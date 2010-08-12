@@ -55,10 +55,20 @@ def check(codeString, filename):
         # Okay, it's syntactically valid.  Now check it.
         w = checker.Checker(tree, filename)
         w.messages.sort(lambda a, b: cmp(a.lineno, b.lineno))
-        for warning in w.messages:
-            print warning
-        return len(w.messages)
+        valid_warnings = 0
 
+        for warning in w.messages:
+            if _noqa(warning):
+                continue
+            print warning
+            valid_warnings += 1
+
+        return valid_warnings
+
+def _noqa(warning):
+    # XXX quick dirty hack, just need to keep the line in the warning
+    line = open(warning.filename).readlines()[warning.lineno-1]
+    return line.strip().lower().endswith('# noqa')
 
 def checkPath(filename):
     """

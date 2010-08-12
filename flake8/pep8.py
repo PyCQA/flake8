@@ -935,6 +935,8 @@ class Checker(object):
         """
         Report an error, according to options.
         """
+        if self.physical_line.strip().lower().endswith('# noqa'):
+            return
         if options.quiet == 1 and not self.file_errors:
             message(self.filename)
         self.file_errors += 1

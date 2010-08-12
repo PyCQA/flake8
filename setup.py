@@ -9,7 +9,7 @@ setup(
     description="code checking",
     author="Tarek Ziade",
     url="http://bitbucket.org/tarek/flake8",
-    packages=["flake8", "flake8.scripts", "flake8.test"],
+    packages=["flake8", "flake8.test"],
     scripts=["bin/flake8"],
     long_description=README,
     classifiers=[

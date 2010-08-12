@@ -981,7 +981,7 @@ def input_file(filename):
         count = options.counters.get(code, 0)
         if count == 0 and 'not' not in basename:
             message("%s: error %s not found" % (filename, code))
-    return len(errors)
+    return errors
 
 def input_dir(dirname):
     """

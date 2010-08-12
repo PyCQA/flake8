@@ -10,6 +10,7 @@ import pep8
 
 checker = __import__('flake8.checker').checker
 
+
 def check(codeString, filename):
     """
     Check the Python source given by C{codeString} for flakes.
@@ -65,10 +66,12 @@ def check(codeString, filename):
 
         return valid_warnings
 
+
 def _noqa(warning):
     # XXX quick dirty hack, just need to keep the line in the warning
-    line = open(warning.filename).readlines()[warning.lineno-1]
+    line = open(warning.filename).readlines()[warning.lineno - 1]
     return line.strip().lower().endswith('# noqa')
+
 
 def checkPath(filename):
     """
@@ -104,6 +107,5 @@ def main():
     else:
         stdin = sys.stdin.read()
         warnings += check(stdin, '<stdin>')
-
 
     raise SystemExit(warnings > 0)

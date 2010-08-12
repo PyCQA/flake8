@@ -14,7 +14,6 @@ class Test(harness.Test):
     def test_definedInListComp(self):
         self.flakes('[a for a in range(10) if a]')
 
-
     def test_functionsNeedGlobalScope(self):
         self.flakes('''
         class a:
@@ -26,14 +25,12 @@ class Test(harness.Test):
     def test_builtins(self):
         self.flakes('range(10)')
 
-
     def test_magicGlobalsFile(self):
         """
         Use of the C{__file__} magic global should not emit an undefined name
         warning.
         """
         self.flakes('__file__')
-
 
     def test_magicGlobalsBuiltins(self):
         """
@@ -42,14 +39,12 @@ class Test(harness.Test):
         """
         self.flakes('__builtins__')
 
-
     def test_magicGlobalsName(self):
         """
         Use of the C{__name__} magic global should not emit an undefined name
         warning.
         """
         self.flakes('__name__')
-
 
     def test_magicGlobalsPath(self):
         """
@@ -59,13 +54,15 @@ class Test(harness.Test):
         self.flakes('__path__', m.UndefinedName)
         self.flakes('__path__', filename='package/__init__.py')
 
-
     def test_globalImportStar(self):
         '''Can't find undefined names with import *'''
         self.flakes('from fu import *; bar', m.ImportStarUsed)
 
     def test_localImportStar(self):
-        '''A local import * still allows undefined names to be found in upper scopes'''
+        '''
+        A local import * still allows undefined names to be found
+        in upper scopes
+        '''
         self.flakes('''
         def a():
             from fu import *
@@ -80,7 +77,10 @@ class Test(harness.Test):
         ''')
 
     def test_definedByGlobal(self):
-        '''"global" can make an otherwise undefined name in another function defined'''
+        '''
+        "global" can make an otherwise undefined name
+        in another function defined
+        '''
         self.flakes('''
         def a(): global fu; fu = 1
         def b(): fu
@@ -153,13 +153,12 @@ class Test(harness.Test):
                     return a
         ''', m.UndefinedLocal)
 
-
     def test_intermediateClassScopeIgnored(self):
         """
         If a name defined in an enclosing scope is shadowed by a local variable
         and the name is used locally before it is bound, an unbound local
-        warning is emitted, even if there is a class scope between the enclosing
-        scope and the local scope.
+        warning is emitted, even if there is a class scope between
+        the enclosing scope and the local scope.
         """
         self.flakes('''
         def f():
@@ -171,7 +170,6 @@ class Test(harness.Test):
                     print x, a
             print x
         ''', m.UndefinedLocal)
-
 
     def test_doubleNestingReportsClosestName(self):
         """
@@ -193,7 +191,6 @@ class Test(harness.Test):
                 return x
         ''', m.UndefinedLocal).messages[0]
         self.assertEqual(exc.message_args, ('x', 5))
-
 
     def test_laterRedefinedGlobalFromNestedScope3(self):
         """
@@ -249,15 +246,14 @@ class Test(harness.Test):
         self.flakes('(a for a in xrange(10) if a)')
 
 
-
 class NameTests(TestCase):
     """
     Tests for some extra cases of name handling.
     """
     def test_impossibleContext(self):
         """
-        A Name node with an unrecognized context results in a RuntimeError being
-        raised.
+        A Name node with an unrecognized context results in a RuntimeError
+        being raised.
         """
         tree = compile("x = 10", "<test>", "exec", PyCF_ONLY_AST)
         # Make it into something unrecognizable.

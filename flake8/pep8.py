@@ -985,6 +985,7 @@ def input_file(filename):
             message("%s: error %s not found" % (filename, code))
     return errors
 
+
 def input_dir(dirname):
     """
     Check all Python source files in this directory and all subdirectories.

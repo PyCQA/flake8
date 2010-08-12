@@ -14,10 +14,11 @@ try:
     import ast
     iter_child_nodes = ast.iter_child_nodes
 except (ImportError, AttributeError):
+
     def iter_child_nodes(node, astcls=_ast.AST):
         """
-        Yield all direct child nodes of *node*, that is, all fields that are nodes
-        and all items of fields that are lists of nodes.
+        Yield all direct child nodes of *node*, that is, all fields that are
+        nodes and all items of fields that are lists of nodes.
         """
         for name in node._fields:
             field = getattr(node, name, None)
@@ -45,22 +46,19 @@ class Binding(object):
         self.source = source
         self.used = False
 
-
     def __str__(self):
         return self.name
 
-
     def __repr__(self):
-        return '<%s object %r from line %r at 0x%x>' % (self.__class__.__name__,
-                                                        self.name,
-                                                        self.source.lineno,
-                                                        id(self))
-
+        return '<%s object %r from line %r at 0x%x>' % (
+            self.__class__.__name__,
+            self.name,
+            self.source.lineno,
+            id(self))
 
 
 class UnBinding(Binding):
     '''Created by the 'del' operator.'''
-
 
 
 class Importation(Binding):
@@ -77,12 +75,10 @@ class Importation(Binding):
         super(Importation, self).__init__(name, source)
 
 
-
 class Argument(Binding):
     """
     Represents binding a name as an argument.
     """
-
 
 
 class Assignment(Binding):
@@ -95,10 +91,8 @@ class Assignment(Binding):
     """
 
 
-
 class FunctionDefinition(Binding):
     pass
-
 
 
 class ExportBinding(Binding):
@@ -127,23 +121,20 @@ class ExportBinding(Binding):
         return names
 
 
-
 class Scope(dict):
     importStarred = False       # set to True when import * is found
 
-
     def __repr__(self):
-        return '<%s at 0x%x %s>' % (self.__class__.__name__, id(self), dict.__repr__(self))
-
+        return '<%s at 0x%x %s>' % (self.__class__.__name__,
+                                    id(self),
+                                    dict.__repr__(self))
 
     def __init__(self):
         super(Scope, self).__init__()
 
 
-
 class ClassScope(Scope):
     pass
-
 
 
 class FunctionScope(Scope):
@@ -157,14 +148,12 @@ class FunctionScope(Scope):
         self.globals = {}
 
 
-
 class ModuleScope(Scope):
     pass
 
 
 # Globally defined names which are not attributes of the __builtin__ module.
 _MAGIC_GLOBALS = ['__file__', '__builtins__']
-
 
 
 class Checker(object):
@@ -204,7 +193,6 @@ class Checker(object):
         self.popScope()
         self.check_dead_scopes()
 
-
     def deferFunction(self, callable):
         '''
         Schedule a function handler to be called just before completion.
@@ -216,14 +204,12 @@ class Checker(object):
         '''
         self._deferredFunctions.append((callable, self.scopeStack[:]))
 
-
     def deferAssignment(self, callable):
         """
         Schedule an assignment handler to be called just after deferred
         function handlers.
         """
         self._deferredAssignments.append((callable, self.scopeStack[:]))
-
 
     def _runDeferred(self, deferred):
         """
@@ -233,14 +219,12 @@ class Checker(object):
             self.scopeStack = scope
             handler()
 
-
     def scope(self):
         return self.scopeStack[-1]
     scope = property(scope)
 
     def popScope(self):
         self.dead_scopes.append(self.scopeStack.pop())
-
 
     def check_dead_scopes(self):
         """
@@ -270,7 +254,6 @@ class Checker(object):
                             messages.UnusedImport,
                             importation.source.lineno,
                             importation.name)
-
 
     def pushFunctionScope(self):
         self.scopeStack.append(FunctionScope())
@@ -352,18 +335,21 @@ class Checker(object):
         if (isinstance(self.scope.get(value.name), FunctionDefinition)
                     and isinstance(value, FunctionDefinition)):
             self.report(messages.RedefinedFunction,
-                        lineno, value.name, self.scope[value.name].source.lineno)
+                        lineno, value.name,
+                        self.scope[value.name].source.lineno)
 
         if not isinstance(self.scope, ClassScope):
             for scope in self.scopeStack[::-1]:
                 existing = scope.get(value.name)
                 if (isinstance(existing, Importation)
                         and not existing.used
-                        and (not isinstance(value, Importation) or value.fullName == existing.fullName)
+                        and (not isinstance(value, Importation) \
+                             or value.fullName == existing.fullName)
                         and reportRedef):
 
                     self.report(messages.RedefinedWhileUnused,
-                                lineno, value.name, scope[value.name].source.lineno)
+                                lineno, value.name,
+                                scope[value.name].source.lineno)
 
         if isinstance(value, UnBinding):
             try:
@@ -400,6 +386,7 @@ class Checker(object):
         Process bindings for loop variables.
         """
         vars = []
+
         def collectLoopVars(n):
             if isinstance(n, _ast.Name):
                 vars.append(n.id)
@@ -461,10 +448,14 @@ class Checker(object):
                         # the special name __path__ is valid only in packages
                         pass
                     else:
-                        self.report(messages.UndefinedName, node.lineno, node.id)
+                        self.report(messages.UndefinedName,
+                                    node.lineno,
+                                    node.id)
+
         elif isinstance(node.ctx, (_ast.Store, _ast.AugStore)):
             # if the name hasn't already been defined in the current scope
-            if isinstance(self.scope, FunctionScope) and node.id not in self.scope:
+            if isinstance(self.scope, FunctionScope) and \
+               node.id not in self.scope:
                 # for each function or module scope above us
                 for scope in self.scopeStack[:-1]:
                     if not isinstance(scope, (FunctionScope, ModuleScope)):
@@ -484,7 +475,10 @@ class Checker(object):
                         break
 
             if isinstance(node.parent,
-                          (_ast.For, _ast.comprehension, _ast.Tuple, _ast.List)):
+                          (_ast.For,
+                           _ast.comprehension,
+                           _ast.Tuple,
+                           _ast.List)):
                 binding = Binding(node.id, node)
             elif (node.id == '__all__' and
                   isinstance(self.scope, ModuleScope)):
@@ -501,11 +495,10 @@ class Checker(object):
             else:
                 self.addBinding(node.lineno, UnBinding(node.id, node))
         else:
-            # must be a Param context -- this only happens for names in function
-            # arguments, but these aren't dispatched through here
+            # must be a Param context -- this only happens for names
+            # in function arguments, but these aren't dispatched through here
             raise RuntimeError(
                 "Got impossible expression context: %r" % (node.ctx,))
-
 
     def FUNCTIONDEF(self, node):
         # the decorators attribute is called decorator_list as of Python 2.6
@@ -543,7 +536,8 @@ class Checker(object):
             if node.args.kwarg:
                 args.append(node.args.kwarg)
             for name in args:
-                self.addBinding(node.lineno, Argument(name, node), reportRedef=False)
+                self.addBinding(node.lineno, Argument(name, node),
+                                reportRedef=False)
             if isinstance(node.body, list):
                 # case for FunctionDefs
                 for stmt in node.body:
@@ -551,6 +545,7 @@ class Checker(object):
             else:
                 # case for Lambdas
                 self.handleNode(node.body, node)
+
             def checkUnusedAssignments():
                 """
                 Check to see if any assignments have not been used.
@@ -564,7 +559,6 @@ class Checker(object):
             self.popScope()
 
         self.deferFunction(runFunction)
-
 
     def CLASSDEF(self, node):
         """
@@ -589,8 +583,9 @@ class Checker(object):
             self.handleNode(target, node)
 
     def AUGASSIGN(self, node):
-        # AugAssign is awkward: must set the context explicitly and visit twice,
-        # once with AugLoad context, once with AugStore context
+        # AugAssign is awkward: must set the context explicitly
+        # and visit twice, once with AugLoad context, once with
+        # AugStore context
         node.target.ctx = _ast.AugLoad()
         self.handleNode(node.target, node)
         self.handleNode(node.value, node)

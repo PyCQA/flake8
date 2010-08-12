@@ -23,5 +23,6 @@ for input:
 expected outputs:
 %s
 but got:
-%s''' % (input, repr(expectedOutputs), '\n'.join([str(o) for o in w.messages])))
+%s''' % (input, repr(expectedOutputs), '\n'.join(map(str, w.messages))))
         return w
+

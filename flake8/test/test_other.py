@@ -23,7 +23,8 @@ class Test(harness.Test):
             a; a=1
         f()
         ''', m.UndefinedName)
-    test_localReferencedBeforeAssignment.todo = 'this requires finding all assignments in the function body first'
+    test_localReferencedBeforeAssignment.todo = 'this requires finding all ' \
+            'assignments in the function body first'
 
     def test_redefinedFunction(self):
         """
@@ -73,7 +74,6 @@ class Test(harness.Test):
         '''Don't die on unary +'''
         self.flakes('+1')
 
-
     def test_undefinedBaseClass(self):
         """
         If a name in the base list of a class definition is undefined, a
@@ -84,7 +84,6 @@ class Test(harness.Test):
             pass
         ''', m.UndefinedName)
 
-
     def test_classNameUndefinedInClassBody(self):
         """
         If a class name is used in the body of that class's definition and
@@ -94,7 +93,6 @@ class Test(harness.Test):
         class foo:
             foo
         ''', m.UndefinedName)
-
 
     def test_classNameDefinedPreviously(self):
         """
@@ -107,7 +105,6 @@ class Test(harness.Test):
         class foo:
             foo
         ''')
-
 
     def test_comparison(self):
         """
@@ -125,7 +122,6 @@ class Test(harness.Test):
         x > y
         ''')
 
-
     def test_identity(self):
         """
         If a deefined name is used on either side of an identity test, no
@@ -138,7 +134,6 @@ class Test(harness.Test):
         x is not y
         ''')
 
-
     def test_containment(self):
         """
         If a defined name is used on either side of a containment test, no
@@ -150,7 +145,6 @@ class Test(harness.Test):
         x in y
         x not in y
         ''')
-
 
     def test_loopControl(self):
         """
@@ -165,7 +159,6 @@ class Test(harness.Test):
             continue
         ''')
 
-
     def test_ellipsis(self):
         """
         Ellipsis in a slice is supported.
@@ -173,7 +166,6 @@ class Test(harness.Test):
         self.flakes('''
         [1, 2][...]
         ''')
-
 
     def test_extendedSlice(self):
         """
@@ -183,7 +175,6 @@ class Test(harness.Test):
         x = 3
         [1, 2][x,:]
         ''')
-
 
 
 class TestUnusedAssignment(harness.Test):
@@ -201,7 +192,6 @@ class TestUnusedAssignment(harness.Test):
             b = 1
         ''', m.UnusedVariable)
 
-
     def test_assignToGlobal(self):
         """
         Assigning to a global and then not using that global is perfectly
@@ -213,7 +203,6 @@ class TestUnusedAssignment(harness.Test):
             global b
             b = 1
         ''')
-
 
     def test_assignToMember(self):
         """
@@ -230,7 +219,6 @@ class TestUnusedAssignment(harness.Test):
             b.foo = 1
         ''')
 
-
     def test_assignInForLoop(self):
         """
         Don't warn when a variable in a for loop is assigned to but not used.
@@ -240,7 +228,6 @@ class TestUnusedAssignment(harness.Test):
             for i in range(10):
                 pass
         ''')
-
 
     def test_assignInListComprehension(self):
         """
@@ -252,16 +239,15 @@ class TestUnusedAssignment(harness.Test):
             [None for i in range(10)]
         ''')
 
-
     def test_generatorExpression(self):
         """
-        Don't warn when a variable in a generator expression is assigned to but not used.
+        Don't warn when a variable in a generator expression is assigned to
+        but not used.
         """
         self.flakes('''
         def f():
             (None for i in range(10))
         ''')
-
 
     def test_assignmentInsideLoop(self):
         """
@@ -276,7 +262,6 @@ class TestUnusedAssignment(harness.Test):
                 x = i * 2
         ''')
 
-
     def test_tupleUnpacking(self):
         """
         Don't warn when a variable included in tuple unpacking is unused. It's
@@ -288,7 +273,6 @@ class TestUnusedAssignment(harness.Test):
             (x, y) = 1, 2
         ''')
 
-
     def test_listUnpacking(self):
         """
         Don't warn when a variable included in list unpacking is unused.
@@ -297,7 +281,6 @@ class TestUnusedAssignment(harness.Test):
         def f():
             [x, y] = [1, 2]
         ''')
-
 
     def test_closedOver(self):
         """
@@ -310,7 +293,6 @@ class TestUnusedAssignment(harness.Test):
                 return foo
             return bar
         ''')
-
 
     def test_doubleClosedOver(self):
         """
@@ -327,7 +309,6 @@ class TestUnusedAssignment(harness.Test):
         ''')
 
 
-
 class Python25Test(harness.Test):
     """
     Tests for checking of syntax only available in Python 2.5 and newer.
@@ -342,7 +323,6 @@ class Python25Test(harness.Test):
         self.flakes("a = 'moo' if True else 'oink'")
         self.flakes("a = foo if True else 'oink'", m.UndefinedName)
         self.flakes("a = 'moo' if True else bar", m.UndefinedName)
-
 
     def test_withStatementNoNames(self):
         """
@@ -369,7 +349,6 @@ class Python25Test(harness.Test):
         bar
         ''')
 
-
     def test_withStatementAttributeName(self):
         """
         No warnings are emitted for using an attribute as the target of a
@@ -381,7 +360,6 @@ class Python25Test(harness.Test):
         with open('foo') as foo.bar:
             pass
         ''')
-
 
     def test_withStatementSubscript(self):
         """
@@ -395,7 +373,6 @@ class Python25Test(harness.Test):
             pass
         ''')
 
-
     def test_withStatementSubscriptUndefined(self):
         """
         An undefined name warning is emitted if the subscript used as the
@@ -407,7 +384,6 @@ class Python25Test(harness.Test):
         with open('foo') as foo[bar]:
             pass
         ''', m.UndefinedName)
-
 
     def test_withStatementTupleNames(self):
         """
@@ -421,7 +397,6 @@ class Python25Test(harness.Test):
         bar, baz
         ''')
 
-
     def test_withStatementListNames(self):
         """
         No warnings are emitted for using any of the list of names defined by a
@@ -433,7 +408,6 @@ class Python25Test(harness.Test):
             bar, baz
         bar, baz
         ''')
-
 
     def test_withStatementComplicatedTarget(self):
         """
@@ -451,7 +425,6 @@ class Python25Test(harness.Test):
         a, b, c, d, e, g, h, i
         ''')
 
-
     def test_withStatementSingleNameUndefined(self):
         """
         An undefined name warning is emitted if the name first defined by a
@@ -463,7 +436,6 @@ class Python25Test(harness.Test):
         with open('foo') as bar:
             pass
         ''', m.UndefinedName)
-
 
     def test_withStatementTupleNamesUndefined(self):
         """
@@ -478,7 +450,6 @@ class Python25Test(harness.Test):
             pass
         ''', m.UndefinedName)
 
-
     def test_withStatementSingleNameRedefined(self):
         """
         A redefined name warning is emitted if a name bound by an import is
@@ -490,7 +461,6 @@ class Python25Test(harness.Test):
         with open('foo') as bar:
             pass
         ''', m.RedefinedWhileUnused)
-
 
     def test_withStatementTupleNamesRedefined(self):
         """
@@ -505,7 +475,6 @@ class Python25Test(harness.Test):
             pass
         ''', m.RedefinedWhileUnused)
 
-
     def test_withStatementUndefinedInside(self):
         """
         An undefined name warning is emitted if a name is used inside the
@@ -516,7 +485,6 @@ class Python25Test(harness.Test):
         with open('foo') as bar:
             baz
         ''', m.UndefinedName)
-
 
     def test_withStatementNameDefinedInBody(self):
         """
@@ -529,7 +497,6 @@ class Python25Test(harness.Test):
             baz = 10
         baz
         ''')
-
 
     def test_withStatementUndefinedInExpression(self):
         """
@@ -547,7 +514,6 @@ class Python25Test(harness.Test):
         with bar as bar:
             pass
         ''', m.UndefinedName)
-
 
 
 class Python27Test(harness.Test):

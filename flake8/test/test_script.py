@@ -11,6 +11,7 @@ from twisted.trial.unittest import TestCase
 
 from pyflakes.scripts.pyflakes import checkPath
 
+
 def withStderrTo(stderr, f):
     """
     Call C{f} with C{sys.stderr} redirected to C{stderr}.
@@ -20,7 +21,6 @@ def withStderrTo(stderr, f):
         return f()
     finally:
         sys.stderr = outer
-
 
 
 class CheckTests(TestCase):
@@ -37,16 +37,15 @@ class CheckTests(TestCase):
         FilePath(fName).setContent("def foo():\n\tpass\n\t")
         self.assertFalse(checkPath(fName))
 
-
     def test_checkPathNonExisting(self):
         """
         L{checkPath} handles non-existing files.
         """
         err = StringIO()
         count = withStderrTo(err, lambda: checkPath('extremo'))
-        self.assertEquals(err.getvalue(), 'extremo: No such file or directory\n')
+        self.assertEquals(err.getvalue(),
+                          'extremo: No such file or directory\n')
         self.assertEquals(count, 1)
-
 
     def test_multilineSyntaxError(self):
         """
@@ -86,7 +85,6 @@ def baz():
            ^
 """ % (sourcePath.path,))
 
-
     def test_eofSyntaxError(self):
         """
         The error reported for source files which end prematurely causing a
@@ -105,7 +103,6 @@ def baz():
 def foo(
          ^
 """ % (sourcePath.path,))
-
 
     def test_nonDefaultFollowsDefaultSyntaxError(self):
         """
@@ -129,7 +126,6 @@ def foo(bar=baz, bax):
 def foo(bar=baz, bax):
 """ % (sourcePath.path,))
 
-
     def test_nonKeywordAfterKeywordSyntaxError(self):
         """
         Source which has a non-keyword argument after a keyword argument should
@@ -151,7 +147,6 @@ foo(bar=baz, bax)
 foo(bar=baz, bax)
 """ % (sourcePath.path,))
 
-
     def test_permissionDenied(self):
         """
         If the a source file is not readable, this is reported on standard
@@ -165,7 +160,6 @@ foo(bar=baz, bax)
         self.assertEquals(count, 1)
         self.assertEquals(
             err.getvalue(), "%s: Permission denied\n" % (sourcePath.path,))
-
 
     def test_misencodedFile(self):
         """
@@ -182,4 +176,5 @@ x = "\N{SNOWMAN}"
         count = withStderrTo(err, lambda: checkPath(sourcePath.path))
         self.assertEquals(count, 1)
         self.assertEquals(
-            err.getvalue(), "%s: problem decoding source\n" % (sourcePath.path,))
+            err.getvalue(),
+            "%s: problem decoding source\n" % (sourcePath.path,))

@@ -8,6 +8,7 @@ setup(
     version="0.1",
     description="code checking using pep8 and pyflakes",
     author="Tarek Ziade",
+    author_email="tarek@ziade.org",
     url="http://bitbucket.org/tarek/flake8",
     packages=["flake8", "flake8.test"],
     scripts=["bin/flake8"],

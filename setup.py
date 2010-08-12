@@ -1,5 +1,7 @@
 from distutils.core import setup
 
+README = open('README').read()
+
 setup(
     name="flake8",
     license="MIT",

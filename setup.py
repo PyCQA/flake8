@@ -6,7 +6,7 @@ setup(
     name="flake8",
     license="MIT",
     version="0.1",
-    description="code checking",
+    description="code checking using pep8 and pyflakes",
     author="Tarek Ziade",
     url="http://bitbucket.org/tarek/flake8",
     packages=["flake8", "flake8.test"],

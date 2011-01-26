@@ -12,6 +12,7 @@ It also adds a few features:
 
 - lines that contains a "# NOQA" comment at the end will not issue a warning
 - merging pep8 and pyflakes options
+- a Mercurial hook
 - more things to come..
 
 Original projects:
@@ -19,3 +20,20 @@ Original projects:
 - pep8: http://github.com/jcrocholl/pep8/
 - PyFlakes: http://divmod.org/trac/wiki/DivmodPyflakes
 
+
+Mercurial hook
+==============
+
+To use the Mercurial hook on any *commit* or *qrefresh*, change your .hg/rc file
+like this::
+
+    [hooks]
+    commit = python:flake8.hg_hook
+    qrefresh = python:flake8.hg_hook
+
+    [flake8]
+    strict = 0
+
+
+If *strict* option is set to **1**, any warning will block the commit. When
+*strict* is set to **0**, warnings are just displayed in the standard output.

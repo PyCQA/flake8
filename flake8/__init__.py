@@ -109,3 +109,25 @@ def main():
         warnings += check(stdin, '<stdin>')
 
     raise SystemExit(warnings > 0)
+
+def hg_hook(ui, repo, **kwargs):
+    pep8.process_options()
+    warnings = 0
+    files = []
+    for rev in xrange(repo[kwargs['node']], len(repo)):
+        for file_ in repo[rev].files():
+            if file_ not in files:
+                files.append(file_)
+
+    for file_ in files:
+        warnings += checkPath(file_)
+        warnings += pep8.input_file(file_)
+
+    strict = ui.config('flake8', 'strict')
+    if strict is None:
+        strict = True
+
+    if strict.lower() in ('1', 'true'):
+        return warnings
+
+    return 0

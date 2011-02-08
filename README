@@ -10,6 +10,10 @@ options and just uses its defaults.
 
 It also adds a few features:
 
+- files that starts with this header are skipped::
+
+    # flake8: noqa
+
 - lines that contains a "# NOQA" comment at the end will not issue a warning
 - merging pep8 and pyflakes options
 - a Mercurial hook

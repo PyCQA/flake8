@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/home/tarek/dev/bitbucket.org/flake8-clean/bin/python
 from flake8 import main
 
 if __name__ == '__main__':

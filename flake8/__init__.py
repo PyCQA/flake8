@@ -2,7 +2,7 @@
 """
 Implementation of the command-line I{flake8} tool.
 """
-
+import re
 import sys
 import os
 import _ast
@@ -73,6 +73,22 @@ def _noqa(warning):
     return line.strip().lower().endswith('# noqa')
 
 
+_NOQA = re.compile(r'^# flake8: noqa', re.I | re.M)
+
+
+def skip_file(path):
+    """Returns True if this header is found in path
+
+    # -*- flake8: noqa -*-
+    """
+    f = open(path)
+    try:
+        content = f.read()
+    finally:
+        f.close()
+    return _NOQA.match(content) is not None
+
+
 def checkPath(filename):
     """
     Check the given path, printing out any warnings detected.
@@ -96,11 +112,16 @@ def main():
             if os.path.isdir(arg):
                 for dirpath, dirnames, filenames in os.walk(arg):
                     for filename in filenames:
-                        if filename.endswith('.py'):
-                            fullpath = os.path.join(dirpath, filename)
-                            warnings += checkPath(fullpath)
-                            warnings += pep8.input_file(fullpath)
+                        if not filename.endswith('.py'):
+                            continue
+                        fullpath = os.path.join(dirpath, filename)
+                        if skip_file(fullpath):
+                            continue
+                        warnings += checkPath(fullpath)
+                        warnings += pep8.input_file(fullpath)
             else:
+                if skip_file(filename):
+                    continue
                 warnings += checkPath(arg)
                 warnings += pep8.input_file(arg)
 
@@ -110,6 +131,7 @@ def main():
 
     raise SystemExit(warnings > 0)
 
+
 def hg_hook(ui, repo, **kwargs):
     pep8.process_options()
     warnings = 0
@@ -117,6 +139,8 @@ def hg_hook(ui, repo, **kwargs):
     for rev in xrange(repo[kwargs['node']], len(repo)):
         for file_ in repo[rev].files():
             if not file_.endswith('.py'):
+                continue
+            if skip_file(file_):
                 continue
             if file_ not in files:
                 files.append(file_)

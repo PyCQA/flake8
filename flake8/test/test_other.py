@@ -413,7 +413,8 @@ class Python25Test(harness.Test):
         """
         If the target of a C{with} statement uses any or all of the valid forms
         for that part of the grammar (See
-        U{http://docs.python.org/reference/compound_stmts.html#the-with-statement}),
+        U{http://docs.python.org/reference/
+            compound_stmts.html#the-with-statement}),
         the names involved are checked both for definedness and any bindings
         created are respected in the suite of the statement and afterwards.
         """

@@ -120,7 +120,7 @@ def main():
                         warnings += checkPath(fullpath)
                         warnings += pep8.input_file(fullpath)
             else:
-                if skip_file(filename):
+                if skip_file(arg):
                     continue
                 warnings += checkPath(arg)
                 warnings += pep8.input_file(arg)

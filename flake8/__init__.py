@@ -2,11 +2,13 @@
 """
 Implementation of the command-line I{flake8} tool.
 """
-import re
 import sys
 import os
 import _ast
 import pep8
+import mccabe
+import re
+
 
 checker = __import__('flake8.checker').checker
 
@@ -69,24 +71,8 @@ def check(codeString, filename):
 
 def _noqa(warning):
     # XXX quick dirty hack, just need to keep the line in the warning
-    line = open(warning.filename).readlines()[warning.lineno - 1]
+    line = open(warning.filename).readlines()[warning.lineno-1]
     return line.strip().lower().endswith('# noqa')
-
-
-_NOQA = re.compile(r'^# flake8: noqa', re.I | re.M)
-
-
-def skip_file(path):
-    """Returns True if this header is found in path
-
-    # -*- flake8: noqa -*-
-    """
-    f = open(path)
-    try:
-        content = f.read()
-    finally:
-        f.close()
-    return _NOQA.match(content) is not None
 
 
 def checkPath(filename):
@@ -102,52 +88,80 @@ def checkPath(filename):
         return 1
 
 
+def check_file(path, complexity=10):
+    warnings = checkPath(path)
+    warnings += pep8.input_file(path)
+    warnings += mccabe.get_module_complexity(path, complexity)
+    return warnings
+
+
+def check_code(code, complexity=10):
+    warnings = check(code, '<stdin>')
+    warnings += mccabe.get_code_complexity(code, complexity)
+    return warnings
+
+
+_NOQA = re.compile(r'^# flake8: noqa', re.I | re.M)
+
+
+def skip_file(path):
+    """Returns True if this header is found in path
+
+    # flake8: noqa
+    """
+    f = open(path)
+    try:
+        content = f.read()
+    finally:
+        f.close()
+    return _NOQA.match(content) is not None
+
+
+def _get_python_files(paths):
+    for path in paths:
+        if os.path.isdir(path):
+            for dirpath, dirnames, filenames in os.walk(path):
+                for filename in filenames:
+                    if not filename.endswith('.py'):
+                        continue
+                    fullpath = os.path.join(dirpath, filename)
+                    if not skip_file(fullpath):
+                        yield fullpath
+
+        else:
+            if not skip_file(path):
+                yield path
+
+
 def main():
     pep8.process_options()
-
     warnings = 0
     args = sys.argv[1:]
     if args:
-        for arg in args:
-            if os.path.isdir(arg):
-                for dirpath, dirnames, filenames in os.walk(arg):
-                    for filename in filenames:
-                        if not filename.endswith('.py'):
-                            continue
-                        fullpath = os.path.join(dirpath, filename)
-                        if skip_file(fullpath):
-                            continue
-                        warnings += checkPath(fullpath)
-                        warnings += pep8.input_file(fullpath)
-            else:
-                if skip_file(arg):
-                    continue
-                warnings += checkPath(arg)
-                warnings += pep8.input_file(arg)
-
+        for path in _get_python_files(args):
+            warnings += check_file(path)
     else:
         stdin = sys.stdin.read()
-        warnings += check(stdin, '<stdin>')
+        warnings += check_code(stdin)
 
     raise SystemExit(warnings > 0)
 
 
-def hg_hook(ui, repo, **kwargs):
-    pep8.process_options()
-    warnings = 0
-    files = []
+def _get_files(repo, **kwargs):
     for rev in xrange(repo[kwargs['node']], len(repo)):
         for file_ in repo[rev].files():
             if not file_.endswith('.py'):
                 continue
             if skip_file(file_):
                 continue
-            if file_ not in files:
-                files.append(file_)
+            yield file_
 
-    for file_ in files:
-        warnings += checkPath(file_)
-        warnings += pep8.input_file(file_)
+
+def hg_hook(ui, repo, **kwargs):
+    pep8.process_options()
+    warnings = 0
+    for file_ in _get_files(repo, **kwargs):
+        warnings += check_file(file_)
 
     strict = ui.config('flake8', 'strict')
     if strict is None:
@@ -157,3 +171,6 @@ def hg_hook(ui, repo, **kwargs):
         return warnings
 
     return 0
+
+if __name__ == '__main__':
+    main()

@@ -1,5 +1,5 @@
 #!/home/tarek/dev/bitbucket.org/flake8-clean/bin/python
-from flake8 import main
+from flake8.run import main
 
 if __name__ == '__main__':
     main()

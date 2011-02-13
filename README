@@ -2,11 +2,14 @@
 Flake8
 ======
 
-Flake8 is just a merge of the PyFlakes and the pep8 projects into one single
-script.
+Flake8 is a wrapper around these tools:
 
-It runs both tests by launching the single 'flake8' script, but ignores pep8
-options and just uses its defaults.
+- PyFlakes
+- pep8
+- Ned's MacCabe script
+
+It runs all tools by launching the single 'flake8' script, but ignores pep8 
+and PyFlakes extended options and just uses defaults.
 
 It also adds a few features:
 
@@ -15,7 +18,6 @@ It also adds a few features:
     # flake8: noqa
 
 - lines that contains a "# NOQA" comment at the end will not issue a warning
-- merging pep8 and pyflakes options
 - a Mercurial hook
 - more things to come..
 
@@ -23,6 +25,7 @@ Original projects:
 
 - pep8: http://github.com/jcrocholl/pep8/
 - PyFlakes: http://divmod.org/trac/wiki/DivmodPyflakes
+- McCabe: http://nedbatchelder.com/blog/200803/python_code_complexity_microtool.html
 
 
 Mercurial hook

@@ -67,18 +67,30 @@ class PathGraphingAstVisitor(compiler.visitor.ASTVisitor):
         self.tail = None
 
     def visitFunction(self, node):
+
         if self.classname:
             entity = '%s%s' % (self.classname, node.name)
         else:
             entity = node.name
 
         name = '%d:1: %r' % (node.lineno, entity)
-        self.graph = PathGraph(name)
-        pathnode = PathNode(name)
-        self.tail = pathnode
-        self.default(node)
-        self.graphs["%s%s" % (self.classname, node.name)] = self.graph
-        self.reset()
+
+        if self.graph is not None:
+            # closure
+            pathnode = self.appendPathNode(name)
+            self.tail = pathnode
+            self.default(node)
+            bottom = PathNode("", look='point')
+            self.graph.connect(self.tail, bottom)
+            self.graph.connect(pathnode, bottom)
+            self.tail = bottom
+        else:
+            self.graph = PathGraph(name)
+            pathnode = PathNode(name)
+            self.tail = pathnode
+            self.default(node)
+            self.graphs["%s%s" % (self.classname, node.name)] = self.graph
+            self.reset()
 
     def visitClass(self, node):
         old_classname = self.classname
@@ -96,7 +108,11 @@ class PathGraphingAstVisitor(compiler.visitor.ASTVisitor):
         return pathnode
 
     def visitSimpleStatement(self, node):
-        name = "Stmt %d" % node.lineno
+        if node.lineno is None:
+            lineno = 0
+        else:
+            lineno = node.lineno
+        name = "Stmt %d" % lineno
         self.appendPathNode(name)
 
     visitAssert = visitAssign = visitAssTuple = visitPrint = \
@@ -106,13 +122,24 @@ class PathGraphingAstVisitor(compiler.visitor.ASTVisitor):
 
     def visitLoop(self, node):
         name = "Loop %d" % node.lineno
-        pathnode = self.appendPathNode(name)
-        self.tail = pathnode
-        self.default(node.body)
-        bottom = PathNode("", look='point')
-        self.graph.connect(self.tail, bottom)
-        self.graph.connect(pathnode, bottom)
-        self.tail = bottom
+
+        if self.graph is None:
+            # global loop
+            self.graph = PathGraph(name)
+            pathnode = PathNode(name)
+            self.tail = pathnode
+            self.default(node)
+            self.graphs["%s%s" % (self.classname, name)] = self.graph
+            self.reset()
+        else:
+            pathnode = self.appendPathNode(name)
+            self.tail = pathnode
+            self.default(node.body)
+            bottom = PathNode("", look='point')
+            self.graph.connect(self.tail, bottom)
+            self.graph.connect(pathnode, bottom)
+            self.tail = bottom
+
         # TODO: else clause in node.else_
 
     visitFor = visitWhile = visitLoop
@@ -147,12 +174,7 @@ def get_code_complexity(code, min=7, filename='stdin'):
     complex = []
     ast = compiler.parse(code)
     visitor = PathGraphingAstVisitor()
-    try:
-        visitor.preorder(ast, visitor)
-    except AttributeError:
-        print('McCabe: Could not parse code')
-        return -1
-
+    visitor.preorder(ast, visitor)
     for graph in visitor.graphs.values():
         if graph is None:
             # ?
@@ -172,10 +194,7 @@ def get_code_complexity(code, min=7, filename='stdin'):
 def get_module_complexity(module_path, min=7):
     """Returns the complexity of a module"""
     code = open(module_path, "rU").read() + '\n\n'
-    res = get_code_complexity(code, min, filename=module_path)
-    if res == -1:
-        print('McCabe: Problem with %s' % module_path)
-    return res
+    return get_code_complexity(code, min, filename=module_path)
 
 
 def main(argv):

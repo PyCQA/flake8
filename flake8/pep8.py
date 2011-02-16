@@ -956,7 +956,7 @@ class Checker(object):
                 return  # Don't print the expected error message
         if ignore_code(code):
             return
-        if options.counters[code] == 1 or options.repeat:
+        if options.counters[code] == 1 or not options.no_repeat:
             message("%s:%s:%d: %s" %
                     (self.filename, line_number, offset + 1, text))
             if options.show_source:
@@ -1166,8 +1166,8 @@ def process_options(arglist=None):
                       help="print status messages, or debug with -vv")
     parser.add_option('-q', '--quiet', default=0, action='count',
                       help="report only file names, or nothing with -qq")
-    parser.add_option('-r', '--repeat', action='store_true',
-                      help="show all occurrences of the same error")
+    parser.add_option('-r', '--no-repeat', action='store_true',
+                      help="don't show all occurrences of the same error")
     parser.add_option('--exclude', metavar='patterns', default=DEFAULT_EXCLUDE,
                       help="exclude files or directories which match these "
                         "comma separated patterns (default: %s)" %

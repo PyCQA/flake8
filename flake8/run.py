@@ -42,9 +42,8 @@ def _get_python_files(paths):
 
 
 def main():
-    pep8.process_options()
+    options, args = pep8.process_options()
     warnings = 0
-    args = sys.argv[1:]
     if args:
         for path in _get_python_files(args):
             warnings += check_file(path)

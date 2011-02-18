@@ -45,3 +45,21 @@ like this::
 
 If *strict* option is set to **1**, any warning will block the commit. When
 *strict* is set to **0**, warnings are just displayed in the standard output.
+
+CHANGES
+=======
+
+0.7 - 2010-02-18
+----------------
+
+- Fix pep8 intialization when run through Hg
+- Make pep8 short options work when run throug the command line
+- skip duplicates when controlling files via Hg
+
+
+0.6 - 2010-02-15
+----------------
+
+- Fix the McCabe metric on some loops
+
+

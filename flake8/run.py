@@ -12,7 +12,6 @@ from flake8 import mccabe
 
 
 def check_file(path, complexity=10):
-
     warnings = pyflakes.checkPath(path)
     warnings += pep8.input_file(path)
     warnings += mccabe.get_module_complexity(path, complexity)
@@ -64,8 +63,21 @@ def _get_files(repo, **kwargs):
             yield file_
 
 
+class _PEP8Options(object):
+    exclude = select = []
+    show_pep8 = show_source = quiet = verbose = testsuite = False
+    repeat = True
+    messages = counters = {}
+    ignore = pep8.DEFAULT_IGNORE
+
+
 def hg_hook(ui, repo, **kwargs):
-    pep8.process_options()
+    # default pep8 setup
+    pep8.options = _PEP8Options()
+    pep8.options.physical_checks = pep8.find_checks('physical_line')
+    pep8.options.logical_checks = pep8.find_checks('logical_line')
+    pep8.args = []
+
     warnings = 0
     for file_ in _get_files(repo, **kwargs):
         warnings += check_file(file_)

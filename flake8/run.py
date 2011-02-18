@@ -54,8 +54,12 @@ def main():
 
 
 def _get_files(repo, **kwargs):
+    seen = set()
     for rev in xrange(repo[kwargs['node']], len(repo)):
         for file_ in repo[rev].files():
+            if file_ in seen:
+                continue
+            seen.add(file_)
             if not file_.endswith('.py'):
                 continue
             if skip_file(file_):
@@ -82,11 +86,9 @@ def hg_hook(ui, repo, **kwargs):
     for file_ in _get_files(repo, **kwargs):
         warnings += check_file(file_)
 
-    strict = ui.config('flake8', 'strict')
-    if strict is None:
-        strict = True
+    strict = ui.configbool('flake8', 'strict', default=True)
 
-    if strict.lower() in ('1', 'true'):
+    if strict:
         return warnings
 
     return 0

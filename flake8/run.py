@@ -55,8 +55,12 @@ def main():
 
 
 def _get_files(repo, **kwargs):
+    seen = set()
     for rev in xrange(repo[kwargs['node']], len(repo)):
         for file_ in repo[rev].files():
+            if file_ in seen:
+                continue
+            seen.add(file_)
             if not file_.endswith('.py'):
                 continue
             if skip_file(file_):

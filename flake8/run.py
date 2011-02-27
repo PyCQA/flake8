@@ -4,6 +4,7 @@ Implementation of the command-line I{flake8} tool.
 """
 import sys
 import os
+import os.path
 
 from flake8.util import skip_file
 from flake8 import pep8
@@ -57,6 +58,7 @@ def _get_files(repo, **kwargs):
     seen = set()
     for rev in xrange(repo[kwargs['node']], len(repo)):
         for file_ in repo[rev].files():
+            file_ = os.path.join(repo.root, file_)
             if file_ in seen:
                 continue
             seen.add(file_)
@@ -70,8 +72,9 @@ def _get_files(repo, **kwargs):
 class _PEP8Options(object):
     exclude = select = []
     show_pep8 = show_source = quiet = verbose = testsuite = False
-    repeat = True
-    messages = counters = {}
+    no_repeat = False
+    counters = {}
+    messages = {}
     ignore = pep8.DEFAULT_IGNORE
 
 

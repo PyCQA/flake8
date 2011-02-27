@@ -59,7 +59,7 @@ def _get_files(repo, **kwargs):
     for rev in xrange(repo[kwargs['node']], len(repo)):
         for file_ in repo[rev].files():
             file_ = os.path.join(repo.root, file_)
-            if file_ in seen:
+            if file_ in seen or not os.path.exists(file_):
                 continue
             seen.add(file_)
             if not file_.endswith('.py'):

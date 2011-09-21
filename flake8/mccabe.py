@@ -172,7 +172,12 @@ class PathGraphingAstVisitor(compiler.visitor.ASTVisitor):
 
 def get_code_complexity(code, min=7, filename='stdin'):
     complex = []
-    ast = compiler.parse(code)
+    try:
+        ast = compiler.parse(code)
+    except AttributeError as e:
+        print >>sys.stderr, "Unable to parse %s: %s" % (filename, e)
+        return 0
+
     visitor = PathGraphingAstVisitor()
     visitor.preorder(ast, visitor)
     for graph in visitor.graphs.values():

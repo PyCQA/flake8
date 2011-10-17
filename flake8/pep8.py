@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# flake8: noqa
 # pep8.py - Check Python source code formatting, according to PEP 8
 # Copyright (C) 2006 Johann C. Rocholl <johann@rocholl.net>
 #
@@ -108,6 +109,7 @@ try:
 except NameError:
     from sets import ImmutableSet as frozenset
 
+from flake8.util import skip_line
 
 DEFAULT_EXCLUDE = '.svn,CVS,.bzr,.hg,.git'
 DEFAULT_IGNORE = 'E24'
@@ -992,6 +994,8 @@ class Checker(object):
         """
         Report an error, according to options.
         """
+        if skip_line(self.physical_line):
+            return
         code = text[:4]
         if ignore_code(code):
             return
@@ -1006,7 +1010,7 @@ class Checker(object):
             # Don't care about expected errors or warnings
             return
         self.file_errors += 1
-        if options.counters[code] == 1 or options.repeat:
+        if options.counters[code] == 1 or not options.no_repeat:
             message("%s:%s:%d: %s" %
                     (self.filename, self.line_offset + line_number,
                      offset + 1, text))
@@ -1025,6 +1029,7 @@ def input_file(filename):
     if options.verbose:
         message('checking ' + filename)
     errors = Checker(filename).check_all()
+    return errors
 
 
 def input_dir(dirname, runner=None):
@@ -1261,8 +1266,8 @@ def process_options(arglist=None):
                       help="print status messages, or debug with -vv")
     parser.add_option('-q', '--quiet', default=0, action='count',
                       help="report only file names, or nothing with -qq")
-    parser.add_option('-r', '--repeat', action='store_true',
-                      help="show all occurrences of the same error")
+    parser.add_option('-r', '--no-repeat', action='store_true',
+                      help="don't show all occurrences of the same error")
     parser.add_option('--exclude', metavar='patterns', default=DEFAULT_EXCLUDE,
                       help="exclude files or directories which match these "
                         "comma separated patterns (default: %s)" %

@@ -8,7 +8,7 @@ Flake8 is a wrapper around these tools:
 - pep8
 - Ned's MacCabe script
 
-Flake8 runs all tools by launching the single 'flake8' script, but ignores pep8 
+Flake8 runs all tools by launching the single 'flake8' script, but ignores pep8
 and PyFlakes extended options and just uses defaults. It displays the warnings
 in a per-file, merged output.
 
@@ -48,6 +48,19 @@ If *strict* option is set to **1**, any warning will block the commit. When
 
 CHANGES
 =======
+
+0.9 - 2011-11-09
+----------------
+
+- update pep8 version to 0.6.1
+- mccabe check: gracefully handle compile failure
+
+0.8 - 2011-02-27
+----------------
+
+- fixed hg hook
+- discard unexisting files on hook check
+
 
 0.7 - 2010-02-18
 ----------------

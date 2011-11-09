@@ -5,7 +5,7 @@ README = open('README').read()
 setup(
     name="flake8",
     license="MIT",
-    version="0.9",
+    version="1.0",
     description="code checking using pep8 and pyflakes",
     author="Tarek Ziade",
     author_email="tarek@ziade.org",

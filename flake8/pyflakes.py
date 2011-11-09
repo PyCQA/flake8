@@ -619,6 +619,7 @@ class Checker(object):
                 importation.used = (self.scope, node.lineno)
             self.addBinding(node.lineno, importation)
 
+
 def checkPath(filename):
     """
     Check the given path, printing out any warnings detected.
@@ -630,6 +631,7 @@ def checkPath(filename):
     except IOError, msg:
         print >> sys.stderr, "%s: %s" % (filename, msg.args[1])
         return 1
+
 
 def check(codeString, filename):
     """
@@ -685,4 +687,3 @@ def check(codeString, filename):
             valid_warnings += 1
 
         return valid_warnings
-

@@ -3,8 +3,9 @@
     http://nedbatchelder.com/blog/200803/python_code_complexity_microtool.html
     MIT License.
 """
-
-import compiler, optparse, sys
+import compiler
+import optparse
+import sys
 
 
 class PathNode:
@@ -13,7 +14,8 @@ class PathNode:
         self.look = look
 
     def to_dot(self):
-        print 'node [shape=%s,label="%s"] %d;' % (self.look, self.name, self.dot_id())
+        print 'node [shape=%s,label="%s"] %d;' % \
+                (self.look, self.name, self.dot_id())
 
     def dot_id(self):
         return id(self)
@@ -204,12 +206,15 @@ def get_module_complexity(module_path, min=7):
 
 def main(argv):
     opar = optparse.OptionParser()
-    opar.add_option("-d", "--dot", dest="dot", help="output a graphviz dot file", action="store_true")
-    opar.add_option("-m", "--min", dest="min", help="minimum complexity for output", type="int", default=2)
+    opar.add_option("-d", "--dot", dest="dot",
+                    help="output a graphviz dot file", action="store_true")
+    opar.add_option("-m", "--min", dest="min",
+                    help="minimum complexity for output", type="int",
+                    default=2)
 
     options, args = opar.parse_args(argv)
 
-    text = open(args[0], "rU").read()+'\n\n'
+    text = open(args[0], "rU").read() + '\n\n'
     ast = compiler.parse(text)
     visitor = PathGraphingAstVisitor()
     visitor.preorder(ast, visitor)

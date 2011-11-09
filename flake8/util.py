@@ -3,8 +3,9 @@ import re
 
 def skip_warning(warning):
     # XXX quick dirty hack, just need to keep the line in the warning
-    line = open(warning.filename).readlines()[warning.lineno-1]
+    line = open(warning.filename).readlines()[warning.lineno - 1]
     return skip_line(line)
+
 
 def skip_line(line):
     return line.strip().lower().endswith('# noqa')

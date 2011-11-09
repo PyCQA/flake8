@@ -727,7 +727,7 @@ else:
     # Python 3: decode to latin-1.
     # This function is lazy, it does not read the encoding declaration.
     # XXX: use tokenize.detect_encoding()
-    def readlines(filename):
+    def readlines(filename):        # NOQA
         return open(filename, encoding='latin-1').readlines()
 
 

@@ -177,7 +177,7 @@ def get_code_complexity(code, min=7, filename='stdin'):
     try:
         ast = compiler.parse(code)
     except AttributeError as e:
-        print >>sys.stderr, "Unable to parse %s: %s" % (filename, e)
+        print >> sys.stderr, "Unable to parse %s: %s" % (filename, e)
         return 0
 
     visitor = PathGraphingAstVisitor()

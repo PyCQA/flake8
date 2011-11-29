@@ -1264,6 +1264,8 @@ def process_options(arglist=None):
     global options, args
     parser = OptionParser(version=__version__,
                           usage="%prog [options] input ...")
+    parser.add_option('--max-complexity', default=-1, action='store',
+                      type='int', help="McCabe complexity treshold")
     parser.add_option('-v', '--verbose', default=0, action='count',
                       help="print status messages, or debug with -vv")
     parser.add_option('-q', '--quiet', default=0, action='count',

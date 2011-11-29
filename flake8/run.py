@@ -12,16 +12,18 @@ from flake8 import pyflakes
 from flake8 import mccabe
 
 
-def check_file(path, complexity=10):
+def check_file(path, complexity=-1):
     warnings = pyflakes.checkPath(path)
     warnings += pep8.input_file(path)
-    warnings += mccabe.get_module_complexity(path, complexity)
+    if complexity > -1:
+        warnings += mccabe.get_module_complexity(path, complexity)
     return warnings
 
 
-def check_code(code, complexity=10):
+def check_code(code, complexity=-1):
     warnings = pyflakes.check(code, '<stdin>')
-    warnings += mccabe.get_code_complexity(code, complexity)
+    if complexity > -1:
+        warnings += mccabe.get_code_complexity(code, complexity)
     return warnings
 
 
@@ -43,13 +45,14 @@ def _get_python_files(paths):
 
 def main():
     options, args = pep8.process_options()
+    complexity = options.max_complexity
     warnings = 0
     if args:
         for path in _get_python_files(args):
-            warnings += check_file(path)
+            warnings += check_file(path, complexity)
     else:
         stdin = sys.stdin.read()
-        warnings += check_code(stdin)
+        warnings += check_code(stdin, complexity)
 
     raise SystemExit(warnings > 0)
 
@@ -84,10 +87,11 @@ def hg_hook(ui, repo, **kwargs):
     pep8.options.physical_checks = pep8.find_checks('physical_line')
     pep8.options.logical_checks = pep8.find_checks('logical_line')
     pep8.args = []
-
+    complexity = ui.configint('flake8', 'complexity', default=-1)
     warnings = 0
+
     for file_ in _get_files(repo, **kwargs):
-        warnings += check_file(file_)
+        warnings += check_file(file_, complexity)
 
     strict = ui.configbool('flake8', 'strict', default=True)
 

@@ -18,15 +18,40 @@ It also adds a few features:
 
     # flake8: noqa
 
-- lines that contains a "# NOQA" comment at the end will not issue a warning
-- a Mercurial hook
-- more things to come..
+- lines that contains a "# NOQA" comment at the end will not issue a warning.
+- a Mercurial hook.
+- a McCabe complexity checker.
 
-Original projects:
+QuickStart
+==========
 
-- pep8: http://github.com/jcrocholl/pep8/
-- PyFlakes: http://divmod.org/trac/wiki/DivmodPyflakes
-- McCabe: http://nedbatchelder.com/blog/200803/python_code_complexity_microtool.html
+To run flake8 just invoke it against any directory or Python module::
+
+    $ flake8 coolproject
+    coolproject/mod.py:1027: local variable 'errors' is assigned to but never used
+    coolproject/mod.py:97: 'shutil' imported but unused
+    coolproject/mod.py:729: redefinition of function 'readlines' from line 723
+    coolproject/mod.py:1028: local variable 'errors' is assigned to but never used
+    coolproject/mod.py:625:17: E225 missing whitespace around operato
+
+The output of PyFlakes *and* pep8 is merged and returned.
+
+flake8 offers an extra option: --max-complexity, which will emit a warning if the
+McCabe complexityu of a function is higher that the value. By default it's 
+deactivated::
+
+    $ bin/flake8 --max-complexity 12 flake8
+    coolproject/mod.py:97: 'shutil' imported but unused
+    coolproject/mod.py:729: redefinition of function 'readlines' from line 723
+    coolproject/mod.py:1028: local variable 'errors' is assigned to but never used
+    coolproject/mod.py:625:17: E225 missing whitespace around operator
+    coolproject/mod.py:452:1: 'missing_whitespace_around_operator' is too complex (18)
+    coolproject/mod.py:939:1: 'Checker.check_all' is too complex (12)
+    coolproject/mod.py:1204:1: 'selftest' is too complex (14)
+
+This feature is quite useful to detect over-complex code. According to McCabe, anything
+that goes beyond 10 is too complex. 
+See https://en.wikipedia.org/wiki/Cyclomatic_complexity.
 
 
 Mercurial hook
@@ -41,18 +66,37 @@ like this::
 
     [flake8]
     strict = 0
+    complexity = 12
 
 
 If *strict* option is set to **1**, any warning will block the commit. When
 *strict* is set to **0**, warnings are just displayed in the standard output.
 
+*complexity* defines the maximum McCabe complexity allowed before a warning 
+is emited. If you don't specify it it's just ignored. If specified, must
+be a positive value. 12 is usually a good value.
+
+
+Original projects
+=================
+
+Flake8 is just a glue project, all the merits go to the creators of the original
+projects:
+
+- pep8: http://github.com/jcrocholl/pep8/
+- PyFlakes: http://divmod.org/trac/wiki/DivmodPyflakes
+- McCabe: http://nedbatchelder.com/blog/200803/python_code_complexity_microtool.html
+
+
 CHANGES
 =======
 
-1.0 - ?
--------
+1.0 - 2011-11-29
+----------------
 
-??
+- Deactivates by default the complexity checker
+- Introduces the complexity option in the HG hook and the command line.
+
 
 0.9 - 2011-11-09
 ----------------

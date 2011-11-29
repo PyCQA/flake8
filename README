@@ -76,6 +76,23 @@ If *strict* option is set to **1**, any warning will block the commit. When
 is emited. If you don't specify it it's just ignored. If specified, must
 be a positive value. 12 is usually a good value.
 
+Buildout integration
+=====================
+
+In order to use Flake8 inside a buildout, edit your buildout.cfg and add this::
+
+    [buildout]
+    
+    parts +=
+        ...
+        flake8
+    
+    [flake8]
+    recipe = zc.recipe.egg
+    eggs = flake8
+           ${buildout:eggs}
+    entry-points =
+        flake8=flake8.run:main 
 
 Original projects
 =================

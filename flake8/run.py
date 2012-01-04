@@ -86,6 +86,7 @@ def hg_hook(ui, repo, **kwargs):
     pep8.options = _PEP8Options()
     pep8.options.physical_checks = pep8.find_checks('physical_line')
     pep8.options.logical_checks = pep8.find_checks('logical_line')
+    pep8.options.counters = dict.fromkeys(pep8.BENCHMARK_KEYS, 0)
     pep8.args = []
     complexity = ui.configint('flake8', 'complexity', default=-1)
     warnings = 0

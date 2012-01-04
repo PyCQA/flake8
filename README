@@ -14,7 +14,7 @@ in a per-file, merged output.
 
 It also adds a few features:
 
-- files that starts with this header are skipped::
+- files that contains with this header are skipped::
 
     # flake8: noqa
 

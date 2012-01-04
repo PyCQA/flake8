@@ -11,7 +11,7 @@ def skip_line(line):
     return line.strip().lower().endswith('# noqa')
 
 
-_NOQA = re.compile(r'^# flake8: noqa', re.I | re.M)
+_NOQA = re.compile(r'flake8[:=]\s*noqa', re.I | re.M)
 
 
 def skip_file(path):

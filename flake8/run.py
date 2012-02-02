@@ -73,12 +73,22 @@ def _get_files(repo, **kwargs):
 
 
 class _PEP8Options(object):
-    exclude = select = []
-    show_pep8 = show_source = quiet = verbose = testsuite = False
+    # Default options taken from pep8.process_options()
+    max_complexity = -1
+    verbose = False
+    quiet = False
     no_repeat = False
-    counters = {}
-    messages = {}
-    ignore = pep8.DEFAULT_IGNORE
+    exclude = [exc.rstrip('/') for exc in pep8.DEFAULT_EXCLUDE.split(',')]
+    filename = ['*.py']
+    select = []
+    ignore = pep8.DEFAULT_IGNORE.split(',')  # or []?
+    show_source = False
+    show_pep8 = False
+    statistics = False
+    count = False
+    benchmark = False
+    testsuite = ''
+    doctest = False
 
 
 def hg_hook(ui, repo, **kwargs):
@@ -87,6 +97,7 @@ def hg_hook(ui, repo, **kwargs):
     pep8.options.physical_checks = pep8.find_checks('physical_line')
     pep8.options.logical_checks = pep8.find_checks('logical_line')
     pep8.options.counters = dict.fromkeys(pep8.BENCHMARK_KEYS, 0)
+    pep8.options.messages = {}
     pep8.args = []
     complexity = ui.configint('flake8', 'complexity', default=-1)
     warnings = 0

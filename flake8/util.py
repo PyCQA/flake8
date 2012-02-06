@@ -24,4 +24,4 @@ def skip_file(path):
         content = f.read()
     finally:
         f.close()
-    return _NOQA.match(content) is not None
+    return _NOQA.search(content) is not None

@@ -117,6 +117,7 @@ MAX_LINE_LENGTH = 79
 
 INDENT_REGEX = re.compile(r'([ \t]*)')
 RAISE_COMMA_REGEX = re.compile(r'raise\s+\w+\s*(,)')
+QUOTED_REGEX = re.compile(r"""([""'])(?:(?=(\\?))\2.)*?\1""")
 SELFTEST_REGEX = re.compile(r'(Okay|[EW]\d{3}):\s(.*)')
 ERRORCODE_REGEX = re.compile(r'[EW]\d{3}')
 DOCSTRING_REGEX = re.compile(r'u?r?["\']')
@@ -690,7 +691,10 @@ def python_3000_raise_comma(logical_line):
     """
     match = RAISE_COMMA_REGEX.match(logical_line)
     if match:
-        return match.start(1), "W602 deprecated form of raising exception"
+        rest = QUOTED_REGEX.sub("", logical_line)
+        # but allow three argument form of raise
+        if rest.count(",") == 1:
+            return match.start(1), "W602 deprecated form of raising exception"
 
 
 def python_3000_not_equal(logical_line):

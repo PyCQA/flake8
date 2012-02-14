@@ -1,7 +1,14 @@
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup   # NOQA
+import sys
+
+ispy3 = sys.version_info[0] == 3
+
+if ispy3:
+    from distutils.core import setup
+else:
+    try:
+        from setuptools import setup
+    except ImportError:
+        from distutils.core import setup   # NOQA
 
 from flake8 import __version__
 

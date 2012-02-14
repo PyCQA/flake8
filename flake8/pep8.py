@@ -92,6 +92,8 @@ before the docstring, you can use \n for newline, \t for tab and \s
 for space.
 
 """
+from flake8 import __version__ as flake8_version
+from pyflakes import __version__ as pep8_version
 
 __version__ = '0.6.1'
 
@@ -1266,7 +1268,9 @@ def process_options(arglist=None):
     Process options passed either via arglist or via command line args.
     """
     global options, args
-    parser = OptionParser(version=__version__,
+    version = '%s (pyflakes: %s, pep8: %s)' % (flake8_version, pep8_version,
+            __version__)
+    parser = OptionParser(version=version,
                           usage="%prog [options] input ...")
     parser.add_option('--max-complexity', default=-1, action='store',
                       type='int', help="McCabe complexity treshold")

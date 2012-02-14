@@ -10,6 +10,8 @@ import sys
 from flake8 import messages
 from flake8.util import skip_warning
 
+__version__ = '0.5.0'
+
 # utility function to iterate over an AST node's children, adapted
 # from Python 2.6's standard ast module
 try:

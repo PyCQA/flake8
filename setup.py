@@ -3,12 +3,14 @@ try:
 except ImportError:
     from distutils.core import setup
 
+from flake8 import __version__
+
 README = open('README').read()
 
 setup(
     name="flake8",
     license="MIT",
-    version="1.1",
+    version=__version__,
     description="code checking using pep8 and pyflakes",
     author="Tarek Ziade",
     author_email="tarek@ziade.org",

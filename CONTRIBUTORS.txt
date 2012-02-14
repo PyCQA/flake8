@@ -1,9 +1,10 @@
 Project created by Tarek Ziadé.
 
-Contributors:
+Contributors (by order of appearence) :
 
 - Tamás Gulácsi
 - Nicolas Dumazet
 - Stefan Scherfke
 - Chris Adams
 - Ben Bass
+- Ask Solem

@@ -14,7 +14,7 @@ setup(
     author_email="tarek@ziade.org",
     url="http://bitbucket.org/tarek/flake8",
     packages=["flake8", "flake8.tests"],
-    scripts=["bin/flake8"],
+    scripts=["flake8/flake8"],
     long_description=README,
     classifiers=[
         "Environment :: Console",

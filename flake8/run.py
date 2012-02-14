@@ -91,6 +91,7 @@ class _PEP8Options(object):
     testsuite = ''
     doctest = False
 
+
 def _initpep8():
     # default pep8 setup
     pep8.options = _PEP8Options()

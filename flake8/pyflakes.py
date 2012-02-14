@@ -300,7 +300,7 @@ class Checker(object):
         finally:
             self.nodeDepth -= 1
         if self.traceTree:
-            print ('  ' * self.nodeDepth + 'end ' + node.__class__.__name__)
+            print('  ' * self.nodeDepth + 'end ' + node.__class__.__name__)
 
     def ignore(self, node):
         pass

@@ -60,7 +60,7 @@ def main():
 
 def _get_files(repo, **kwargs):
     seen = set()
-    for rev in xrange(repo[kwargs['node']], len(repo)):
+    for rev in range(repo[kwargs['node']], len(repo)):
         for file_ in repo[rev].files():
             file_ = os.path.join(repo.root, file_)
             if file_ in seen or not os.path.exists(file_):

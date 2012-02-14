@@ -5,6 +5,7 @@ Implementation of the command-line I{flake8} tool.
 import sys
 import os
 import os.path
+from subprocess import PIPE, Popen
 
 from flake8.util import skip_file
 from flake8 import pep8
@@ -90,8 +91,7 @@ class _PEP8Options(object):
     testsuite = ''
     doctest = False
 
-
-def hg_hook(ui, repo, **kwargs):
+def _initpep8():
     # default pep8 setup
     pep8.options = _PEP8Options()
     pep8.options.physical_checks = pep8.find_checks('physical_line')
@@ -99,6 +99,34 @@ def hg_hook(ui, repo, **kwargs):
     pep8.options.counters = dict.fromkeys(pep8.BENCHMARK_KEYS, 0)
     pep8.options.messages = {}
     pep8.args = []
+
+
+def run(command):
+    p = Popen(command.split(), stdout=PIPE, stderr=PIPE)
+    p.wait()
+    return (p.returncode, [line.strip() for line in p.stdout.readlines()],
+            [line.strip() for line in p.stderr.readlines()])
+
+
+def git_hook(complexity=-1, strict=False):
+    _initpep8()
+    warnings = 0
+
+    _, files_modified, _ = run("git diff-index --name-only HEAD")
+    for filename in files_modified:
+        ext = os.path.splitext(filename)[-1]
+        if ext != '.py':
+            continue
+        warnings += check_file(filename, complexity)
+
+    if strict:
+        return warnings
+
+    return 0
+
+
+def hg_hook(ui, repo, **kwargs):
+    _initpep8()
     complexity = ui.configint('flake8', 'complexity', default=-1)
     warnings = 0
 

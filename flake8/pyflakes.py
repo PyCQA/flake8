@@ -2,7 +2,11 @@
 # (c) 2005-2010 Divmod, Inc.
 # See LICENSE file for details
 
-import __builtin__
+try:
+    import __builtin__
+except ImportError:
+    import builtins as __builtin__
+
 import os.path
 import _ast
 import sys
@@ -251,7 +255,7 @@ class Checker(object):
                 all = []
 
             # Look for imported names that aren't used.
-            for importation in scope.itervalues():
+            for importation in scope.values():
                 if isinstance(importation, Importation):
                     if not importation.used and importation.name not in all:
                         self.report(
@@ -284,7 +288,7 @@ class Checker(object):
     def handleNode(self, node, parent):
         node.parent = parent
         if self.traceTree:
-            print '  ' * self.nodeDepth + node.__class__.__name__
+            print('  ' * self.nodeDepth + node.__class__.__name__)
         self.nodeDepth += 1
         if self.futuresAllowed and not \
                (isinstance(node, _ast.ImportFrom) or self.isDocstring(node)):
@@ -296,7 +300,7 @@ class Checker(object):
         finally:
             self.nodeDepth -= 1
         if self.traceTree:
-            print '  ' * self.nodeDepth + 'end ' + node.__class__.__name__
+            print ('  ' * self.nodeDepth + 'end ' + node.__class__.__name__)
 
     def ignore(self, node):
         pass
@@ -527,10 +531,15 @@ class Checker(object):
                     if isinstance(arg, _ast.Tuple):
                         addArgs(arg.elts)
                     else:
-                        if arg.id in args:
+                        try:
+                            id_ = arg.id
+                        except AttributeError:
+                            id_ = arg.arg
+
+                        if id_ in args:
                             self.report(messages.DuplicateArgument,
-                                        node.lineno, arg.id)
-                        args.append(arg.id)
+                                        node.lineno, id_)
+                        args.append(id_)
 
             self.pushFunctionScope()
             addArgs(node.args.args)
@@ -554,7 +563,7 @@ class Checker(object):
                 """
                 Check to see if any assignments have not been used.
                 """
-                for name, binding in self.scope.iteritems():
+                for name, binding in self.scope.items():
                     if (not binding.used and not name in self.scope.globals
                         and isinstance(binding, Assignment)):
                         self.report(messages.UnusedVariable,
@@ -629,8 +638,9 @@ def checkPath(filename):
     @return: the number of warnings printed
     """
     try:
-        return check(file(filename, 'U').read() + '\n', filename)
-    except IOError, msg:
+        return check(open(filename, 'U').read() + '\n', filename)
+    except IOError:
+        msg = sys.exc_info()[1]
         print >> sys.stderr, "%s: %s" % (filename, msg.args[1])
         return 1
 
@@ -652,7 +662,8 @@ def check(codeString, filename):
     # First, compile into an AST and handle syntax errors.
     try:
         tree = compile(codeString, filename, "exec", _ast.PyCF_ONLY_AST)
-    except SyntaxError, value:
+    except SyntaxError:
+        value = sys.exc_info()[1]
         msg = value.args[0]
 
         (lineno, offset, text) = value.lineno, value.offset, value.text
@@ -679,13 +690,15 @@ def check(codeString, filename):
     else:
         # Okay, it's syntactically valid.  Now check it.
         w = Checker(tree, filename)
-        w.messages.sort(lambda a, b: cmp(a.lineno, b.lineno))
+        sorting = [(msg.lineno, msg) for msg in w.messages]
+        sorting.sort()
+        w.messages = [msg for index, msg in sorting]
         valid_warnings = 0
 
         for warning in w.messages:
             if skip_warning(warning):
                 continue
-            print warning
+            print(warning)
             valid_warnings += 1
 
         return valid_warnings

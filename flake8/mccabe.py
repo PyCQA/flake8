@@ -3,7 +3,13 @@
     http://nedbatchelder.com/blog/200803/python_code_complexity_microtool.html
     MIT License.
 """
-import compiler
+try:
+    from compiler.visitor import ASTVisitor as Visitor
+    from compiler import parse
+except ImportError:
+    from ast import NodeVisitor as Visitor
+    from ast import parse
+
 import optparse
 import sys
 
@@ -14,8 +20,8 @@ class PathNode:
         self.look = look
 
     def to_dot(self):
-        print 'node [shape=%s,label="%s"] %d;' % \
-                (self.look, self.name, self.dot_id())
+        print('node [shape=%s,label="%s"] %d;' % \
+                (self.look, self.name, self.dot_id()))
 
     def dot_id(self):
         return id(self)
@@ -36,13 +42,13 @@ class PathGraph:
         self.nodes.setdefault(n1, []).append(n2)
 
     def to_dot(self):
-        print 'subgraph {'
+        print('subgraph {')
         for node in self.nodes:
             node.to_dot()
         for node, nexts in self.nodes.items():
             for next in nexts:
-                print '%s -- %s;' % (node.dot_id(), next.dot_id())
-        print '}'
+                print('%s -- %s;' % (node.dot_id(), next.dot_id()))
+        print('}')
 
     def complexity(self):
         """ Return the McCabe complexity for the graph.
@@ -53,13 +59,13 @@ class PathGraph:
         return num_edges - num_nodes + 2
 
 
-class PathGraphingAstVisitor(compiler.visitor.ASTVisitor):
+class PathGraphingAstVisitor(Visitor):
     """ A visitor for a parsed Abstract Syntax Tree which finds executable
         statements.
     """
 
     def __init__(self):
-        compiler.visitor.ASTVisitor.__init__(self)
+        Visitor.__init__(self)
         self.classname = ""
         self.graphs = {}
         self.reset()
@@ -175,9 +181,9 @@ class PathGraphingAstVisitor(compiler.visitor.ASTVisitor):
 def get_code_complexity(code, min=7, filename='stdin'):
     complex = []
     try:
-        ast = compiler.parse(code)
+        ast = parse(code)
     except AttributeError as e:
-        print >> sys.stderr, "Unable to parse %s: %s" % (filename, e)
+        sys.stderr.write("Unable to parse %s: %s\n" % (filename, e))
         return 0
 
     visitor = PathGraphingAstVisitor()
@@ -215,20 +221,20 @@ def main(argv):
     options, args = opar.parse_args(argv)
 
     text = open(args[0], "rU").read() + '\n\n'
-    ast = compiler.parse(text)
+    ast = parse(text)
     visitor = PathGraphingAstVisitor()
     visitor.preorder(ast, visitor)
 
     if options.dot:
-        print 'graph {'
+        print('graph {')
         for graph in visitor.graphs.values():
             if graph.complexity() >= options.min:
                 graph.to_dot()
-        print '}'
+        print('}')
     else:
         for graph in visitor.graphs.values():
             if graph.complexity() >= options.min:
-                print graph.name, graph.complexity()
+                print(graph.name, graph.complexity())
 
 
 if __name__ == '__main__':

@@ -47,14 +47,18 @@ def _get_python_files(paths):
 def main():
     options, args = pep8.process_options()
     complexity = options.max_complexity
+    builtins = set(options.builtins)
     warnings = 0
+
+    if builtins:
+        orig_builtins = set(pyflakes._MAGIC_GLOBALS)
+        pyflakes._MAGIC_GLOBALS = orig_builtins | builtins
     if args:
         for path in _get_python_files(args):
             warnings += check_file(path, complexity)
     else:
         stdin = sys.stdin.read()
         warnings += check_code(stdin, complexity)
-
     raise SystemExit(warnings > 0)
 
 

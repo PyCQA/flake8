@@ -1272,6 +1272,9 @@ def process_options(arglist=None):
             __version__)
     parser = OptionParser(version=version,
                           usage="%prog [options] input ...")
+    parser.add_option('--builtins', default=[], action="append",
+                      help="append builtin function (pyflakes "
+                           "_MAGIC_GLOBALS)")
     parser.add_option('--max-complexity', default=-1, action='store',
                       type='int', help="McCabe complexity treshold")
     parser.add_option('-v', '--verbose', default=0, action='count',

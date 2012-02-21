@@ -1,8 +1,11 @@
 import re
+import os
 
 
 def skip_warning(warning):
     # XXX quick dirty hack, just need to keep the line in the warning
+    if not os.path.isfile(warning.filename):
+        return False
     line = open(warning.filename).readlines()[warning.lineno - 1]
     return skip_line(line)
 

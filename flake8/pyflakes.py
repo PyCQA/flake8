@@ -9,6 +9,7 @@ except ImportError:
 
 import os.path
 import _ast
+import sys
 
 from flake8 import messages
 from flake8.util import skip_warning
@@ -645,7 +646,7 @@ def checkPath(filename):
         return check(open(filename, 'U').read() + '\n', filename)
     except IOError:
         msg = sys.exc_info()[1]
-        print >> sys.stderr, "%s: %s" % (filename, msg.args[1])
+        sys.stderr.write("%s: %s\n" % (filename, msg.args[1]))
         return 1
 
 
@@ -677,18 +678,19 @@ def check(codeString, filename='(code)'):
             # Avoid using msg, since for the only known case, it contains a
             # bogus message that claims the encoding the file declared was
             # unknown.
-            print >> sys.stderr, "%s: problem decoding source" % (filename, )
+            sys.stderr.write("%s: problem decoding source\n" % (filename))
         else:
             line = text.splitlines()[-1]
 
             if offset is not None:
                 offset = offset - (len(text) - len(line))
 
-            print >> sys.stderr, '%s:%d: %s' % (filename, lineno, msg)
-            print >> sys.stderr, line
+
+            sys.stderr.write('%s:%d: %s\n' % (filename, lineno, msg))
+            sys.stderr.write(line + '\n')
 
             if offset is not None:
-                print >> sys.stderr, " " * offset, "^"
+                sys.stderr.write(" " * offset + "^\n")
 
         return 1
     else:

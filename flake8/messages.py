@@ -13,6 +13,16 @@ class Message(object):
         return '%s:%s: %s' % (self.filename, self.lineno,
                               self.message % self.message_args)
 
+    def __lt__(self, other):
+        if self.filename != other.filename:
+            return self.filename < other.filename
+        return self.lineno < other.lineno
+
+    def __cmp__(self, other):
+        if self.filename != other.filename:
+            return cmp(self.filename, other.filename)
+        return cmp(self.lineno, other.lineno)
+
 
 class UnusedImport(Message):
     message = '%r imported but unused'

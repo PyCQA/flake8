@@ -329,7 +329,10 @@ class Checker(object):
     EQ = NOTEQ = LT = LTE = GT = GTE = IS = ISNOT = IN = NOTIN = ignore
 
     # additional node types
-    COMPREHENSION = EXCEPTHANDLER = KEYWORD = handleChildren
+    COMPREHENSION = KEYWORD = handleChildren
+
+    def EXCEPTHANDLER(self, node):
+        self.scope[node.name] = node
 
     def addBinding(self, lineno, value, reportRedef=True):
         '''Called when a binding is altered.
@@ -645,7 +648,7 @@ def checkPath(filename):
         return 1
 
 
-def check(codeString, filename):
+def check(codeString, filename='(code)'):
     """
     Check the Python source given by C{codeString} for flakes.
 

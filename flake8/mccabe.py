@@ -46,7 +46,7 @@ class ASTVisitor:
         """Do preorder walk of tree using visitor"""
         self.visitor = visitor
         visitor.visit = self.dispatch
-        self.dispatch(tree, *args) # XXX *args make sense?
+        self.dispatch(tree, *args)  # XXX *args make sense?
 
 
 class PathNode:

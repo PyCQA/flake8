@@ -3,13 +3,12 @@
 # See LICENSE file for details
 
 try:
-    import __builtin__
+    import __builtin__      # NOQA
 except ImportError:
     import builtins as __builtin__
 
 import os.path
 import _ast
-import sys
 
 from flake8 import messages
 from flake8.util import skip_warning
@@ -568,14 +567,10 @@ class Checker(object):
                 Check to see if any assignments have not been used.
                 """
                 for name, binding in self.scope.items():
-                    try:
-                        if (not binding.used and not name in self.scope.globals
+                    if (not binding.used and not name in self.scope.globals
                         and isinstance(binding, Assignment)):
-                            self.report(messages.UnusedVariable,
-                                    binding.source.lineno, name)
-                    except:
-                        raise Exception(binding)
-                        import pdb; pdb.set_trace()
+                        self.report(messages.UnusedVariable,
+                                binding.source.lineno, name)
 
             self.deferAssignment(checkUnusedAssignments)
             self.popScope()

@@ -60,7 +60,7 @@ def main():
 
 def _get_files(repo, **kwargs):
     seen = set()
-    for rev in xrange(repo[kwargs['node']], len(repo)):
+    for rev in range(repo[kwargs['node']], len(repo)):
         for file_ in repo[rev].files():
             file_ = os.path.join(repo.root, file_)
             if file_ in seen or not os.path.exists(file_):
@@ -117,6 +117,8 @@ def git_hook(complexity=-1, strict=False):
     for filename in files_modified:
         ext = os.path.splitext(filename)[-1]
         if ext != '.py':
+            continue
+        if not os.path.exists(filename):
             continue
         warnings += check_file(filename, complexity)
 

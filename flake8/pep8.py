@@ -93,7 +93,7 @@ for space.
 
 """
 from flake8 import __version__ as flake8_version
-from pyflakes import __version__ as pep8_version
+from flake8.pyflakes import __version__ as pep8_version
 
 __version__ = '0.6.1'
 

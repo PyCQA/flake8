@@ -1,6 +1,9 @@
 import unittest
 import sys
-from StringIO import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 from flake8.mccabe import get_code_complexity
 
@@ -33,6 +36,6 @@ class McCabeTest(unittest.TestCase):
         self.assertEqual(get_code_complexity(_GLOBAL, 1), 2)
         self.out.seek(0)
         res = self.out.read().strip().split('\n')
-        wanted = ["stdin:5:1: 'a' is too complex (3)",
-                  'stdin:Loop 2 is too complex (1)']
+        wanted = ["stdin:5:1: 'a' is too complex (4)",
+                  'stdin:Loop 2 is too complex (2)']
         self.assertEqual(res, wanted)

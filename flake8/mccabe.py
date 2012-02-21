@@ -3,9 +3,50 @@
     http://nedbatchelder.com/blog/200803/python_code_complexity_microtool.html
     MIT License.
 """
-import compiler
+try:
+    from compiler import parse
+    iter_child_nodes = None
+except ImportError:
+    from ast import parse, iter_child_nodes
+
 import optparse
 import sys
+from collections import defaultdict
+
+
+class ASTVisitor:
+
+    VERBOSE = 0
+
+    def __init__(self):
+        self.node = None
+        self._cache = {}
+
+    def default(self, node, *args):
+        if hasattr(node, 'getChildNodes'):
+            children = node.getChildNodes()
+        else:
+            children = iter_child_nodes(node)
+
+        for child in children:
+            self.dispatch(child, *args)
+
+    def dispatch(self, node, *args):
+        self.node = node
+        klass = node.__class__
+        meth = self._cache.get(klass)
+        if meth is None:
+            className = klass.__name__
+            meth = getattr(self.visitor, 'visit' + className, self.default)
+            self._cache[klass] = meth
+
+        return meth(node, *args)
+
+    def preorder(self, tree, visitor, *args):
+        """Do preorder walk of tree using visitor"""
+        self.visitor = visitor
+        visitor.visit = self.dispatch
+        self.dispatch(tree, *args) # XXX *args make sense?
 
 
 class PathNode:
@@ -14,8 +55,8 @@ class PathNode:
         self.look = look
 
     def to_dot(self):
-        print 'node [shape=%s,label="%s"] %d;' % \
-                (self.look, self.name, self.dot_id())
+        print('node [shape=%s,label="%s"] %d;' % \
+                (self.look, self.name, self.dot_id()))
 
     def dot_id(self):
         return id(self)
@@ -24,25 +65,19 @@ class PathNode:
 class PathGraph:
     def __init__(self, name):
         self.name = name
-        self.nodes = {}
-
-    def add_node(self, n):
-        assert n
-        self.nodes.setdefault(n, [])
+        self.nodes = defaultdict(list)
 
     def connect(self, n1, n2):
-        assert n1
-        assert n2
-        self.nodes.setdefault(n1, []).append(n2)
+        self.nodes[n1].append(n2)
 
     def to_dot(self):
-        print 'subgraph {'
+        print('subgraph {')
         for node in self.nodes:
             node.to_dot()
         for node, nexts in self.nodes.items():
             for next in nexts:
-                print '%s -- %s;' % (node.dot_id(), next.dot_id())
-        print '}'
+                print('%s -- %s;' % (node.dot_id(), next.dot_id()))
+        print('}')
 
     def complexity(self):
         """ Return the McCabe complexity for the graph.
@@ -53,13 +88,13 @@ class PathGraph:
         return num_edges - num_nodes + 2
 
 
-class PathGraphingAstVisitor(compiler.visitor.ASTVisitor):
+class PathGraphingAstVisitor(ASTVisitor):
     """ A visitor for a parsed Abstract Syntax Tree which finds executable
         statements.
     """
 
     def __init__(self):
-        compiler.visitor.ASTVisitor.__init__(self)
+        ASTVisitor.__init__(self)
         self.classname = ""
         self.graphs = {}
         self.reset()
@@ -94,6 +129,8 @@ class PathGraphingAstVisitor(compiler.visitor.ASTVisitor):
             self.graphs["%s%s" % (self.classname, node.name)] = self.graph
             self.reset()
 
+    visitFunctionDef = visitFunction
+
     def visitClass(self, node):
         old_classname = self.classname
         self.classname += node.name + "."
@@ -104,7 +141,6 @@ class PathGraphingAstVisitor(compiler.visitor.ASTVisitor):
         if not self.tail:
             return
         pathnode = PathNode(name)
-        self.graph.add_node(pathnode)
         self.graph.connect(self.tail, pathnode)
         self.tail = pathnode
         return pathnode
@@ -171,13 +207,29 @@ class PathGraphingAstVisitor(compiler.visitor.ASTVisitor):
     # TODO: visitTryFinally
     # TODO: visitWith
 
+    # XXX todo: determine which ones can add to the complexity
+    # py2
+    # TODO: visitStmt
+    # TODO: visitAssName
+    # TODO: visitCallFunc
+    # TODO: visitConst
+
+    # py3
+    # TODO: visitStore
+    # TODO: visitCall
+    # TODO: visitLoad
+    # TODO: visitNum
+    # TODO: visitarguments
+    # TODO: visitExpr
+
 
 def get_code_complexity(code, min=7, filename='stdin'):
     complex = []
     try:
-        ast = compiler.parse(code)
-    except AttributeError as e:
-        print >> sys.stderr, "Unable to parse %s: %s" % (filename, e)
+        ast = parse(code)
+    except AttributeError:
+        e = sys.exc_info()[1]
+        sys.stderr.write("Unable to parse %s: %s\n" % (filename, e))
         return 0
 
     visitor = PathGraphingAstVisitor()
@@ -215,20 +267,20 @@ def main(argv):
     options, args = opar.parse_args(argv)
 
     text = open(args[0], "rU").read() + '\n\n'
-    ast = compiler.parse(text)
+    ast = parse(text)
     visitor = PathGraphingAstVisitor()
     visitor.preorder(ast, visitor)
 
     if options.dot:
-        print 'graph {'
+        print('graph {')
         for graph in visitor.graphs.values():
             if graph.complexity() >= options.min:
                 graph.to_dot()
-        print '}'
+        print('}')
     else:
         for graph in visitor.graphs.values():
             if graph.complexity() >= options.min:
-                print graph.name, graph.complexity()
+                print(graph.name, graph.complexity())
 
 
 if __name__ == '__main__':

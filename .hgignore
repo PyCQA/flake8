@@ -1,3 +1,8 @@
 lib
 include
 .*\.pyc$
+dist
+bin
+flake8.egg-info
+man
+\.Python

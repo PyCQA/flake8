@@ -13,18 +13,25 @@ code2 = """
 try:
     pass
 except ValueError:
-    print(err)
+    print("err")
 
 try:
     pass
 except ValueError:
-    print(err)
+    print("err")
+"""
+
+code3 = """
+try:
+    pass
+except (ImportError, ValueError):
+    print("err")
 """
 
 
 class TestFlake(TestCase):
 
     def test_exception(self):
-        for c in (code, code2):
+        for c in (code, code2, code3):
             warnings = check(code)
-            self.assertEqual(warnings, 0)
+            self.assertEqual(warnings, 0, code)

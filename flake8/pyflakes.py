@@ -334,7 +334,11 @@ class Checker(object):
     def EXCEPTHANDLER(self, node):
 
         if node.name is not None:
-            self.addBinding(node.lineno, Assignment(node.name, node))
+            if isinstance(node.name, str):
+                name = node.name
+            else:
+                name = node.name.id
+            self.addBinding(node.lineno, Assignment(name, node))
 
         def runException():
             for stmt in node.body:

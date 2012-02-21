@@ -3,7 +3,7 @@ import sys
 try:
     from StringIO import StringIO
 except ImportError:
-    from io import StringIO
+    from io import StringIO     # NOQA
 
 from flake8.mccabe import get_code_complexity
 

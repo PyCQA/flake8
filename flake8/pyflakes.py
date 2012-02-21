@@ -5,7 +5,7 @@
 try:
     import __builtin__      # NOQA
 except ImportError:
-    import builtins as __builtin__
+    import builtins as __builtin__  # NOQA
 
 import os.path
 import _ast
@@ -332,8 +332,15 @@ class Checker(object):
     COMPREHENSION = KEYWORD = handleChildren
 
     def EXCEPTHANDLER(self, node):
+
         if node.name is not None:
-            self.addBinding(node.lineno, FunctionDefinition(node.name, node))
+            self.addBinding(node.lineno, Assignment(node.name, node))
+
+        def runException():
+            for stmt in node.body:
+                self.handleNode(stmt, node)
+
+        self.deferFunction(runException)
 
     def addBinding(self, lineno, value, reportRedef=True):
         '''Called when a binding is altered.
@@ -358,7 +365,6 @@ class Checker(object):
                         and (not isinstance(value, Importation) \
                              or value.fullName == existing.fullName)
                         and reportRedef):
-
                     self.report(messages.RedefinedWhileUnused,
                                 lineno, value.name,
                                 scope[value.name].source.lineno)
@@ -684,7 +690,6 @@ def check(codeString, filename='(code)'):
 
             if offset is not None:
                 offset = offset - (len(text) - len(line))
-
 
             sys.stderr.write('%s:%d: %s\n' % (filename, lineno, msg))
             sys.stderr.write(line + '\n')

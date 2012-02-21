@@ -4,10 +4,10 @@
     MIT License.
 """
 try:
-    from compiler import parse
-    iter_child_nodes = None
+    from compiler import parse      # NOQA
+    iter_child_nodes = None         # NOQA
 except ImportError:
-    from ast import parse, iter_child_nodes
+    from ast import parse, iter_child_nodes     # NOQA
 
 import optparse
 import sys

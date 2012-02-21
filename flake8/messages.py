@@ -18,11 +18,6 @@ class Message(object):
             return self.filename < other.filename
         return self.lineno < other.lineno
 
-    def __cmp__(self, other):
-        if self.filename != other.filename:
-            return cmp(self.filename, other.filename)
-        return cmp(self.lineno, other.lineno)
-
 
 class UnusedImport(Message):
     message = '%r imported but unused'

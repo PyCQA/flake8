@@ -9,9 +9,22 @@ except ValueError as err:
     print(err)
 """
 
+code2 = """
+try:
+    pass
+except ValueError:
+    print(err)
+
+try:
+    pass
+except ValueError:
+    print(err)
+"""
+
 
 class TestFlake(TestCase):
 
     def test_exception(self):
-        warnings = check(code)
-        self.assertEqual(warnings, 0)
+        for c in (code, code2):
+            warnings = check(code)
+            self.assertEqual(warnings, 0)

@@ -332,7 +332,8 @@ class Checker(object):
     COMPREHENSION = KEYWORD = handleChildren
 
     def EXCEPTHANDLER(self, node):
-        self.scope[node.name] = node
+        if node.name is not None:
+            self.addBinding(node.lineno, FunctionDefinition(node.name, node))
 
     def addBinding(self, lineno, value, reportRedef=True):
         '''Called when a binding is altered.
@@ -567,10 +568,15 @@ class Checker(object):
                 Check to see if any assignments have not been used.
                 """
                 for name, binding in self.scope.items():
-                    if (not binding.used and not name in self.scope.globals
+                    try:
+                        if (not binding.used and not name in self.scope.globals
                         and isinstance(binding, Assignment)):
-                        self.report(messages.UnusedVariable,
+                            self.report(messages.UnusedVariable,
                                     binding.source.lineno, name)
+                    except:
+                        raise Exception(binding)
+                        import pdb; pdb.set_trace()
+
             self.deferAssignment(checkUnusedAssignments)
             self.popScope()
 

@@ -4,14 +4,49 @@
     MIT License.
 """
 try:
-    from compiler.visitor import ASTVisitor as Visitor
     from compiler import parse
+    iter_child_nodes = None
 except ImportError:
-    from ast import NodeVisitor as Visitor
-    from ast import parse
+    from ast import parse, iter_child_nodes
 
 import optparse
 import sys
+from collections import defaultdict
+
+
+class ASTVisitor:
+
+    VERBOSE = 0
+
+    def __init__(self):
+        self.node = None
+        self._cache = {}
+
+    def default(self, node, *args):
+        if hasattr(node, 'getChildNodes'):
+            children = node.getChildNodes()
+        else:
+            children = iter_child_nodes(node)
+
+        for child in children:
+            self.dispatch(child, *args)
+
+    def dispatch(self, node, *args):
+        self.node = node
+        klass = node.__class__
+        meth = self._cache.get(klass)
+        if meth is None:
+            className = klass.__name__
+            meth = getattr(self.visitor, 'visit' + className, self.default)
+            self._cache[klass] = meth
+
+        return meth(node, *args)
+
+    def preorder(self, tree, visitor, *args):
+        """Do preorder walk of tree using visitor"""
+        self.visitor = visitor
+        visitor.visit = self.dispatch
+        self.dispatch(tree, *args) # XXX *args make sense?
 
 
 class PathNode:
@@ -30,16 +65,10 @@ class PathNode:
 class PathGraph:
     def __init__(self, name):
         self.name = name
-        self.nodes = {}
-
-    def add_node(self, n):
-        assert n
-        self.nodes.setdefault(n, [])
+        self.nodes = defaultdict(list)
 
     def connect(self, n1, n2):
-        assert n1
-        assert n2
-        self.nodes.setdefault(n1, []).append(n2)
+        self.nodes[n1].append(n2)
 
     def to_dot(self):
         print('subgraph {')
@@ -59,13 +88,13 @@ class PathGraph:
         return num_edges - num_nodes + 2
 
 
-class PathGraphingAstVisitor(Visitor):
+class PathGraphingAstVisitor(ASTVisitor):
     """ A visitor for a parsed Abstract Syntax Tree which finds executable
         statements.
     """
 
     def __init__(self):
-        Visitor.__init__(self)
+        ASTVisitor.__init__(self)
         self.classname = ""
         self.graphs = {}
         self.reset()
@@ -100,6 +129,8 @@ class PathGraphingAstVisitor(Visitor):
             self.graphs["%s%s" % (self.classname, node.name)] = self.graph
             self.reset()
 
+    visitFunctionDef = visitFunction
+
     def visitClass(self, node):
         old_classname = self.classname
         self.classname += node.name + "."
@@ -110,7 +141,6 @@ class PathGraphingAstVisitor(Visitor):
         if not self.tail:
             return
         pathnode = PathNode(name)
-        self.graph.add_node(pathnode)
         self.graph.connect(self.tail, pathnode)
         self.tail = pathnode
         return pathnode
@@ -176,6 +206,21 @@ class PathGraphingAstVisitor(Visitor):
     # TODO: visitTryExcept
     # TODO: visitTryFinally
     # TODO: visitWith
+
+    # XXX todo: determine which ones can add to the complexity
+    # py2
+    # TODO: visitStmt
+    # TODO: visitAssName
+    # TODO: visitCallFunc
+    # TODO: visitConst
+
+    # py3
+    # TODO: visitStore
+    # TODO: visitCall
+    # TODO: visitLoad
+    # TODO: visitNum
+    # TODO: visitarguments
+    # TODO: visitExpr
 
 
 def get_code_complexity(code, min=7, filename='stdin'):

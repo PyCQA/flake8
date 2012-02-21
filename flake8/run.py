@@ -118,6 +118,8 @@ def git_hook(complexity=-1, strict=False):
         ext = os.path.splitext(filename)[-1]
         if ext != '.py':
             continue
+        if not os.path.exists(filename):
+            continue
         warnings += check_file(filename, complexity)
 
     if strict:

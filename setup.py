@@ -6,7 +6,7 @@ if ispy3:
     from distutils.core import setup
 else:
     try:
-        from setuptools import setup
+        from setuptools import setup    # NOQA
     except ImportError:
         from distutils.core import setup   # NOQA
 

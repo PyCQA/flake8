@@ -20,7 +20,7 @@ class Message(object):
 
 
 class UnusedImport(Message):
-    message = '%r imported but unused'
+    message = 'W402 %r imported but unused'
 
     def __init__(self, filename, lineno, name):
         Message.__init__(self, filename, lineno)
@@ -28,7 +28,7 @@ class UnusedImport(Message):
 
 
 class RedefinedWhileUnused(Message):
-    message = 'redefinition of unused %r from line %r'
+    message = 'W801 redefinition of unused %r from line %r'
 
     def __init__(self, filename, lineno, name, orig_lineno):
         Message.__init__(self, filename, lineno)
@@ -36,7 +36,7 @@ class RedefinedWhileUnused(Message):
 
 
 class ImportShadowedByLoopVar(Message):
-    message = 'import %r from line %r shadowed by loop variable'
+    message = 'W403 import %r from line %r shadowed by loop variable'
 
     def __init__(self, filename, lineno, name, orig_lineno):
         Message.__init__(self, filename, lineno)
@@ -44,7 +44,7 @@ class ImportShadowedByLoopVar(Message):
 
 
 class ImportStarUsed(Message):
-    message = "'from %s import *' used; unable to detect undefined names"
+    message = "W404 'from %s import *' used; unable to detect undefined names"
 
     def __init__(self, filename, lineno, modname):
         Message.__init__(self, filename, lineno)
@@ -52,7 +52,7 @@ class ImportStarUsed(Message):
 
 
 class UndefinedName(Message):
-    message = 'undefined name %r'
+    message = 'W802 undefined name %r'
 
     def __init__(self, filename, lineno, name):
         Message.__init__(self, filename, lineno)
@@ -60,7 +60,7 @@ class UndefinedName(Message):
 
 
 class UndefinedExport(Message):
-    message = 'undefined name %r in __all__'
+    message = 'W803 undefined name %r in __all__'
 
     def __init__(self, filename, lineno, name):
         Message.__init__(self, filename, lineno)
@@ -68,8 +68,8 @@ class UndefinedExport(Message):
 
 
 class UndefinedLocal(Message):
-    message = "local variable %r (defined in enclosing scope on line %r) " \
-            "referenced before assignment"
+    message = "W804 local variable %r (defined in enclosing scope on line " \
+            "%r) referenced before assignment"
 
     def __init__(self, filename, lineno, name, orig_lineno):
         Message.__init__(self, filename, lineno)
@@ -77,7 +77,7 @@ class UndefinedLocal(Message):
 
 
 class DuplicateArgument(Message):
-    message = 'duplicate argument %r in function definition'
+    message = 'W805 duplicate argument %r in function definition'
 
     def __init__(self, filename, lineno, name):
         Message.__init__(self, filename, lineno)
@@ -85,7 +85,7 @@ class DuplicateArgument(Message):
 
 
 class RedefinedFunction(Message):
-    message = 'redefinition of function %r from line %r'
+    message = 'W806 redefinition of function %r from line %r'
 
     def __init__(self, filename, lineno, name, orig_lineno):
         Message.__init__(self, filename, lineno)
@@ -93,7 +93,7 @@ class RedefinedFunction(Message):
 
 
 class LateFutureImport(Message):
-    message = 'future import(s) %r after other statements'
+    message = 'W405 future import(s) %r after other statements'
 
     def __init__(self, filename, lineno, names):
         Message.__init__(self, filename, lineno)
@@ -106,7 +106,7 @@ class UnusedVariable(Message):
     used.
     """
 
-    message = 'local variable %r is assigned to but never used'
+    message = 'W806 local variable %r is assigned to but never used'
 
     def __init__(self, filename, lineno, names):
         Message.__init__(self, filename, lineno)

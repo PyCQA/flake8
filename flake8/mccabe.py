@@ -243,7 +243,7 @@ def get_code_complexity(code, min=7, filename='stdin'):
             # ?
             continue
         if graph.complexity() >= min:
-            msg = '%s:%d:1 %s %r is too complex (%d)' % (
+            msg = '%s:%d:1: %s %r is too complex (%d)' % (
                 filename,
                 graph.lineno,
                 WARNING_CODE,

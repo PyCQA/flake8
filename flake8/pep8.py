@@ -1287,6 +1287,9 @@ def process_options(arglist=None):
                       help="exclude files or directories which match these "
                         "comma separated patterns (default: %s)" %
                         DEFAULT_EXCLUDE)
+    parser.add_option('--exit-zero', action='store_true',
+                      help="use exit code 0 (success), even if there are "
+                        "warnings")
     parser.add_option('--filename', metavar='patterns', default='*.py',
                       help="when parsing directories, only check filenames "
                         "matching these comma separated patterns (default: "

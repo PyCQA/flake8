@@ -59,6 +59,9 @@ def main():
     else:
         stdin = sys.stdin.read()
         warnings += check_code(stdin, complexity)
+
+    if options.exit_zero:
+        raise SystemExit(0)
     raise SystemExit(warnings > 0)
 
 

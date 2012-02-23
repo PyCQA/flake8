@@ -13,6 +13,8 @@ import optparse
 import sys
 from collections import defaultdict
 
+WARNING_CODE = "W901"
+
 
 class ASTVisitor:
 
@@ -63,8 +65,10 @@ class PathNode:
 
 
 class PathGraph:
-    def __init__(self, name):
+    def __init__(self, name, entity, lineno):
         self.name = name
+        self.entity = entity
+        self.lineno = lineno
         self.nodes = defaultdict(list)
 
     def connect(self, n1, n2):
@@ -122,7 +126,7 @@ class PathGraphingAstVisitor(ASTVisitor):
             self.graph.connect(pathnode, bottom)
             self.tail = bottom
         else:
-            self.graph = PathGraph(name)
+            self.graph = PathGraph(name, entity, node.lineno)
             pathnode = PathNode(name)
             self.tail = pathnode
             self.default(node)
@@ -163,7 +167,7 @@ class PathGraphingAstVisitor(ASTVisitor):
 
         if self.graph is None:
             # global loop
-            self.graph = PathGraph(name)
+            self.graph = PathGraph(name, name, node.lineno)
             pathnode = PathNode(name)
             self.tail = pathnode
             self.default(node)
@@ -239,8 +243,13 @@ def get_code_complexity(code, min=7, filename='stdin'):
             # ?
             continue
         if graph.complexity() >= min:
-            msg = '%s:%s is too complex (%d)' % (filename,
-                    graph.name, graph.complexity())
+            msg = '%s:%d:1 %s %r is too complex (%d)' % (
+                filename,
+                graph.lineno,
+                WARNING_CODE,
+                graph.entity,
+                graph.complexity(),
+            )
             complex.append(msg)
 
     if len(complex) == 0:

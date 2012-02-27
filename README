@@ -137,11 +137,12 @@ projects:
 CHANGES
 =======
 
-1.2 - ?
--------
+1.2 - 2012-02-12
+----------------
 
 - added a git hook
--
+- now python 3 compatible 
+- mccabe and pyflakes have warning codes like pep8 now
 
 
 1.1 - 2012-02-14

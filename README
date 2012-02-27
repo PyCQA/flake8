@@ -133,6 +133,66 @@ projects:
 - PyFlakes: http://divmod.org/trac/wiki/DivmodPyflakes
 - McCabe: http://nedbatchelder.com/blog/200803/python_code_complexity_microtool.html
 
+Warning / Error codes
+=====================
+
+Below are lists of all warning and error codes flake8 will generate, broken
+out by component.
+
+pep8:
+
+- E101: indentation contains mixed spaces and tabs
+- E111: indentation is not a multiple of four
+- E112: expected an indented block
+- E113: unexpected indentation
+- E201: whitespace after char
+- E202: whitespace before char
+- E203: whitespace before char
+- E211: whitespace before text
+- E223: tab / multiple spaces before operator
+- E224: tab / multiple spaces after operator
+- E225: missing whitespace around operator
+- E225: missing whitespace around operator
+- E231: missing whitespace after char
+- E241: multiple spaces after separator
+- E242: tab after separator
+- E251: no spaces around keyword / parameter equals
+- E262: inline comment should start with '# '
+- E301: expected 1 blank line, found 0
+- E302: expected 2 blank lines, found <n>
+- E303: too many blank lines (<n>)
+- E304: blank lines found after function decorator
+- E401: multiple imports on one line
+- E501: line too long (<n> characters)
+- E701: multiple statements on one line (colon)
+- E702: multiple statements on one line (semicolon)
+- W191: indentation contains tabs
+- W291: trailing whitespace
+- W292: no newline at end of file
+- W293: blank line contains whitespace
+- W391: blank line at end of file
+- W601: .has_key() is deprecated, use 'in'
+- W602: deprecated form of raising exception
+- W603: '<>' is deprecated, use '!='
+- W604: backticks are deprecated, use 'repr()'
+
+pyflakes:
+
+- W402: <module> imported but unused
+- W403: import <module> from line <n> shadowed by loop variable
+- W404: 'from <module> import ``*``' used; unable to detect undefined names
+- W405: future import(s) <name> after other statements
+- W801: redefinition of unused <name> from line <n>
+- W802: undefined name <name>
+- W803: undefined name <name> in __all__
+- W804: local variable <name> (defined in enclosing scope on line <n>) referenced before assignment
+- W805: duplicate argument <name> in function definition
+- W806: redefinition of function <name> from line <n>
+- W806: local variable <name> is assigned to but never used
+
+McCabe:
+
+- W901: '<function_name>' is too complex ('<complexity_level>')
 
 CHANGES
 =======

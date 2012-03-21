@@ -341,7 +341,7 @@ class Checker(object):
             self.addBinding(node.lineno, Assignment(name, node))
 
         def runException():
-            for stmt in node.body:
+            for stmt in iter_child_nodes(node):
                 self.handleNode(stmt, node)
 
         self.deferFunction(runException)

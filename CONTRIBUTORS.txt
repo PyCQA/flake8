@@ -9,3 +9,4 @@ Contributors (by order of appearence) :
 - Ben Bass
 - Ask Solem
 - Steven Kryskalla
+- Gustavo Picon

@@ -44,6 +44,7 @@ except foo.SomeException:
     print("err")
 """
 
+
 class TestFlake(TestCase):
 
     def test_exception(self):

@@ -10,3 +10,4 @@ Contributors (by order of appearence) :
 - Ask Solem
 - Steven Kryskalla
 - Gustavo Picon
+- Jannis Leidel

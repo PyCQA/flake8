@@ -120,7 +120,7 @@ def git_hook(complexity=-1, strict=False):
     _initpep8()
     warnings = 0
 
-    _, files_modified, _ = run("git diff-index --name-only HEAD")
+    _, files_modified, _ = run("git diff-index --cached --name-only HEAD")
     for filename in files_modified:
         ext = os.path.splitext(filename)[-1]
         if ext != '.py':

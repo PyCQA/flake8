@@ -1,6 +1,6 @@
 Project created by Tarek Ziadé.
 
-Contributors (by order of appearence) :
+Contributors (by order of appearance) :
 
 - Tamás Gulácsi
 - Nicolas Dumazet
@@ -11,3 +11,4 @@ Contributors (by order of appearence) :
 - Steven Kryskalla
 - Gustavo Picon
 - Jannis Leidel
+- Miki Tebeka

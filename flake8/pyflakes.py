@@ -366,7 +366,7 @@ class Checker(object):
                 existing = scope.get(value.name)
                 if (isinstance(existing, Importation)
                         and not existing.used
-                        and (not isinstance(value, Importation) \
+                        and (not isinstance(value, Importation)
                              or value.fullName == existing.fullName)
                         and reportRedef):
                     self.report(messages.RedefinedWhileUnused,

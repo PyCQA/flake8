@@ -57,7 +57,7 @@ class PathNode:
         self.look = look
 
     def to_dot(self):
-        print('node [shape=%s,label="%s"] %d;' % \
+        print('node [shape=%s,label="%s"] %d;' %
                 (self.look, self.name, self.dot_id()))
 
     def dot_id(self):

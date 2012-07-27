@@ -3,7 +3,7 @@ import sys
 ispy3 = sys.version_info[0] == 3
 
 if ispy3:
-    from distutils.core import setup
+    from distutils.core import setup    # NOQA
 else:
     try:
         from setuptools import setup    # NOQA

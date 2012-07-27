@@ -1127,6 +1127,9 @@ class Checker(object):
         if filename is None:
             self.filename = 'stdin'
             self.lines = lines or []
+        elif hasattr(filename, 'readlines'):
+            self.lines = filename.readlines()
+            self.filename = 'stdin'
         elif lines is None:
             self.lines = readlines(filename)
         else:
@@ -1644,8 +1647,10 @@ def process_options(arglist=None):
         options.repeat = False
     if options.testsuite:
         args.append(options.testsuite)
+
     if not args and not options.doctest:
-        parser.error('input not specified')
+        pass
+
     options.prog = os.path.basename(sys.argv[0])
     options.exclude = options.exclude.split(',')
     for index, value in enumerate(options.exclude):

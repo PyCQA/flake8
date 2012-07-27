@@ -6,6 +6,11 @@ import sys
 import os
 import os.path
 from subprocess import PIPE, Popen
+import select
+try:
+    from StringIO import StringIO   # NOQA
+except ImportError:
+    from io import StringIO         # NOQA
 
 from flake8.util import skip_file
 from flake8 import pep8
@@ -22,7 +27,8 @@ def check_file(path, complexity=-1):
 
 
 def check_code(code, complexity=-1):
-    warnings = pyflakes.check(code, '<stdin>')
+    warnings = pyflakes.check(code, 'stdin')
+    warnings += pep8.input_file(StringIO(code))
     if complexity > -1:
         warnings += mccabe.get_code_complexity(code, complexity)
     return warnings
@@ -53,10 +59,17 @@ def main():
     if builtins:
         orig_builtins = set(pyflakes._MAGIC_GLOBALS)
         pyflakes._MAGIC_GLOBALS = orig_builtins | builtins
-    if args:
+
+    if args and options.filename is not None:
         for path in _get_python_files(args):
             warnings += check_file(path, complexity)
     else:
+        # wait for 1 second on the stdin fd
+        reads, __, __ = select.select([sys.stdin], [], [], 1.)
+        if reads == []:
+            print('input not specified')
+            raise SystemExit(1)
+
         stdin = sys.stdin.read()
         warnings += check_code(stdin, complexity)
 

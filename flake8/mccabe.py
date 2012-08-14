@@ -231,7 +231,7 @@ def get_code_complexity(code, min=7, filename='stdin'):
     complex = []
     try:
         ast = parse(code)
-    except AttributeError:
+    except (AttributeError, SyntaxError):
         e = sys.exc_info()[1]
         sys.stderr.write("Unable to parse %s: %s\n" % (filename, e))
         return 0

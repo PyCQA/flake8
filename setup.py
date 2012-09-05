@@ -32,4 +32,8 @@ setup(
         "Programming Language :: Python",
         "Topic :: Software Development",
         "Topic :: Utilities",
-        ])
+        ],
+    entry_points={
+        'console_scripts': ['flake8 = flake8.run:main'] 
+        },
+      )

@@ -32,4 +32,6 @@ setup(
         "Programming Language :: Python",
         "Topic :: Software Development",
         "Topic :: Utilities",
-        ])
+        ],
+    tests_require=['nose'],
+    test_suite='nose.collector',)

@@ -164,5 +164,40 @@ def hg_hook(ui, repo, **kwargs):
 
     return 0
 
+
+try:
+    from setuptools import Command
+except ImportError:
+    Flake8Command = None
+else:
+    class Flake8Command(Command):
+        description = "Run flake8 on modules registered in setuptools"
+        user_options = []
+
+        def initialize_options(self):
+            pass
+
+        def finalize_options(self):
+            pass
+
+        def distribution_files(self):
+            if self.distribution.packages:
+                for package in self.distribution.packages:
+                    yield package
+
+            if self.distribution.py_modules:
+                for filename in self.distribution.py_modules:
+                    yield "%s.py" % filename
+
+        def run(self):
+            _initpep8()
+
+            warnings = 0
+            for path in _get_python_files(self.distribution_files()):
+                warnings += check_file(path)
+
+            raise SystemExit(warnings > 0)
+
+
 if __name__ == '__main__':
     main()

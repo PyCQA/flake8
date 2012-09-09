@@ -24,6 +24,11 @@ setup(
     url="http://bitbucket.org/tarek/flake8",
     packages=["flake8", "flake8.tests"],
     scripts=["flake8/flake8"],
+    entry_points = {
+        "distutils.commands": [
+            "flake8 = flake8.run:Flake8Command",
+        ],
+    },
     long_description=README,
     classifiers=[
         "Environment :: Console",

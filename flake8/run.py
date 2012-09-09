@@ -110,6 +110,7 @@ class _PEP8Options(object):
     benchmark = False
     testsuite = ''
     doctest = False
+    max_line_length = pep8.MAX_LINE_LENGTH
 
 
 def _initpep8():

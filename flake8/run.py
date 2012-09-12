@@ -35,6 +35,7 @@ def check_code(code, complexity=-1):
 
 
 def _get_python_files(paths):
+    seen = set()
     for path in paths:
         if os.path.isdir(path):
             for dirpath, dirnames, filenames in os.walk(path):
@@ -42,11 +43,11 @@ def _get_python_files(paths):
                     if not filename.endswith('.py'):
                         continue
                     fullpath = os.path.join(dirpath, filename)
-                    if not skip_file(fullpath):
+                    if not skip_file(fullpath) and fullpath not in seen:
                         yield fullpath
 
         else:
-            if not skip_file(path):
+            if not skip_file(path) and path not in seen:
                 yield path
 
 
@@ -183,7 +184,7 @@ else:
         def distribution_files(self):
             if self.distribution.packages:
                 for package in self.distribution.packages:
-                    yield package
+                    yield package.replace(".", os.path.sep)
 
             if self.distribution.py_modules:
                 for filename in self.distribution.py_modules:
@@ -192,9 +193,16 @@ else:
         def run(self):
             _initpep8()
 
+            # _get_python_files can produce the same file several
+            # times, if one of its paths is a parent of another. Keep
+            # a set of checked files to de-duplicate.
+            checked = set()
+
             warnings = 0
             for path in _get_python_files(self.distribution_files()):
-                warnings += check_file(path)
+                if path not in checked:
+                    warnings += check_file(path)
+                checked.add(path)
 
             raise SystemExit(warnings > 0)
 

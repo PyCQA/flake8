@@ -17,10 +17,12 @@ from flake8 import pep8
 from flake8 import pyflakes
 from flake8 import mccabe
 
+pep8style = None
+
 
 def check_file(path, complexity=-1):
     warnings = pyflakes.checkPath(path)
-    warnings += pep8.input_file(path)
+    warnings += pep8style.input_file(path)
     if complexity > -1:
         warnings += mccabe.get_module_complexity(path, complexity)
     return warnings
@@ -28,7 +30,7 @@ def check_file(path, complexity=-1):
 
 def check_code(code, complexity=-1):
     warnings = pyflakes.check(code, 'stdin')
-    warnings += pep8.input_file(StringIO(code))
+    warnings += pep8style.input_file(StringIO(code))
     if complexity > -1:
         warnings += mccabe.get_code_complexity(code, complexity)
     return warnings
@@ -51,7 +53,9 @@ def _get_python_files(paths):
 
 
 def main():
-    options, args = pep8.process_options()
+    global pep8style
+    pep8style = pep8.StyleGuide(parse_argv=True, config_file=True)
+    options = pep8style.options
     complexity = options.max_complexity
     builtins = set(options.builtins)
     warnings = 0
@@ -60,8 +64,8 @@ def main():
         orig_builtins = set(pyflakes._MAGIC_GLOBALS)
         pyflakes._MAGIC_GLOBALS = orig_builtins | builtins
 
-    if args and options.filename is not None:
-        for path in _get_python_files(args):
+    if pep8style.paths and options.filename is not None:
+        for path in _get_python_files(pep8style.paths):
             warnings += check_file(path, complexity)
     else:
         # wait for 1 second on the stdin fd

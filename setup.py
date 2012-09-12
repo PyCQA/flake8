@@ -2,11 +2,16 @@ import sys
 
 ispy3 = sys.version_info[0] == 3
 
+kwargs = {}
 if ispy3:
     from distutils.core import setup    # NOQA
 else:
     try:
         from setuptools import setup    # NOQA
+        kwargs = {
+            'tests_require': ['nose'],
+            'test_suite': 'nose.collector',
+        }
     except ImportError:
         from distutils.core import setup   # NOQA
 
@@ -33,5 +38,4 @@ setup(
         "Topic :: Software Development",
         "Topic :: Utilities",
         ],
-    tests_require=['nose'],
-    test_suite='nose.collector',)
+    **kwargs)

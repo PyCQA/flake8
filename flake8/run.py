@@ -119,6 +119,7 @@ def _initpep8():
     pep8.options.logical_checks = pep8.find_checks('logical_line')
     pep8.options.counters = dict.fromkeys(pep8.BENCHMARK_KEYS, 0)
     pep8.options.messages = {}
+    pep8.options.max_line_length = 79
     pep8.args = []
 
 
@@ -129,8 +130,11 @@ def run(command):
             [line.strip() for line in p.stderr.readlines()])
 
 
-def git_hook(complexity=-1, strict=False):
+def git_hook(complexity=-1, strict=False, ignore=None):
     _initpep8()
+    if ignore:
+        pep8.options.ignore=ignore
+
     warnings = 0
 
     _, files_modified, _ = run("git diff-index --cached --name-only HEAD")

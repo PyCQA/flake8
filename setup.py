@@ -1,14 +1,24 @@
-import sys
+﻿import sys
 
 ispy3 = sys.version_info[0] == 3
 
+kwargs = {}
+scripts = ["flake8/flake8"]
 if ispy3:
     from distutils.core import setup    # NOQA
 else:
     try:
         from setuptools import setup    # NOQA
+        kwargs = {
+            'tests_require': ['nose'],
+            'test_suite': 'nose.collector',
+            'entry_points': {
+                'console_scripts': ['flake8 = flake8.run:main']
+            },
+        }
     except ImportError:
         from distutils.core import setup   # NOQA
+        scripts.append("scripts/flake8.cmd")
 
 from flake8 import __version__
 
@@ -23,7 +33,7 @@ setup(
     author_email="tarek@ziade.org",
     url="http://bitbucket.org/tarek/flake8",
     packages=["flake8", "flake8.tests"],
-    scripts=["flake8/flake8", "scripts/flake8.cmd"],
+    scripts=scripts,
     long_description=README,
     classifiers=[
         "Environment :: Console",
@@ -33,7 +43,4 @@ setup(
         "Topic :: Software Development",
         "Topic :: Utilities",
         ],
-    entry_points={
-        'console_scripts': ['flake8 = flake8.run:main'] 
-        },
-      )
+    **kwargs)

@@ -1,24 +1,25 @@
 import sys
 
 ispy3 = sys.version_info[0] == 3
-issetuptools = False
 
+kwargs = {}
 if ispy3:
     from distutils.core import setup    # NOQA
 else:
     try:
         from setuptools import setup    # NOQA
-        issetuptools = True
+        kwargs = {
+            'entry_points':
+                {'distutils.commands': ['flake8 = flake8.run:Flake8Command']},
+            'tests_require': ['nose'],
+            'test_suite': 'nose.collector'
+        }
     except ImportError:
         from distutils.core import setup   # NOQA
 
 from flake8 import __version__
 
 README = open('README').read()
-
-entry_points = {}
-if issetuptools:
-    entry_points["distutils.commands"] = ["flake8 = flake8.run:Flake8Command"]
 
 setup(
     name="flake8",
@@ -30,7 +31,6 @@ setup(
     url="http://bitbucket.org/tarek/flake8",
     packages=["flake8", "flake8.tests"],
     scripts=["flake8/flake8"],
-    entry_points=entry_points,
     long_description=README,
     classifiers=[
         "Environment :: Console",
@@ -39,4 +39,5 @@ setup(
         "Programming Language :: Python",
         "Topic :: Software Development",
         "Topic :: Utilities",
-        ])
+        ],
+    **kwargs)

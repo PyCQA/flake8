@@ -90,7 +90,7 @@ To use the Git hook on any *commit*, add a **pre-commit** file in the
     STRICT = False
 
     if __name__ == '__main__':
-        sys.exit(git_hook(complexity=COMPLEXITY, strict=STRICT))
+        sys.exit(git_hook(complexity=COMPLEXITY, strict=STRICT, ignore='E501'))
 
 
 If *strict* option is set to **True**, any warning will block the commit. When

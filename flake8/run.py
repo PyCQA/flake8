@@ -37,7 +37,6 @@ def check_code(code, complexity=-1):
 
 
 def _get_python_files(paths):
-    seen = set()
     for path in paths:
         if os.path.isdir(path):
             for dirpath, dirnames, filenames in os.walk(path):
@@ -45,11 +44,11 @@ def _get_python_files(paths):
                     if not filename.endswith('.py'):
                         continue
                     fullpath = os.path.join(dirpath, filename)
-                    if not skip_file(fullpath) and fullpath not in seen:
+                    if not skip_file(fullpath):
                         yield fullpath
 
         else:
-            if not skip_file(path) and path not in seen:
+            if not skip_file(path):
                 yield path
 
 

@@ -1,11 +1,15 @@
 ﻿import sys
+import os
 
 ispy3 = sys.version_info[0] == 3
+iswin = os.name == 'nt' 
 
 kwargs = {}
 scripts = ["flake8/flake8"]
 if ispy3:
     from distutils.core import setup    # NOQA
+    if iswin:
+        scripts.append("scripts/flake8.cmd")
 else:
     try:
         from setuptools import setup    # NOQA
@@ -18,7 +22,8 @@ else:
         }
     except ImportError:
         from distutils.core import setup   # NOQA
-        scripts.append("scripts/flake8.cmd")
+        if iswin:
+            scripts.append("scripts/flake8.cmd")
 
 from flake8 import __version__
 

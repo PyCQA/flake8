@@ -1,4 +1,4 @@
-﻿import sys
+import sys
 import os
 
 ispy3 = sys.version_info[0] == 3
@@ -14,11 +14,11 @@ else:
     try:
         from setuptools import setup    # NOQA
         kwargs = {
+            'entry_points':
+                {'distutils.commands': ['flake8 = flake8.run:Flake8Command'],
+                 'console_scripts': ['flake8 = flake8.run:main']},
             'tests_require': ['nose'],
             'test_suite': 'nose.collector',
-            'entry_points': {
-                'console_scripts': ['flake8 = flake8.run:main']
-            },
         }
     except ImportError:
         from distutils.core import setup   # NOQA

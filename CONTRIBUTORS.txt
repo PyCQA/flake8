@@ -13,3 +13,4 @@ Contributors (by order of appearance) :
 - Jannis Leidel
 - Miki Tebeka
 - David Cramer
+- Peter Teichman

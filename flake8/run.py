@@ -114,6 +114,7 @@ class _PEP8Options(object):
     benchmark = False
     testsuite = ''
     doctest = False
+    max_line_length = pep8.MAX_LINE_LENGTH
 
 
 def _initpep8():
@@ -170,6 +171,51 @@ def hg_hook(ui, repo, **kwargs):
         return warnings
 
     return 0
+
+
+try:
+    from setuptools import Command
+except ImportError:
+    Flake8Command = None
+else:
+    class Flake8Command(Command):
+        description = "Run flake8 on modules registered in setuptools"
+        user_options = []
+
+        def initialize_options(self):
+            pass
+
+        def finalize_options(self):
+            pass
+
+        def distribution_files(self):
+            if self.distribution.packages:
+                for package in self.distribution.packages:
+                    yield package.replace(".", os.path.sep)
+
+            if self.distribution.py_modules:
+                for filename in self.distribution.py_modules:
+                    yield "%s.py" % filename
+
+        def run(self):
+            global pep8style
+            pep8style = pep8.StyleGuide(config_file=True)
+
+            _initpep8()
+
+            # _get_python_files can produce the same file several
+            # times, if one of its paths is a parent of another. Keep
+            # a set of checked files to de-duplicate.
+            checked = set()
+
+            warnings = 0
+            for path in _get_python_files(self.distribution_files()):
+                if path not in checked:
+                    warnings += check_file(path)
+                checked.add(path)
+
+            raise SystemExit(warnings > 0)
+
 
 if __name__ == '__main__':
     main()

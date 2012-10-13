@@ -222,10 +222,16 @@ McCabe:
 CHANGES
 =======
 
-1.5
----
+1.5 - 2012-10-13
+----------------
 
-???
+- fixed the stdin
+- make sure mccabe catches the syntax errors as warnings
+- pep8 upgrade
+- added max_line_length default value
+- added Flake8Command and entry points is setuptools is around
+- using the setuptools console wrapper when available
+
 
 1.4 - 2012-07-12
 ----------------

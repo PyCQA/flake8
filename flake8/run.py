@@ -141,7 +141,7 @@ def git_hook(complexity=-1, strict=False, ignore=None):
 
     _initpep8()
     if ignore:
-        pep8.options.ignore=ignore
+        pep8.options.ignore = ignore
 
     warnings = 0
 

@@ -136,6 +136,9 @@ def run(command):
 
 
 def git_hook(complexity=-1, strict=False, ignore=None):
+    global pep8style
+    pep8style = pep8.StyleGuide(config_file=True)
+
     _initpep8()
     if ignore:
         pep8.options.ignore=ignore

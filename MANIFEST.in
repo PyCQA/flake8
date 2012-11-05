@@ -1,3 +1,4 @@
 include CONTRIBUTORS.txt
 include README
-include LICENCE
+include LICENSE
+recursive-include scripts flake8.*

@@ -21,6 +21,8 @@ pep8style = None
 
 
 def check_file(path, complexity=-1):
+    if pep8style.excluded(path):
+        return 0
     warnings = pyflakes.checkPath(path)
     warnings += pep8style.input_file(path)
     if complexity > -1:

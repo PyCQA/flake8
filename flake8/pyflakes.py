@@ -336,6 +336,9 @@ class Checker(object):
         if node.name is not None:
             if isinstance(node.name, str):
                 name = node.name
+            elif hasattr(node.name, 'elts'):
+                names = [e.id for e in node.name.elts]
+                name = '({0})'.format(', '.join(names))
             else:
                 name = node.name.id
             self.addBinding(node.lineno, Assignment(name, node))

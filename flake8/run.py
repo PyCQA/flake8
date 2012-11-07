@@ -119,6 +119,9 @@ class _PEP8Options(object):
 
 def _initpep8():
     # default pep8 setup
+    global pep8style
+    if pep8style is None:
+        pep8style = pep8.StyleGuide(config_file=True)
     pep8.options = _PEP8Options()
     pep8.options.physical_checks = pep8.find_checks('physical_line')
     pep8.options.logical_checks = pep8.find_checks('logical_line')
@@ -136,9 +139,6 @@ def run(command):
 
 
 def git_hook(complexity=-1, strict=False, ignore=None):
-    global pep8style
-    pep8style = pep8.StyleGuide(config_file=True)
-
     _initpep8()
     if ignore:
         pep8.options.ignore = ignore
@@ -201,9 +201,6 @@ else:
                     yield "%s.py" % filename
 
         def run(self):
-            global pep8style
-            pep8style = pep8.StyleGuide(config_file=True)
-
             _initpep8()
 
             # _get_python_files can produce the same file several

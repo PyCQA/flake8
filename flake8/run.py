@@ -54,9 +54,14 @@ def _get_python_files(paths):
                 yield path
 
 
-def main():
+def init(parse_argv=False, config_file=True, **kwargs):
     global pep8style
-    pep8style = pep8.StyleGuide(parse_argv=True, config_file=True)
+    pep8style = pep8.StyleGuide(parse_argv=parse_argv,
+                                config_file=config_file)
+
+
+def main():
+    init(True)
     options = pep8style.options
     complexity = options.max_complexity
     builtins = set(options.builtins)
@@ -138,9 +143,7 @@ def run(command):
 
 
 def git_hook(complexity=-1, strict=False, ignore=None):
-    global pep8style
-    pep8style = pep8.StyleGuide(config_file=True)
-
+    init()
     _initpep8()
     if ignore:
         pep8.options.ignore = ignore
@@ -203,8 +206,7 @@ else:
                     yield "%s.py" % filename
 
         def run(self):
-            global pep8style
-            pep8style = pep8.StyleGuide(config_file=True)
+            init()
 
             _initpep8()
 

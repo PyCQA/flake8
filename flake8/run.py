@@ -140,14 +140,18 @@ def run(command):
             [line.strip() for line in p.stderr.readlines()])
 
 
-def git_hook(complexity=-1, strict=False, ignore=None):
+def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
     _initpep8()
     if ignore:
         pep8.options.ignore = ignore
 
     warnings = 0
 
-    _, files_modified, _ = run("git diff-index --cached --name-only HEAD")
+    gitcmd = "git diff-index --cached --name-only HEAD"
+    if lazy:
+        gitcmd = gitcmd.replace('--cached ', '')
+
+    _, files_modified, _ = run(gitcmd)
     for filename in files_modified:
         ext = os.path.splitext(filename)[-1]
         if ext != '.py':

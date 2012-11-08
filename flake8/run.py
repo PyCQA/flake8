@@ -54,14 +54,9 @@ def _get_python_files(paths):
                 yield path
 
 
-def init(parse_argv=False, config_file=True, **kwargs):
-    global pep8style
-    pep8style = pep8.StyleGuide(parse_argv=parse_argv,
-                                config_file=config_file)
-
-
 def main():
-    init(True)
+    global pep8style
+    pep8style = pep8.StyleGuide(parse_argv=True, config_file=True)
     options = pep8style.options
     complexity = options.max_complexity
     builtins = set(options.builtins)
@@ -126,6 +121,9 @@ class _PEP8Options(object):
 
 def _initpep8():
     # default pep8 setup
+    global pep8style
+    if pep8style is None:
+        pep8style = pep8.StyleGuide(config_file=True)
     pep8.options = _PEP8Options()
     pep8.options.physical_checks = pep8.find_checks('physical_line')
     pep8.options.logical_checks = pep8.find_checks('logical_line')
@@ -143,7 +141,6 @@ def run(command):
 
 
 def git_hook(complexity=-1, strict=False, ignore=None):
-    init()
     _initpep8()
     if ignore:
         pep8.options.ignore = ignore
@@ -206,8 +203,6 @@ else:
                     yield "%s.py" % filename
 
         def run(self):
-            init()
-
             _initpep8()
 
             # _get_python_files can produce the same file several

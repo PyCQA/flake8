@@ -20,10 +20,10 @@ from flake8 import mccabe
 pep8style = None
 
 
-def check_file(path, complexity=-1):
+def check_file(path, ignore=[], complexity=-1):
     if pep8style.excluded(path):
         return 0
-    warnings = pyflakes.checkPath(path)
+    warnings = pyflakes.checkPath(path, ignore)
     warnings += pep8style.input_file(path)
     if complexity > -1:
         warnings += mccabe.get_module_complexity(path, complexity)
@@ -68,7 +68,7 @@ def main():
 
     if pep8style.paths and options.filename is not None:
         for path in _get_python_files(pep8style.paths):
-            warnings += check_file(path, complexity)
+            warnings += check_file(path, options.ignore, complexity)
     else:
         # wait for 1 second on the stdin fd
         reads, __, __ = select.select([sys.stdin], [], [], 1.)

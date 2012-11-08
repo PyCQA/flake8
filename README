@@ -223,8 +223,11 @@ CHANGES
 =======
 
 1.6
+---
 
-XXX
+- changed the signatures of the ``check_file`` function in flake8/run.py, 
+  ``skip_warning`` in flake8/util.py and the ``check``, ``checkPath``
+  functions in flake8/pyflakes.py.
 
 
 1.5 - 2012-10-13

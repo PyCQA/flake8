@@ -1882,7 +1882,7 @@ def process_options(arglist=None, parse_argv=False, config_file=None):
                       help="use exit code 0 (success), even if there are "
                         "warnings")
     parser.add_option('--max-complexity', default=-1, action='store',
-                      type='int', help="McCabe complexity treshold")
+                      type='int', help="McCabe complexity threshold")
 
     options, args = parser.parse_args(arglist)
     options.reporter = None

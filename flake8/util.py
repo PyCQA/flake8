@@ -22,7 +22,7 @@ def skip_line(line):
 _NOQA = re.compile(r'flake8[:=]\s*noqa', re.I | re.M)
 
 
-def skip_file(path):
+def skip_file(path, pep8style):
     """Returns True if this header is found in path
 
     # flake8: noqa
@@ -32,4 +32,4 @@ def skip_file(path):
         content = f.read()
     finally:
         f.close()
-    return _NOQA.search(content) is not None
+    return _NOQA.search(content) is not None or pep8style.excluded(path)

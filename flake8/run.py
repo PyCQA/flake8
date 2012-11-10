@@ -44,11 +44,11 @@ def _get_python_files(paths):
                     if not filename.endswith('.py'):
                         continue
                     fullpath = os.path.join(dirpath, filename)
-                    if not skip_file(fullpath):
+                    if not skip_file(fullpath, pep8style):
                         yield fullpath
 
         else:
-            if not skip_file(path):
+            if not skip_file(path, pep8style):
                 yield path
 
 
@@ -92,7 +92,7 @@ def _get_files(repo, **kwargs):
             seen.add(file_)
             if not file_.endswith('.py'):
                 continue
-            if skip_file(file_):
+            if skip_file(file_, pep8style):
                 continue
             yield file_
 

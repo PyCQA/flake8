@@ -29,6 +29,8 @@ def skip_file(path):
 
     # flake8: noqa
     """
+    if not os.path.isfile(path):
+        return False
     f = open(path)
     try:
         content = f.read()

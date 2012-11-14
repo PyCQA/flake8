@@ -52,7 +52,7 @@ def _get_python_files(paths):
                         yield fullpath
 
         else:
-            if not skip_file(path) or pep8style.excluded(fullpath):
+            if not skip_file(path) or pep8style.excluded(path):
                 yield path
 
 

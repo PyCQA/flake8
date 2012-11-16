@@ -482,6 +482,9 @@ def continuation_line_indentation(logical_line, tokens, indent_level, verbose):
         print(">>> " + tokens[0][4].rstrip())
 
     for token_type, text, start, end, line in tokens:
+        if line.strip().lower().endswith('# nopep8'):
+            continue
+
         newline = row < start[0] - first_row
         if newline:
             row = start[0] - first_row

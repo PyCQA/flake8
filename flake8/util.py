@@ -3,8 +3,10 @@ import re
 import os
 
 
-def skip_warning(warning):
+def skip_warning(warning, ignore=[]):
     # XXX quick dirty hack, just need to keep the line in the warning
+    if warning.message.split()[0] in ignore:
+        return True
     if not os.path.isfile(warning.filename):
         return False
 
@@ -22,14 +24,16 @@ def skip_line(line):
 _NOQA = re.compile(r'flake8[:=]\s*noqa', re.I | re.M)
 
 
-def skip_file(path, pep8style):
+def skip_file(path):
     """Returns True if this header is found in path
 
     # flake8: noqa
     """
+    if not os.path.isfile(path):
+        return False
     f = open(path)
     try:
         content = f.read()
     finally:
         f.close()
-    return _NOQA.search(content) is not None or pep8style.excluded(path)
+    return _NOQA.search(content) is not None

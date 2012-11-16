@@ -336,6 +336,9 @@ class Checker(object):
         if node.name is not None:
             if isinstance(node.name, str):
                 name = node.name
+            elif hasattr(node.name, 'elts'):
+                names = [e.id for e in node.name.elts]
+                name = '({0})'.format(', '.join(names))
             else:
                 name = node.name.id
             self.addBinding(node.lineno, Assignment(name, node))
@@ -646,21 +649,21 @@ class Checker(object):
             self.addBinding(node.lineno, importation)
 
 
-def checkPath(filename):
+def checkPath(filename, ignore=[]):
     """
     Check the given path, printing out any warnings detected.
 
     @return: the number of warnings printed
     """
     try:
-        return check(open(filename, 'U').read() + '\n', filename)
+        return check(open(filename, 'U').read() + '\n', ignore, filename)
     except IOError:
         msg = sys.exc_info()[1]
         sys.stderr.write("%s: %s\n" % (filename, msg.args[1]))
         return 1
 
 
-def check(codeString, filename='(code)'):
+def check(codeString, ignore, filename='(code)'):
     """
     Check the Python source given by C{codeString} for flakes.
 
@@ -711,7 +714,7 @@ def check(codeString, filename='(code)'):
         valid_warnings = 0
 
         for warning in w.messages:
-            if skip_warning(warning):
+            if skip_warning(warning, ignore):
                 continue
             print(warning)
             valid_warnings += 1

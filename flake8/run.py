@@ -20,8 +20,10 @@ from flake8 import mccabe
 pep8style = None
 
 
-def check_file(path, complexity=-1):
-    warnings = pyflakes.checkPath(path)
+def check_file(path, ignore=[], complexity=-1):
+    if pep8style.excluded(path):
+        return 0
+    warnings = pyflakes.checkPath(path, ignore)
     warnings += pep8style.input_file(path)
     if complexity > -1:
         warnings += mccabe.get_module_complexity(path, complexity)
@@ -46,11 +48,11 @@ def _get_python_files(paths):
                     if not filename.endswith('.py'):
                         continue
                     fullpath = os.path.join(dirpath, filename)
-                    if not skip_file(fullpath, pep8style):
+                    if not skip_file(fullpath) or pep8style.excluded(fullpath):
                         yield fullpath
 
         else:
-            if not skip_file(path, pep8style):
+            if not skip_file(path) or pep8style.excluded(path):
                 yield path
 
 
@@ -68,7 +70,7 @@ def main():
 
     if pep8style.paths and options.filename is not None:
         for path in _get_python_files(pep8style.paths):
-            warnings += check_file(path, complexity)
+            warnings += check_file(path, options.ignore, complexity)
     else:
         # wait for 1 second on the stdin fd
         reads, __, __ = select.select([sys.stdin], [], [], 1.)
@@ -140,14 +142,18 @@ def run(command):
             [line.strip() for line in p.stderr.readlines()])
 
 
-def git_hook(complexity=-1, strict=False, ignore=None):
+def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
     _initpep8()
     if ignore:
         pep8.options.ignore = ignore
 
     warnings = 0
 
-    _, files_modified, _ = run("git diff-index --cached --name-only HEAD")
+    gitcmd = "git diff-index --cached --name-only HEAD"
+    if lazy:
+        gitcmd = gitcmd.replace('--cached ', '')
+
+    _, files_modified, _ = run(gitcmd)
     for filename in files_modified:
         ext = os.path.splitext(filename)[-1]
         if ext != '.py':

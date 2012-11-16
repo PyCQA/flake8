@@ -14,3 +14,5 @@ Contributors (by order of appearance) :
 - Miki Tebeka
 - David Cramer
 - Peter Teichman
+- Oleg Broytman
+- Marc Labbé

@@ -96,7 +96,7 @@ def _get_files(repo, **kwargs):
             seen.add(file_)
             if not file_.endswith('.py'):
                 continue
-            if skip_file(file_, pep8style):
+            if skip_file(file_):
                 continue
             yield file_
 

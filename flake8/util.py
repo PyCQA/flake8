@@ -5,7 +5,7 @@ import os
 
 def skip_warning(warning, ignore=[]):
     # XXX quick dirty hack, just need to keep the line in the warning
-    if not hasattr(warning, message):
+    if not hasattr(warning, 'message'):
         # McCabe's warnings cannot be skipped afaik, and they're all strings.
         return False
     if warning.message.split()[0] in ignore:

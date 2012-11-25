@@ -15,4 +15,5 @@ Contributors (by order of appearance) :
 - David Cramer
 - Peter Teichman
 - Oleg Broytman
-- Marc Labb�
+- Marc Labbé
+- Bruno Miguel Custódio

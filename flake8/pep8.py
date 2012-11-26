@@ -113,8 +113,6 @@ try:
 except ImportError:
     from ConfigParser import RawConfigParser
 
-from flake8.util import skip_line
-
 DEFAULT_EXCLUDE = '.svn,CVS,.bzr,.hg,.git'
 DEFAULT_IGNORE = 'E24'
 if sys.platform == 'win32':

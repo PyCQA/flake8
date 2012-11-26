@@ -160,7 +160,7 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
             continue
         if not os.path.exists(filename):
             continue
-        warnings += check_file(filename, complexity)
+        warnings += check_file(path=filename, ignore=ignore, complexity=complexity)
 
     if strict:
         return warnings

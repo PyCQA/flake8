@@ -126,13 +126,12 @@ def _initpep8():
     global pep8style
     if pep8style is None:
         pep8style = pep8.StyleGuide(config_file=True)
-    pep8.options = _PEP8Options()
-    pep8.options.physical_checks = pep8.find_checks('physical_line')
-    pep8.options.logical_checks = pep8.find_checks('logical_line')
-    pep8.options.counters = dict.fromkeys(pep8.BENCHMARK_KEYS, 0)
-    pep8.options.messages = {}
-    pep8.options.max_line_length = 79
-    pep8.args = []
+    #pep8style.options.physical_checks = pep8.find_checks('physical_line')
+    #pep8style.options.logical_checks = pep8.find_checks('logical_line')
+    pep8style.options.counters = dict.fromkeys(pep8.BENCHMARK_KEYS, 0)
+    pep8style.options.messages = {}
+    pep8style.options.max_line_length = 79
+    pep8style.args = []
 
 
 def run(command):
@@ -145,7 +144,7 @@ def run(command):
 def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
     _initpep8()
     if ignore:
-        pep8.options.ignore = ignore
+        pep8style.options.ignore = ignore
 
     warnings = 0
 
@@ -160,7 +159,8 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
             continue
         if not os.path.exists(filename):
             continue
-        warnings += check_file(path=filename, ignore=ignore, complexity=complexity)
+        warnings += check_file(path=filename, ignore=ignore,
+                               complexity=complexity)
 
     if strict:
         return warnings
@@ -170,7 +170,7 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
 
 def hg_hook(ui, repo, **kwargs):
     _initpep8()
-    complexity = ui.configint('flake8', 'complexity', default=-1)
+    complexity = ui.config('flake8', 'complexity', default=-1)
     warnings = 0
 
     for file_ in _get_files(repo, **kwargs):

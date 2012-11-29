@@ -1822,9 +1822,11 @@ def process_options(arglist=None, parse_argv=False, config_file=None):
     parser = OptionParser(version=version,
                           usage="%prog [options] input ...")
     parser.config_options = [
-        'exclude', 'filename', 'select', 'ignore', 'max-line-length', 'count',
-        'format', 'quiet', 'show-pep8', 'show-source', 'statistics', 'verbose']
-    parser.add_option('--builtins', default=[], action="append",
+        'builtins', 'count', 'exclude', 'filename', 'format', 'ignore',
+        'max-line-length', 'quiet', 'select', 'show-pep8', 'show-source',
+        'statistics', 'verbose',
+        ]
+    parser.add_option('--builtins', default='',
                       help="append builtin function (pyflakes "
                            "_MAGIC_GLOBALS)")
     parser.add_option('-v', '--verbose', default=0, action='count',
@@ -1899,6 +1901,8 @@ def process_options(arglist=None, parse_argv=False, config_file=None):
         options = read_config(options, args, arglist, parser)
         options.reporter = parse_argv and options.quiet == 1 and FileReport
 
+    if options.builtins:
+        options.builtins = options.builtins.split(',')
     if options.filename:
         options.filename = options.filename.split(',')
     options.exclude = options.exclude.split(',')

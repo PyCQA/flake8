@@ -18,7 +18,10 @@ It also adds a few features:
 
     # flake8: noqa
 
-- lines that contains a "# NOQA" comment at the end will not issue a warning.
+- lines that contain a "# NOQA" comment at the end will not issue pyflakes 
+  warnings.
+- lines that contain a "# NOPEP8" comment at the end will not issue pep8 
+  warnings.
 - a Mercurial hook.
 - a McCabe complexity checker.
 

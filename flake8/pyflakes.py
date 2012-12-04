@@ -663,7 +663,7 @@ def checkPath(filename, ignore=[]):
         return 1
 
 
-def check(codeString, ignore, filename='(code)'):
+def check(codeString, ignore, filename='stdin'):
     """
     Check the Python source given by C{codeString} for flakes.
 

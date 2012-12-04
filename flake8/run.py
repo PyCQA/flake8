@@ -8,9 +8,9 @@ import os.path
 from subprocess import PIPE, Popen
 import select
 try:
-    from StringIO import StringIO   # NOQA
+    from StringIO import StringIO
 except ImportError:
-    from io import StringIO         # NOQA
+    from io import StringIO  # NOQA
 
 from flake8.util import skip_file
 from flake8 import pep8
@@ -20,7 +20,7 @@ from flake8 import mccabe
 pep8style = None
 
 
-def check_file(path, ignore=[], complexity=-1):
+def check_file(path, ignore=(), complexity=-1):
     if pep8style.excluded(path):
         return 0
     warnings = pyflakes.checkPath(path, ignore)
@@ -30,8 +30,8 @@ def check_file(path, ignore=[], complexity=-1):
     return warnings
 
 
-def check_code(code, complexity=-1):
-    warnings = pyflakes.check(code, 'stdin')
+def check_code(code, ignore=(), complexity=-1):
+    warnings = pyflakes.check(code, ignore, 'stdin')
     warnings += pep8style.input_file(StringIO(code))
     if complexity > -1:
         warnings += mccabe.get_code_complexity(code, complexity)
@@ -56,6 +56,16 @@ def _get_python_files(paths):
                 yield path
 
 
+def read_stdin():
+    # wait for 1 second on the stdin fd
+    reads, __, __ = select.select([sys.stdin], [], [], 1.)
+    if reads == []:
+        print('input not specified')
+        raise SystemExit(1)
+
+    return sys.stdin.read()
+
+
 def main():
     global pep8style
     pep8style = pep8.StyleGuide(parse_argv=True, config_file=True)
@@ -63,6 +73,7 @@ def main():
     complexity = options.max_complexity
     builtins = set(options.builtins)
     warnings = 0
+    stdin = None
 
     if builtins:
         orig_builtins = set(pyflakes._MAGIC_GLOBALS)
@@ -70,16 +81,15 @@ def main():
 
     if pep8style.paths and options.filename is not None:
         for path in _get_python_files(pep8style.paths):
-            warnings += check_file(path, options.ignore, complexity)
+            if path == '-':
+                if stdin is None:
+                    stdin = read_stdin()
+                warnings += check_code(stdin, options.ignore, complexity)
+            else:
+                warnings += check_file(path, options.ignore, complexity)
     else:
-        # wait for 1 second on the stdin fd
-        reads, __, __ = select.select([sys.stdin], [], [], 1.)
-        if reads == []:
-            print('input not specified')
-            raise SystemExit(1)
-
-        stdin = sys.stdin.read()
-        warnings += check_code(stdin, complexity)
+        stdin = read_stdin()
+        warnings += check_code(stdin, options.ignore, complexity)
 
     if options.exit_zero:
         raise SystemExit(0)

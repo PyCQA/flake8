@@ -313,7 +313,8 @@ class Checker(object):
 
     # "expr" type nodes
     BOOLOP = BINOP = UNARYOP = IFEXP = DICT = SET = YIELD = COMPARE = \
-    CALL = REPR = ATTRIBUTE = SUBSCRIPT = LIST = TUPLE = TRY = handleChildren
+        CALL = REPR = ATTRIBUTE = SUBSCRIPT = LIST = TUPLE = TRY = \
+        WITHITEM = handleChildren
 
     NUM = STR = ELLIPSIS = ignore
 
@@ -325,8 +326,8 @@ class Checker(object):
 
     # same for operators
     AND = OR = ADD = SUB = MULT = DIV = MOD = POW = LSHIFT = RSHIFT = \
-    BITOR = BITXOR = BITAND = FLOORDIV = INVERT = NOT = UADD = USUB = \
-    EQ = NOTEQ = LT = LTE = GT = GTE = IS = ISNOT = IN = NOTIN = ignore
+        BITOR = BITXOR = BITAND = FLOORDIV = INVERT = NOT = UADD = USUB = \
+        EQ = NOTEQ = LT = LTE = GT = GTE = IS = ISNOT = IN = NOTIN = ignore
 
     # additional node types
     COMPREHENSION = KEYWORD = handleChildren

@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # flake8: noqa
 # pep8.py - Check Python source code formatting, according to PEP 8
-# Copyright (C) 2006 Johann C. Rocholl <johann@rocholl.net>
+# Copyright (C) 2006-2009 Johann C. Rocholl <johann@rocholl.net>
+# Copyright (C) 2009-2012 Florent Xicluna <florent.xicluna@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -89,14 +90,12 @@ These examples are verified automatically when pep8.py is run with the
 --doctest option. You can add examples for your own check functions.
 The format is simple: "Okay" or error/warning code followed by colon
 and space, the rest of the line is example source code. If you put 'r'
-before the docstring, you can use \n for newline, \t for tab and \s
-for space.
-
+before the docstring, you can use \n for newline and \t for tab.
 """
 from flake8.pyflakes import __version__ as pyflakes_version
 from flake8 import __version__ as flake8_version
 
-__version__ = '1.3.4a0'
+__version__ = '1.3.5a'
 
 import os
 import sys
@@ -114,7 +113,7 @@ except ImportError:
     from ConfigParser import RawConfigParser
 
 DEFAULT_EXCLUDE = '.svn,CVS,.bzr,.hg,.git'
-DEFAULT_IGNORE = 'E24'
+DEFAULT_IGNORE = 'E226,E24'
 if sys.platform == 'win32':
     DEFAULT_CONFIG = os.path.expanduser(r'~\.pep8')
 else:
@@ -135,14 +134,18 @@ BINARY_OPERATORS = frozenset([
     '%',  '^',  '&',  '|',  '=',  '/',  '//',  '<',  '>',  '<<'])
 UNARY_OPERATORS = frozenset(['>>', '**', '*', '+', '-'])
 OPERATORS = BINARY_OPERATORS | UNARY_OPERATORS
+WS_OPTIONAL_OPERATORS = frozenset(['**', '*', '/', '//', '+', '-'])
+WS_NEEDED_OPERATORS = frozenset([
+    '**=', '*=', '/=', '//=', '+=', '-=', '!=', '<>',
+    '%=', '^=', '&=', '|=', '==', '<=', '>=', '<<=', '>>=',
+    '%',  '^',  '&',  '|',  '=',  '<',  '>',  '<<'])
 WHITESPACE = frozenset(' \t')
 SKIP_TOKENS = frozenset([tokenize.COMMENT, tokenize.NL, tokenize.NEWLINE,
                          tokenize.INDENT, tokenize.DEDENT])
 BENCHMARK_KEYS = ['directories', 'files', 'logical lines', 'physical lines']
 
 INDENT_REGEX = re.compile(r'([ \t]*)')
-RAISE_COMMA_REGEX = re.compile(r'raise\s+\w+\s*(,)')
-RERAISE_COMMA_REGEX = re.compile(r'raise\s+\w+\s*,\s*\w+\s*,\s*\w+')
+RAISE_COMMA_REGEX = re.compile(r'raise\s+\w+\s*,(.*)')
 SELFTEST_REGEX = re.compile(r'(Okay|[EW]\d{3}):\s(.*)')
 ERRORCODE_REGEX = re.compile(r'[EW]\d{3}')
 DOCSTRING_REGEX = re.compile(r'u?r?["\']')
@@ -151,11 +154,11 @@ WHITESPACE_AFTER_COMMA_REGEX = re.compile(r'[,;:]\s*(?:  |\t)')
 COMPARE_SINGLETON_REGEX = re.compile(r'([=!]=)\s*(None|False|True)')
 COMPARE_TYPE_REGEX = re.compile(r'([=!]=|is|is\s+not)\s*type(?:s\.(\w+)Type'
                                 r'|\(\s*(\(\s*\)|[^)]*[^ )])\s*\))')
-KEYWORD_REGEX = re.compile(r'(?:[^\s])(\s*)\b(?:%s)\b(\s*)' %
+KEYWORD_REGEX = re.compile(r'(?:[^\s]|\b)(\s*)\b(?:%s)\b(\s*)' %
                            r'|'.join(KEYWORDS))
-OPERATOR_REGEX = re.compile(r'(?:[^\s])(\s*)(?:[-+*/|!<=>%&^]+)(\s*)')
+OPERATOR_REGEX = re.compile(r'(?:[^,\s])(\s*)(?:[-+*/|!<=>%&^]+)(\s*)')
 LAMBDA_REGEX = re.compile(r'\blambda\b')
-HUNK_REGEX = re.compile(r'^@@ -\d+,\d+ \+(\d+),(\d+) @@.*$')
+HUNK_REGEX = re.compile(r'^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@.*$')
 
 # Work around Python < 2.6 behaviour, which does not generate NL after
 # a comment which is on a line by itself.
@@ -215,8 +218,8 @@ def trailing_whitespace(physical_line):
     The warning returned varies on whether the line itself is blank, for easier
     filtering for those who want to indent their blank lines.
 
-    Okay: spam(1)
-    W291: spam(1)\s
+    Okay: spam(1)\n#
+    W291: spam(1) \n#
     W293: class Foo(object):\n    \n    bang = 12
     """
     physical_line = physical_line.rstrip('\n')    # chr(10), newline
@@ -392,13 +395,15 @@ def missing_whitespace(logical_line):
     Okay: a[1:4:2]
     E231: ['a','b']
     E231: foo(bar,baz)
+    E231: [{'a':'b'}]
     """
     line = logical_line
     for index in range(len(line) - 1):
         char = line[index]
         if char in ',;:' and line[index + 1] not in WHITESPACE:
             before = line[:index]
-            if char == ':' and before.count('[') > before.count(']'):
+            if char == ':' and before.count('[') > before.count(']') and \
+                    before.rfind('{') < before.rfind('['):
                 continue  # Slice syntax, no space required
             if char == ',' and line[index + 1] == ')':
                 continue  # Allow tuple with only one element: (3,)
@@ -555,7 +560,8 @@ def continuation_line_indentation(logical_line, tokens, indent_level, verbose):
             if verbose >= 4:
                 print("bracket depth %s indent to %s" % (depth, start[1]))
         # deal with implicit string concatenation
-        elif token_type == tokenize.STRING or text in ('u', 'ur', 'b', 'br'):
+        elif (token_type in (tokenize.STRING, tokenize.COMMENT) or
+              text in ('u', 'ur', 'b', 'br')):
             indent_chances[start[1]] = str
 
         # keep track of bracket depth
@@ -679,14 +685,19 @@ def missing_whitespace_around_operator(logical_line, tokens):
     Okay: alpha[:-i]
     Okay: if not -5 < x < +5:\n    pass
     Okay: lambda *args, **kw: (args, kw)
+    Okay: z = 2 ** 30
+    Okay: x = x / 2 - 1
 
     E225: i=i+1
     E225: submitted +=1
-    E225: x = x*2 - 1
-    E225: hypot2 = x*x + y*y
-    E225: c = (a+b) * (a-b)
     E225: c = alpha -4
+    E225: x = x /2 - 1
     E225: z = x **y
+    E226: c = (a+b) * (a-b)
+    E226: z = 2**30
+    E226: x = x*2 - 1
+    E226: x = x/2 - 1
+    E226: hypot2 = x*x + y*y
     """
     parens = 0
     need_space = False
@@ -694,7 +705,7 @@ def missing_whitespace_around_operator(logical_line, tokens):
     prev_text = prev_end = None
     for token_type, text, start, end, line in tokens:
         if token_type in (tokenize.NL, tokenize.NEWLINE, tokenize.ERRORTOKEN):
-            # ERRORTOKEN is triggered by backticks in Python 3000
+            # ERRORTOKEN is triggered by backticks in Python 3
             continue
         if text in ('(', 'lambda'):
             parens += 1
@@ -702,32 +713,54 @@ def missing_whitespace_around_operator(logical_line, tokens):
             parens -= 1
         if need_space:
             if start != prev_end:
+                # Found a (probably) needed space
+                if need_space is not True and not need_space[1]:
+                    yield (need_space[0],
+                           "E225 missing whitespace around operator")
                 need_space = False
             elif text == '>' and prev_text in ('<', '-'):
                 # Tolerate the "<>" operator, even if running Python 3
                 # Deal with Python 3's annotated return value "->"
                 pass
             else:
-                yield prev_end, "E225 missing whitespace around operator"
+                if need_space is True or need_space[1]:
+                    # A needed trailing space was not found
+                    yield prev_end, "E225 missing whitespace around operator"
+                else:
+                    yield (need_space[0],
+                           "E226 missing optional whitespace around operator")
                 need_space = False
         elif token_type == tokenize.OP and prev_end is not None:
             if text == '=' and parens:
                 # Allow keyword args or defaults: foo(bar=None).
                 pass
-            elif text in BINARY_OPERATORS:
+            elif text in WS_NEEDED_OPERATORS:
                 need_space = True
             elif text in UNARY_OPERATORS:
+                # Check if the operator is being used as a binary operator
                 # Allow unary operators: -123, -x, +1.
                 # Allow argument unpacking: foo(*args, **kwargs).
                 if prev_type == tokenize.OP:
-                    if prev_text in '}])':
-                        need_space = True
+                    binary_usage = (prev_text in '}])')
                 elif prev_type == tokenize.NAME:
-                    if prev_text not in KEYWORDS:
+                    binary_usage = (prev_text not in KEYWORDS)
+                else:
+                    binary_usage = (prev_type not in SKIP_TOKENS)
+
+                if binary_usage:
+                    if text in WS_OPTIONAL_OPERATORS:
+                        need_space = None
+                    else:
                         need_space = True
-                elif prev_type not in SKIP_TOKENS:
-                    need_space = True
-            if need_space and start == prev_end:
+            elif text in WS_OPTIONAL_OPERATORS:
+                need_space = None
+
+            if need_space is None:
+                # Surrounding space is optional, but ensure that
+                # trailing space matches opening space
+                need_space = (prev_end, start != prev_end)
+            elif need_space and start == prev_end:
+                # A needed opening space was not found
                 yield prev_end, "E225 missing whitespace around operator"
                 need_space = False
         prev_type = token_type
@@ -971,8 +1004,8 @@ def comparison_type(logical_line):
 
 def python_3000_has_key(logical_line):
     r"""
-    The {}.has_key() method will be removed in the future version of
-    Python. Use the 'in' operation instead.
+    The {}.has_key() method is removed in the Python 3.
+    Use the 'in' operation instead.
 
     Okay: if "alph" in d:\n    print d["alph"]
     W601: assert d.has_key('alph')
@@ -990,21 +1023,21 @@ def python_3000_raise_comma(logical_line):
     The paren-using form is preferred because when the exception arguments
     are long or include string formatting, you don't need to use line
     continuation characters thanks to the containing parentheses.  The older
-    form will be removed in Python 3000.
+    form is removed in Python 3.
 
     Okay: raise DummyError("Message")
     W602: raise DummyError, "Message"
     """
     match = RAISE_COMMA_REGEX.match(logical_line)
-    if match and not RERAISE_COMMA_REGEX.match(logical_line):
-        yield match.start(1), "W602 deprecated form of raising exception"
+    if match and ',' not in match.group(1):
+        yield match.start(1) - 1, "W602 deprecated form of raising exception"
 
 
 def python_3000_not_equal(logical_line):
     """
     != can also be written <>, but this is an obsolete usage kept for
     backwards compatibility only. New code should always use !=.
-    The older syntax is removed in Python 3000.
+    The older syntax is removed in Python 3.
 
     Okay: if a != 'no':
     W603: if a <> 'no':
@@ -1016,7 +1049,7 @@ def python_3000_not_equal(logical_line):
 
 def python_3000_backticks(logical_line):
     """
-    Backticks are removed in Python 3000.
+    Backticks are removed in Python 3.
     Use repr() instead.
 
     Okay: val = repr(1 + 2)
@@ -1125,7 +1158,8 @@ def parse_udiff(diff, patterns=None, parent='.'):
                 nrows -= 1
             continue
         if line[:3] == '@@ ':
-            row, nrows = [int(g) for g in HUNK_REGEX.match(line).groups()]
+            hunk_match = HUNK_REGEX.match(line)
+            row, nrows = [int(g or '1') for g in hunk_match.groups()]
             rv[path].update(range(row, row + nrows))
         elif line[:3] == '+++':
             path = line[4:].split('\t', 1)[0]
@@ -1171,7 +1205,7 @@ class Checker(object):
     Load a Python source file, tokenize it, check coding style.
     """
 
-    def __init__(self, filename, lines=None,
+    def __init__(self, filename=None, lines=None,
                  options=None, report=None, **kwargs):
         if options is None:
             options = StyleGuide(kwargs).options
@@ -1186,9 +1220,9 @@ class Checker(object):
         if filename is None:
             self.filename = 'stdin'
             self.lines = lines or []
-        elif hasattr(filename, 'readlines'):
-            self.lines = filename.readlines()
+        elif filename == '-':
             self.filename = 'stdin'
+            self.lines = stdin_get_value().splitlines(True)
         elif lines is None:
             try:
                 self.lines = readlines(filename)
@@ -1624,7 +1658,7 @@ class StyleGuide(object):
                 print('directory ' + root)
             counters['directories'] += 1
             for subdir in sorted(dirs):
-                if self.excluded(subdir):
+                if self.excluded(os.path.join(root, subdir)):
                     dirs.remove(subdir)
             for filename in sorted(files):
                 # contain a pattern that matches?
@@ -1637,7 +1671,10 @@ class StyleGuide(object):
         Check if options.exclude contains a pattern that matches filename.
         """
         basename = os.path.basename(filename)
-        return filename_match(basename, self.options.exclude, default=False)
+        return any((filename_match(filename, self.options.exclude,
+                                   default=False),
+                    filename_match(basename, self.options.exclude,
+                                   default=False)))
 
     def ignore_code(self, code):
         """
@@ -1728,11 +1765,9 @@ def selftest(options):
             if match is None:
                 continue
             code, source = match.groups()
-            checker = Checker(None, options=options, report=report)
-            for part in source.split(r'\n'):
-                part = part.replace(r'\t', '\t')
-                part = part.replace(r'\s', ' ')
-                checker.lines.append(part + '\n')
+            lines = [part.replace(r'\t', '\t') + '\n'
+                     for part in source.split(r'\n')]
+            checker = Checker(lines=lines, options=options, report=report)
             checker.check_all()
             error = None
             if code == 'Okay':
@@ -1820,6 +1855,7 @@ def process_options(arglist=None, parse_argv=False, config_file=None):
 
     version = '%s (pyflakes: %s, pep8: %s)' % \
             (flake8_version, pyflakes_version, __version__)
+
 
     parser = OptionParser(version=version,
                           usage="%prog [options] input ...")
@@ -1955,7 +1991,6 @@ def _main():
         if options.count:
             sys.stderr.write(str(report.total_errors) + '\n')
         sys.exit(1)
-
 
 if __name__ == '__main__':
     _main()

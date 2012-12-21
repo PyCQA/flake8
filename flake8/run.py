@@ -32,7 +32,7 @@ def check_file(path, ignore=(), complexity=-1):
 
 def check_code(code, ignore=(), complexity=-1):
     warnings = pyflakes.check(code, ignore, 'stdin')
-    warnings += pep8style.input_file(StringIO(code))
+    warnings += pep8style.input_file(None, lines=code.split('\n'))
     if complexity > -1:
         warnings += mccabe.get_code_complexity(code, complexity)
     return warnings

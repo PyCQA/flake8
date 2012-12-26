@@ -5,17 +5,17 @@ Implementation of the command-line I{flake8} tool.
 import sys
 import os
 import os.path
+import optparse
 from subprocess import PIPE, Popen
 import select
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO  # NOQA
 
-from flake8.util import skip_file
 from flake8 import pep8
-from flake8 import pyflakes
 from flake8 import mccabe
+from flake8.util import skip_file
+from flake8 import __version__ as flake8_version
+from flakey import __version__ as flakey_version
+from flakey import checker
+from flakey.scripts import flakey
 
 pep8style = None
 
@@ -23,7 +23,8 @@ pep8style = None
 def check_file(path, ignore=(), complexity=-1):
     if pep8style.excluded(path):
         return 0
-    warnings = pyflakes.checkPath(path, ignore)
+    #warnings = flakey.checkPath(path, ignore)
+    warnings = flakey.checkPath(path)
     warnings += pep8style.input_file(path)
     if complexity > -1:
         warnings += mccabe.get_module_complexity(path, complexity)
@@ -31,7 +32,7 @@ def check_file(path, ignore=(), complexity=-1):
 
 
 def check_code(code, ignore=(), complexity=-1):
-    warnings = pyflakes.check(code, ignore, 'stdin')
+    warnings = flakey.check(code, ignore, 'stdin')
     warnings += pep8style.input_file(None, lines=code.split('\n'))
     if complexity > -1:
         warnings += mccabe.get_code_complexity(code, complexity)
@@ -66,8 +67,22 @@ def read_stdin():
     return sys.stdin.read()
 
 
+def version(option, opt, value, parser):
+    parser.print_usage()
+    parser.print_version()
+    sys.exit(0)
+
+
 def main():
     global pep8style
+    parser = optparse.OptionParser('%prog [options]', version=version)
+    parser.version = '{0} (pep8: {1}, flakey: {2})'.format(
+        flake8_version, pep8.__version__, flakey_version)
+    parser.remove_option('--version')
+    parser.add_option('-v', '--version', action='callback',
+                      callback=version,
+                      help='Print the version info for flake8')
+    parser.parse_args()
     pep8style = pep8.StyleGuide(parse_argv=True, config_file=True)
     options = pep8style.options
     complexity = options.max_complexity
@@ -76,8 +91,8 @@ def main():
     stdin = None
 
     if builtins:
-        orig_builtins = set(pyflakes._MAGIC_GLOBALS)
-        pyflakes._MAGIC_GLOBALS = orig_builtins | builtins
+        orig_builtins = set(checker._MAGIC_GLOBALS)
+        checker._MAGIC_GLOBALS = orig_builtins | builtins
 
     if pep8style.paths and options.filename is not None:
         for path in _get_python_files(pep8style.paths):

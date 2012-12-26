@@ -92,8 +92,6 @@ The format is simple: "Okay" or error/warning code followed by colon
 and space, the rest of the line is example source code. If you put 'r'
 before the docstring, you can use \n for newline and \t for tab.
 """
-from flake8.pyflakes import __version__ as pyflakes_version
-from flake8 import __version__ as flake8_version
 
 __version__ = '1.3.5a'
 
@@ -1853,11 +1851,7 @@ def process_options(arglist=None, parse_argv=False, config_file=None):
     if config_file is True:
         config_file = DEFAULT_CONFIG
 
-    version = '%s (pyflakes: %s, pep8: %s)' % \
-            (flake8_version, pyflakes_version, __version__)
-
-
-    parser = OptionParser(version=version,
+    parser = OptionParser(version=__version__,
                           usage="%prog [options] input ...")
     parser.config_options = [
         'builtins', 'count', 'exclude', 'filename', 'format', 'ignore',

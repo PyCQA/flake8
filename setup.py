@@ -39,7 +39,7 @@ setup(
     url="http://bitbucket.org/tarek/flake8",
     packages=["flake8", "flake8.tests"],
     scripts=scripts,
-    requires=['flakey'],
+    requires=["flakey>=2.0",  "pep8"],
     long_description=README,
     classifiers=[
         "Environment :: Console",

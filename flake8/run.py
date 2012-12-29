@@ -12,10 +12,8 @@ import select
 from flake8 import pep8
 from flake8 import mccabe
 from flake8.util import skip_file
-from flake8 import __version__ as flake8_version
-from flakey import __version__ as flakey_version
-from flakey import checker
-from flakey.scripts import flakey
+from flake8 import __version__
+import flakey
 
 pep8style = None
 
@@ -23,8 +21,8 @@ pep8style = None
 def check_file(path, ignore=(), complexity=-1):
     if pep8style.excluded(path):
         return 0
-    #warnings = flakey.checkPath(path, ignore)
-    warnings = flakey.checkPath(path)
+    warning = flakey.checkPath(path)
+    warnings = flakey.print_messages(warning, ignore=ignore)
     warnings += pep8style.input_file(path)
     if complexity > -1:
         warnings += mccabe.get_module_complexity(path, complexity)
@@ -32,7 +30,8 @@ def check_file(path, ignore=(), complexity=-1):
 
 
 def check_code(code, ignore=(), complexity=-1):
-    warnings = flakey.check(code, ignore, 'stdin')
+    warning = flakey.check(code, 'stdin')
+    warnings = flakey.print_messages(warning, ignore=ignore)
     warnings += pep8style.input_file(None, lines=code.split('\n'))
     if complexity > -1:
         warnings += mccabe.get_code_complexity(code, complexity)
@@ -75,40 +74,55 @@ def version(option, opt, value, parser):
 
 def main():
     global pep8style
+
+    # Create our own parser
     parser = optparse.OptionParser('%prog [options]', version=version)
     parser.version = '{0} (pep8: {1}, flakey: {2})'.format(
-        flake8_version, pep8.__version__, flakey_version)
+        __version__, pep8.__version__, flakey.__version__)
     parser.remove_option('--version')
-    parser.add_option('-v', '--version', action='callback',
+    # don't overlap with pep8's verbose option
+    parser.add_option('--builtins', default='', dest='builtins',
+                      help="append builtin functions to flakey's "
+                           "_MAGIC_BUILTINS")
+    parser.add_option('--ignore', default='',
+                      help='skip errors and warnings (e.g. E4,W)')
+    parser.add_option('--exit-zero', action='store_true', default=False,
+                      help='Exit with status 0 even if there are errors')
+    parser.add_option('--max-complexity', default=-1, action='store',
+                      type='int', help='McCabe complexity threshold')
+    parser.add_option('-V', '--version', action='callback',
                       callback=version,
                       help='Print the version info for flake8')
-    parser.parse_args()
+    # parse our flags
+    opts, args = parser.parse_args()
+
     pep8style = pep8.StyleGuide(parse_argv=True, config_file=True)
     options = pep8style.options
     complexity = options.max_complexity
-    builtins = set(options.builtins)
+    builtins = set(opts.builtins.split(','))
     warnings = 0
     stdin = None
 
     if builtins:
-        orig_builtins = set(checker._MAGIC_GLOBALS)
-        checker._MAGIC_GLOBALS = orig_builtins | builtins
+        orig_builtins = set(flakey.checker._MAGIC_GLOBALS)
+        flakey.checker._MAGIC_GLOBALS = orig_builtins | builtins
 
     if pep8style.paths and options.filename is not None:
         for path in _get_python_files(pep8style.paths):
             if path == '-':
                 if stdin is None:
                     stdin = read_stdin()
-                warnings += check_code(stdin, options.ignore, complexity)
+                warnings += check_code(stdin, opts.ignore, complexity)
             else:
-                warnings += check_file(path, options.ignore, complexity)
+                warnings += check_file(path, opts.ignore, complexity)
     else:
         stdin = read_stdin()
-        warnings += check_code(stdin, options.ignore, complexity)
+        warnings += check_code(stdin, opts.ignore, complexity)
 
     if options.exit_zero:
         raise SystemExit(0)
-    raise SystemExit(warnings > 0)
+
+    raise SystemExit(warnings)
 
 
 def _get_files(repo, **kwargs):

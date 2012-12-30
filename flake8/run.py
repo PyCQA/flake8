@@ -75,7 +75,8 @@ def get_parser():
         sys.exit(0)
 
     # Create our own parser
-    parser = optparse.OptionParser('%prog [options]', version=version)
+    parser = optparse.OptionParser('%prog [options] [file.py|directory]',
+                                   version=version)
     parser.version = '{0} (pep8: {1}, flakey: {2})'.format(
         __version__, pep8.__version__, flakey.__version__)
     parser.remove_option('--version')
@@ -98,9 +99,12 @@ def get_parser():
 def main():
     global pep8style
 
+    # parse out our flags so pep8 doesn't get confused
     parser = get_parser()
-    # parse our flags
-    opts, args = parser.parse_args()
+    opts, sys.argv = parser.parse_args()
+
+    # make sure pep8 gets the information it expects
+    sys.argv.insert(0, 'pep8')
 
     pep8style = pep8.StyleGuide(parse_argv=True, config_file=True)
     options = pep8style.options

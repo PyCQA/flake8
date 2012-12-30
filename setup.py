@@ -2,7 +2,7 @@ import sys
 import os
 
 ispy3 = sys.version_info[0] == 3
-iswin = os.name == 'nt' 
+iswin = os.name == 'nt'
 
 kwargs = {}
 scripts = ["flake8/flake8"]
@@ -14,9 +14,10 @@ else:
     try:
         from setuptools import setup    # NOQA
         kwargs = {
-            'entry_points':
-                {'distutils.commands': ['flake8 = flake8.run:Flake8Command'],
-                 'console_scripts': ['flake8 = flake8.run:main']},
+            'entry_points': {
+                'distutils.commands': ['flake8 = flake8.run:Flake8Command'],
+                'console_scripts': ['flake8 = flake8.run:main']
+            },
             'tests_require': ['nose'],
             'test_suite': 'nose.collector',
         }
@@ -39,7 +40,7 @@ setup(
     url="http://bitbucket.org/tarek/flake8",
     packages=["flake8", "flake8.tests"],
     scripts=scripts,
-    requires=["flakey>=2.0",  "pep8"],
+    requires=["flakey (>=2.0)",  "pep8 (>=1.4)"],
     long_description=README,
     classifiers=[
         "Environment :: Console",
@@ -48,5 +49,6 @@ setup(
         "Programming Language :: Python",
         "Topic :: Software Development",
         "Topic :: Utilities",
-        ],
-    **kwargs)
+    ],
+    **kwargs
+)

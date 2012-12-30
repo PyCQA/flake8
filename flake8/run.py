@@ -9,10 +9,10 @@ import optparse
 from subprocess import PIPE, Popen
 import select
 
-from flake8 import pep8
 from flake8 import mccabe
 from flake8.util import skip_file
 from flake8 import __version__
+import pep8
 import flakey
 
 pep8style = None
@@ -66,14 +66,13 @@ def read_stdin():
     return sys.stdin.read()
 
 
-def version(option, opt, value, parser):
-    parser.print_usage()
-    parser.print_version()
-    sys.exit(0)
+def get_parser():
+    """Create a custom OptionParser"""
 
-
-def main():
-    global pep8style
+    def version(option, opt, value, parser):
+        parser.print_usage()
+        parser.print_version()
+        sys.exit(0)
 
     # Create our own parser
     parser = optparse.OptionParser('%prog [options]', version=version)
@@ -93,6 +92,13 @@ def main():
     parser.add_option('-V', '--version', action='callback',
                       callback=version,
                       help='Print the version info for flake8')
+    return parser
+
+
+def main():
+    global pep8style
+
+    parser = get_parser()
     # parse our flags
     opts, args = parser.parse_args()
 
@@ -165,8 +171,8 @@ def _initpep8():
     global pep8style
     if pep8style is None:
         pep8style = pep8.StyleGuide(config_file=True)
-    #pep8style.options.physical_checks = pep8.find_checks('physical_line')
-    #pep8style.options.logical_checks = pep8.find_checks('logical_line')
+    pep8style.options.physical_checks = pep8.find_checks('physical_line')
+    pep8style.options.logical_checks = pep8.find_checks('logical_line')
     pep8style.options.counters = dict.fromkeys(pep8.BENCHMARK_KEYS, 0)
     pep8style.options.messages = {}
     pep8style.options.max_line_length = 79

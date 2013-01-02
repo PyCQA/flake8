@@ -2,6 +2,8 @@ from __future__ import with_statement
 import re
 import os
 
+pep8style = None
+
 
 def skip_warning(warning, ignore=[]):
     # XXX quick dirty hack, just need to keep the line in the warning
@@ -40,3 +42,18 @@ def skip_file(path):
     finally:
         f.close()
     return _NOQA.search(content) is not None
+
+
+def _initpep8():
+    # default pep8 setup
+    global pep8style
+    import pep8
+    if pep8style is None:
+        pep8style = pep8.StyleGuide(config_file=True)
+    pep8style.options.physical_checks = pep8.find_checks('physical_line')
+    pep8style.options.logical_checks = pep8.find_checks('logical_line')
+    pep8style.options.counters = dict.fromkeys(pep8.BENCHMARK_KEYS, 0)
+    pep8style.options.messages = {}
+    pep8style.options.max_line_length = 79
+    pep8style.args = []
+    return pep8style

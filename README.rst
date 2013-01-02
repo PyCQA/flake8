@@ -151,7 +151,7 @@ files listed in your ``py_modules`` and ``packages``. If any warnings
 are found, the command will exit with an error code::
 
     $ python setup.py flake8
-    
+
 
 
 Original projects
@@ -160,8 +160,9 @@ Original projects
 Flake8 is just a glue project, all the merits go to the creators of the original
 projects:
 
-- pep8: http://github.com/jcrocholl/pep8/
+- pep8: https://github.com/jcrocholl/pep8/
 - PyFlakes: http://divmod.org/trac/wiki/DivmodPyflakes
+- flakey: https://bitbucket.org/icordasc/flakey
 - McCabe: http://nedbatchelder.com/blog/200803/python_code_complexity_microtool.html
 
 Warning / Error codes
@@ -207,7 +208,7 @@ pep8:
 - W603: '<>' is deprecated, use '!='
 - W604: backticks are deprecated, use 'repr()'
 
-pyflakes:
+flakey:
 
 - W402: <module> imported but unused
 - W403: import <module> from line <n> shadowed by loop variable
@@ -227,6 +228,15 @@ McCabe:
 
 CHANGES
 =======
+
+2.0.0 - 2013-01-xx
+------------------
+
+- Fixes #13: pep8 and flakey are now external dependencies
+- Split run.py into main.py and hooks.py for better logic
+- Expose our parser for our users
+- New feature: Install git and hg hooks automagically
+- By relying on flakey, we also fixed #45 and #35
 
 1.7.0 - 2012-12-21
 ------------------

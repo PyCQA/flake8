@@ -28,7 +28,7 @@ else:
 
 from flake8 import __version__
 
-README = open('README').read()
+README = open('README.rst').read()
 
 setup(
     name="flake8",

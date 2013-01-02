@@ -190,6 +190,49 @@ def run(command):
             [line.strip() for line in p.stderr.readlines()])
 
 
+def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
+    _initpep8()
+    if ignore:
+        pep8style.options.ignore = ignore
+
+    warnings = 0
+
+    gitcmd = "git diff-index --cached --name-only HEAD"
+    if lazy:
+        gitcmd = gitcmd.replace('--cached ', '')
+
+    _, files_modified, _ = run(gitcmd)
+    for filename in files_modified:
+        ext = os.path.splitext(filename)[-1]
+        if ext != '.py':
+            continue
+        if not os.path.exists(filename):
+            continue
+        warnings += check_file(path=filename, ignore=ignore,
+                               complexity=complexity)
+
+    if strict:
+        return warnings
+
+    return 0
+
+
+def hg_hook(ui, repo, **kwargs):
+    _initpep8()
+    complexity = ui.config('flake8', 'complexity', default=-1)
+    warnings = 0
+
+    for file_ in _get_files(repo, **kwargs):
+        warnings += check_file(file_, complexity)
+
+    strict = ui.configbool('flake8', 'strict', default=True)
+
+    if strict:
+        return warnings
+
+    return 0
+
+
 try:
     from setuptools import Command
 except ImportError:

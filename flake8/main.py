@@ -3,42 +3,8 @@ import sys
 import pep8
 import flakey
 import select
-import optparse
 from flake8 import mccabe
-from flake8 import __version__
-from flake8.util import _initpep8, skip_file
-
-pep8style = None
-
-
-def get_parser():
-    """Create a custom OptionParser"""
-
-    def version(option, opt, value, parser):
-        parser.print_usage()
-        parser.print_version()
-        sys.exit(0)
-
-    # Create our own parser
-    parser = optparse.OptionParser('%prog [options] [file.py|directory]',
-                                   version=version)
-    parser.version = '{0} (pep8: {1}, flakey: {2})'.format(
-        __version__, pep8.__version__, flakey.__version__)
-    parser.remove_option('--version')
-    # don't overlap with pep8's verbose option
-    parser.add_option('--builtins', default='', dest='builtins',
-                      help="append builtin functions to flakey's "
-                           "_MAGIC_BUILTINS")
-    parser.add_option('--ignore', default='',
-                      help='skip errors and warnings (e.g. E4,W)')
-    parser.add_option('--exit-zero', action='store_true', default=False,
-                      help='Exit with status 0 even if there are errors')
-    parser.add_option('--max-complexity', default=-1, action='store',
-                      type='int', help='McCabe complexity threshold')
-    parser.add_option('-V', '--version', action='callback',
-                      callback=version,
-                      help='Print the version info for flake8')
-    return parser
+from flake8.util import _initpep8, skip_file, get_parser, pep8style
 
 
 def main():
@@ -47,6 +13,10 @@ def main():
     # parse out our flags so pep8 doesn't get confused
     parser = get_parser()
     opts, sys.argv = parser.parse_args()
+
+    if opts.install_hook:
+        from flake8.hooks import install_hook
+        install_hook()
 
     # make sure pep8 gets the information it expects
     sys.argv.insert(0, 'pep8')

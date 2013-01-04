@@ -1,6 +1,7 @@
 from __future__ import with_statement
 import re
 import os
+from io import StringIO
 
 pep8style = None
 
@@ -29,14 +30,18 @@ def skip_line(line):
 _NOQA = re.compile(r'flake8[:=]\s*noqa', re.I | re.M)
 
 
-def skip_file(path):
+def skip_file(path, source=None):
     """Returns True if this header is found in path
 
     # flake8: noqa
     """
-    if not os.path.isfile(path):
+    if os.path.isfile(path):
+        f = open(path)
+    elif source:
+        f = StringIO(source)
+    else:
         return False
-    f = open(path)
+
     try:
         content = f.read()
     finally:

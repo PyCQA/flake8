@@ -92,8 +92,8 @@ def check_file(path, ignore=(), complexity=-1):
 
 
 def check_code(code, ignore=(), complexity=-1):
-    warning = flakey.check(code, 'stdin')
-    warnings = flakey.print_messages(warning, ignore=ignore)
+    warning = flakey.check(code, '<stdin>')
+    warnings = flakey.print_messages(warning, ignore=ignore, code=code)
     warnings += pep8style.input_file(None, lines=code.split('\n'))
     if complexity > -1:
         warnings += mccabe.get_code_complexity(code, complexity)

@@ -1,6 +1,7 @@
 from __future__ import with_statement
 import re
 import os
+import sys
 from io import StringIO
 import optparse
 
@@ -19,41 +20,30 @@ def get_parser():
     from flake8 import __version__
     import flakey
     import pep8
+    parser = pep8.get_parser()
 
     def version(option, opt, value, parser):
         parser.print_usage()
         parser.print_version()
         sys.exit(0)
 
-    def help(option, opt, value, parser):
-        parser.print_help()
-        p = pep8.get_parser()
-        p.print_help()
-
-    # Create our own parser
-    parser = optparse.OptionParser('%prog [options] [file.py|directory]',
-                                   version=version, add_help_option=False)
     parser.version = '{0} (pep8: {1}, flakey: {2})'.format(
         __version__, pep8.__version__, flakey.__version__)
     parser.remove_option('--version')
-    # don't overlap with pep8's verbose option
     parser.add_option('--builtins', default='', dest='builtins',
                       help="append builtin functions to flakey's "
                            "_MAGIC_BUILTINS")
-    parser.add_option('--ignore', default='',
-                      help='skip errors and warnings (e.g. E4,W)')
     parser.add_option('--exit-zero', action='store_true', default=False,
                       help='Exit with status 0 even if there are errors')
     parser.add_option('--max-complexity', default=-1, action='store',
                       type='int', help='McCabe complexity threshold')
-    parser.add_option('-V', '--version', action='callback',
-                      callback=version,
-                      help='Print the version info for flake8')
     parser.add_option('--install-hook', default=False, action='store_true',
                       help='Install the appropriate hook for this '
                       'repository.', dest='install_hook')
-    parser.add_option('-h', '--help', action='callback', callback=help,
-                      help='Print this message and exit')
+    # don't overlap with pep8's verbose option
+    parser.add_option('-V', '--version', action='callback',
+                      callback=version,
+                      help='Print the version info for flake8')
     return parser
 
 

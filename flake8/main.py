@@ -4,30 +4,45 @@ import pep8
 import flakey
 import select
 from flake8 import mccabe
-from flake8.util import _initpep8, skip_file, get_parser, pep8style
+from flake8.util import _initpep8, skip_file, get_parser
+
+pep8style = None
 
 
 def main():
     global pep8style
-
     # parse out our flags so pep8 doesn't get confused
     parser = get_parser()
-    opts, sys.argv = parser.parse_args()
+    opts, _ = parser.parse_args()
 
     if opts.install_hook:
         from flake8.hooks import install_hook
         install_hook()
 
+    if opts.builtins:
+        s = '--builtins={0}'.format(opts.builtins)
+        sys.argv.remove(s)
+
+    if opts.exit_zero:
+        sys.argv.remove('--exit-zero')
+
+    if opts.install_hook:
+        sys.argv.remove('--install-hook')
+
+    complexity = opts.max_complexity
+    if complexity > 0:
+        sys.argv.remove('--max-complexity={0}'.format(complexity))
+
     # make sure pep8 gets the information it expects
+    sys.argv.pop(0)
     sys.argv.insert(0, 'pep8')
 
     pep8style = pep8.StyleGuide(parse_argv=True, config_file=True)
     options = pep8style.options
-    complexity = opts.max_complexity
-    builtins = set(opts.builtins.split(','))
     warnings = 0
     stdin = None
 
+    builtins = set(opts.builtins.split(','))
     if builtins:
         orig_builtins = set(flakey.checker._MAGIC_GLOBALS)
         flakey.checker._MAGIC_GLOBALS = orig_builtins | builtins

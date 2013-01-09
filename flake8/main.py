@@ -141,6 +141,7 @@ def _get_python_files(paths):
         if os.path.isdir(path):
             for dirpath, dirnames, filenames in os.walk(path):
                 if pep8style.excluded(dirpath):
+                    dirnames[:] = []
                     continue
                 for filename in filenames:
                     if not filename.endswith('.py'):

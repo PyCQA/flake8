@@ -35,8 +35,9 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
 
 def hg_hook(ui, repo, **kwargs):
     from flake8.main import check_file
-    _initpep8()
     complexity = ui.config('flake8', 'complexity', default=-1)
+    config = ui.config('flake8', 'config', default=True)
+    _initpep8(config_file=config)
     warnings = 0
 
     for file_ in _get_files(repo, **kwargs):

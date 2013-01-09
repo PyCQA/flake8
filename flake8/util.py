@@ -49,8 +49,9 @@ def get_parser():
 
 def skip_warning(warning, ignore=[]):
     # XXX quick dirty hack, just need to keep the line in the warning
-    if not hasattr(warning, 'message'):
+    if not hasattr(warning, 'message') or ignore is None:
         # McCabe's warnings cannot be skipped afaik, and they're all strings.
+        # And we'll get a TypeError otherwise
         return False
     if warning.message.split()[0] in ignore:
         return True
@@ -90,16 +91,17 @@ def skip_file(path, source=None):
     return _NOQA.search(content) is not None
 
 
-def _initpep8():
+def _initpep8(config_file=True):
     # default pep8 setup
     global pep8style
     import pep8
     if pep8style is None:
-        pep8style = pep8.StyleGuide(config_file=True)
+        pep8style = pep8.StyleGuide(config_file=config_file)
     pep8style.options.physical_checks = pep8.find_checks('physical_line')
     pep8style.options.logical_checks = pep8.find_checks('logical_line')
     pep8style.options.counters = dict.fromkeys(pep8.BENCHMARK_KEYS, 0)
     pep8style.options.messages = {}
-    pep8style.options.max_line_length = 79
+    if not pep8style.options.max_line_length:
+        pep8style.options.max_line_length = 79
     pep8style.args = []
     return pep8style

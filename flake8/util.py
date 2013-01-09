@@ -49,8 +49,9 @@ def get_parser():
 
 def skip_warning(warning, ignore=[]):
     # XXX quick dirty hack, just need to keep the line in the warning
-    if not hasattr(warning, 'message'):
+    if not hasattr(warning, 'message') or ignore is None:
         # McCabe's warnings cannot be skipped afaik, and they're all strings.
+        # And we'll get a TypeError otherwise
         return False
     if warning.message.split()[0] in ignore:
         return True

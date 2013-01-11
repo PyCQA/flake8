@@ -15,8 +15,8 @@ else:
         from setuptools import setup    # NOQA
         kwargs = {
             'entry_points': {
-                'distutils.commands': ['flake8 = flake8.run:Flake8Command'],
-                'console_scripts': ['flake8 = flake8.run:main']
+                'distutils.commands': ['flake8 = flake8.main:Flake8Command'],
+                'console_scripts': ['flake8 = flake8.main:main']
             },
             'tests_require': ['nose'],
             'test_suite': 'nose.collector',
@@ -42,7 +42,7 @@ setup(
     url="http://bitbucket.org/tarek/flake8",
     packages=["flake8", "flake8.tests"],
     scripts=scripts,
-    requires=["flakey (>=2.0)",  "pep8 (>=1.4)"],
+    install_requires=["flakey (==2.0)",  "pep8 (>=1.4)"],
     long_description=README,
     classifiers=[
         "Environment :: Console",

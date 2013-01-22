@@ -7,13 +7,14 @@ from flake8 import mccabe
 from flake8.util import _initpep8, skip_file, get_parser
 
 pep8style = None
+pep8.PROJECT_CONFIG = ('.flake8', '.pep8', 'tox.ini', 'setup.cfg')
 
 
 def main():
     global pep8style
     # parse out our flags so pep8 doesn't get confused
     parser = get_parser()
-    opts, _ = parser.parse_args()
+    opts, _ = pep8.process_options(parse_argv=True, parser=parser)
 
     if opts.install_hook:
         from flake8.hooks import install_hook

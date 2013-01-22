@@ -210,17 +210,17 @@ pep8:
 
 flakey:
 
-- W402: <module> imported but unused
-- W403: import <module> from line <n> shadowed by loop variable
-- W404: 'from <module> import ``*``' used; unable to detect undefined names
-- W405: future import(s) <name> after other statements
-- W801: redefinition of unused <name> from line <n>
-- W802: undefined name <name>
-- W803: undefined name <name> in __all__
-- W804: local variable <name> (defined in enclosing scope on line <n>) referenced before assignment
-- W805: duplicate argument <name> in function definition
-- W806: redefinition of function <name> from line <n>
-- W806: local variable <name> is assigned to but never used
+- YW402: <module> imported but unused
+- YW403: import <module> from line <n> shadowed by loop variable
+- YW404: 'from <module> import ``*``' used; unable to detect undefined names
+- YW405: future import(s) <name> after other statements
+- YW801: redefinition of unused <name> from line <n>
+- YW802: undefined name <name>
+- YW803: undefined name <name> in __all__
+- YW804: local variable <name> (defined in enclosing scope on line <n>) referenced before assignment
+- YW805: duplicate argument <name> in function definition
+- YW806: redefinition of function <name> from line <n>
+- YW806: local variable <name> is assigned to but never used
 
 McCabe:
 
@@ -237,6 +237,8 @@ CHANGES
 - Expose our parser for our users
 - New feature: Install git and hg hooks automagically
 - By relying on flakey, we also fixed #45 and #35
+- Changed the way flakey errors are printed. Both the old and new versions 
+  will be ignored when specified at the command-line though.
 
 1.7.0 - 2012-12-21
 ------------------

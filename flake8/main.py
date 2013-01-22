@@ -65,10 +65,16 @@ def main():
     raise SystemExit(warnings)
 
 
+def _set_alt(warning):
+    for m in warning.messages:
+        m.error_code, m.alt_error_code = m.alt_error_code, m.error_code
+
+
 def check_file(path, ignore=(), complexity=-1):
     if pep8style.excluded(path):
         return 0
-    warning = flakey.checkPath(path)
+    warning = flakey.check_path(path)
+    _set_alt(warning)
     warnings = flakey.print_messages(warning, ignore=ignore)
     warnings += pep8style.input_file(path)
     if complexity > -1:
@@ -78,6 +84,7 @@ def check_file(path, ignore=(), complexity=-1):
 
 def check_code(code, ignore=(), complexity=-1):
     warning = flakey.check(code, '<stdin>')
+    _set_alt(warning)
     warnings = flakey.print_messages(warning, ignore=ignore, code=code)
     warnings += pep8style.input_file('-', lines=code.split('\n'))
     if complexity > -1:

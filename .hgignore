@@ -6,3 +6,6 @@ bin
 flake8.egg-info
 man
 \.Python
+nose*
+.*\.swp
+.*.orig

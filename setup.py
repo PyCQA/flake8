@@ -2,7 +2,7 @@ import sys
 import os
 
 ispy3 = sys.version_info[0] == 3
-iswin = os.name == 'nt' 
+iswin = os.name == 'nt'
 
 kwargs = {}
 scripts = ["flake8/flake8"]
@@ -14,9 +14,10 @@ else:
     try:
         from setuptools import setup    # NOQA
         kwargs = {
-            'entry_points':
-                {'distutils.commands': ['flake8 = flake8.run:Flake8Command'],
-                 'console_scripts': ['flake8 = flake8.run:main']},
+            'entry_points': {
+                'distutils.commands': ['flake8 = flake8.main:Flake8Command'],
+                'console_scripts': ['flake8 = flake8.main:main']
+            },
             'tests_require': ['nose'],
             'test_suite': 'nose.collector',
         }
@@ -27,7 +28,7 @@ else:
 
 from flake8 import __version__
 
-README = open('README').read()
+README = open('README.rst').read()
 
 setup(
     name="flake8",
@@ -36,9 +37,12 @@ setup(
     description="code checking using pep8 and pyflakes",
     author="Tarek Ziade",
     author_email="tarek@ziade.org",
+    maintainer="Ian Cordasco",
+    maintainer_email="graffatcolmingov@gmail.com",
     url="http://bitbucket.org/tarek/flake8",
     packages=["flake8", "flake8.tests"],
     scripts=scripts,
+    install_requires=["flakey (==2.0)",  "pep8 (==1.4.1)"],
     long_description=README,
     classifiers=[
         "Environment :: Console",
@@ -47,5 +51,6 @@ setup(
         "Programming Language :: Python",
         "Topic :: Software Development",
         "Topic :: Utilities",
-        ],
-    **kwargs)
+    ],
+    **kwargs
+)

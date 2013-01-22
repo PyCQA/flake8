@@ -8,3 +8,4 @@ man
 \.Python
 nose*
 .*\.swp
+.*.orig

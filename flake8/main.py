@@ -14,7 +14,8 @@ def main():
     global pep8style
     # parse out our flags so pep8 doesn't get confused
     parser = get_parser()
-    opts, _ = pep8.process_options(parse_argv=True, parser=parser)
+    # This is required so we can parse out our added options
+    opts, args = pep8.process_options(parse_argv=True, parser=parser)
 
     if opts.install_hook:
         from flake8.hooks import install_hook
@@ -38,8 +39,8 @@ def main():
     sys.argv.pop(0)
     sys.argv.insert(0, 'pep8')
 
+    # We then have to re-parse argv to make sure pep8 is properly initialized
     pep8style = pep8.StyleGuide(parse_argv=True, config_file=True)
-    options = pep8style.options
     warnings = 0
     stdin = None
 
@@ -48,7 +49,7 @@ def main():
         orig_builtins = set(flakey.checker._MAGIC_GLOBALS)
         flakey.checker._MAGIC_GLOBALS = orig_builtins | builtins
 
-    if pep8style.paths and options.filename is not None:
+    if pep8style.paths and pep8style.options.filename is not None:
         for path in _get_python_files(pep8style.paths):
             if path == '-':
                 if stdin is None:

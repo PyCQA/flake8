@@ -4,10 +4,10 @@ import pep8
 import flakey
 import select
 from flake8 import mccabe
-from flake8.util import _initpep8, skip_file, get_parser
+from flake8.util import (_initpep8, skip_file, get_parser, read_config,
+                         merge_opts)
 
 pep8style = None
-pep8.PROJECT_CONFIG = ('.flake8', '.pep8', 'tox.ini', 'setup.cfg')
 
 
 def main():
@@ -39,8 +39,11 @@ def main():
     sys.argv.pop(0)
     sys.argv.insert(0, 'pep8')
 
+    read_config(opts, parser)
+
     # We then have to re-parse argv to make sure pep8 is properly initialized
     pep8style = pep8.StyleGuide(parse_argv=True, config_file=True)
+    merge_opts(pep8style.options, opts)
     warnings = 0
     stdin = None
 

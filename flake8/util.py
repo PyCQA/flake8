@@ -4,6 +4,7 @@ import os
 import sys
 from io import StringIO
 import optparse
+import pep8
 
 try:
     # Python 2
@@ -19,7 +20,6 @@ def get_parser():
     """Create a custom OptionParser"""
     from flake8 import __version__
     import flakey
-    import pep8
     parser = pep8.get_parser()
 
     def version(option, opt, value, parser):
@@ -45,6 +45,62 @@ def get_parser():
                       callback=version,
                       help='Print the version info for flake8')
     return parser
+
+
+def read_config(opts, opt_parser):
+    configs = ('.flake8', '.pep8', 'tox.ini', 'setup.cfg')
+    parser = ConfigParser()
+    files_found = parser.read(configs)
+    if not (files_found and parser.has_section('flake8')):
+        return
+
+    if opts.verbose:
+        print("Found local configuration file(s): {0}".format(
+            ', '.join(files_found)))
+
+    option_list = dict([(o.dest, o.type or o.action)
+                        for o in opt_parser.option_list])
+
+    for o in parser.options('flake8'):
+        v = parser.get('flake8', o)
+
+        if opts.verbose > 1:
+            print(" {0} = {1}".format(o, v))
+
+        normed = o.replace('-', '_')
+        if normed not in option_list:
+            print("Unknown option: {0}".format(o))
+
+        opt_type = option_list[normed]
+
+        if opt_type in ('int', 'count'):
+            v = int(v)
+        elif opt_type in ('store_true', 'store_false'):
+            v = True if v == 'True' else False
+
+        setattr(opts, normed, v)
+
+    for attr in ('filename', 'exclude', 'ignore', 'select'):
+        val = getattr(opts, attr)
+        if hasattr(val, 'split'):
+            setattr(opts, attr, val.split(','))
+
+
+def merge_opts(pep8_opts, our_opts):
+    pep8_parser = pep8.get_parser()
+
+    for o in pep8_parser.option_list:
+        if not (o.dest and getattr(our_opts, o.dest)):
+            continue
+
+        new_val = getattr(our_opts, o.dest)
+        old_val = getattr(pep8_opts, o.dest)
+        if isinstance(old_val, list):
+            old_val.extend(new_val)
+            continue
+        elif isinstance(old_val, tuple):
+            new_val = tuple(new_val)
+        setattr(pep8_opts, o.dest, new_val)
 
 
 def skip_warning(warning, ignore=[]):

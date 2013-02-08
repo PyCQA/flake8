@@ -42,7 +42,7 @@ setup(
     url="http://bitbucket.org/tarek/flake8",
     packages=["flake8", "flake8.tests"],
     scripts=scripts,
-    install_requires=["flakey (==2.0)",  "pep8 (==1.4.1)"],
+    install_requires=["pyflakes==0.6.1",  "pep8"],
     long_description=README,
     classifiers=[
         "Environment :: Console",

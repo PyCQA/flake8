@@ -5,6 +5,8 @@ import sys
 from io import StringIO
 import optparse
 import pep8
+import pyflakes
+from pyflakes import reporter, messages
 
 try:
     # Python 2
@@ -19,7 +21,6 @@ pep8style = None
 def get_parser():
     """Create a custom OptionParser"""
     from flake8 import __version__
-    import flakey
     parser = pep8.get_parser()
 
     def version(option, opt, value, parser):
@@ -27,11 +28,11 @@ def get_parser():
         parser.print_version()
         sys.exit(0)
 
-    parser.version = '{0} (pep8: {1}, flakey: {2})'.format(
-        __version__, pep8.__version__, flakey.__version__)
+    parser.version = '{0} (pep8: {1}, pyflakes: {2})'.format(
+        __version__, pep8.__version__, pyflakes.__version__)
     parser.remove_option('--version')
     parser.add_option('--builtins', default='', dest='builtins',
-                      help="append builtin functions to flakey's "
+                      help="append builtin functions to pyflakes' "
                            "_MAGIC_BUILTINS")
     parser.add_option('--exit-zero', action='store_true', default=False,
                       help='Exit with status 0 even if there are errors')
@@ -48,7 +49,7 @@ def get_parser():
 
 
 def read_config(opts, opt_parser):
-    configs = ('.flake8', '.pep8', 'tox.ini', 'setup.cfg')
+    configs = ('.flake8', '.pep8', 'tox.ini', 'setup.cfg',)
     parser = ConfigParser()
     files_found = parser.read(configs)
     if not (files_found and parser.has_section('flake8')):
@@ -161,3 +162,37 @@ def _initpep8(config_file=True):
         pep8style.options.max_line_length = 79
     pep8style.args = []
     return pep8style
+
+
+error_mapping = {
+    'W402': messages.UnusedImport,
+    'W403': messages.ImportShadowedByLoopVar,
+    'W404': messages.ImportStarUsed,
+    'W405': messages.LateFutureImport,
+    'W801': (messages.RedefinedWhileUnused,
+             messages.RedefinedInListComp,),
+    'W802': messages.UndefinedName,
+    'W803': messages.UndefinedExport,
+    'W804': (messages.UndefinedLocal,
+             messages.UnusedVariable,),
+    'W805': messages.DuplicateArgument,
+    'W806': messages.Redefined,
+}
+
+
+class Flake8Reporter(reporter.Reporter):
+    """Our own instance of a Reporter so that we can silence some messages."""
+    #class_mapping = dict((k, c) for (c, v) in error_mapping.items() for k in 
+    #v)
+    def __init__(self, ignore=None):
+        super(Flake8Reporter, self).__init__(sys.stdout, sys.stderr)
+        self.ignore = ignore or []
+
+    def flake(self, message):
+        classes = [error_mapping[i] for i in self.ignore if i in error_mapping]
+
+        if (any(isinstance(message, c) for c in classes) or
+                skip_warning(message)):
+            return
+
+        super(Flake8Reporter, self).flake(message)

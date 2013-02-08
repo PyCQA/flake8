@@ -1,11 +1,12 @@
 import os
 import sys
 import pep8
-import flakey
+import pyflakes.api
+import pyflakes.checker
 import select
 from flake8 import mccabe
 from flake8.util import (_initpep8, skip_file, get_parser, read_config,
-                         merge_opts)
+                         merge_opts, Flake8Reporter)
 
 pep8style = None
 
@@ -49,8 +50,11 @@ def main():
 
     builtins = set(opts.builtins.split(','))
     if builtins:
-        orig_builtins = set(flakey.checker._MAGIC_GLOBALS)
-        flakey.checker._MAGIC_GLOBALS = orig_builtins | builtins
+        orig_builtins = set(pyflakes.checker._MAGIC_GLOBALS)
+        pyflakes.checker._MAGIC_GLOBALS = orig_builtins | builtins
+
+    # This is needed so we can ignore some items
+    pyflakes_reporter = Flake8Reporter(opts.ignore)
 
     if pep8style.paths and pep8style.options.filename is not None:
         for path in _get_python_files(pep8style.paths):
@@ -59,10 +63,12 @@ def main():
                     stdin = read_stdin()
                 warnings += check_code(stdin, opts.ignore, complexity)
             else:
-                warnings += check_file(path, opts.ignore, complexity)
+                warnings += check_file(path, opts.ignore, complexity,
+                                       pyflakes_reporter)
     else:
         stdin = read_stdin()
-        warnings += check_code(stdin, opts.ignore, complexity)
+        warnings += check_code(stdin, opts.ignore, complexity,
+                               pyflakes_reporter)
 
     if opts.exit_zero:
         raise SystemExit(0)
@@ -70,27 +76,18 @@ def main():
     raise SystemExit(warnings)
 
 
-def _set_alt(warning):
-    for m in warning.messages:
-        m.error_code, m.alt_error_code = m.alt_error_code, m.error_code
-
-
-def check_file(path, ignore=(), complexity=-1):
+def check_file(path, ignore=(), complexity=-1, reporter=None):
     if pep8style.excluded(path):
         return 0
-    warning = flakey.check_path(path)
-    _set_alt(warning)
-    warnings = flakey.print_messages(warning, ignore=ignore)
+    warnings = pyflakes.api.checkPath(path, reporter)
     warnings += pep8style.input_file(path)
     if complexity > -1:
         warnings += mccabe.get_module_complexity(path, complexity)
     return warnings
 
 
-def check_code(code, ignore=(), complexity=-1):
-    warning = flakey.check(code, '<stdin>')
-    _set_alt(warning)
-    warnings = flakey.print_messages(warning, ignore=ignore, code=code)
+def check_code(code, ignore=(), complexity=-1, reporter=None):
+    warnings = pyflakes.api.check(code, '<stdin>', reporter)
     warnings += pep8style.input_file('-', lines=code.split('\n'))
     if complexity > -1:
         warnings += mccabe.get_code_complexity(code, complexity)

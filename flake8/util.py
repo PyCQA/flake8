@@ -123,7 +123,13 @@ def skip_warning(warning, ignore=[]):
 
 
 def skip_line(line):
-    return line.strip().lower().endswith('# noqa')
+    def _noqa(line):
+        return line.strip().lower().endswith('# noqa')
+    skip = _noqa(line)
+    if not skip:
+        i = line.rfind(' #')
+        skip = _noqa(line[:i]) if i > 0 else False
+    return skip
 
 
 _NOQA = re.compile(r'flake8[:=]\s*noqa', re.I | re.M)

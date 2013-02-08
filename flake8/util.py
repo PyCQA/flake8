@@ -49,7 +49,9 @@ def get_parser():
 
 
 def read_config(opts, opt_parser):
-    configs = ('.flake8', '.pep8', 'tox.ini', 'setup.cfg',)
+    configs = ('.flake8', '.pep8', 'tox.ini', 'setup.cfg',
+               os.path.expanduser(r'~\.flake8'),
+               os.path.join(os.path.expanduser('~/.config'), 'flake8')
     parser = ConfigParser()
     files_found = parser.read(configs)
     if not (files_found and parser.has_section('flake8')):

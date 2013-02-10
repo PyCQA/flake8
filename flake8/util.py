@@ -5,6 +5,8 @@ import sys
 from io import StringIO
 import optparse
 import pep8
+import pyflakes
+from pyflakes import reporter, messages
 
 try:
     # Python 2
@@ -19,7 +21,6 @@ pep8style = None
 def get_parser():
     """Create a custom OptionParser"""
     from flake8 import __version__
-    import flakey
     parser = pep8.get_parser()
 
     def version(option, opt, value, parser):
@@ -27,11 +28,11 @@ def get_parser():
         parser.print_version()
         sys.exit(0)
 
-    parser.version = '{0} (pep8: {1}, flakey: {2})'.format(
-        __version__, pep8.__version__, flakey.__version__)
+    parser.version = '{0} (pep8: {1}, pyflakes: {2})'.format(
+        __version__, pep8.__version__, pyflakes.__version__)
     parser.remove_option('--version')
     parser.add_option('--builtins', default='', dest='builtins',
-                      help="append builtin functions to flakey's "
+                      help="append builtin functions to pyflakes' "
                            "_MAGIC_BUILTINS")
     parser.add_option('--exit-zero', action='store_true', default=False,
                       help='Exit with status 0 even if there are errors')
@@ -48,7 +49,9 @@ def get_parser():
 
 
 def read_config(opts, opt_parser):
-    configs = ('.flake8', '.pep8', 'tox.ini', 'setup.cfg')
+    configs = ('.flake8', '.pep8', 'tox.ini', 'setup.cfg',
+               os.path.expanduser(r'~\.flake8'),
+               os.path.join(os.path.expanduser('~/.config'), 'flake8'))
     parser = ConfigParser()
     files_found = parser.read(configs)
     if not (files_found and parser.has_section('flake8')):
@@ -86,23 +89,6 @@ def read_config(opts, opt_parser):
             setattr(opts, attr, val.split(','))
 
 
-def merge_opts(pep8_opts, our_opts):
-    pep8_parser = pep8.get_parser()
-
-    for o in pep8_parser.option_list:
-        if not (o.dest and getattr(our_opts, o.dest)):
-            continue
-
-        new_val = getattr(our_opts, o.dest)
-        old_val = getattr(pep8_opts, o.dest)
-        if isinstance(old_val, list):
-            old_val.extend(new_val)
-            continue
-        elif isinstance(old_val, tuple):
-            new_val = tuple(new_val)
-        setattr(pep8_opts, o.dest, new_val)
-
-
 def skip_warning(warning, ignore=[]):
     # XXX quick dirty hack, just need to keep the line in the warning
     if not hasattr(warning, 'message') or ignore is None:
@@ -122,7 +108,13 @@ def skip_warning(warning, ignore=[]):
 
 
 def skip_line(line):
-    return line.strip().lower().endswith('# noqa')
+    def _noqa(line):
+        return line.strip().lower().endswith('# noqa')
+    skip = _noqa(line)
+    if not skip:
+        i = line.rfind(' #')
+        skip = _noqa(line[:i]) if i > 0 else False
+    return skip
 
 
 _NOQA = re.compile(r'flake8[:=]\s*noqa', re.I | re.M)
@@ -161,3 +153,47 @@ def _initpep8(config_file=True):
         pep8style.options.max_line_length = 79
     pep8style.args = []
     return pep8style
+
+
+error_mapping = {
+    'W402': (messages.UnusedImport,),
+    'W403': (messages.ImportShadowedByLoopVar,),
+    'W404': (messages.ImportStarUsed,),
+    'W405': (messages.LateFutureImport,),
+    'W801': (messages.RedefinedWhileUnused,
+             messages.RedefinedInListComp,),
+    'W802': (messages.UndefinedName,),
+    'W803': (messages.UndefinedExport,),
+    'W804': (messages.UndefinedLocal,
+             messages.UnusedVariable,),
+    'W805': (messages.DuplicateArgument,),
+    'W806': (messages.Redefined,),
+}
+
+
+class Flake8Reporter(reporter.Reporter):
+    """Our own instance of a Reporter so that we can silence some messages."""
+    class_mapping = dict((k, c) for (c, v) in error_mapping.items() for k in v)
+    def __init__(self, ignore=None):
+        super(Flake8Reporter, self).__init__(sys.stdout, sys.stderr)
+        self.ignore = ignore or []
+
+    def flake(self, message):
+        classes = [error_mapping[i] for i in self.ignore if i in error_mapping]
+
+        if (any(isinstance(message, c) for c in classes) or
+                skip_warning(message)):
+            return
+        m = self.to_str(message)
+        i = m.rfind(':') + 1
+        message = '{0} {1}{2}'.format(
+            m[:i], self.class_mapping[message.__class__], m[i:]
+        )
+
+        super(Flake8Reporter, self).flake(message)
+
+    def to_str(self, message):
+        try:
+            return unicode(message)
+        except NameError:
+            return str(message)

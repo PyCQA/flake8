@@ -7,9 +7,17 @@ iswin = os.name == 'nt'
 kwargs = {}
 scripts = ["flake8/flake8"]
 if ispy3:
-    from distutils.core import setup    # NOQA
-    if iswin:
-        scripts.append("scripts/flake8.cmd")
+    try:
+        from setuptools import setup    # NOQA
+        kwargs = {
+            'entry_points': {
+                'console_scripts': ['flake8 = flake8.main:main']
+            },
+        }
+    except ImportError:
+        from distutils.core import setup    # NOQA
+        if iswin:
+            scripts.append("scripts/flake8.cmd")
 else:
     try:
         from setuptools import setup    # NOQA

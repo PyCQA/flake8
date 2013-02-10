@@ -5,10 +5,21 @@ import pyflakes.api
 import pyflakes.checker
 import select
 from flake8 import mccabe
-from flake8.util import (_initpep8, skip_file, get_parser, read_config,
-                         Flake8Reporter)
+from flake8.util import _initpep8, skip_file, get_parser, Flake8Reporter
 
 pep8style = None
+
+if sys.platform.startswith('win'):
+    pep8.DEFAULT_CONFIG = os.path.expanduser(r'~\.flake8')
+else:
+    pep8.DEFAULT_CONFIG = os.path.join(
+        os.getenv('XDG_CONFIG_HOME') or os.path.expanduser('~/.config'),
+        'flake8'
+    )
+
+PROJECT_CONFIG = ['.flake8']
+PROJECT_CONFIG.extend(pep8.PROJECT_CONFIG)
+pep8.PROJECT_CONFIG = tuple(PROJECT_CONFIG)
 
 
 def main():
@@ -24,8 +35,6 @@ def main():
     if opts.install_hook:
         from flake8.hooks import install_hook
         install_hook()
-
-    read_config(opts, parser)
 
     warnings = 0
     stdin = None

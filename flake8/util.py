@@ -45,48 +45,8 @@ def get_parser():
     parser.add_option('-V', '--version', action='callback',
                       callback=version,
                       help='Print the version info for flake8')
+    parser.prog = os.path.basename(sys.argv[0])
     return parser
-
-
-def read_config(opts, opt_parser):
-    configs = ('.flake8', '.pep8', 'tox.ini', 'setup.cfg',
-               os.path.expanduser(r'~\.flake8'),
-               os.path.join(os.path.expanduser('~/.config'), 'flake8'))
-    parser = ConfigParser()
-    files_found = parser.read(configs)
-    if not (files_found and parser.has_section('flake8')):
-        return
-
-    if opts.verbose:
-        print("Found local configuration file(s): {0}".format(
-            ', '.join(files_found)))
-
-    option_list = dict([(o.dest, o.type or o.action)
-                        for o in opt_parser.option_list])
-
-    for o in parser.options('flake8'):
-        v = parser.get('flake8', o)
-
-        if opts.verbose > 1:
-            print(" {0} = {1}".format(o, v))
-
-        normed = o.replace('-', '_')
-        if normed not in option_list:
-            print("Unknown option: {0}".format(o))
-
-        opt_type = option_list[normed]
-
-        if opt_type in ('int', 'count'):
-            v = int(v)
-        elif opt_type in ('store_true', 'store_false'):
-            v = True if v == 'True' else False
-
-        setattr(opts, normed, v)
-
-    for attr in ('filename', 'exclude', 'ignore', 'select'):
-        val = getattr(opts, attr)
-        if hasattr(val, 'split'):
-            setattr(opts, attr, val.split(','))
 
 
 def skip_warning(warning, ignore=[]):

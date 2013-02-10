@@ -1,5 +1,5 @@
 from unittest import TestCase
-from flakey import check, print_messages
+from pyflakes.api import check
 
 
 code = """
@@ -50,15 +50,12 @@ class TestFlake(TestCase):
     def test_exception(self):
         for c in (code, code2, code3):
             warnings = check(code, '(stdin)')
-            warnings = print_messages(warnings)
             self.assertEqual(warnings, 0)
 
     def test_from_import_exception_in_scope(self):
         warnings = check(code_from_import_exception, '(stdin)')
-        warnings = print_messages(warnings)
         self.assertEqual(warnings, 0)
 
     def test_import_exception_in_scope(self):
         warnings = check(code_import_exception, '(stdin)')
-        warnings = print_messages(warnings)
         self.assertEqual(warnings, 0)

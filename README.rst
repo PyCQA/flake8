@@ -127,7 +127,7 @@ In order to use Flake8 inside a buildout, edit your buildout.cfg and add this::
     eggs = flake8
            ${buildout:eggs}
     entry-points =
-        flake8=flake8.run:main
+        flake8=flake8.main:main
 
 
 setuptools integration

@@ -4,8 +4,6 @@ import select
 
 from flake8.engine import get_style_guide
 
-pep8style = None
-
 if sys.platform.startswith('win'):
     DEFAULT_CONFIG = os.path.expanduser(r'~\.flake8')
 else:

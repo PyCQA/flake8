@@ -5,7 +5,7 @@ import pyflakes.api
 import pyflakes.checker
 import select
 from flake8 import mccabe
-from flake8.util import _initpep8, skip_file, get_parser, Flake8Reporter
+from flake8.util import skip_file, get_parser, Flake8Reporter
 
 pep8style = None
 
@@ -123,7 +123,8 @@ else:
                     yield "%s.py" % filename
 
         def run(self):
-            _initpep8()
+            # XXX the setuptools command is currently broken
+            # _initpep8()
 
             # _get_python_files can produce the same file several
             # times, if one of its paths is a parent of another. Keep

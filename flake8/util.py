@@ -91,22 +91,6 @@ def skip_file(path, source=None):
     return _NOQA.search(content) is not None
 
 
-def _initpep8(config_file=True):
-    # default pep8 setup
-    global pep8style
-    import pep8
-    if pep8style is None:
-        pep8style = pep8.StyleGuide(config_file=config_file)
-    pep8style.options.physical_checks = pep8.find_checks('physical_line')
-    pep8style.options.logical_checks = pep8.find_checks('logical_line')
-    pep8style.options.counters = dict.fromkeys(pep8.BENCHMARK_KEYS, 0)
-    pep8style.options.messages = {}
-    if not pep8style.options.max_line_length:
-        pep8style.options.max_line_length = 79
-    pep8style.args = []
-    return pep8style
-
-
 error_mapping = {
     'W402': (messages.UnusedImport,),
     'W403': (messages.ImportShadowedByLoopVar,),

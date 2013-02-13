@@ -7,6 +7,13 @@ import pep8
 import pyflakes
 from pyflakes import reporter, messages
 
+try:
+    # Python 2
+    from ConfigParser import ConfigParser
+except ImportError:
+    # Python 3
+    from configparser import ConfigParser
+
 pep8style = None
 
 

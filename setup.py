@@ -36,6 +36,7 @@ setup(
         'console_scripts': ['flake8 = flake8.main:main'],
         'flake8.extension': [
             'F = flake8._pyflakes:FlakesChecker',
+            'C90 = flake8.mccabe:McCabeChecker',
         ],
     },
     tests_require=['nose'],

@@ -1,52 +1,52 @@
+from __future__ import with_statement
 import os
 import sys
-from flake8.util import (_initpep8, pep8style, skip_file, get_parser,
-                         ConfigParser)
 from subprocess import Popen, PIPE
+try:
+    from configparser import ConfigParser
+except ImportError:   # Python 2
+    from ConfigParser import ConfigParser
+
+from flake8.engine import get_parser, get_style_guide
+from flake8.main import DEFAULT_CONFIG
+from flake8.util import skip_file
 
 
 def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
-    from flake8.main import check_file
-    _initpep8()
-    if ignore:
-        pep8style.options.ignore = ignore
-
-    warnings = 0
-
     gitcmd = "git diff-index --cached --name-only HEAD"
     if lazy:
         gitcmd = gitcmd.replace('--cached ', '')
 
     _, files_modified, _ = run(gitcmd)
-    for filename in files_modified:
-        ext = os.path.splitext(filename)[-1]
-        if ext != '.py':
-            continue
-        if not os.path.exists(filename):
-            continue
-        warnings += check_file(path=filename, ignore=ignore,
-                               complexity=complexity)
+
+    flake8_style = get_style_guide(
+        config_file=DEFAULT_CONFIG,
+        ignore=ignore, max_complexity=complexity)
+    report = flake8_style.check_files(files_modified)
 
     if strict:
-        return warnings
+        return report.get_file_results()
 
     return 0
 
 
 def hg_hook(ui, repo, **kwargs):
-    from flake8.main import check_file
     complexity = ui.config('flake8', 'complexity', default=-1)
     config = ui.config('flake8', 'config', default=True)
-    _initpep8(config_file=config)
-    warnings = 0
+    if config is True:
+        config = DEFAULT_CONFIG
 
-    for file_ in _get_files(repo, **kwargs):
-        warnings += check_file(file_, complexity)
+    flake8_style = get_style_guide(
+        config_file=config,
+        max_complexity=complexity)
+
+    paths = _get_files(repo, **kwargs)
+    report = flake8_style.check_files(paths)
 
     strict = ui.configbool('flake8', 'strict', default=True)
 
     if strict:
-        return warnings
+        return report.get_file_results()
 
     return 0
 

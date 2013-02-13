@@ -1,33 +1,8 @@
-import sys
-import os
-
-ispy3 = sys.version_info[0] == 3
-iswin = os.name == 'nt'
-
-kwargs = {}
-scripts = ["flake8/flake8"]
-if ispy3:
-    from distutils.core import setup    # NOQA
-    if iswin:
-        scripts.append("scripts/flake8.cmd")
-else:
-    try:
-        from setuptools import setup    # NOQA
-        kwargs = {
-            'entry_points': {
-                'distutils.commands': ['flake8 = flake8.main:Flake8Command'],
-                'console_scripts': ['flake8 = flake8.main:main']
-            },
-            'tests_require': ['nose'],
-            'test_suite': 'nose.collector',
-        }
-    except ImportError:
-        from distutils.core import setup   # NOQA
-        if iswin:
-            scripts.append("scripts/flake8.cmd")
+from setuptools import setup
 
 from flake8 import __version__
 
+scripts = ["flake8/flake8"]
 README = open('README.rst').read()
 
 setup(
@@ -42,7 +17,11 @@ setup(
     url="http://bitbucket.org/tarek/flake8",
     packages=["flake8", "flake8.tests"],
     scripts=scripts,
-    install_requires=["pyflakes==0.6.1",  "pep8==1.4.2"],
+    install_requires=[
+        "setuptools",
+        "pyflakes==0.6.1",
+        "pep8==1.4.2",
+    ],
     long_description=README,
     classifiers=[
         "Environment :: Console",
@@ -52,5 +31,10 @@ setup(
         "Topic :: Software Development",
         "Topic :: Utilities",
     ],
-    **kwargs
+    entry_points={
+        'distutils.commands': ['flake8 = flake8.main:Flake8Command'],
+        'console_scripts': ['flake8 = flake8.main:main']
+    },
+    tests_require=['nose'],
+    test_suite='nose.collector',
 )

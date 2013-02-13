@@ -3,17 +3,9 @@ import re
 import os
 import sys
 from io import StringIO
-import optparse
 import pep8
 import pyflakes
 from pyflakes import reporter, messages
-
-try:
-    # Python 2
-    from ConfigParser import ConfigParser
-except ImportError:
-    # Python 3
-    from configparser import ConfigParser
 
 pep8style = None
 
@@ -134,6 +126,7 @@ error_mapping = {
 class Flake8Reporter(reporter.Reporter):
     """Our own instance of a Reporter so that we can silence some messages."""
     class_mapping = dict((k, c) for (c, v) in error_mapping.items() for k in v)
+
     def __init__(self, ignore=None):
         super(Flake8Reporter, self).__init__(sys.stdout, sys.stderr)
         self.ignore = ignore or []

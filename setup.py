@@ -33,7 +33,10 @@ setup(
     ],
     entry_points={
         'distutils.commands': ['flake8 = flake8.main:Flake8Command'],
-        'console_scripts': ['flake8 = flake8.main:main']
+        'console_scripts': ['flake8 = flake8.main:main'],
+        'flake8.extension': [
+            'F = flake8._pyflakes:FlakesChecker',
+        ],
     },
     tests_require=['nose'],
     test_suite='nose.collector',

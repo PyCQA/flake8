@@ -91,4 +91,4 @@ else:
             flake8_style = get_style_guide(config_file=DEFAULT_CONFIG)
             paths = self.distribution_files()
             report = flake8_style.check_files(paths)
-            raise SystemExit(report.get_file_results() > 0)
+            raise SystemExit(report.total_errors > 0)

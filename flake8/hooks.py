@@ -25,7 +25,7 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
     report = flake8_style.check_files(files_modified)
 
     if strict:
-        return report.get_file_results()
+        return report.total_errors
 
     return 0
 
@@ -46,7 +46,7 @@ def hg_hook(ui, repo, **kwargs):
     strict = ui.configbool('flake8', 'strict', default=True)
 
     if strict:
-        return report.get_file_results()
+        return report.total_errors
 
     return 0
 

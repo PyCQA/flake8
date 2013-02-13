@@ -137,12 +137,14 @@ class Flake8Reporter(reporter.Reporter):
     def __init__(self, ignore=None):
         super(Flake8Reporter, self).__init__(sys.stdout, sys.stderr)
         self.ignore = ignore or []
+        self.ignored_warnings = 0
 
     def flake(self, message):
         classes = [error_mapping[i] for i in self.ignore if i in error_mapping]
 
         if (any(isinstance(message, c) for c in classes) or
                 skip_warning(message)):
+            self.ignored_warnings += 1
             return
         m = self.to_str(message)
         i = m.rfind(':') + 1

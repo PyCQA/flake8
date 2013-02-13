@@ -65,13 +65,14 @@ def main():
     if opts.exit_zero:
         raise SystemExit(0)
 
-    raise SystemExit(warnings)
+    raise SystemExit(warnings > 0)
 
 
 def check_file(path, ignore=(), complexity=-1, reporter=None):
     if pep8style.excluded(path):
         return 0
     warnings = pyflakes.api.checkPath(path, reporter)
+    warnings -= reporter.ignored_warnings
     warnings += pep8style.input_file(path)
     if complexity > -1:
         warnings += mccabe.get_module_complexity(path, complexity)
@@ -80,6 +81,7 @@ def check_file(path, ignore=(), complexity=-1, reporter=None):
 
 def check_code(code, ignore=(), complexity=-1, reporter=None):
     warnings = pyflakes.api.check(code, '<stdin>', reporter)
+    warnings -= reporter.ignored_warnings
     warnings += pep8style.input_file('-', lines=code.split('\n'))
     if complexity > -1:
         warnings += mccabe.get_code_complexity(code, complexity)

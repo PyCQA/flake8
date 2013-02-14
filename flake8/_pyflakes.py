@@ -22,12 +22,12 @@ def patch_pyflakes():
 
     for name, obj in vars(pyflakes.messages).items():
         if name[0].isupper() and obj.message:
-            obj.flint_msg = '%s %s' % (codes.get(name, 'F999'), obj.message)
+            obj.flake8_msg = '%s %s' % (codes.get(name, 'F999'), obj.message)
 patch_pyflakes()
 
 
 class FlakesChecker(pyflakes.checker.Checker):
-    """Subclass the Pyflakes checker to conform with the flint API."""
+    """Subclass the Pyflakes checker to conform with the flake8 API."""
     name = 'pyflakes'
     version = pyflakes.__version__
 
@@ -44,4 +44,4 @@ class FlakesChecker(pyflakes.checker.Checker):
 
     def run(self):
         for m in self.messages:
-            yield m.lineno, 0, (m.flint_msg % m.message_args), m.__class__
+            yield m.lineno, 0, (m.flake8_msg % m.message_args), m.__class__

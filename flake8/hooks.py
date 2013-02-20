@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import with_statement
 import os
 import sys
@@ -20,8 +21,7 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
     _, files_modified, _ = run(gitcmd)
 
     flake8_style = get_style_guide(
-        config_file=DEFAULT_CONFIG,
-        ignore=ignore, max_complexity=complexity)
+        config_file=DEFAULT_CONFIG, ignore=ignore, max_complexity=complexity)
     report = flake8_style.check_files(files_modified)
 
     if strict:
@@ -32,18 +32,16 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
 
 def hg_hook(ui, repo, **kwargs):
     complexity = ui.config('flake8', 'complexity', default=-1)
+    strict = ui.configbool('flake8', 'strict', default=True)
     config = ui.config('flake8', 'config', default=True)
     if config is True:
         config = DEFAULT_CONFIG
 
-    flake8_style = get_style_guide(
-        config_file=config,
-        max_complexity=complexity)
-
     paths = _get_files(repo, **kwargs)
-    report = flake8_style.check_files(paths)
 
-    strict = ui.configbool('flake8', 'strict', default=True)
+    flake8_style = get_style_guide(
+        config_file=config, max_complexity=complexity)
+    report = flake8_style.check_files(paths)
 
     if strict:
         return report.total_errors
@@ -53,9 +51,9 @@ def hg_hook(ui, repo, **kwargs):
 
 def run(command):
     p = Popen(command.split(), stdout=PIPE, stderr=PIPE)
-    p.wait()
-    return (p.returncode, [line.strip() for line in p.stdout.readlines()],
-            [line.strip() for line in p.stderr.readlines()])
+    (stdout, stderr) = p.communicate()
+    return (p.returncode, [line.strip() for line in stdout.splitlines()],
+            [line.strip() for line in stderr.splitlines()])
 
 
 def _get_files(repo, **kwargs):
@@ -66,11 +64,8 @@ def _get_files(repo, **kwargs):
             if file_ in seen or not os.path.exists(file_):
                 continue
             seen.add(file_)
-            if not file_.endswith('.py'):
-                continue
-            if skip_file(file_):
-                continue
-            yield file_
+            if file_.endswith('.py') and not skip_file(file_):
+                yield file_
 
 
 def find_vcs():

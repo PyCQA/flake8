@@ -2,7 +2,6 @@ from setuptools import setup
 
 from flake8 import __version__
 
-scripts = ["flake8/flake8"]
 README = open('README.rst').read()
 
 setup(
@@ -17,7 +16,6 @@ setup(
     maintainer_email="graffatcolmingov@gmail.com",
     url="http://bitbucket.org/tarek/flake8",
     packages=["flake8", "flake8.tests"],
-    scripts=scripts,
     install_requires=[
         "setuptools",
         "pyflakes==0.6.1",

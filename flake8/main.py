@@ -2,6 +2,8 @@
 import os
 import sys
 
+import setuptools
+
 from flake8.engine import get_style_guide
 
 if sys.platform.startswith('win'):
@@ -53,32 +55,27 @@ def check_code(code, ignore=(), complexity=-1, reporter=None):
     return flake8_style.input_file('-', lines=code.split('\n'))
 
 
-try:
-    from setuptools import Command
-except ImportError:
-    Flake8Command = None
-else:
-    class Flake8Command(Command):
-        description = "Run flake8 on modules registered in setuptools"
-        user_options = []
+class Flake8Command(setuptools.Command):
+    description = "Run flake8 on modules registered in setuptools"
+    user_options = []
 
-        def initialize_options(self):
-            pass
+    def initialize_options(self):
+        pass
 
-        def finalize_options(self):
-            pass
+    def finalize_options(self):
+        pass
 
-        def distribution_files(self):
-            if self.distribution.packages:
-                for package in self.distribution.packages:
-                    yield package.replace(".", os.path.sep)
+    def distribution_files(self):
+        if self.distribution.packages:
+            for package in self.distribution.packages:
+                yield package.replace(".", os.path.sep)
 
-            if self.distribution.py_modules:
-                for filename in self.distribution.py_modules:
-                    yield "%s.py" % filename
+        if self.distribution.py_modules:
+            for filename in self.distribution.py_modules:
+                yield "%s.py" % filename
 
-        def run(self):
-            flake8_style = get_style_guide(config_file=DEFAULT_CONFIG)
-            paths = self.distribution_files()
-            report = flake8_style.check_files(paths)
-            raise SystemExit(report.total_errors > 0)
+    def run(self):
+        flake8_style = get_style_guide(config_file=DEFAULT_CONFIG)
+        paths = self.distribution_files()
+        report = flake8_style.check_files(paths)
+        raise SystemExit(report.total_errors > 0)

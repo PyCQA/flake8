@@ -1,15 +1,24 @@
+# -*- coding: utf-8 -*-
+from __future__ import with_statement
 from setuptools import setup
 
 from flake8 import __version__
 
-README = open('README.rst').read()
+
+def get_long_description():
+    descr = []
+    for fname in ('README.rst', 'CHANGES.rst'):
+        with open(fname) as f:
+            descr.append(f.read())
+    return '\n\n'.join(descr)
+
 
 setup(
     name="flake8",
     license="MIT",
     version=__version__,
     description="the modular source code checker: pep8, pyflakes and co",
-    long_description=README,
+    long_description=get_long_description(),
     author="Tarek Ziade",
     author_email="tarek@ziade.org",
     maintainer="Ian Cordasco",

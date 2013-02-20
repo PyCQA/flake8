@@ -1,6 +1,6 @@
+# -*- coding: utf-8 -*-
 import os
 import sys
-import select
 
 from flake8.engine import get_style_guide
 
@@ -51,16 +51,6 @@ def check_code(code, ignore=(), complexity=-1, reporter=None):
         config_file=DEFAULT_CONFIG,
         ignore=ignore, max_complexity=complexity, reporter=reporter)
     return flake8_style.input_file('-', lines=code.split('\n'))
-
-
-def read_stdin():
-    # wait for 1 second on the stdin fd
-    reads, __, __ = select.select([sys.stdin], [], [], 1.)
-    if reads == []:
-        print('input not specified')
-        raise SystemExit(1)
-
-    return sys.stdin.read()
 
 
 try:

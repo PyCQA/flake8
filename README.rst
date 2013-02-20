@@ -177,6 +177,8 @@ pep8:
 - E111: indentation is not a multiple of four
 - E112: expected an indented block
 - E113: unexpected indentation
+- E127: continuation line over-indented for visual indent
+- E128: continuation line under-indented for visual indent
 - E201: whitespace after char
 - E202: whitespace before char
 - E203: whitespace before char

@@ -34,13 +34,13 @@ setup(
         "setuptools",
         "pyflakes >= 0.6.1",
         "pep8 >= 1.4.2",
+        "mccabe >= 0.2a0",
     ],
     entry_points={
         'distutils.commands': ['flake8 = flake8.main:Flake8Command'],
         'console_scripts': ['flake8 = flake8.main:main'],
         'flake8.extension': [
             'F = flake8._pyflakes:FlakesChecker',
-            'C90 = flake8.mccabe:McCabeChecker',
         ],
     },
     classifiers=[

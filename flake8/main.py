@@ -41,18 +41,16 @@ def main():
             raise SystemExit(1)
 
 
-def check_file(path, ignore=(), complexity=-1, reporter=None):
+def check_file(path, ignore=(), complexity=-1):
     flake8_style = get_style_guide(
-        config_file=DEFAULT_CONFIG,
-        ignore=ignore, max_complexity=complexity, reporter=reporter)
+        config_file=DEFAULT_CONFIG, ignore=ignore, max_complexity=complexity)
     return flake8_style.input_file(path)
 
 
-def check_code(code, ignore=(), complexity=-1, reporter=None):
+def check_code(code, ignore=(), complexity=-1):
     flake8_style = get_style_guide(
-        config_file=DEFAULT_CONFIG,
-        ignore=ignore, max_complexity=complexity, reporter=reporter)
-    return flake8_style.input_file('-', lines=code.split('\n'))
+        config_file=DEFAULT_CONFIG, ignore=ignore, max_complexity=complexity)
+    return flake8_style.input_file('-', lines=code.splitlines())
 
 
 class Flake8Command(setuptools.Command):

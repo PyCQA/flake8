@@ -8,7 +8,7 @@ setup(
     name="flake8",
     license="MIT",
     version=__version__,
-    description="code checking using pep8 and pyflakes",
+    description="the modular source code checker: pep8, pyflakes and co",
     long_description=README,
     author="Tarek Ziade",
     author_email="tarek@ziade.org",

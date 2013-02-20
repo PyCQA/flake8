@@ -2,7 +2,12 @@
 from __future__ import with_statement
 from setuptools import setup
 
-from flake8 import __version__
+
+def get_version(fname='flake8/__init__.py'):
+    with open(fname) as f:
+        for line in f:
+            if line.startswith('__version__'):
+                return eval(line.split('=')[-1])
 
 
 def get_long_description():
@@ -16,7 +21,7 @@ def get_long_description():
 setup(
     name="flake8",
     license="MIT",
-    version=__version__,
+    version=get_version(),
     description="the modular source code checker: pep8, pyflakes and co",
     long_description=get_long_description(),
     author="Tarek Ziade",

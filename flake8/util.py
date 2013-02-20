@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import with_statement
-import os.path
-import re
 
-__all__ = ['ast', 'iter_child_nodes', 'OrderedSet', 'skip_file']
+__all__ = ['ast', 'iter_child_nodes', 'OrderedSet']
 
 try:
     import ast
@@ -40,19 +38,3 @@ class OrderedSet(list):
     def add(self, value):
         if value not in self:
             self.append(value)
-
-_NOQA = re.compile(r'flake8[:=]\s*noqa', re.I | re.M)
-
-
-def skip_file(path, source=None):
-    """Returns True if this header is found in path
-
-    # flake8: noqa
-    """
-    if os.path.isfile(path):
-        with open(path) as f:
-            source = f.read()
-    elif not source:
-        return False
-
-    return _NOQA.search(source) is not None

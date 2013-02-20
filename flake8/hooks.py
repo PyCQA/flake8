@@ -10,7 +10,6 @@ except ImportError:   # Python 2
 
 from flake8.engine import get_parser, get_style_guide
 from flake8.main import DEFAULT_CONFIG
-from flake8.util import skip_file
 
 
 def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
@@ -64,7 +63,7 @@ def _get_files(repo, **kwargs):
             if file_ in seen or not os.path.exists(file_):
                 continue
             seen.add(file_)
-            if file_.endswith('.py') and not skip_file(file_):
+            if file_.endswith('.py'):
                 yield file_
 
 

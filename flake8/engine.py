@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
+import re
+
 import pep8
 
 from flake8 import __version__
 from flake8.util import OrderedSet
+
+_flake8_noqa = re.compile(r'flake8[:=]\s*noqa', re.I).search
 
 
 def _register_extensions():
@@ -46,10 +50,26 @@ def get_parser():
     return parser, options_hooks
 
 
+class StyleGuide(pep8.StyleGuide):
+    # Backward compatibility pep8 <= 1.4.2
+    checker_class = pep8.Checker
+
+    def input_file(self, filename, lines=None, expected=None, line_offset=0):
+        """Run all checks on a Python source file."""
+        if self.options.verbose:
+            print('checking %s' % filename)
+        fchecker = self.checker_class(
+            filename, lines=lines, options=self.options)
+        # Any "# flake8: noqa" line?
+        if any(_flake8_noqa(line) for line in fchecker.lines):
+            return 0
+        return fchecker.check_all(expected=expected, line_offset=line_offset)
+
+
 def get_style_guide(**kwargs):
     """Parse the options and configure the checker."""
     kwargs['parser'], options_hooks = get_parser()
-    styleguide = pep8.StyleGuide(**kwargs)
+    styleguide = StyleGuide(**kwargs)
     options = styleguide.options
     for options_hook in options_hooks:
         options_hook(options)

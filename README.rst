@@ -202,7 +202,7 @@ A list of the known prefixes is published below:
 - ``C9**``: McCabe complexity plugin `mccabe
   <https://github.com/flintwork/mccabe>`_
 - ``N8**``: Naming Conventions plugin `pep8-naming
-  <https://github.com/flintwork/pep8-naming>`_ (planned)
+  <https://github.com/flintwork/pep8-naming>`_
 
 
 The original PyFlakes does not provide error codes.  Flake8 patches the

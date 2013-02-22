@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-2.0.0 - 2013-01-xx
+2.0.0 - 2013-02-xx
 ------------------
 
 - Fixes #13: pep8 and pyflakes are now external dependencies
@@ -9,6 +9,7 @@ CHANGES
 - Expose our parser for our users
 - New feature: Install git and hg hooks automagically
 - By relying on pyflakes (0.6.1), we also fixed #45 and #35
+
 
 1.7.0 - 2012-12-21
 ------------------
@@ -19,6 +20,7 @@ CHANGES
 - Incorporate @phd's builtins pull request
 - Fix the git hook
 - Update pep8.py to the latest version
+
 
 1.6.2 - 2012-11-25
 ------------------
@@ -34,6 +36,7 @@ CHANGES
 - fixed an assumption about warnings/error messages that caused an exception 
   to be thrown when McCabe is used
 
+
 1.6 - 2012-11-16
 ----------------
 
@@ -48,7 +51,6 @@ CHANGES
 - ``check_file`` can now be used without any special prior setup (#21)
 - unpacking exceptions will no longer cause an exception (#20)
 - fixed crash on non-existant file (#38)
-
 
 
 1.5 - 2012-10-13
@@ -98,6 +100,7 @@ CHANGES
 - allow three argument form of raise
 - now uses setuptools if available, for 'develop' command
 
+
 1.0 - 2011-11-29
 ----------------
 
@@ -110,6 +113,7 @@ CHANGES
 
 - update pep8 version to 0.6.1
 - mccabe check: gracefully handle compile failure
+
 
 0.8 - 2011-02-27
 ----------------

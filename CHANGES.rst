@@ -14,8 +14,8 @@ CHANGES
 1.7.0 - 2012-12-21
 ------------------
 
-- Fixes part of #35: Exception for no WITHITEM being an attribute of Checker 
-  for python 3.3
+- Fixes part of #35: Exception for no WITHITEM being an attribute of Checker
+  for Python 3.3
 - Support stdin
 - Incorporate @phd's builtins pull request
 - Fix the git hook
@@ -31,26 +31,26 @@ CHANGES
 1.6.1 - 2012-11-24
 ------------------
 
-- fixed the mercurial hook, a change from a previous patch was not properly 
+- fixed the mercurial hook, a change from a previous patch was not properly
   applied
-- fixed an assumption about warnings/error messages that caused an exception 
+- fixed an assumption about warnings/error messages that caused an exception
   to be thrown when McCabe is used
 
 
 1.6 - 2012-11-16
 ----------------
 
-- changed the signatures of the ``check_file`` function in flake8/run.py, 
+- changed the signatures of the ``check_file`` function in flake8/run.py,
   ``skip_warning`` in flake8/util.py and the ``check``, ``checkPath``
   functions in flake8/pyflakes.py.
 - fix ``--exclude`` and ``--ignore`` command flags (#14, #19)
-- fix the git hook that wasn't catching files not already added to the index 
+- fix the git hook that wasn't catching files not already added to the index
   (#29)
-- pre-emptively includes the addition to pep8 to ignore certain lines. Add ``# 
-  nopep8`` to the end of a line to ignore it. (#37)
+- pre-emptively includes the addition to pep8 to ignore certain lines.
+  Add ``# nopep8`` to the end of a line to ignore it. (#37)
 - ``check_file`` can now be used without any special prior setup (#21)
 - unpacking exceptions will no longer cause an exception (#20)
-- fixed crash on non-existant file (#38)
+- fixed crash on non-existent file (#38)
 
 
 1.5 - 2012-10-13
@@ -87,7 +87,7 @@ CHANGES
 ----------------
 
 - added a git hook
-- now python 3 compatible 
+- now Python 3 compatible
 - mccabe and pyflakes have warning codes like pep8 now
 
 
@@ -125,9 +125,9 @@ CHANGES
 0.7 - 2010-02-18
 ----------------
 
-- Fix pep8 intialization when run through Hg
-- Make pep8 short options work when run throug the command line
-- skip duplicates when controlling files via Hg
+- Fix pep8 initialization when run through Hg
+- Make pep8 short options work when run through the command line
+- Skip duplicates when controlling files via Hg
 
 
 0.6 - 2010-02-15

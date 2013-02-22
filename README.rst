@@ -8,22 +8,20 @@ Flake8 is a wrapper around these tools:
 - pep8
 - Ned's McCabe script
 
-Flake8 runs all tools by launching the single 'flake8' script, but ignores pep8
-and PyFlakes extended options and just uses defaults. It displays the warnings
-in a per-file, merged output.
+Flake8 runs all the tools by launching the single 'flake8' script.
+It displays the warnings in a per-file, merged output.
 
 It also adds a few features:
 
-- files that contains with this header are skipped::
+- files that contain this line are skipped::
 
     # flake8: noqa
 
-- lines that contain a "# NOQA" comment at the end will not issue pyflakes 
-  warnings.
-- lines that contain a "# NOPEP8" comment at the end will not issue pep8 
-  warnings.
-- a Mercurial hook.
+- lines that contain a "# noqa" comment at the end will not issue warnings.
+- a Git and a Mercurial hook.
 - a McCabe complexity checker.
+- extendable through ``flake8.extension`` entry points.
+
 
 QuickStart
 ==========
@@ -31,37 +29,57 @@ QuickStart
 To run flake8 just invoke it against any directory or Python module::
 
     $ flake8 coolproject
-    coolproject/mod.py:1027: local variable 'errors' is assigned to but never used
-    coolproject/mod.py:97: 'shutil' imported but unused
-    coolproject/mod.py:729: redefinition of function 'readlines' from line 723
-    coolproject/mod.py:1028: local variable 'errors' is assigned to but never used
+    coolproject/mod.py:97:1: F401 'shutil' imported but unused
     coolproject/mod.py:625:17: E225 missing whitespace around operato
+    coolproject/mod.py:729:1: F811 redefinition of function 'readlines' from line 723
+    coolproject/mod.py:1028:1: F841 local variable 'errors' is assigned to but never used
 
-The output of PyFlakes *and* pep8 is merged and returned.
+The outputs of PyFlakes *and* pep8 (and the optional plugins) are merged
+and returned.
 
-flake8 offers an extra option: --max-complexity, which will emit a warning if the
-McCabe complexityu of a function is higher that the value. By default it's
+flake8 offers an extra option: --max-complexity, which will emit a warning if
+the McCabe complexity of a function is higher than the value.  By default it's
 deactivated::
 
-    $ bin/flake8 --max-complexity 12 flake8
-    coolproject/mod.py:97: 'shutil' imported but unused
-    coolproject/mod.py:729: redefinition of function 'readlines' from line 723
-    coolproject/mod.py:1028: local variable 'errors' is assigned to but never used
+    $ flake8 --max-complexity 12 coolproject
+    coolproject/mod.py:97:1: F401 'shutil' imported but unused
     coolproject/mod.py:625:17: E225 missing whitespace around operator
-    coolproject/mod.py:452:1: 'missing_whitespace_around_operator' is too complex (18)
-    coolproject/mod.py:939:1: 'Checker.check_all' is too complex (12)
-    coolproject/mod.py:1204:1: 'selftest' is too complex (14)
+    coolproject/mod.py:729:1: F811 redefinition of unused 'readlines' from line 723
+    coolproject/mod.py:939:1: C901 'Checker.check_all' is too complex (12)
+    coolproject/mod.py:1028:1: F841 local variable 'errors' is assigned to but never used
+    coolproject/mod.py:1204:1: C901 'selftest' is too complex (14)
 
-This feature is quite useful to detect over-complex code. According to McCabe, anything
-that goes beyond 10 is too complex.
+This feature is quite useful to detect over-complex code.  According to McCabe,
+anything that goes beyond 10 is too complex.
 See https://en.wikipedia.org/wiki/Cyclomatic_complexity.
+
+
+Configuration
+-------------
+
+The behaviour may be configured at two levels.
+
+The user settings are read from the ``~/.config/flake8`` file.
+Example::
+
+  [flake8]
+  ignore = E226,E302,E41
+  max-line-length = 160
+
+At the project level, a ``tox.ini`` file or a ``setup.cfg`` file is read
+if present.  Only the first file is considered.  If this file does not
+have a ``[flake8]`` section, no project specific configuration is loaded.
+
+If the ``ignore`` option is not in the configuration and not in the arguments,
+only the error codes ``E226`` and ``E241/E242`` are ignored
+(see codes in the table below).
 
 
 Mercurial hook
 ==============
 
-To use the Mercurial hook on any *commit* or *qrefresh*, change your .hg/rc file
-like this::
+To use the Mercurial hook on any *commit* or *qrefresh*, change your .hg/hgrc
+file like this::
 
     [hooks]
     commit = python:flake8.run.hg_hook
@@ -73,11 +91,12 @@ like this::
 
 
 If *strict* option is set to **1**, any warning will block the commit. When
-*strict* is set to **0**, warnings are just displayed in the standard output.
+*strict* is set to **0**, warnings are just printed to the standard output.
 
 *complexity* defines the maximum McCabe complexity allowed before a warning
-is emited. If you don't specify it it's just ignored. If specified, must
-be a positive value. 12 is usually a good value.
+is emitted.  If you don't specify it, it's just ignored.  If specified, it must
+be a positive value.  12 is usually a good value.
+
 
 Git hook
 ========
@@ -97,18 +116,18 @@ To use the Git hook on any *commit*, add a **pre-commit** file in the
 
 
 If *strict* option is set to **True**, any warning will block the commit. When
-*strict* is set to **False** or omited, warnings are just displayed in the
+*strict* is set to **False** or omitted, warnings are just printed to the
 standard output.
 
 *complexity* defines the maximum McCabe complexity allowed before a warning
-is emited. If you don't specify it or set it to **-1**, it's just ignored.
-If specified, it must be a positive value. 12 is usually a good value.
+is emitted.  If you don't specify it or set it to **-1**, it's just ignored.
+If specified, it must be a positive value.  12 is usually a good value.
 
-*lazy* when set to ``True`` will also take into account files not added to the 
+*lazy* when set to ``True`` will also take into account files not added to the
 index.
 
 Also, make sure the file is executable and adapt the shebang line so it
-point to your python interpreter.
+points to your Python interpreter.
 
 
 Buildout integration
@@ -134,7 +153,7 @@ setuptools integration
 ======================
 
 If setuptools is available, Flake8 provides a command that checks the
-Python files declared by your project. To use it, add flake8 to your
+Python files declared by your project.  To use it, add flake8 to your
 setup_requires::
 
     setup(
@@ -147,8 +166,8 @@ setup_requires::
     )
 
 Running ``python setup.py flake8`` on the command line will check the
-files listed in your ``py_modules`` and ``packages``. If any warnings
-are found, the command will exit with an error code::
+files listed in your ``py_modules`` and ``packages``.  If any warning
+is found, the command will exit with an error code::
 
     $ python setup.py flake8
 
@@ -160,205 +179,65 @@ Original projects
 Flake8 is just a glue project, all the merits go to the creators of the original
 projects:
 
-- pep8: https://github.com/jcrocholl/pep8/
-- PyFlakes: http://divmod.org/trac/wiki/DivmodPyflakes
-- flakey: https://bitbucket.org/icordasc/flakey
+- pep8: https://github.com/jcrocholl/pep8
+- PyFlakes: https://launchpad.net/pyflakes
 - McCabe: http://nedbatchelder.com/blog/200803/python_code_complexity_microtool.html
+
 
 Warning / Error codes
 =====================
 
-Below are lists of all warning and error codes flake8 will generate, broken
-out by component.
+The convention of Flake8 is to assign a code to each error or warning, like
+the ``pep8`` tool.  These codes are used to configure the list of errors
+which are selected or ignored.
 
-pep8:
+Each code consists of an upper case ASCII letter followed by three digits.
+The recommendation is to use a different prefix for each plugin. A list of the
+known prefixes is published below:
 
-- E101: indentation contains mixed spaces and tabs
-- E111: indentation is not a multiple of four
-- E112: expected an indented block
-- E113: unexpected indentation
-- E127: continuation line over-indented for visual indent
-- E128: continuation line under-indented for visual indent
-- E201: whitespace after char
-- E202: whitespace before char
-- E203: whitespace before char
-- E211: whitespace before text
-- E223: tab / multiple spaces before operator
-- E224: tab / multiple spaces after operator
-- E225: missing whitespace around operator
-- E225: missing whitespace around operator
-- E231: missing whitespace after char
-- E241: multiple spaces after separator
-- E242: tab after separator
-- E251: no spaces around keyword / parameter equals
-- E262: inline comment should start with '# '
-- E301: expected 1 blank line, found 0
-- E302: expected 2 blank lines, found <n>
-- E303: too many blank lines (<n>)
-- E304: blank lines found after function decorator
-- E401: multiple imports on one line
-- E501: line too long (<n> characters)
-- E701: multiple statements on one line (colon)
-- E702: multiple statements on one line (semicolon)
-- W191: indentation contains tabs
-- W291: trailing whitespace
-- W292: no newline at end of file
-- W293: blank line contains whitespace
-- W391: blank line at end of file
-- W601: .has_key() is deprecated, use 'in'
-- W602: deprecated form of raising exception
-- W603: '<>' is deprecated, use '!='
-- W604: backticks are deprecated, use 'repr()'
-
-flakey:
-
-- W402: <module> imported but unused
-- W403: import <module> from line <n> shadowed by loop variable
-- W404: 'from <module> import ``*``' used; unable to detect undefined names
-- W405: future import(s) <name> after other statements
-- W801: redefinition of unused <name> from line <n>
-- W802: undefined name <name>
-- W803: undefined name <name> in __all__
-- W804: local variable <name> (defined in enclosing scope on line <n>) referenced before assignment
-- W805: duplicate argument <name> in function definition
-- W806: redefinition of function <name> from line <n>
-- W806: local variable <name> is assigned to but never used
-
-McCabe:
-
-- W901: '<function_name>' is too complex ('<complexity_level>')
-
-CHANGES
-=======
-
-2.0.0 - 2013-01-xx
-------------------
-
-- Fixes #13: pep8 and pyflakes are now external dependencies
-- Split run.py into main.py and hooks.py for better logic
-- Expose our parser for our users
-- New feature: Install git and hg hooks automagically
-- By relying on pyflakes (0.6.1), we also fixed #45 and #35
-
-1.7.0 - 2012-12-21
-------------------
-
-- Fixes part of #35: Exception for no WITHITEM being an attribute of Checker 
-  for python 3.3
-- Support stdin
-- Incorporate @phd's builtins pull request
-- Fix the git hook
-- Update pep8.py to the latest version
-
-1.6.2 - 2012-11-25
-------------------
-
-- fixed the NameError: global name 'message' is not defined (#46)
+- ``E***``/``W***``: `pep8 errors and warnings
+  <http://pep8.readthedocs.org/en/latest/intro.html#error-codes>`_
+- ``F***``: PyFlakes codes (see below)
+- ``C9**``: McCabe complexity plugin `mccabe
+  <https://github.com/flintwork/mccabe>`_
+- ``N8**``: Naming Conventions plugin `pep8-naming
+  <https://github.com/flintwork/pep8-naming>`_
 
 
-1.6.1 - 2012-11-24
-------------------
+The original PyFlakes does not provide error codes.  Flake8 patches the
+PyFlakes messages to add the following codes:
 
-- fixed the mercurial hook, a change from a previous patch was not properly 
-  applied
-- fixed an assumption about warnings/error messages that caused an exception 
-  to be thrown when McCabe is used
-
-1.6 - 2012-11-16
-----------------
-
-- changed the signatures of the ``check_file`` function in flake8/run.py, 
-  ``skip_warning`` in flake8/util.py and the ``check``, ``checkPath``
-  functions in flake8/pyflakes.py.
-- fix ``--exclude`` and ``--ignore`` command flags (#14, #19)
-- fix the git hook that wasn't catching files not already added to the index 
-  (#29)
-- pre-emptively includes the addition to pep8 to ignore certain lines. Add ``# 
-  nopep8`` to the end of a line to ignore it. (#37)
-- ``check_file`` can now be used without any special prior setup (#21)
-- unpacking exceptions will no longer cause an exception (#20)
-- fixed crash on non-existant file (#38)
-
-
-
-1.5 - 2012-10-13
-----------------
-
-- fixed the stdin
-- make sure mccabe catches the syntax errors as warnings
-- pep8 upgrade
-- added max_line_length default value
-- added Flake8Command and entry points is setuptools is around
-- using the setuptools console wrapper when available
++------+--------------------------------------------------------------------+
+| code | sample message                                                     |
++======+====================================================================+
+| F401 | ``module`` imported but unused                                     |
++------+--------------------------------------------------------------------+
+| F402 | import ``module`` from line ``N`` shadowed by loop variable        |
++------+--------------------------------------------------------------------+
+| F403 | 'from ``module`` import \*' used; unable to detect undefined names |
++------+--------------------------------------------------------------------+
+| F404 | future import(s) ``name`` after other statements                   |
++------+--------------------------------------------------------------------+
++------+--------------------------------------------------------------------+
+| F811 | redefinition of unused ``name`` from line ``N``                    |
++------+--------------------------------------------------------------------+
+| F812 | list comprehension redefines ``name`` from line ``N``              |
++------+--------------------------------------------------------------------+
+| F821 | undefined name ``name``                                            |
++------+--------------------------------------------------------------------+
+| F822 | undefined name ``name`` in __all__                                 |
++------+--------------------------------------------------------------------+
+| F823 | local variable ``name`` ... referenced before assignment           |
++------+--------------------------------------------------------------------+
+| F831 | duplicate argument ``name`` in function definition                 |
++------+--------------------------------------------------------------------+
+| F841 | local variable ``name`` is assigned to but never used              |
++------+--------------------------------------------------------------------+
 
 
-1.4 - 2012-07-12
-----------------
+Links
+-----
 
-- git_hook: Only check staged changes for compliance
-- use pep8 1.2
+* `pep8 documentation <http://pep8.readthedocs.org/>`_
 
-
-1.3.1 - 2012-05-19
-------------------
-
-- fixed support for Python 2.5
-
-
-1.3 - 2012-03-12
-----------------
-
-- fixed false W402 warning on exception blocks.
-
-
-1.2 - 2012-02-12
-----------------
-
-- added a git hook
-- now python 3 compatible 
-- mccabe and pyflakes have warning codes like pep8 now
-
-
-1.1 - 2012-02-14
-----------------
-
-- fixed the value returned by --version
-- allow the flake8: header to be more generic
-- fixed the "hg hook raises 'physical lines'" bug
-- allow three argument form of raise
-- now uses setuptools if available, for 'develop' command
-
-1.0 - 2011-11-29
-----------------
-
-- Deactivates by default the complexity checker
-- Introduces the complexity option in the HG hook and the command line.
-
-
-0.9 - 2011-11-09
-----------------
-
-- update pep8 version to 0.6.1
-- mccabe check: gracefully handle compile failure
-
-0.8 - 2011-02-27
-----------------
-
-- fixed hg hook
-- discard unexisting files on hook check
-
-
-0.7 - 2010-02-18
-----------------
-
-- Fix pep8 intialization when run through Hg
-- Make pep8 short options work when run throug the command line
-- skip duplicates when controlling files via Hg
-
-
-0.6 - 2010-02-15
-----------------
-
-- Fix the McCabe metric on some loops
-
-
+* `flake8 documentation <https://bitbucket.org/tarek/flake8/src/tip/README.rst>`_

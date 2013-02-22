@@ -1,8 +1,30 @@
+# -*- coding: utf-8 -*-
+import sys
+
 from unittest import TestCase
 from pyflakes.api import check
 
 
-code = """
+class FlakesTestReporter(object):
+    def __init__(self):
+        self.messages = []
+        self.flakes = self.messages.append
+
+    def unexpectedError(self, filename, msg):
+        self.flakes('[unexpectedError] %s: %s' % (filename, msg))
+
+    def syntaxError(self, filename, msg, lineno, offset, text):
+        self.flakes('[syntaxError] %s:%d: %s' % (filename, lineno, msg))
+
+
+code0 = """
+try:
+    pass
+except ValueError, err:
+    print(err)
+"""
+
+code1 = """
 try:
     pass
 except ValueError as err:
@@ -48,14 +70,25 @@ except foo.SomeException:
 class TestFlake(TestCase):
 
     def test_exception(self):
-        for c in (code, code2, code3):
-            warnings = check(code, '(stdin)')
+        codes = [code1, code2, code3]
+        if sys.version_info < (2, 6):
+            codes[0] = code0
+        elif sys.version_info < (3,):
+            codes.insert(0, code0)
+        for code in codes:
+            reporter = FlakesTestReporter()
+            warnings = check(code, '(stdin)', reporter)
+            self.assertFalse(reporter.messages)
             self.assertEqual(warnings, 0)
 
     def test_from_import_exception_in_scope(self):
-        warnings = check(code_from_import_exception, '(stdin)')
+        reporter = FlakesTestReporter()
+        warnings = check(code_from_import_exception, '(stdin)', reporter)
+        self.assertFalse(reporter.messages)
         self.assertEqual(warnings, 0)
 
     def test_import_exception_in_scope(self):
-        warnings = check(code_import_exception, '(stdin)')
+        reporter = FlakesTestReporter()
+        warnings = check(code_import_exception, '(stdin)', reporter)
+        self.assertFalse(reporter.messages)
         self.assertEqual(warnings, 0)

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import with_statement
 
 __all__ = ['ast', 'iter_child_nodes', 'OrderedSet']
 

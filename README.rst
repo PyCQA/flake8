@@ -20,7 +20,7 @@ It also adds a few features:
 - lines that contain a "# noqa" comment at the end will not issue warnings.
 - a Git and a Mercurial hook.
 - a McCabe complexity checker.
-- extendable through ``flake8.extension`` entry points
+- extendable through ``flake8.extension`` entry points.
 
 
 QuickStart
@@ -29,27 +29,25 @@ QuickStart
 To run flake8 just invoke it against any directory or Python module::
 
     $ flake8 coolproject
-    coolproject/mod.py:1027: local variable 'errors' is assigned to but never used
-    coolproject/mod.py:97: 'shutil' imported but unused
-    coolproject/mod.py:729: redefinition of function 'readlines' from line 723
-    coolproject/mod.py:1028: local variable 'errors' is assigned to but never used
+    coolproject/mod.py:97:1: F401 'shutil' imported but unused
     coolproject/mod.py:625:17: E225 missing whitespace around operato
+    coolproject/mod.py:729: F811 redefinition of function 'readlines' from line 723
+    coolproject/mod.py:1028: F841 local variable 'errors' is assigned to but never used
 
-The output of PyFlakes *and* pep8 (and the optional plugins) are merged
+The outputs of PyFlakes *and* pep8 (and the optional plugins) are merged
 and returned.
 
 flake8 offers an extra option: --max-complexity, which will emit a warning if
 the McCabe complexity of a function is higher than the value.  By default it's
 deactivated::
 
-    $ flake8 --max-complexity 12 flake8
-    coolproject/mod.py:97: 'shutil' imported but unused
-    coolproject/mod.py:729: redefinition of function 'readlines' from line 723
-    coolproject/mod.py:1028: local variable 'errors' is assigned to but never used
+    $ flake8 --max-complexity 12 coolproject
+    coolproject/mod.py:97:1: F401 'shutil' imported but unused
     coolproject/mod.py:625:17: E225 missing whitespace around operator
-    coolproject/mod.py:452:1: 'missing_whitespace_around_operator' is too complex (18)
-    coolproject/mod.py:939:1: 'Checker.check_all' is too complex (12)
-    coolproject/mod.py:1204:1: 'selftest' is too complex (14)
+    coolproject/mod.py:729:1: F811 redefinition of unused 'readlines' from line 723
+    coolproject/mod.py:939:1: C901 'Checker.check_all' is too complex (12)
+    coolproject/mod.py:1028:1: F841 local variable 'errors' is assigned to but never used
+    coolproject/mod.py:1204:1: C901 'selftest' is too complex (14)
 
 This feature is quite useful to detect over-complex code.  According to McCabe,
 anything that goes beyond 10 is too complex.
@@ -202,9 +200,9 @@ A list of the known prefixes is published below:
   <http://pep8.readthedocs.org/en/latest/intro.html#error-codes>`_
 - ``F***``: PyFlakes codes (see below)
 - ``C9**``: McCabe complexity plugin `mccabe
-  <https://github.com/flintwork/flint-mccabe>`_
-- ``N8**``: Naming Conventions plugin `flint-naming
-  <https://github.com/flintwork/flint-naming>`_
+  <https://github.com/flintwork/mccabe>`_
+- ``N8**``: Naming Conventions plugin `pep8-naming
+  <https://github.com/flintwork/pep8-naming>`_ (planned)
 
 
 The original PyFlakes does not provide error codes.  Flake8 patches the

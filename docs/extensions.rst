@@ -1,19 +1,33 @@
 Writing an Extension for Flake8
 ===============================
 
-If you plan on supporting python 2.5 you need to first do ``from __future__ 
-import with_statement``. Every version of python greater than 2.5 already has 
-the with statement built-in. After that, you should only ever need to import 
-``setup`` from ``setuptools``. We're using entry points for extension 
-management and this is the most sane way of doing things. This also means that 
-you should specify that the installation requires (at least) ``setuptools``.  
-Finally you'll need to specify your entry points, e.g., ::
+Since Flake8 is now adding support for extensions, we require ``setuptools`` 
+so we can manage extensions through entry points. If you are making an 
+existing tool compatible with Flake8 but do not already require 
+``setuptools``, you should probably add it to your list of requirements. Next, 
+you'll need to edit your ``setup.py`` file so that upon installation, your 
+extension is registered. If you define a class called ``PackageEntryClass`` 
+then this would look something like the following::
+
 
     setup(
+        # ...
         entry_points={
             'flake8.extension': ['P10 = package.PackageEntryClass'],
         }
+        # ...
     )
+
+We used ``P10`` here, but in reality, you should check to prevent as much 
+future overlap as possible with other extensions. ``W`` and ``E`` followed by 
+three digits should be considered entirely reserved for pep8. ``F`` should be 
+considered reserved for Pyflakes and ``C`` for McCabe. Also, in anticipation 
+of possible pylint integration, ``W`` and ``E`` followed by four digits should 
+be considered reserved. We have no way of checking for those though, so while 
+we ask you not use them, we can not (currently) prevent you from doing so.
+
+A Real Example: McCabe
+----------------------
 
 Below is an example from mccabe_ for how to write your ``setup.py`` file for 
 your Flake8 extension.

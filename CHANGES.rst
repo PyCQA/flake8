@@ -4,13 +4,13 @@ CHANGES
 2.0.0 - 2013-02-xx
 ------------------
 
-- Pyflakes errors are now prefixed by an ``F`` instead of an ``E``
-- McCabe complexity warnings are now prefixed by a ``C`` instead of a ``W``
-- Flake8 now supports extensions through entry points
-- Due to the above support, we now **require** setuptools
-- We now have `documentation <https://flake8.readthedocs.org/>`_
-- Fixes #13: pep8 and pyflakes are now external dependencies
-- Split run.py into main.py and hooks.py for better logic
+- Pyflakes errors are prefixed by an ``F`` instead of an ``E``
+- McCabe complexity warnings are prefixed by a ``C`` instead of a ``W``
+- Flake8 supports extensions through entry points
+- Due to the above support, we **require** setuptools
+- We publish the `documentation <https://flake8.readthedocs.org/>`_
+- Fixes #13: pep8, pyflakes and mccabe become external dependencies
+- Split run.py into main.py, engine.py and hooks.py for better logic
 - Expose our parser for our users
 - New feature: Install git and hg hooks automagically
 - By relying on pyflakes (0.6.1), we also fixed #45 and #35

@@ -32,7 +32,7 @@ flake8.main
 flake8.util
 ===========
 
-For AST checkers, this module has the ``iter_child_nodes`` function and 
-handles compatibility for all versions of Python between 2.5 and 3.3. The 
-function was added to the ``ast`` module in Python 2.6 but is redefined in the 
+For AST checkers, this module has the ``iter_child_nodes`` function and
+handles compatibility for all versions of Python between 2.5 and 3.3. The
+function was added to the ``ast`` module in Python 2.6 but is redefined in the
 case where the user is running Python 2.5

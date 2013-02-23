@@ -1,4 +1,4 @@
-setuptools integration
+Setuptools integration
 ======================
 
 If setuptools is available, Flake8 provides a command that checks the

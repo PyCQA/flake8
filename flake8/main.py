@@ -42,18 +42,35 @@ def main():
 
 
 def check_file(path, ignore=(), complexity=-1):
+    """Checks a file using pep8 and pyflakes by default and mccabe 
+    optionally.
+
+    :param str path: path to the file to be checked
+    :param tuple ignore: (optional), error and warning codes to be ignored
+    :param int complexity: (optional), enables the mccabe check for values > 0
+    """
     flake8_style = get_style_guide(
         config_file=DEFAULT_CONFIG, ignore=ignore, max_complexity=complexity)
     return flake8_style.input_file(path)
 
 
 def check_code(code, ignore=(), complexity=-1):
+    """Checks code using pep8 and pyflakes by default and mccabe optionally.
+
+    :param str code: code to be checked
+    :param tuple ignore: (optional), error and warning codes to be ignored
+    :param int complexity: (optional), enables the mccabe check for values > 0
+    """
     flake8_style = get_style_guide(
         config_file=DEFAULT_CONFIG, ignore=ignore, max_complexity=complexity)
     return flake8_style.input_file('-', lines=code.splitlines())
 
 
 class Flake8Command(setuptools.Command):
+    """The :class:`Flake8Command` class is used by setuptools to perform
+    checks on registered modules.
+    """
+
     description = "Run flake8 on modules registered in setuptools"
     user_options = []
 

@@ -13,6 +13,18 @@ from flake8.main import DEFAULT_CONFIG
 
 
 def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
+    """This is the function used by the git hook.
+    
+    :param int complexity: (optional), any value > 0 enables complexity
+        checking with mccabe
+    :param bool strict: (optional), if True, this returns the total number of
+        errors which will cause the hook to fail
+    :param str ignore: (optional), a comma-separated list of errors and
+        warnings to ignore
+    :param bool lazy: (optional), allows for the instances where you don't add
+        the files to the index before running a commit, e.g., git commit -a
+    :returns: total number of errors if strict is True, otherwise 0
+    """
     gitcmd = "git diff-index --cached --name-only HEAD"
     if lazy:
         gitcmd = gitcmd.replace('--cached ', '')
@@ -30,6 +42,11 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
 
 
 def hg_hook(ui, repo, **kwargs):
+    """This is the function executed directly by Mercurial as part of the
+    hook. This is never called directly by the user, so the parameters are
+    undocumented. If you would like to learn more about them, please feel free
+    to read the official Mercurial documentation.
+    """
     complexity = ui.config('flake8', 'complexity', default=-1)
     strict = ui.configbool('flake8', 'strict', default=True)
     config = ui.config('flake8', 'config', default=True)

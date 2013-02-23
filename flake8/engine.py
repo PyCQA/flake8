@@ -32,6 +32,9 @@ def _register_extensions():
 
 
 def get_parser():
+    """This returns an instance of optparse.OptionParser with all the
+    extensions registered and options set. This wraps ``pep8.get_parser``.
+    """
     (extensions, parser_hooks, options_hooks) = _register_extensions()
     details = ', '.join(['%s: %s' % ext for ext in extensions])
     parser = pep8.get_parser('flake8', '%s (%s)' % (__version__, details))
@@ -67,7 +70,8 @@ class StyleGuide(pep8.StyleGuide):
 
 
 def get_style_guide(**kwargs):
-    """Parse the options and configure the checker."""
+    """Parse the options and configure the checker. This returns a sub-class 
+    of ``pep8.StyleGuide``."""
     kwargs['parser'], options_hooks = get_parser()
     styleguide = StyleGuide(**kwargs)
     options = styleguide.options

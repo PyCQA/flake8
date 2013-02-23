@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-2.0.0 - 2013-02-xx
+2.0.0 - 2013-02-23
 ------------------
 
 - Pyflakes errors are prefixed by an ``F`` instead of an ``E``

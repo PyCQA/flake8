@@ -1,3 +1,7 @@
+==========
+Flake8 API
+==========
+
 .. module:: flake8
 
 flake8.engine

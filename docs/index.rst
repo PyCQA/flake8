@@ -7,6 +7,7 @@ Documentation
 .. toctree::
 
     api
+    extensions
     config
     vcs
     buildout

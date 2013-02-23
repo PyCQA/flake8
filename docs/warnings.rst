@@ -1,3 +1,5 @@
+.. _error-codes:
+
 Warning / Error codes
 =====================
 

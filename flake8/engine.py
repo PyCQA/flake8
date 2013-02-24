@@ -4,7 +4,7 @@ import re
 import pep8
 
 from flake8 import __version__
-from flake8.util import OrderedSet
+from flake8.util import OrderedSet, get_python_version
 
 _flake8_noqa = re.compile(r'flake8[:=]\s*noqa', re.I).search
 
@@ -37,7 +37,10 @@ def get_parser():
     """
     (extensions, parser_hooks, options_hooks) = _register_extensions()
     details = ', '.join(['%s: %s' % ext for ext in extensions])
-    parser = pep8.get_parser('flake8', '%s (%s)' % (__version__, details))
+    python_version = get_python_version()
+    parser = pep8.get_parser('flake8', '%s (%s) %s' % (
+        __version__, details, python_version
+    ))
     for opt in ('--repeat', '--testsuite', '--doctest'):
         try:
             parser.remove_option(opt)

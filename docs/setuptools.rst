@@ -1,9 +1,9 @@
 Setuptools integration
 ======================
 
-If setuptools is available, Flake8 provides a command that checks the
-Python files declared by your project.  To use it, add flake8 to your
-setup_requires::
+Flake8 now depends on setuptools and its installation enables a command    
+that checks the Python files declared by your project.  To use it, add   
+flake8 to your setup_requires::
 
     setup(
         name="project",

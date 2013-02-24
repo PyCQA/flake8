@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+import platform
 
 import pep8
 
@@ -81,3 +82,10 @@ def get_style_guide(**kwargs):
     for options_hook in options_hooks:
         options_hook(options)
     return styleguide
+
+
+def get_python_version():
+    return '%s %s on %s' % (
+        platform.python_implementation(), platform.python_version(),
+        platform.system()
+    )

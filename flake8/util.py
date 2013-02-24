@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import platform
 
 try:
     import ast
@@ -36,10 +35,3 @@ class OrderedSet(list):
     def add(self, value):
         if value not in self:
             self.append(value)
-
-
-def get_python_version():
-    return '%s %s on %s' % (
-        platform.python_implementation(), platform.python_version(),
-        platform.system()
-    )

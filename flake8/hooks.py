@@ -14,7 +14,7 @@ from flake8.main import DEFAULT_CONFIG
 
 def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
     """This is the function used by the git hook.
-    
+
     :param int complexity: (optional), any value > 0 enables complexity
         checking with mccabe
     :param bool strict: (optional), if True, this returns the total number of

@@ -42,7 +42,7 @@ def main():
 
 
 def check_file(path, ignore=(), complexity=-1):
-    """Checks a file using pep8 and pyflakes by default and mccabe 
+    """Checks a file using pep8 and pyflakes by default and mccabe
     optionally.
 
     :param str path: path to the file to be checked

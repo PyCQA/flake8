@@ -5,7 +5,7 @@ import platform
 import pep8
 
 from flake8 import __version__
-from flake8.util import OrderedSet, get_python_version
+from flake8.util import OrderedSet
 
 _flake8_noqa = re.compile(r'flake8[:=]\s*noqa', re.I).search
 

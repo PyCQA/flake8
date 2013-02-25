@@ -6,13 +6,13 @@ Documentation
 
 .. toctree::
 
-    api
-    extensions
     config
+    warnings
     vcs
     buildout
     setuptools
-    warnings
+    api
+    extensions
     changes
 
 Original Projects

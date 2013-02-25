@@ -1,12 +1,12 @@
 Writing an Extension for Flake8
 ===============================
 
-Since Flake8 is now adding support for extensions, we require ``setuptools`` 
-so we can manage extensions through entry points. If you are making an 
-existing tool compatible with Flake8 but do not already require 
-``setuptools``, you should probably add it to your list of requirements. Next, 
-you'll need to edit your ``setup.py`` file so that upon installation, your 
-extension is registered. If you define a class called ``PackageEntryClass`` 
+Since Flake8 is now adding support for extensions, we require ``setuptools``
+so we can manage extensions through entry points. If you are making an
+existing tool compatible with Flake8 but do not already require
+``setuptools``, you should probably add it to your list of requirements. Next,
+you'll need to edit your ``setup.py`` file so that upon installation, your
+extension is registered. If you define a class called ``PackageEntryClass``
 then this would look something like the following::
 
 
@@ -18,57 +18,38 @@ then this would look something like the following::
         # ...
     )
 
-We used ``P10`` here, but in reality, you should check to prevent as much 
-future overlap as possible with other extensions. ``W`` and ``E`` followed by 
-three digits should be considered entirely reserved for pep8. ``F`` should be 
-considered reserved for Pyflakes and ``C`` for McCabe. Also, in anticipation 
-of possible pylint integration, ``W`` and ``E`` followed by four digits should 
-be considered reserved. We have no way of checking for those though, so while 
-we ask you not use them, we can not (currently) prevent you from doing so.
 
-A Real Example: McCabe
+If you intend to publish your extension, choose a unique code prefix
+following the convention for :ref:`error codes <error-codes>`.
+In addition, you can open a request in the `issue tracker
+<https://bitbucket.org/tarek/flake8/issues>`_ to register the prefix in the
+documentation.
+
+.. TODO: describe the API required for the 3 kind of extensions:
+   * physical line checkers
+   * logical line checkers
+   * AST checkers
+
+
+A real example: McCabe
 ----------------------
 
-Below is an example from mccabe_ for how to write your ``setup.py`` file for 
+Below is an example from mccabe_ for how to write your ``setup.py`` file for
 your Flake8 extension.
 
 .. code-block:: python
 
-    # https://github.com/florentx/mccabe/blob/master/setup.py
+    # https://github.com/flintwork/mccabe/blob/0.2/setup.py#L38:L42
     # -*- coding: utf-8 -*-
-    from __future__ import with_statement
     from setuptools import setup
 
-
-    def get_version(fname='mccabe.py'):
-        with open(fname) as f:
-            for line in f:
-                if line.startswith('__version__'):
-                    return eval(line.split('=')[-1])
-
-
-    def get_long_description():
-        descr = []
-        for fname in ('README.rst',):
-            with open(fname) as f:
-                descr.append(f.read())
-        return '\n\n'.join(descr)
-
+    # ...
 
     setup(
         name='mccabe',
-        version=get_version(),
-        description="McCabe checker, plugin for flake8",
-        long_description=get_long_description(),
-        keywords='flake8 mccabe',
-        author='Tarek Ziade',
-        author_email='tarek@ziade.org',
-        maintainer='Florent Xicluna',
-        maintainer_email='florent.xicluna@gmail.com',
-        url='https://github.com/florentx/mccabe',
-        license='Expat license',
-        py_modules=['mccabe'],
-        zip_safe=False,
+
+        # ...
+
         install_requires=[
             'setuptools',
         ],
@@ -77,26 +58,17 @@ your Flake8 extension.
                 'C90 = mccabe:McCabeChecker',
             ],
         },
-        classifiers=[
-            'Development Status :: 3 - Alpha',
-            'Environment :: Console',
-            'Intended Audience :: Developers',
-            'License :: OSI Approved :: MIT License',
-            'Operating System :: OS Independent',
-            'Programming Language :: Python',
-            'Programming Language :: Python :: 2',
-            'Programming Language :: Python :: 3',
-            'Topic :: Software Development :: Libraries :: Python Modules',
-            'Topic :: Software Development :: Quality Assurance',
-        ],
+
+        # ...
+
     )
 
-In ``mccabe.py`` you can see that extra options are added to the parser when 
-flake8 registers the extensions:
+In ``mccabe.py`` you can see that extra options are added to the parser when
+flake8 registers the extension:
 
 .. code-block:: python
 
-    # https://github.com/florentx/mccabe/blob/e88be51e0c6c2bd1b87d7a44b7e71b78fdc53959/mccabe.py#L225
+    # https://github.com/flintwork/mccabe/blob/0.2/mccabe.py#L225:L254
     class McCabeChecker(object):
         """McCabe cyclomatic complexity checker."""
         name = 'mccabe'
@@ -128,9 +100,10 @@ flake8 registers the extensions:
                     text = self._error_tmpl % (graph.entity, graph.complexity())
                     yield graph.lineno, 0, text, type(self)
 
-Since that is the defined entry point in the above ``setup.py``, flake8 finds 
+Since that is the defined entry point in the above ``setup.py``, flake8 finds
 it and uses it to register the extension.
 
+
 .. links
-.. _mccabe: https://github.com/florentx/mccabe
+.. _mccabe: https://github.com/flintwork/mccabe
 .. _PyPI: https://pypi.python.org/pypi/

@@ -6,13 +6,14 @@ Documentation
 
 .. toctree::
 
-    api
-    extensions
     config
+    warnings
     vcs
     buildout
     setuptools
-    warnings
+    api
+    extensions
+    changes
 
 Original Projects
 =================
@@ -23,5 +24,3 @@ projects:
 - pep8: https://github.com/jcrocholl/pep8
 - PyFlakes: https://launchpad.net/pyflakes
 - McCabe: http://nedbatchelder.com/blog/200803/python_code_complexity_microtool.html
-
-.. include:: ../CHANGES.rst

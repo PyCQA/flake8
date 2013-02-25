@@ -30,7 +30,7 @@ Git hook
 To use the Git hook on any *commit*, add a **pre-commit** file in the
 *.git/hooks* directory containing::
 
-    #!/usr/bin/python
+    #!/usr/bin/env python
     import sys
     from flake8.run import git_hook
 

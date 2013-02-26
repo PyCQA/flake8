@@ -109,6 +109,10 @@ if __name__ == '__main__':
 
 
 def _install_hg_hook(path):
+    if not os.path.isfile(path):
+        # Make the file so we can avoid IOError's
+        open(path, 'w+').close()
+
     c = ConfigParser()
     c.readfp(open(path, 'r'))
     if not c.has_section('hooks'):

@@ -29,6 +29,9 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
     if lazy:
         gitcmd = gitcmd.replace('--cached ', '')
 
+    if hasattr(ignore, 'split'):
+        ignore = ignore.split(',')
+
     _, files_modified, _ = run(gitcmd)
 
     flake8_style = get_style_guide(

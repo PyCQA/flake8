@@ -8,8 +8,8 @@ To use the Mercurial hook on any *commit* or *qrefresh*, change your .hg/hgrc
 file like this::
 
     [hooks]
-    commit = python:flake8.run.hg_hook
-    qrefresh = python:flake8.run.hg_hook
+    commit = python:flake8.hooks.hg_hook
+    qrefresh = python:flake8.hooks.hg_hook
 
     [flake8]
     strict = 0
@@ -32,13 +32,16 @@ To use the Git hook on any *commit*, add a **pre-commit** file in the
 
     #!/usr/bin/env python
     import sys
-    from flake8.run import git_hook
+    from flake8.hooks import git_hook
 
     COMPLEXITY = 10
     STRICT = False
 
     if __name__ == '__main__':
         sys.exit(git_hook(complexity=COMPLEXITY, strict=STRICT, ignore='E501'))
+        # Alternatively
+        # sys.exit(git_hook(complexity=COMPLEXITY, strict=STRICT,
+        #                   ignore=['E501']))
 
 
 If *strict* option is set to **True**, any warning will block the commit. When

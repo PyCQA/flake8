@@ -57,6 +57,13 @@ This feature is quite useful to detect over-complex code.  According to McCabe,
 anything that goes beyond 10 is too complex.
 See https://en.wikipedia.org/wiki/Cyclomatic_complexity.
 
+Questions or Feedback
+=====================
+
+If you have questions you'd like to ask the developers, or feedback you'd like 
+to provide, feel free to use the mailing list: code-quality@python.org We 
+would love to hear from you. Additionally, if you have a feature you'd like to 
+suggest, the mailing list would be the best place for it.
 
 .. _links:
 

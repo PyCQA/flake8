@@ -159,7 +159,9 @@ def install_hook():
         with open(vcs, 'w+') as fd:
             fd.write(git_hook_file)
         # 0b111100100 == rwxr--r--
-        os.chmod(vcs, 0b111100100)
+        # Python 2.5 doesn't support 0b syntax so note that the above binary
+        # value is equilvanet to 484 in decimal
+        os.chmod(vcs, 484)
     elif 'hg' in vcs:
         _install_hg_hook(vcs)
     else:

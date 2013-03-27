@@ -103,6 +103,17 @@ flake8 registers the extension:
 Since that is the defined entry point in the above ``setup.py``, flake8 finds
 it and uses it to register the extension.
 
+Existing Extensions
+===================
+
+This is not at all a comprehensive listing of existing extensions but simply a 
+listing of the ones we are aware of:
+
+* `flake8-immediate <https://github.com/schlamar/flake8-immediate>`_
+  
+* `flake8-todo <https://github.com/schlamar/flake8-todo>`_
+
+* `pep8-naming <https://github.com/flintwork/pep8-naming>`_
 
 .. links
 .. _mccabe: https://github.com/flintwork/mccabe

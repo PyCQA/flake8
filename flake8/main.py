@@ -63,7 +63,8 @@ def check_code(code, ignore=(), complexity=-1):
     """
     flake8_style = get_style_guide(
         config_file=DEFAULT_CONFIG, ignore=ignore, max_complexity=complexity)
-    return flake8_style.input_file('-', lines=code.splitlines())
+    return flake8_style.input_file(
+        None, lines=['%s\n' % l for l in code.splitlines()])
 
 
 class Flake8Command(setuptools.Command):

@@ -31,7 +31,7 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
         the files to the index before running a commit, e.g., git commit -a
     :returns: total number of errors if strict is True, otherwise 0
     """
-    gitcmd = "git diff-index --cached --name-only HEAD"
+    gitcmd = "git diff-index --cached --name-only --diff-filter=ACMRTUXB HEAD"
     if lazy:
         # Catch all files, including those not added to the index
         gitcmd = gitcmd.replace('--cached ', '')

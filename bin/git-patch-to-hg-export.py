@@ -47,7 +47,7 @@ def git_patch_to_hg(fin, fout):
     # NOTE: there will still be an index line after each diff --git, but it
     # will be ignored
     for line in fin:
-        fout.write(line)
+        fout.write(line.encode('utf-8'))
 
     # NOTE: the --/version will still be at the end, but it will be ignored
 
@@ -58,7 +58,10 @@ def open_file():
             import requests
             import io
             resp = requests.get(sys.argv[1])
-            return io.StringIO(resp.content) if resp.ok else io.StringIO('')
+            if resp.ok:
+                return io.StringIO(resp.content.decode('utf-8'))
+            else:
+                return io.StringIO('')
         elif os.path.exists(sys.argv[1]):
             return open(sys.argv[1])
     return sys.stdin

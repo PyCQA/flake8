@@ -1,5 +1,5 @@
 .. include:: ../README.rst
-   :end-before: _links:
+
 
 Documentation
 =============

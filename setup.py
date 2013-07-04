@@ -31,8 +31,8 @@ setup(
     url="http://bitbucket.org/tarek/flake8",
     packages=["flake8", "flake8.tests"],
     install_requires=[
-        "pyflakes >= 0.6.1",
-        "pep8 >= 1.4.5",
+        "pyflakes >= 0.7.3",
+        "pep8 >= 1.4.6",
         "mccabe >= 0.2.1",
     ],
     entry_points={

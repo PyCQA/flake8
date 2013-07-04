@@ -81,6 +81,14 @@ def hg_hook(ui, repo, **kwargs):
 def run(command):
     p = Popen(command.split(), stdout=PIPE, stderr=PIPE)
     (stdout, stderr) = p.communicate()
+    # On python 3, subprocess.Popen returns bytes objects which expect
+    # endswith to be given a bytes object or a tuple of bytes but not native
+    # string objects. This is simply less mysterious than using b'.py' in the
+    # endswith method. That should work but might still fail horribly.
+    if hasattr(stdout, 'decode'):
+        stdout = stdout.decode()
+    if hasattr(stderr, 'decode'):
+        stderr = stderr.decode()
     return (p.returncode, [line.strip() for line in stdout.splitlines()],
             [line.strip() for line in stderr.splitlines()])
 

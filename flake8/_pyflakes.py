@@ -44,4 +44,5 @@ class FlakesChecker(pyflakes.checker.Checker):
 
     def run(self):
         for m in self.messages:
-            yield m.lineno, 0, (m.flake8_msg % m.message_args), m.__class__
+            col = getattr(m, 'col', 0)
+            yield m.lineno, col, (m.flake8_msg % m.message_args), m.__class__

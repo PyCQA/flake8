@@ -31,9 +31,9 @@ setup(
     url="http://bitbucket.org/tarek/flake8",
     packages=["flake8", "flake8.tests"],
     install_requires=[
-        "pyflakes == 0.6.1",
-        "pep8 == 1.4.5",
-        "mccabe == 0.2.1",
+        "pyflakes >= 0.6.1",
+        "pep8 >= 1.4.5",
+        "mccabe >= 0.2.1",
     ],
     entry_points={
         'distutils.commands': ['flake8 = flake8.main:Flake8Command'],

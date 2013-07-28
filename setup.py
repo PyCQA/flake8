@@ -52,6 +52,6 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Software Development :: Quality Assurance",
     ],
-    tests_require=['nose'],
+    tests_require=['nose', 'mock'],
     test_suite='nose.collector',
 )

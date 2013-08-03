@@ -2,6 +2,7 @@
 from __future__ import with_statement
 import os
 import sys
+import stat
 from subprocess import Popen, PIPE
 try:
     # The 'demandimport' breaks pyflakes and flake8._pyflakes
@@ -172,10 +173,8 @@ def install_hook():
     if 'git' in vcs:
         with open(vcs, 'w+') as fd:
             fd.write(git_hook_file)
-        # 0b111100100 == rwxr--r--
-        # Python 2.5 doesn't support 0b syntax so note that the above binary
-        # value is equivalent to 484 in decimal
-        os.chmod(vcs, 484)
+        # rwxr--r--
+        os.chmod(vcs, stat.S_IRWXU | stat.S_IRGRP | stat.S_IROTH)
     elif 'hg' in vcs:
         _install_hg_hook(vcs)
     else:

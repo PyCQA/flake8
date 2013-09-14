@@ -138,12 +138,14 @@ def _get_files(repo, **kwargs):
 
 
 def find_vcs():
-    if os.path.isdir('.git'):
-        if not os.path.isdir('.git/hooks'):
-            os.mkdir('.git/hooks')
-        return '.git/hooks/pre-commit'
-    elif os.path.isdir('.hg'):
-        return '.hg/hgrc'
+    _, git_dir, _ = run('git rev-parse --git-dir')
+    if git_dir and os.path.isdir(git_dir[0]):
+        if not os.path.isdir(os.path.join(git_dir[0], 'hooks')):
+            os.mkdir(os.path.join(git_dir[0], 'hooks'))
+        return os.path.join(git_dir[0], 'hooks', 'pre-commit')
+    _, hg_dir, _ = run('hg root')
+    if hg_dir and os.path.isdir(hg_dir[0]):
+        return os.path.join(hg_dir[0], '.hg', 'hgrc')
     return ''
 
 
@@ -193,7 +195,7 @@ def install_hook():
     vcs = find_vcs()
 
     if not vcs:
-        p = get_parser()
+        p = get_parser()[0]
         sys.stderr.write('Error: could not find either a git or mercurial '
                          'directory. Please re-run this in a proper '
                          'repository.')

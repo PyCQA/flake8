@@ -15,6 +15,8 @@ else:
         'flake8'
     )
 
+EXTRA_IGNORE = ['.tox']
+
 
 def main():
     """Parse options and run checks on Python source."""
@@ -56,6 +58,7 @@ def check_file(path, ignore=(), complexity=-1):
     :param tuple ignore: (optional), error and warning codes to be ignored
     :param int complexity: (optional), enables the mccabe check for values > 0
     """
+    ignore = set(ignore).union(EXTRA_IGNORE)
     flake8_style = get_style_guide(
         config_file=DEFAULT_CONFIG, ignore=ignore, max_complexity=complexity)
     return flake8_style.input_file(path)
@@ -68,6 +71,7 @@ def check_code(code, ignore=(), complexity=-1):
     :param tuple ignore: (optional), error and warning codes to be ignored
     :param int complexity: (optional), enables the mccabe check for values > 0
     """
+    ignore = set(ignore).union(EXTRA_IGNORE)
     flake8_style = get_style_guide(
         config_file=DEFAULT_CONFIG, ignore=ignore, max_complexity=complexity)
     return flake8_style.input_file(None, lines=code.splitlines(True))

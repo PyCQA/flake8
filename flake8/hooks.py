@@ -4,6 +4,8 @@ import os
 import sys
 import stat
 from subprocess import Popen, PIPE
+import shutil
+from tempfile import mkdtemp
 try:
     # The 'demandimport' breaks pyflakes and flake8._pyflakes
     from mercurial import demandimport
@@ -42,12 +44,36 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
 
     # Returns the exit code, list of files modified, list of error messages
     _, files_modified, _ = run(gitcmd)
+    files_modified = [f for f in files_modified if f.endswith('.py')]
 
-    # Run the checks
     flake8_style = get_style_guide(
         config_file=DEFAULT_CONFIG, ignore=ignore, max_complexity=complexity)
-    report = flake8_style.check_files([f for f in files_modified if
-                                       f.endswith('.py')])
+
+    # Copy staged versions to temporary directory
+    tmpdir = mkdtemp()
+    files_to_check = []
+    try:
+        for file_ in files_modified:
+            # get the staged version of the file
+            gitcmd_getstaged = ["git", "show", ":%s" % file_]
+            _, out, _ = run(gitcmd_getstaged, raw_output=True)
+            # write the staged version to temp dir with its full path to
+            # avoid overwriting files with the same name
+            dirname, filename = os.path.split(os.path.abspath(file_))
+            prefix = os.path.commonprefix([dirname, tmpdir])
+            print dirname, tmpdir, prefix
+            dirname = os.path.relpath(dirname, start=prefix)
+            dirname = os.path.join(tmpdir, dirname)
+            if not os.path.isdir(dirname):
+                os.makedirs(dirname)
+            filename = os.path.join(dirname, filename)
+            with open(filename, "wb") as fh:
+                fh.write(out)
+        files_to_check.append(filename)
+        # Run the checks
+        report = flake8_style.check_files(files_to_check)
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
 
     if strict:
         return report.total_errors
@@ -79,8 +105,10 @@ def hg_hook(ui, repo, **kwargs):
     return 0
 
 
-def run(command):
-    p = Popen(command.split(), stdout=PIPE, stderr=PIPE)
+def run(command, raw_output=False):
+    if isinstance(command, basestring):
+        command = command.split()
+    p = Popen(command, stdout=PIPE, stderr=PIPE)
     (stdout, stderr) = p.communicate()
     # On python 3, subprocess.Popen returns bytes objects which expect
     # endswith to be given a bytes object or a tuple of bytes but not native
@@ -90,8 +118,10 @@ def run(command):
         stdout = stdout.decode()
     if hasattr(stderr, 'decode'):
         stderr = stderr.decode()
-    return (p.returncode, [line.strip() for line in stdout.splitlines()],
-            [line.strip() for line in stderr.splitlines()])
+    if not raw_output:
+        stdout = [line.strip() for line in stdout.splitlines()]
+        stderr = [line.strip() for line in stderr.splitlines()]
+    return (p.returncode, stdout, stderr)
 
 
 def _get_files(repo, **kwargs):

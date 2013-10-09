@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import with_statement
+import re
 import os
 import sys
 import stat
@@ -52,26 +53,41 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
     # Copy staged versions to temporary directory
     tmpdir = mkdtemp()
     files_to_check = []
+    coding_pattern = r'coding[=:]\s*([-\w.]+)'
     try:
         for file_ in files_modified:
+            # try to detect encoding of python file according to PEP 0263
+            with open(file_) as fh:
+                for i_ in xrange(2):
+                    line = fh.readline()
+                    match = re.search(coding_pattern, line)
+                    if match:
+                        coding = match.groups()[0]
+                        break
+                else:
+                    coding = None
             # get the staged version of the file
             gitcmd_getstaged = ["git", "show", ":%s" % file_]
-            _, out, _ = run(gitcmd_getstaged, raw_output=True)
+            _, out, _ = run(gitcmd_getstaged, raw_output=True, coding=coding)
             # write the staged version to temp dir with its full path to
             # avoid overwriting files with the same name
             dirname, filename = os.path.split(os.path.abspath(file_))
             prefix = os.path.commonprefix([dirname, tmpdir])
-            print dirname, tmpdir, prefix
             dirname = os.path.relpath(dirname, start=prefix)
             dirname = os.path.join(tmpdir, dirname)
             if not os.path.isdir(dirname):
                 os.makedirs(dirname)
             filename = os.path.join(dirname, filename)
+            # encode for output if we know the encoding
+            if coding:
+                out = out.encode(coding)
+            # write staged version of file to temporary directory
             with open(filename, "wb") as fh:
                 fh.write(out)
         files_to_check.append(filename)
         # Run the checks
         report = flake8_style.check_files(files_to_check)
+    # remove temporary directory
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
 
@@ -105,7 +121,7 @@ def hg_hook(ui, repo, **kwargs):
     return 0
 
 
-def run(command, raw_output=False):
+def run(command, raw_output=False, coding=None):
     if isinstance(command, basestring):
         command = command.split()
     p = Popen(command, stdout=PIPE, stderr=PIPE)
@@ -115,9 +131,15 @@ def run(command, raw_output=False):
     # string objects. This is simply less mysterious than using b'.py' in the
     # endswith method. That should work but might still fail horribly.
     if hasattr(stdout, 'decode'):
-        stdout = stdout.decode()
+        if coding:
+            stdout = stdout.decode(coding)
+        else:
+            stdout = stdout.decode()
     if hasattr(stderr, 'decode'):
-        stderr = stderr.decode()
+        if coding:
+            stderr = stderr.decode(coding)
+        else:
+            stderr = stderr.decode()
     if not raw_output:
         stdout = [line.strip() for line in stdout.splitlines()]
         stderr = [line.strip() for line in stderr.splitlines()]

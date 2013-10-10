@@ -55,7 +55,7 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
     try:
         for file_ in files_modified:
             # get the staged version of the file
-            gitcmd_getstaged = ["git", "show", ":%s" % file_]
+            gitcmd_getstaged = "git show :%s" % file_
             _, out, _ = run(gitcmd_getstaged, raw_output=True, decode=False)
             # write the staged version to temp dir with its full path to
             # avoid overwriting files with the same name
@@ -107,9 +107,7 @@ def hg_hook(ui, repo, **kwargs):
 
 
 def run(command, raw_output=False, decode=True):
-    if isinstance(command, basestring):
-        command = command.split()
-    p = Popen(command, stdout=PIPE, stderr=PIPE)
+    p = Popen(command.split(), stdout=PIPE, stderr=PIPE)
     (stdout, stderr) = p.communicate()
     # On python 3, subprocess.Popen returns bytes objects which expect
     # endswith to be given a bytes object or a tuple of bytes but not native

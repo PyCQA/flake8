@@ -69,7 +69,7 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
             # write staged version of file to temporary directory
             with open(filename, "wb") as fh:
                 fh.write(out)
-        files_to_check.append(filename)
+            files_to_check.append(filename)
         # Run the checks
         report = flake8_style.check_files(files_to_check)
     # remove temporary directory

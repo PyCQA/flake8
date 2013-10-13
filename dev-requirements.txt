@@ -1,4 +1,5 @@
 pep8
 pyflakes
 mccabe
+mock
 nose

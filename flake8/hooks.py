@@ -177,10 +177,11 @@ from flake8.hooks import git_hook
 
 COMPLEXITY = os.getenv('FLAKE8_COMPLEXITY', 10)
 STRICT = os.getenv('FLAKE8_STRICT', False)
+IGNORE = os.getenv('FLAKE8_IGNORE')
 
 
 if __name__ == '__main__':
-    sys.exit(git_hook(complexity=COMPLEXITY, strict=STRICT))
+    sys.exit(git_hook(complexity=COMPLEXITY, strict=STRICT, ignore=IGNORE))
 """
 
 
@@ -208,6 +209,9 @@ def _install_hg_hook(path):
 
     if not c.has_option('flake8', 'strict'):
         c.set('flake8', 'strict', os.getenv('FLAKE8_STRICT', False))
+
+    if not c.has_option('flake8', 'ignore'):
+        c.set('flake8', 'ignore', os.getenv('FLAKE8_IGNORE'))
 
     c.write(open(path, 'w+'))
 

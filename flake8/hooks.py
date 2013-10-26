@@ -44,10 +44,22 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
 
     # Returns the exit code, list of files modified, list of error messages
     _, files_modified, _ = run(gitcmd)
+
+    # We only want to pass ignore and max_complexity if they differ from the
+    # defaults so that we don't override a local configuration file
+    options = {}
+    if ignore:
+        options['ignore'] = ignore
+    if complexity > -1:
+        options['max_complexity'] = complexity
+
     files_modified = [f for f in files_modified if f.endswith('.py')]
 
     flake8_style = get_style_guide(
-        config_file=DEFAULT_CONFIG, ignore=ignore, max_complexity=complexity)
+        parse_argv=True,
+        config_file=DEFAULT_CONFIG,
+        **options
+        )
 
     # Copy staged versions to temporary directory
     tmpdir = mkdtemp()
@@ -90,14 +102,23 @@ def hg_hook(ui, repo, **kwargs):
     """
     complexity = ui.config('flake8', 'complexity', default=-1)
     strict = ui.configbool('flake8', 'strict', default=True)
+    ignore = ui.config('flake8', 'ignore', default=None)
     config = ui.config('flake8', 'config', default=True)
     if config is True:
         config = DEFAULT_CONFIG
 
     paths = _get_files(repo, **kwargs)
 
-    flake8_style = get_style_guide(
-        config_file=config, max_complexity=complexity)
+    # We only want to pass ignore and max_complexity if they differ from the
+    # defaults so that we don't override a local configuration file
+    options = {}
+    if ignore:
+        options['ignore'] = ignore
+    if complexity > -1:
+        options['max_complexity'] = complexity
+
+    flake8_style = get_style_guide(parse_argv=True, config_file=config,
+                                   **options)
     report = flake8_style.check_files(paths)
 
     if strict:

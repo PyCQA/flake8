@@ -55,11 +55,8 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
 
     files_modified = [f for f in files_modified if f.endswith('.py')]
 
-    flake8_style = get_style_guide(
-        parse_argv=True,
-        config_file=DEFAULT_CONFIG,
-        **options
-        )
+    flake8_style = get_style_guide(config_file=DEFAULT_CONFIG, paths=['.'],
+                                   **options)
 
     # Copy staged versions to temporary directory
     tmpdir = mkdtemp()
@@ -117,7 +114,7 @@ def hg_hook(ui, repo, **kwargs):
     if complexity > -1:
         options['max_complexity'] = complexity
 
-    flake8_style = get_style_guide(parse_argv=True, config_file=config,
+    flake8_style = get_style_guide(config_file=config, paths=['.'],
                                    **options)
     report = flake8_style.check_files(paths)
 

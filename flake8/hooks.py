@@ -100,9 +100,7 @@ def hg_hook(ui, repo, **kwargs):
     complexity = ui.config('flake8', 'complexity', default=-1)
     strict = ui.configbool('flake8', 'strict', default=True)
     ignore = ui.config('flake8', 'ignore', default=None)
-    config = ui.config('flake8', 'config', default=True)
-    if config is True:
-        config = DEFAULT_CONFIG
+    config = ui.config('flake8', 'config', default=DEFAULT_CONFIG)
 
     paths = _get_files(repo, **kwargs)
 

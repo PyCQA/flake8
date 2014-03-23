@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+try:
+    # The 'demandimport' breaks pyflakes and flake8._pyflakes
+    from mercurial import demandimport
+    demandimport.disable()
+except ImportError:
+    pass
 import pyflakes
 import pyflakes.checker
 

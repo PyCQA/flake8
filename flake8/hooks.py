@@ -7,12 +7,6 @@ from subprocess import Popen, PIPE
 import shutil
 from tempfile import mkdtemp
 try:
-    # The 'demandimport' breaks pyflakes and flake8._pyflakes
-    from mercurial import demandimport
-    demandimport.disable()
-except ImportError:
-    pass
-try:
     from configparser import ConfigParser
 except ImportError:   # Python 2
     from ConfigParser import ConfigParser

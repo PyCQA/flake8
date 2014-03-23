@@ -217,7 +217,7 @@ def _install_hg_hook(path):
         c.set('flake8', 'strict', os.getenv('FLAKE8_STRICT', False))
 
     if not c.has_option('flake8', 'ignore'):
-        c.set('flake8', 'ignore', os.getenv('FLAKE8_IGNORE'))
+        c.set('flake8', 'ignore', os.getenv('FLAKE8_IGNORE', ''))
 
     if not c.has_option('flake8', 'lazy'):
         c.set('flake8', 'lazy', os.getenv('FLAKE8_LAZY', False))

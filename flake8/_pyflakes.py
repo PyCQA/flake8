@@ -2,9 +2,10 @@
 try:
     # The 'demandimport' breaks pyflakes and flake8._pyflakes
     from mercurial import demandimport
-    demandimport.disable()
 except ImportError:
     pass
+else:
+    demandimport.disable()
 import pyflakes
 import pyflakes.checker
 

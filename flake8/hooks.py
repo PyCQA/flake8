@@ -49,11 +49,8 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
 
     files_modified = [f for f in files_modified if f.endswith('.py')]
 
-    flake8_style = get_style_guide(
-        parse_argv=True,
-        config_file=DEFAULT_CONFIG,
-        **options
-        )
+    flake8_style = get_style_guide(config_file=DEFAULT_CONFIG, paths=['.'],
+                                   **options)
 
     # Copy staged versions to temporary directory
     tmpdir = mkdtemp()
@@ -97,9 +94,7 @@ def hg_hook(ui, repo, **kwargs):
     complexity = ui.config('flake8', 'complexity', default=-1)
     strict = ui.configbool('flake8', 'strict', default=True)
     ignore = ui.config('flake8', 'ignore', default=None)
-    config = ui.config('flake8', 'config', default=True)
-    if config is True:
-        config = DEFAULT_CONFIG
+    config = ui.config('flake8', 'config', default=DEFAULT_CONFIG)
 
     paths = _get_files(repo, **kwargs)
 
@@ -111,7 +106,7 @@ def hg_hook(ui, repo, **kwargs):
     if complexity > -1:
         options['max_complexity'] = complexity
 
-    flake8_style = get_style_guide(parse_argv=True, config_file=config,
+    flake8_style = get_style_guide(config_file=config, paths=['.'],
                                    **options)
     report = flake8_style.check_files(paths)
 
@@ -211,7 +206,7 @@ def _install_hg_hook(path):
         c.set('flake8', 'strict', os.getenv('FLAKE8_STRICT', False))
 
     if not c.has_option('flake8', 'ignore'):
-        c.set('flake8', 'ignore', os.getenv('FLAKE8_IGNORE'))
+        c.set('flake8', 'ignore', os.getenv('FLAKE8_IGNORE', ''))
 
     if not c.has_option('flake8', 'lazy'):
         c.set('flake8', 'lazy', os.getenv('FLAKE8_LAZY', False))

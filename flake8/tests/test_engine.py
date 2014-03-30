@@ -1,3 +1,5 @@
+from __future__ import with_statement
+
 from flake8 import engine, util, __version__
 import pep8
 import unittest

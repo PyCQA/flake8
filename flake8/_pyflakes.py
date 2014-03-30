@@ -38,16 +38,22 @@ class FlakesChecker(pyflakes.checker.Checker):
     name = 'pyflakes'
     version = pyflakes.__version__
 
+    def __init__(self, tree, filename):
+        super(FlakesChecker, self).__init__(tree, filename, withDoctest=self.withDoctest)
+
     @classmethod
     def add_options(cls, parser):
         parser.add_option('--builtins',
                           help="define more built-ins, comma separated")
-        parser.config_options.append('builtins')
+        parser.add_option('--doctests', default=False, action='store_true',
+                          help="check syntax of the doctests")
+        parser.config_options.extend(['builtins', 'doctests'])
 
     @classmethod
     def parse_options(cls, options):
         if options.builtins:
             cls.builtIns = cls.builtIns.union(options.builtins.split(','))
+        cls.withDoctest = options.doctests
 
     def run(self):
         for m in self.messages:

@@ -4,6 +4,7 @@ CHANGES
 2.1.1 - unreleased
 ------------------
 
+- New option ``doctests`` to run Pyflakes checks on doctests too
 - Fix Git and Mercurial hooks, issues #88 and #133
 - Fix crashes with Python 3.4 by upgrading dependencies
 - Fix traceback when running tests with Python 2.6

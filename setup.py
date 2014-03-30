@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import with_statement
 from setuptools import setup
+try:
+    # http://bugs.python.org/issue15881#msg170215
+    import multiprocessing
+except ImportError:
+    pass
 
 
 def get_version(fname='flake8/__init__.py'):

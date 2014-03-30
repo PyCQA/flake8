@@ -1,6 +1,14 @@
 CHANGES
 =======
 
+2.1.1 - unreleased
+------------------
+
+- Fix Git and Mercurial hooks, issues #88 and #133
+- Fix crashes with Python 3.4 by upgrading dependencies
+- Fix traceback when running tests with Python 2.6
+
+
 2.1.0 - 2013-10-26
 ------------------
 
@@ -13,6 +21,7 @@ CHANGES
 - Ignore non-python files when running the git hook
 - Ignore .tox directories by default
 - Flake8 now reports the column number for PyFlakes messages
+
 
 2.0.0 - 2013-02-23
 ------------------

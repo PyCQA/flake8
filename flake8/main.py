@@ -120,6 +120,8 @@ class Flake8Command(setuptools.Command):
         if self.distribution.py_modules:
             for filename in self.distribution.py_modules:
                 yield "%s.py" % filename
+        # Don't miss the setup.py file itself
+        yield "setup.py"
 
     def run(self):
         # Prepare

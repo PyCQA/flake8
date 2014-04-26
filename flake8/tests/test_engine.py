@@ -1,9 +1,9 @@
 from __future__ import with_statement
 
-from flake8 import engine, util, __version__
-import pep8
 import unittest
 import mock
+
+from flake8 import engine, util, __version__
 
 
 class TestEngine(unittest.TestCase):
@@ -41,10 +41,10 @@ class TestEngine(unittest.TestCase):
 
     def test_register_extensions(self):
         with mock.patch('pep8.register_check') as register_check:
-            registered_extensions = engine._register_extensions()
-            self.assertTrue(isinstance(registered_extensions[0], util.OrderedSet))
-            self.assertTrue(len(registered_extensions[0]) > 0)
-            for i in registered_extensions[1:]:
+            registered_exts = engine._register_extensions()
+            self.assertTrue(isinstance(registered_exts[0], util.OrderedSet))
+            self.assertTrue(len(registered_exts[0]) > 0)
+            for i in registered_exts[1:]:
                 self.assertTrue(isinstance(i, list))
             register_check.assert_called()
 
@@ -64,8 +64,7 @@ class TestEngine(unittest.TestCase):
         gpv.assert_called()
         pgp.assert_called_once_with(
             'flake8',
-            '%s (pyflakes: 0.7, mccabe: 0.2) Python Version' % __version__
-            )
+            '%s (pyflakes: 0.7, mccabe: 0.2) Python Version' % __version__)
         m.remove_option.assert_called()
         m.add_option.assert_called()
         self.assertEqual(parser, m)

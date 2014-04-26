@@ -39,7 +39,8 @@ class FlakesChecker(pyflakes.checker.Checker):
     version = pyflakes.__version__
 
     def __init__(self, tree, filename):
-        super(FlakesChecker, self).__init__(tree, filename, withDoctest=self.withDoctest)
+        super(FlakesChecker, self).__init__(tree, filename,
+                                            withDoctest=self.withDoctest)
 
     @classmethod
     def add_options(cls, parser):

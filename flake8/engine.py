@@ -58,8 +58,6 @@ def get_parser():
 
 
 class StyleGuide(pep8.StyleGuide):
-    # Backward compatibility pep8 <= 1.4.2
-    checker_class = pep8.Checker
 
     def input_file(self, filename, lines=None, expected=None, line_offset=0):
         """Run all checks on a Python source file."""

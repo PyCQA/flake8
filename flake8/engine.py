@@ -5,6 +5,7 @@ import platform
 import pep8
 
 from flake8 import __version__
+from flake8.reporter import multiprocessing, BaseQReport, QueueReport
 from flake8.util import OrderedSet
 
 _flake8_noqa = re.compile(r'flake8[:=]\s*noqa', re.I).search
@@ -47,6 +48,12 @@ def get_parser():
             parser.remove_option(opt)
         except ValueError:
             pass
+
+    if multiprocessing:
+        parser.config_options.append('jobs')
+        parser.add_option('-j', '--jobs', type='int', default=1,
+                          help="number of jobs to run simultaneously")
+
     parser.add_option('--exit-zero', action='store_true',
                       help="exit with code 0 even if there are errors")
     for parser_hook in parser_hooks:
@@ -79,6 +86,13 @@ def get_style_guide(**kwargs):
     options = styleguide.options
     for options_hook in options_hooks:
         options_hook(options)
+
+    if multiprocessing and options.jobs > 1:
+        reporter = BaseQReport if options.quiet else QueueReport
+        report = styleguide.init_report(reporter)
+        report.input_file = styleguide.input_file
+        styleguide.runner = report.task_queue.put
+
     return styleguide
 
 

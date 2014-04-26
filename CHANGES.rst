@@ -8,6 +8,8 @@ CHANGES
 - Fix Git and Mercurial hooks, issues #88 and #133
 - Fix crashes with Python 3.4 by upgrading dependencies
 - Fix traceback when running tests with Python 2.6
+- Fix the setuptools command ``python setup.py flake8`` to read
+  the project configuration
 
 
 2.1.0 - 2013-10-26
@@ -88,7 +90,7 @@ CHANGES
 - make sure mccabe catches the syntax errors as warnings
 - pep8 upgrade
 - added max_line_length default value
-- added Flake8Command and entry points is setuptools is around
+- added Flake8Command and entry points if setuptools is around
 - using the setuptools console wrapper when available
 
 

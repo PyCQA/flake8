@@ -122,9 +122,13 @@ class Flake8Command(setuptools.Command):
                 yield "%s.py" % filename
 
     def run(self):
+        # Prepare
+        paths = list(self.distribution_files())
         flake8_style = get_style_guide(config_file=DEFAULT_CONFIG,
+                                       paths=paths,
                                        **self.options_dict)
-        paths = self.distribution_files()
-        report = flake8_style.check_files(paths)
+
+        # Run the checkers
+        report = flake8_style.check_files()
         exit_code = print_report(report, flake8_style)
         raise SystemExit(exit_code > 0)

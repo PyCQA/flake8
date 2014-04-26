@@ -4,7 +4,7 @@ from setuptools import setup
 try:
     # Work around a traceback with Nose on Python 2.6
     # http://bugs.python.org/issue15881#msg170215
-    import multiprocessing
+    __import__('multiprocessing')
 except ImportError:
     pass
 

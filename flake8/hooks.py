@@ -228,6 +228,8 @@ def install_hook():
 
     status = 0
     if 'git' in vcs:
+        if os.path.exists(vcs):
+            sys.exit('Error: hook already exists (%s)' % vcs)
         with open(vcs, 'w') as fd:
             fd.write(git_hook_file)
         # rwxr--r--

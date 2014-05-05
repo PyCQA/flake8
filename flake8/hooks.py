@@ -125,10 +125,10 @@ def run(command, raw_output=False, decode=True):
     # endswith method. That should work but might still fail horribly.
     if hasattr(stdout, 'decode'):
         if decode:
-            stdout = stdout.decode()
+            stdout = stdout.decode('utf-8')
     if hasattr(stderr, 'decode'):
         if decode:
-            stderr = stderr.decode()
+            stderr = stderr.decode('utf-8')
     if not raw_output:
         stdout = [line.strip() for line in stdout.splitlines()]
         stderr = [line.strip() for line in stderr.splitlines()]

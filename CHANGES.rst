@@ -6,7 +6,7 @@ CHANGES
 
 - New option ``doctests`` to run Pyflakes checks on doctests too
 - New option ``jobs`` to launch multiple jobs in parallel
-- Fix Git and Mercurial hooks, issues #88 and #133
+- Fix Git and Mercurial hooks, issues #88, #133 and #148
 - Fix crashes with Python 3.4 by upgrading dependencies
 - Fix traceback when running tests with Python 2.6
 - Fix the setuptools command ``python setup.py flake8`` to read

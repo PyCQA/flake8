@@ -183,7 +183,7 @@ if __name__ == '__main__':
 def _install_hg_hook(path):
     if not os.path.isfile(path):
         # Make the file so we can avoid IOError's
-        open(path, 'w+').close()
+        open(path, 'w').close()
 
     c = ConfigParser()
     c.readfp(open(path, 'r'))
@@ -211,7 +211,8 @@ def _install_hg_hook(path):
     if not c.has_option('flake8', 'lazy'):
         c.set('flake8', 'lazy', os.getenv('FLAKE8_LAZY', False))
 
-    c.write(open(path, 'w+'))
+    with open(path, 'w') as fd:
+        c.write(fd)
 
 
 def install_hook():
@@ -227,7 +228,7 @@ def install_hook():
 
     status = 0
     if 'git' in vcs:
-        with open(vcs, 'w+') as fd:
+        with open(vcs, 'w') as fd:
             fd.write(git_hook_file)
         # rwxr--r--
         os.chmod(vcs, stat.S_IRWXU | stat.S_IRGRP | stat.S_IROTH)

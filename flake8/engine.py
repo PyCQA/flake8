@@ -50,8 +50,12 @@ def get_parser():
             pass
 
     if multiprocessing:
+        try:
+            auto = multiprocessing.cpu_count() or 1
+        except NotImplimentedError:
+            auto =1
         parser.config_options.append('jobs')
-        parser.add_option('-j', '--jobs', type='int', default=1,
+        parser.add_option('-j', '--jobs', type='int', default=auto,
                           help="number of jobs to run simultaneously")
 
     parser.add_option('--exit-zero', action='store_true',

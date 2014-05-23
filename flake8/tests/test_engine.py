@@ -34,7 +34,7 @@ class TestEngine(unittest.TestCase):
         m = mock.Mock()
         with mock.patch('flake8.engine.StyleGuide') as StyleGuide:
             with mock.patch('flake8.engine.get_parser') as get_parser:
-                StyleGuide.return_value.options.jobs = 42
+                StyleGuide.return_value.options.jobs = '42'
                 get_parser.return_value = (m, [])
                 engine.get_style_guide(foo='bar')
                 get_parser.assert_called_once_with()

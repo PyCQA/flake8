@@ -51,8 +51,9 @@ def get_parser():
 
     if multiprocessing:
         parser.config_options.append('jobs')
-        parser.add_option('-j', '--jobs', type='int', default=1,
-                          help="number of jobs to run simultaneously")
+        parser.add_option('-j', '--jobs', type='string', default='',
+                          help="number of jobs to run simultaneously, "
+                          "or 'auto'")
 
     parser.add_option('--exit-zero', action='store_true',
                       help="exit with code 0 even if there are errors")
@@ -87,11 +88,20 @@ def get_style_guide(**kwargs):
     for options_hook in options_hooks:
         options_hook(options)
 
-    if multiprocessing and options.jobs > 1:
-        reporter = BaseQReport if options.quiet else QueueReport
-        report = styleguide.init_report(reporter)
-        report.input_file = styleguide.input_file
-        styleguide.runner = report.task_queue.put
+    if multiprocessing and options.jobs:
+        if options.jobs.isdigit():
+            n_jobs = int(options.jobs)
+        else:
+            try:
+                n_jobs = multiprocessing.cpu_count()
+            except NotImplementedError:
+                n_jobs = 1
+        if n_jobs > 1:
+            options.jobs = n_jobs
+            reporter = BaseQReport if options.quiet else QueueReport
+            report = styleguide.init_report(reporter)
+            report.input_file = styleguide.input_file
+            styleguide.runner = report.task_queue.put
 
     return styleguide
 

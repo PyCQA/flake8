@@ -52,7 +52,7 @@ def get_parser():
     if multiprocessing:
         try:
             auto = multiprocessing.cpu_count() or 1
-        except NotImplimentedError:
+        except NotImplementedError:
             auto = 1
         parser.config_options.append('jobs')
         parser.add_option('-j', '--jobs', type='int', default=auto,

@@ -1,59 +1,34 @@
 VCS Hooks
 =========
 
-Mercurial hook
---------------
+flake8 can install hooks for Mercurial and Git so that flake8 is run
+automatically before commits. The commit will fail if there are any
+flake8 issues.
 
-To use the Mercurial hook on any *commit* or *qrefresh*, change your .hg/hgrc
-file like this::
+You can install the hook by issuing this command in the root of your
+project::
 
-    [hooks]
-    commit = python:flake8.hooks.hg_hook
-    qrefresh = python:flake8.hooks.hg_hook
+  $ flake8 --install-hooks
 
-    [flake8]
-    strict = 0
-    complexity = 12
+In the case of Git, the hook won't be installed if a custom
+``pre-commit`` hook file is already present in
+the ``.git/hooks`` directory.
 
+You can control the behavior of the pre-commit hook using environment
+variables:
 
-If *strict* option is set to **1**, any warning will block the commit. When
-*strict* is set to **0**, warnings are just printed to the standard output.
+``FLAKE8_COMPLEXITY``
+  Any value > 0 enables complexity checking with McCabe. (defaults
+  to 10)
 
-*complexity* defines the maximum McCabe complexity allowed before a warning
-is emitted.  If you don't specify it, it's just ignored.  If specified, it must
-be a positive value.  12 is usually a good value.
+``FLAKE8_STRICT``
+  If True, this causes the commit to fail in case of any errors at
+  all. (defaults to False)
 
+``FLAKE8_IGNORE``
+  Comma-separated list of errors and warnings to ignore.  (defaults to
+  empty)
 
-Git hook
---------
-
-To use the Git hook on any *commit*, add a **pre-commit** file in the
-*.git/hooks* directory containing::
-
-    #!/usr/bin/env python
-    import sys
-    from flake8.hooks import git_hook
-
-    COMPLEXITY = 10
-    STRICT = False
-
-    if __name__ == '__main__':
-        sys.exit(git_hook(complexity=COMPLEXITY, strict=STRICT, ignore='E501'))
-        # Alternatively
-        # sys.exit(git_hook(complexity=COMPLEXITY, strict=STRICT,
-        #                   ignore=['E501']))
-
-
-If *strict* option is set to **True**, any warning will block the commit. When
-*strict* is set to **False** or omitted, warnings are just printed to the
-standard output.
-
-*complexity* defines the maximum McCabe complexity allowed before a warning
-is emitted.  If you don't specify it or set it to **-1**, it's just ignored.
-If specified, it must be a positive value.  12 is usually a good value.
-
-*lazy* when set to ``True`` will also take into account files not added to the
-index.
-
-Also, make sure the file is executable and adapt the shebang line so it
-points to your Python interpreter.
+``FLAKE8_LAZY``
+  If True, also scans those files not added to the index before
+  commit. (defaults to False)

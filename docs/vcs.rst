@@ -8,7 +8,7 @@ flake8 issues.
 You can install the hook by issuing this command in the root of your
 project::
 
-  $ flake8 --install-hooks
+  $ flake8 --install-hook
 
 In the case of Git, the hook won't be installed if a custom
 ``pre-commit`` hook file is already present in

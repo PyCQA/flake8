@@ -38,7 +38,7 @@ setup(
     packages=["flake8", "flake8.tests"],
     install_requires=[
         "pyflakes >= 0.8.1",
-        "pep8 >= 1.5.1",
+        "pep8 >= 1.5.7",
         "mccabe >= 0.2.1",
     ],
     entry_points={

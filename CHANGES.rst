@@ -1,11 +1,12 @@
 CHANGES
 =======
 
-2.1.1 - unreleased
+2.2.0 - 2014-06-22
 ------------------
 
 - New option ``doctests`` to run Pyflakes checks on doctests too
 - New option ``jobs`` to launch multiple jobs in parallel
+- Turn on using multiple jobs by default using the CPU count
 - Add support for ``python -m flake8`` on Python 2.7 and Python 3
 - Fix Git and Mercurial hooks: issues #88, #133, #148 and #149
 - Fix crashes with Python 3.4 by upgrading dependencies

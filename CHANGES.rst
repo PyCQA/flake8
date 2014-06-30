@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+2.2.1 - 2014-06-30
+------------------
+
+- Turn off multiple jobs by default. To enable automatic use of all CPUs, use
+  ``--jobs=auto``. Fixes #155 and #154.
+
 2.2.0 - 2014-06-22
 ------------------
 

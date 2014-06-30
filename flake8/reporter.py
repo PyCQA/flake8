@@ -2,6 +2,7 @@
 # Adapted from a contribution of Johan Dahlin
 
 import collections
+import sys
 try:
     import multiprocessing
 except ImportError:     # Python 2.5
@@ -14,6 +15,7 @@ __all__ = ['multiprocessing', 'BaseQReport', 'QueueReport']
 
 class BaseQReport(pep8.BaseReport):
     """Base Queue Report."""
+    _loaded = False   # Windows support
 
     def __init__(self, options):
         assert options.jobs > 0
@@ -24,9 +26,13 @@ class BaseQReport(pep8.BaseReport):
         # init queues
         self.task_queue = multiprocessing.Queue()
         self.result_queue = multiprocessing.Queue()
+        if sys.platform == 'win32':
+            # Work around http://bugs.python.org/issue10845
+            sys.modules['__main__'].__file__ = __file__
 
     def start(self):
         super(BaseQReport, self).start()
+        self.__class__._loaded = True
         # spawn processes
         for i in range(self.n_jobs):
             p = multiprocessing.Process(target=self.process_main)
@@ -40,6 +46,10 @@ class BaseQReport(pep8.BaseReport):
         super(BaseQReport, self).stop()
 
     def process_main(self):
+        if not self._loaded:
+            # Windows needs to parse again the configuration
+            from flake8.main import get_style_guide, DEFAULT_CONFIG
+            get_style_guide(parse_argv=True, config_file=DEFAULT_CONFIG)
         for filename in iter(self.task_queue.get, 'DONE'):
             self.input_file(filename)
         self.result_queue.put(self.get_state())

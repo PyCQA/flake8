@@ -119,7 +119,6 @@ listing of the ones we are aware of:
 
 * `pep8-naming <https://github.com/flintwork/pep8-naming>`_
 
-
 .. links
 .. _mccabe: https://github.com/flintwork/mccabe
 .. _PyPI: https://pypi.python.org/pypi/

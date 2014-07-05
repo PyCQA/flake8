@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+2.2.2 - 2014-07-04
+------------------
+
+- Re-enable multiprocessing by default while fixing the issue Windows users
+  were seeing.
+
 2.2.1 - 2014-06-30
 ------------------
 

@@ -55,7 +55,7 @@ def get_parser():
         except NotImplementedError:
             auto = 1
         parser.config_options.append('jobs')
-        parser.add_option('-j', '--jobs', type='string', default='',
+        parser.add_option('-j', '--jobs', type='string', default='auto',
                           help="number of jobs to run simultaneously, "
                           "or 'auto'")
 

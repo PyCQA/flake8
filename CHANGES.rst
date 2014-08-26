@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+2.2.3 - 2014-08-25
+------------------
+
+- Actually turn multiprocessing on by default
+
 2.2.2 - 2014-07-04
 ------------------
 

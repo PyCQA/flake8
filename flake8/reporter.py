@@ -36,23 +36,38 @@ class BaseQReport(pep8.BaseReport):
         # spawn processes
         for i in range(self.n_jobs):
             p = multiprocessing.Process(target=self.process_main)
+            p.daemon = True
             p.start()
 
     def stop(self):
-        # collect queues
-        for i in range(self.n_jobs):
-            self.task_queue.put('DONE')
-            self.update_state(self.result_queue.get())
-        super(BaseQReport, self).stop()
+        try:
+            # collect queues
+            for i in range(self.n_jobs):
+                self.task_queue.put('DONE')
+                self.update_state(self.result_queue.get())
+        except KeyboardInterrupt:
+            print('... stopped')
+        finally:
+            # cleanup queues to unlock threads
+            while not self.result_queue.empty():
+                self.result_queue.get_nowait()
+            while not self.task_queue.empty():
+                self.task_queue.get_nowait()
+
+            super(BaseQReport, self).stop()
 
     def process_main(self):
-        if not self._loaded:
-            # Windows needs to parse again the configuration
-            from flake8.main import get_style_guide, DEFAULT_CONFIG
-            get_style_guide(parse_argv=True, config_file=DEFAULT_CONFIG)
-        for filename in iter(self.task_queue.get, 'DONE'):
-            self.input_file(filename)
-        self.result_queue.put(self.get_state())
+        try:
+            if not self._loaded:
+                # Windows needs to parse again the configuration
+                from flake8.main import get_style_guide, DEFAULT_CONFIG
+                get_style_guide(parse_argv=True, config_file=DEFAULT_CONFIG)
+            for filename in iter(self.task_queue.get, 'DONE'):
+                self.input_file(filename)
+        except KeyboardInterrupt:
+            pass
+        finally:
+            self.result_queue.put(self.get_state())
 
     def get_state(self):
         return {'total_errors': self.total_errors,

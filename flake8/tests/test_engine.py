@@ -1,7 +1,10 @@
 from __future__ import with_statement
 
 import unittest
-import mock
+try:
+    from unittest import mock
+except ImportError:
+    import mock  # < PY33
 
 from flake8 import engine, util, __version__
 

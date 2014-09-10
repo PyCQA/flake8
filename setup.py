@@ -8,6 +8,18 @@ try:
 except ImportError:
     pass
 
+try:
+    # Use https://docs.python.org/3/library/unittest.mock.html
+    from unittest import mock
+except ImportError:
+    # < Python 3.3
+    mock = None
+
+
+tests_require = ['nose']
+if mock is None:
+    tests_require += ['mock']
+
 
 def get_version(fname='flake8/__init__.py'):
     with open(fname) as f:
@@ -58,6 +70,6 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Software Development :: Quality Assurance",
     ],
-    tests_require=['nose', 'mock'],
+    tests_require=tests_require,
     test_suite='nose.collector',
 )

@@ -92,6 +92,9 @@ def get_style_guide(**kwargs):
     for options_hook in options_hooks:
         options_hook(options)
 
+    if options.diff:
+        options.jobs = None
+
     if multiprocessing and options.jobs:
         if options.jobs.isdigit():
             n_jobs = int(options.jobs)

@@ -6,7 +6,7 @@ import pep8
 
 from flake8 import __version__
 from flake8.reporter import multiprocessing, BaseQReport, QueueReport
-from flake8.util import OrderedSet
+from flake8.util import OrderedSet, is_windows
 
 _flake8_noqa = re.compile(r'flake8[:=]\s*noqa', re.I).search
 
@@ -49,7 +49,7 @@ def get_parser():
         except ValueError:
             pass
 
-    if multiprocessing:
+    if multiprocessing and not is_windows():
         try:
             auto = multiprocessing.cpu_count() or 1
         except NotImplementedError:

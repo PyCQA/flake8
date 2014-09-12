@@ -49,7 +49,7 @@ def get_parser():
         except ValueError:
             pass
 
-    if multiprocessing and not is_windows():
+    if multiprocessing:
         try:
             auto = multiprocessing.cpu_count() or 1
         except NotImplementedError:
@@ -95,7 +95,7 @@ def get_style_guide(**kwargs):
     if options.diff:
         options.jobs = None
 
-    if multiprocessing and options.jobs:
+    if multiprocessing and options.jobs and not is_windows():
         if options.jobs.isdigit():
             n_jobs = int(options.jobs)
         else:

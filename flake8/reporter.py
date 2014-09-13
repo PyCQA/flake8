@@ -30,6 +30,24 @@ class BaseQReport(pep8.BaseReport):
             # Work around http://bugs.python.org/issue10845
             sys.modules['__main__'].__file__ = __file__
 
+    def _cleanup_queue(self, queue):
+        while not queue.empty():
+            queue.get_nowait()
+
+    def _put_done(self):
+        # collect queues
+        for i in range(self.n_jobs):
+            self.task_queue.put('DONE')
+            self.update_state(self.result_queue.get())
+
+    def _process_main(self):
+        if not self._loaded:
+            # Windows needs to parse again the configuration
+            from flake8.main import get_style_guide, DEFAULT_CONFIG
+            get_style_guide(parse_argv=True, config_file=DEFAULT_CONFIG)
+        for filename in iter(self.task_queue.get, 'DONE'):
+            self.input_file(filename)
+
     def start(self):
         super(BaseQReport, self).start()
         self.__class__._loaded = True
@@ -41,29 +59,18 @@ class BaseQReport(pep8.BaseReport):
 
     def stop(self):
         try:
-            # collect queues
-            for i in range(self.n_jobs):
-                self.task_queue.put('DONE')
-                self.update_state(self.result_queue.get())
+            self._put_done()
         except KeyboardInterrupt:
             pass
         finally:
             # cleanup queues to unlock threads
-            while not self.result_queue.empty():
-                self.result_queue.get_nowait()
-            while not self.task_queue.empty():
-                self.task_queue.get_nowait()
-
+            self._cleanup_queue(self.result_queue)
+            self._cleanup_queue(self.task_queue)
             super(BaseQReport, self).stop()
 
     def process_main(self):
-        if not self._loaded:
-            # Windows needs to parse again the configuration
-            from flake8.main import get_style_guide, DEFAULT_CONFIG
-            get_style_guide(parse_argv=True, config_file=DEFAULT_CONFIG)
         try:
-            for filename in iter(self.task_queue.get, 'DONE'):
-                self.input_file(filename)
+            self._process_main()
         except KeyboardInterrupt:
             pass
         finally:

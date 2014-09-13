@@ -6,7 +6,7 @@ try:
 except ImportError:
     import mock  # < PY33
 
-from flake8 import engine, util, __version__
+from flake8 import engine, util, __version__, reporter
 
 
 class TestEngine(unittest.TestCase):
@@ -81,6 +81,18 @@ class TestEngine(unittest.TestCase):
         # Silly test but it will provide 100% test coverage
         # Also we can never be sure (without reconstructing the string
         # ourselves) what system we may be testing on.
+
+    def test_windows_disables_jobs(self):
+        with mock.patch('flake8.engine.is_windows') as is_windows:
+            is_windows.return_value = True
+            guide = engine.get_style_guide()
+            assert isinstance(guide, reporter.BaseQReport) is False
+
+    def test_stdin_disables_jobs(self):
+        with mock.patch('flake8.engine.is_using_stdin') as is_using_stdin:
+            is_using_stdin.return_value = True
+            guide = engine.get_style_guide()
+            assert isinstance(guide, reporter.BaseQReport) is False
 
 if __name__ == '__main__':
     unittest.main()

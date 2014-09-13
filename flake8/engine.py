@@ -6,7 +6,7 @@ import pep8
 
 from flake8 import __version__
 from flake8.reporter import multiprocessing, BaseQReport, QueueReport
-from flake8.util import OrderedSet, is_windows
+from flake8.util import OrderedSet, is_windows, is_using_stdin
 
 _flake8_noqa = re.compile(r'flake8[:=]\s*noqa', re.I).search
 
@@ -57,7 +57,7 @@ def get_parser():
         parser.config_options.append('jobs')
         parser.add_option('-j', '--jobs', type='string', default='auto',
                           help="number of jobs to run simultaneously, "
-                          "or 'auto'")
+                          "or 'auto'. This is ignored on Windows.")
 
     parser.add_option('--exit-zero', action='store_true',
                       help="exit with code 0 even if there are errors")
@@ -95,7 +95,9 @@ def get_style_guide(**kwargs):
     if options.diff:
         options.jobs = None
 
-    if multiprocessing and options.jobs and not is_windows():
+    force_disable_jobs = is_windows() or is_using_stdin(styleguide.paths)
+
+    if multiprocessing and options.jobs and not force_disable_jobs:
         if options.jobs.isdigit():
             n_jobs = int(options.jobs)
         else:

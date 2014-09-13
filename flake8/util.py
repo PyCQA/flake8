@@ -49,6 +49,11 @@ def is_windows():
     return os.name == 'nt'
 
 
+def is_using_stdin(paths):
+    """Determine if we're running checks on stdin."""
+    return '-' in paths
+
+
 def flag_on(val):
     """Return true if flag is on"""
     return str(val).upper() in ('1', 'T', 'TRUE', 'ON')

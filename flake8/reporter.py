@@ -46,7 +46,7 @@ class BaseQReport(pep8.BaseReport):
                 self.task_queue.put('DONE')
                 self.update_state(self.result_queue.get())
         except KeyboardInterrupt:
-            print('... stopped')
+            pass
         finally:
             # cleanup queues to unlock threads
             while not self.result_queue.empty():
@@ -57,11 +57,11 @@ class BaseQReport(pep8.BaseReport):
             super(BaseQReport, self).stop()
 
     def process_main(self):
+        if not self._loaded:
+            # Windows needs to parse again the configuration
+            from flake8.main import get_style_guide, DEFAULT_CONFIG
+            get_style_guide(parse_argv=True, config_file=DEFAULT_CONFIG)
         try:
-            if not self._loaded:
-                # Windows needs to parse again the configuration
-                from flake8.main import get_style_guide, DEFAULT_CONFIG
-                get_style_guide(parse_argv=True, config_file=DEFAULT_CONFIG)
             for filename in iter(self.task_queue.get, 'DONE'):
                 self.input_file(filename)
         except KeyboardInterrupt:

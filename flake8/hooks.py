@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import with_statement
 import os
+import pep8
 import sys
 import stat
 from subprocess import Popen, PIPE
@@ -47,10 +48,9 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
     if complexity > -1:
         options['max_complexity'] = complexity
 
-    files_modified = [f for f in files_modified if f.endswith('.py')]
-
     flake8_style = get_style_guide(config_file=DEFAULT_CONFIG, paths=['.'],
                                    **options)
+    filepatterns = flake8_style.options.filename
 
     # Copy staged versions to temporary directory
     tmpdir = mkdtemp()
@@ -72,7 +72,12 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
             # write staged version of file to temporary directory
             with open(filename, "wb") as fh:
                 fh.write(out)
-            files_to_check.append(filename)
+
+            # check_files() only does this check if passed a dir; so we do it
+            if ((pep8.filename_match(filename, filepatterns) and
+                 not flake8_style.excluded(filename))):
+                files_to_check.append(filename)
+
         # Run the checks
         report = flake8_style.check_files(files_to_check)
     # remove temporary directory

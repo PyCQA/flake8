@@ -15,7 +15,7 @@ else:
         'flake8'
     )
 
-EXTRA_IGNORE = ['.tox']
+EXTRA_IGNORE = []
 
 
 def main():

@@ -10,6 +10,8 @@ from flake8.util import OrderedSet, is_windows, is_using_stdin
 
 _flake8_noqa = re.compile(r'flake8[:=]\s*noqa', re.I).search
 
+EXTRA_EXCLUDE = '.tox'
+
 
 def _register_extensions():
     """Register all the extensions."""
@@ -89,6 +91,9 @@ def get_style_guide(**kwargs):
     kwargs['parser'], options_hooks = get_parser()
     styleguide = StyleGuide(**kwargs)
     options = styleguide.options
+    # Add pattersn in EXTRA_EXCLUDE to the list of excluded patterns
+    options.exclude.extend(pep8.normalize_paths(EXTRA_EXCLUDE))
+
     for options_hook in options_hooks:
         options_hook(options)
 

@@ -46,7 +46,7 @@ setup(
     author_email="tarek@ziade.org",
     maintainer="Ian Cordasco",
     maintainer_email="graffatcolmingov@gmail.com",
-    url="http://bitbucket.org/tarek/flake8",
+    url="https://gitlab.com/pycqa/flake8",
     packages=["flake8", "flake8.tests"],
     install_requires=[
         "pyflakes >= 0.8.1",

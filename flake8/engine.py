@@ -35,6 +35,19 @@ def _register_extensions():
     return extensions, parser_hooks, options_hooks
 
 
+def _install_hook_cb(option, option_str, value, parser):
+    # For now, there's no way to affect a change in how pep8 processes
+    # options. If no args are provided and there's no config file present,
+    # it will error out because no input was provided. To get around this,
+    # when we're using --install-hook, we'll say that there were arguments so
+    # we can actually attempt to install the hook.
+    # See: https://gitlab.com/pycqa/flake8/issues/2 and
+    # https://github.com/jcrocholl/pep8/blob/4c5bf00cb613be617c7f48d3b2b82a1c7b895ac1/pep8.py#L1912
+    # for more context.
+    parser.values.install_hook = True
+    parser.rargs.append('.')
+
+
 def get_parser():
     """This returns an instance of optparse.OptionParser with all the
     extensions registered and options set. This wraps ``pep8.get_parser``.
@@ -65,9 +78,10 @@ def get_parser():
                       help="exit with code 0 even if there are errors")
     for parser_hook in parser_hooks:
         parser_hook(parser)
-    parser.add_option('--install-hook', default=False, action='store_true',
+    # See comment above regarding why this has to be a callback.
+    parser.add_option('--install-hook', default=False, dest='install_hook',
                       help='Install the appropriate hook for this '
-                      'repository.', dest='install_hook')
+                      'repository.', action='callback', callback=_install_hook_cb)
     return parser, options_hooks
 
 

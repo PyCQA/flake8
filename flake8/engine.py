@@ -94,7 +94,7 @@ def get_style_guide(**kwargs):
 
     if options.exclude and not isinstance(options.exclude, list):
         options.exclude = pep8.normalize_paths(options.exclude)
-    else:
+    elif not options.exclude:
         options.exclude = []
 
     # Add pattersn in EXTRA_EXCLUDE to the list of excluded patterns

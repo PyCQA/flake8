@@ -8,7 +8,7 @@ from flake8 import __version__
 from flake8.reporter import multiprocessing, BaseQReport, QueueReport
 from flake8.util import OrderedSet, is_windows, is_using_stdin
 
-_flake8_noqa = re.compile(r'flake8[:=]\s*noqa', re.I).search
+_flake8_noqa = re.compile(r'\s*# flake8[:=]\s*noqa', re.I).match
 
 EXTRA_EXCLUDE = '.tox'
 
@@ -65,10 +65,6 @@ def get_parser():
             pass
 
     if multiprocessing:
-        try:
-            auto = multiprocessing.cpu_count() or 1
-        except NotImplementedError:
-            auto = 1
         parser.config_options.append('jobs')
         parser.add_option('-j', '--jobs', type='string', default='auto',
                           help="number of jobs to run simultaneously, "
@@ -81,7 +77,8 @@ def get_parser():
     # See comment above regarding why this has to be a callback.
     parser.add_option('--install-hook', default=False, dest='install_hook',
                       help='Install the appropriate hook for this '
-                      'repository.', action='callback', callback=_install_hook_cb)
+                      'repository.', action='callback',
+                      callback=_install_hook_cb)
     return parser, options_hooks
 
 
@@ -100,7 +97,7 @@ class StyleGuide(pep8.StyleGuide):
 
 
 def get_style_guide(**kwargs):
-    """Parse the options and configure the checker. This returns a sub-class 
+    """Parse the options and configure the checker. This returns a sub-class
     of ``pep8.StyleGuide``."""
     kwargs['parser'], options_hooks = get_parser()
     styleguide = StyleGuide(**kwargs)

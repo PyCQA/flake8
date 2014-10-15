@@ -8,7 +8,7 @@ from flake8 import __version__
 from flake8.reporter import multiprocessing, BaseQReport, QueueReport
 from flake8.util import OrderedSet, is_windows, is_using_stdin
 
-_flake8_noqa = re.compile(r'\s*# flake8[:=]\s*noqa', re.I).match
+_flake8_noqa = re.compile(r'\s*# flake8[:=]\s*noqa', re.I).search
 
 EXTRA_EXCLUDE = '.tox'
 
@@ -90,7 +90,7 @@ class StyleGuide(pep8.StyleGuide):
             print('checking %s' % filename)
         fchecker = self.checker_class(
             filename, lines=lines, options=self.options)
-        # Any "# flake8: noqa" line?
+        # Any "flake8: noqa" comments to ignore the entire file?
         if any(_flake8_noqa(line) for line in fchecker.lines):
             return 0
         return fchecker.check_all(expected=expected, line_offset=line_offset)

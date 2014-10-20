@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+2.2.5 - 2014-10-19
+------------------
+
+- Flush standard out when using multiprocessing
+
+- Make the check for "# flake8: noqa" more strict
+
 2.2.4 - 2014-10-09
 ------------------
 

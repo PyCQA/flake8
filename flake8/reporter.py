@@ -74,6 +74,9 @@ class BaseQReport(pep8.BaseReport):
         except KeyboardInterrupt:
             pass
         finally:
+            # ensure all output is flushed before main process continues
+            sys.stdout.flush()
+            sys.stderr.flush()
             self.result_queue.put(self.get_state())
 
     def get_state(self):

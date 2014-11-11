@@ -48,12 +48,20 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
     if complexity > -1:
         options['max_complexity'] = complexity
 
+    tmpdir = mkdtemp()
+
     flake8_style = get_style_guide(config_file=DEFAULT_CONFIG, paths=['.'],
                                    **options)
+    # If an exclude pattern contains a slash, then pep8.read_config will
+    # convert it to an absolute path, using os.curdir as a base.  This behavior
+    # causes pep8.filename_match to fail, since our files will be
+    # in tmpdir, not os.curdir. The workaround below corrects this problem.
+    flake8_style.options.exclude = [tmpdir + x if "/" in x else x
+                                    for x in flake8_style.options.exclude]
+
     filepatterns = flake8_style.options.filename
 
     # Copy staged versions to temporary directory
-    tmpdir = mkdtemp()
     files_to_check = []
     try:
         for file_ in files_modified:

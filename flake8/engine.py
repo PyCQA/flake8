@@ -10,7 +10,7 @@ from flake8.util import OrderedSet, is_windows, is_using_stdin
 
 _flake8_noqa = re.compile(r'\s*# flake8[:=]\s*noqa', re.I).search
 
-EXTRA_EXCLUDE = '.tox'
+EXTRA_EXCLUDE = ['.tox', '.eggs', '*.egg']
 
 
 def _register_extensions():

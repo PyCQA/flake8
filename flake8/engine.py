@@ -101,11 +101,13 @@ class StyleGuide(pep8.StyleGuide):
 
 
 def _disable_extensions(parser, options):
-    select = set(options.select)
-    ignore = set(options.ignore)
-    ignore.update(getattr(parser, 'ignored_extensions', []))
-    ignore -= select
-    options.ignore = tuple(ignore)
+    ignored_extensions = set(getattr(parser, 'ignored_extensions', []))
+    # Remove any of the selected extensions from the extensions ignored by
+    # default.
+    ignored_extensions -= set(options.select)
+    # Whatever is left afterwards should be unioned with options.ignore and
+    # options.ignore should be updated with that.
+    options.ignore = tuple(ignored_extensions.union(options.ignore))
 
 
 def get_style_guide(**kwargs):

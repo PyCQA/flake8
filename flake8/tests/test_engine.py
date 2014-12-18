@@ -28,7 +28,7 @@ class TestEngine(unittest.TestCase):
 
     def test_get_style_guide(self):
         with mock.patch('flake8.engine._register_extensions') as reg_ext:
-            reg_ext.return_value = ([], [], [])
+            reg_ext.return_value = ([], [], [], [])
             g = engine.get_style_guide()
             self.assertTrue(isinstance(g, engine.StyleGuide))
             reg_ext.assert_called_once_with()
@@ -37,6 +37,7 @@ class TestEngine(unittest.TestCase):
         m = mock.Mock()
         with mock.patch('flake8.engine.StyleGuide') as StyleGuide:
             with mock.patch('flake8.engine.get_parser') as get_parser:
+                m.ignored_extensions = []
                 StyleGuide.return_value.options.jobs = '42'
                 get_parser.return_value = (m, [])
                 engine.get_style_guide(foo='bar')
@@ -58,7 +59,8 @@ class TestEngine(unittest.TestCase):
         gpv = self.start_patch('flake8.engine.get_python_version')
         pgp = self.start_patch('pep8.get_parser')
         m = mock.Mock()
-        re.return_value = ([('pyflakes', '0.7'), ('mccabe', '0.2')], [], [])
+        re.return_value = ([('pyflakes', '0.7'), ('mccabe', '0.2')], [], [],
+                           [])
         gpv.return_value = 'Python Version'
         pgp.return_value = m
         # actual call we're testing
@@ -93,6 +95,21 @@ class TestEngine(unittest.TestCase):
             is_using_stdin.return_value = True
             guide = engine.get_style_guide()
             assert isinstance(guide, reporter.BaseQReport) is False
+
+    def test_disables_extensions_that_are_not_selected(self):
+        with mock.patch('flake8.engine._register_extensions') as re:
+            re.return_value = ([('fake_ext', '0.1a1')], [], [], ['X'])
+            sg = engine.get_style_guide()
+            assert 'X' in sg.options.ignore
+
+    def test_enables_off_by_default_extensions(self):
+        with mock.patch('flake8.engine._register_extensions') as re:
+            re.return_value = ([('fake_ext', '0.1a1')], [], [], ['X'])
+            parser, options = engine.get_parser()
+            parser.parse_args(['--select=X'])
+            sg = engine.StyleGuide(parser=parser)
+            assert 'X' not in sg.options.ignore
+
 
 if __name__ == '__main__':
     unittest.main()

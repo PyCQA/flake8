@@ -19,6 +19,7 @@ def _register_extensions():
     extensions.add(('pep8', pep8.__version__))
     parser_hooks = []
     options_hooks = []
+    ignored_hooks = []
     try:
         from pkg_resources import iter_entry_points
     except ImportError:
@@ -32,7 +33,9 @@ def _register_extensions():
                 parser_hooks.append(checker.add_options)
             if hasattr(checker, 'parse_options'):
                 options_hooks.append(checker.parse_options)
-    return extensions, parser_hooks, options_hooks
+            if getattr(checker, 'off_by_default', False) is True:
+                ignored_hooks.append(entry.name)
+    return extensions, parser_hooks, options_hooks, ignored_hooks
 
 
 def _install_hook_cb(option, option_str, value, parser):
@@ -52,7 +55,7 @@ def get_parser():
     """This returns an instance of optparse.OptionParser with all the
     extensions registered and options set. This wraps ``pep8.get_parser``.
     """
-    (extensions, parser_hooks, options_hooks) = _register_extensions()
+    (extensions, parser_hooks, options_hooks, ignored) = _register_extensions()
     details = ', '.join(['%s: %s' % ext for ext in extensions])
     python_version = get_python_version()
     parser = pep8.get_parser('flake8', '%s (%s) %s' % (
@@ -79,6 +82,7 @@ def get_parser():
                       help='Install the appropriate hook for this '
                       'repository.', action='callback',
                       callback=_install_hook_cb)
+    parser.ignored_extensions = ignored
     return parser, options_hooks
 
 
@@ -96,12 +100,22 @@ class StyleGuide(pep8.StyleGuide):
         return fchecker.check_all(expected=expected, line_offset=line_offset)
 
 
+def _disable_extensions(parser, options):
+    select = set(options.select)
+    ignore = set(options.ignore)
+    ignore.update(getattr(parser, 'ignored_extensions', []))
+    ignore -= select
+    options.ignore = tuple(ignore)
+
+
 def get_style_guide(**kwargs):
     """Parse the options and configure the checker. This returns a sub-class
     of ``pep8.StyleGuide``."""
     kwargs['parser'], options_hooks = get_parser()
     styleguide = StyleGuide(**kwargs)
     options = styleguide.options
+
+    _disable_extensions(kwargs['parser'], options)
 
     if options.exclude and not isinstance(options.exclude, list):
         options.exclude = pep8.normalize_paths(options.exclude)

@@ -5,6 +5,7 @@ import platform
 import pep8
 
 from flake8 import __version__
+from flake8 import callbacks
 from flake8.reporter import multiprocessing, BaseQReport, QueueReport
 from flake8.util import OrderedSet, is_windows, is_using_stdin
 
@@ -38,19 +39,6 @@ def _register_extensions():
     return extensions, parser_hooks, options_hooks, ignored_hooks
 
 
-def _install_hook_cb(option, option_str, value, parser):
-    # For now, there's no way to affect a change in how pep8 processes
-    # options. If no args are provided and there's no config file present,
-    # it will error out because no input was provided. To get around this,
-    # when we're using --install-hook, we'll say that there were arguments so
-    # we can actually attempt to install the hook.
-    # See: https://gitlab.com/pycqa/flake8/issues/2 and
-    # https://github.com/jcrocholl/pep8/blob/4c5bf00cb613be617c7f48d3b2b82a1c7b895ac1/pep8.py#L1912
-    # for more context.
-    parser.values.install_hook = True
-    parser.rargs.append('.')
-
-
 def get_parser():
     """This returns an instance of optparse.OptionParser with all the
     extensions registered and options set. This wraps ``pep8.get_parser``.
@@ -81,7 +69,11 @@ def get_parser():
     parser.add_option('--install-hook', default=False, dest='install_hook',
                       help='Install the appropriate hook for this '
                       'repository.', action='callback',
-                      callback=_install_hook_cb)
+                      callback=callbacks.install_vcs_hook)
+    parser.add_option('--output-file', default=None,
+                      help='Redirect report to a file.',
+                      type='string', nargs=1, action='callback',
+                      callback=callbacks.redirect_stdout)
     parser.ignored_extensions = ignored
     return parser, options_hooks
 

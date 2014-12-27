@@ -2,6 +2,7 @@
 # Adapted from a contribution of Johan Dahlin
 
 import collections
+import re
 import sys
 try:
     import multiprocessing
@@ -93,3 +94,34 @@ class BaseQReport(pep8.BaseReport):
 
 class QueueReport(pep8.StandardReport, BaseQReport):
     """Standard Queue Report."""
+
+    def get_file_results(self):
+        """Print the result and return the overall count for this file."""
+        self._deferred_print.sort()
+
+        for line_number, offset, code, text, doc in self._deferred_print:
+            print(self._fmt % {
+                'path': self.filename,
+                'row': self.line_offset + line_number, 'col': offset + 1,
+                'code': code, 'text': text,
+            })
+            # stdout is block buffered when not stdout.isatty().
+            # line can be broken where buffer boundary since other processes
+            # write to same file.
+            # flush() after print() to avoid buffer boundary.
+            # Typical buffer size is 8192. line written safely when
+            # len(line) < 8192.
+            sys.stdout.flush()
+            if self._show_source:
+                if line_number > len(self.lines):
+                    line = ''
+                else:
+                    line = self.lines[line_number - 1]
+                print(line.rstrip())
+                sys.stdout.flush()
+                print(re.sub(r'\S', ' ', line[:offset]) + '^')
+                sys.stdout.flush()
+            if self._show_pep8 and doc:
+                print('    ' + doc.strip())
+                sys.stdout.flush()
+        return self.file_errors

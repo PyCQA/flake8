@@ -2,6 +2,7 @@
 # Adapted from a contribution of Johan Dahlin
 
 import collections
+import re
 import sys
 try:
     import multiprocessing

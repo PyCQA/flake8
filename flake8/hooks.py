@@ -16,6 +16,11 @@ from flake8.engine import get_parser, get_style_guide
 from flake8.main import DEFAULT_CONFIG
 
 
+def fix_exclude(flake8_style, tmpdir):
+    flake8_style.options.exclude = [tmpdir + x if "/" in x else x
+                                    for x in flake8_style.options.exclude]
+
+
 def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
     """This is the function used by the git hook.
 
@@ -52,13 +57,7 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
 
     flake8_style = get_style_guide(config_file=DEFAULT_CONFIG, paths=['.'],
                                    **options)
-    # If an exclude pattern contains a slash, then pep8.read_config will
-    # convert it to an absolute path, using os.curdir as a base.  This behavior
-    # causes pep8.filename_match to fail, since our files will be
-    # in tmpdir, not os.curdir. The workaround below corrects this problem.
-    flake8_style.options.exclude = [tmpdir + x if "/" in x else x
-                                    for x in flake8_style.options.exclude]
-
+    fix_exclude(flake8_style, tmpdir)
     filepatterns = flake8_style.options.filename
 
     # Copy staged versions to temporary directory

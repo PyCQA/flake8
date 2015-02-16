@@ -128,11 +128,10 @@ def run(command, raw_output=False, decode=True):
     # endswith to be given a bytes object or a tuple of bytes but not native
     # string objects. This is simply less mysterious than using b'.py' in the
     # endswith method. That should work but might still fail horribly.
-    if hasattr(stdout, 'decode'):
-        if decode:
+    if decode:
+        if hasattr(stdout, 'decode'):
             stdout = stdout.decode('utf-8')
-    if hasattr(stderr, 'decode'):
-        if decode:
+        if hasattr(stderr, 'decode'):
             stderr = stderr.decode('utf-8')
     if not raw_output:
         stdout = [line.strip() for line in stdout.splitlines()]

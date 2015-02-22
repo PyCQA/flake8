@@ -6,7 +6,8 @@ import pep8
 
 from flake8 import __version__
 from flake8 import callbacks
-from flake8.reporter import multiprocessing, BaseQReport, QueueReport
+from flake8.reporter import (multiprocessing, BaseQReport, FileQReport,
+                             QueueReport)
 from flake8.util import OrderedSet, is_windows, is_using_stdin
 
 _flake8_noqa = re.compile(r'\s*# flake8[:=]\s*noqa', re.I).search
@@ -137,7 +138,11 @@ def get_style_guide(**kwargs):
                 n_jobs = 1
         if n_jobs > 1:
             options.jobs = n_jobs
-            reporter = BaseQReport if options.quiet else QueueReport
+            reporter = QueueReport
+            if options.quiet:
+                reporter = BaseQReport
+                if options.quiet == 1:
+                    reporter = FileQReport
             report = styleguide.init_report(reporter)
             report.input_file = styleguide.input_file
             styleguide.runner = report.task_queue.put

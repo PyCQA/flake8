@@ -92,6 +92,11 @@ class BaseQReport(pep8.BaseReport):
         self.messages.update(state['messages'])
 
 
+class FileQReport(BaseQReport):
+    """File Queue Report."""
+    print_filename = True
+
+
 class QueueReport(pep8.StandardReport, BaseQReport):
     """Standard Queue Report."""
 

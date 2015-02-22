@@ -49,9 +49,9 @@ setup(
     url="https://gitlab.com/pycqa/flake8",
     packages=["flake8", "flake8.tests"],
     install_requires=[
-        "pyflakes >= 0.8.1",
-        "pep8 >= 1.5.7",
-        "mccabe >= 0.2.1",
+        "pyflakes >= 0.8.1, < 0.9",
+        "pep8 >= 1.5.7, < 1.6",
+        "mccabe >= 0.2.1, < 0.4",
     ],
     entry_points={
         'distutils.commands': ['flake8 = flake8.main:Flake8Command'],

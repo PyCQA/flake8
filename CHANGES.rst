@@ -1,6 +1,26 @@
 CHANGES
 =======
 
+2.4.0 - 2015-03-07
+------------------
+
+- **Bug** Print filenames when using multiprocessing and ``-q`` option.
+  (`GitLab#31`_)
+
+- **Bug** Put upper cap on dependencies. The caps for 2.4.0 are:
+
+  - ``pep8 < 1.6`` (Related to `GitLab#35`_)
+
+  - ``mccabe < 0.4``
+
+  - ``pyflakes < 0.9``
+
+  See also `GitLab#32`_
+
+.. _GitLab#31: https://gitlab.com/pycqa/flake8/issues/31
+.. _GitLab#32: https://gitlab.com/pycqa/flake8/issues/32
+.. _GitLab#35: https://gitlab.com/pycqa/flake8/issues/35
+
 2.3.0 - 2015-01-04
 ------------------
 

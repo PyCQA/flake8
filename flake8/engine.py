@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 import platform
+import warnings
 
 import pep8
 
@@ -122,6 +123,21 @@ def get_style_guide(**kwargs):
 
     for options_hook in options_hooks:
         options_hook(options)
+
+    if options.jobs and options.jobs.isdigit() and int(options.jobs) > 1:
+        if not multiprocessing:
+            warnings.warn("The multiprocessing module is not available. "
+                          "Ignoring --jobs arguments.")
+        if is_windows():
+            warnings.warn("The --jobs option is not available on Windows. "
+                          "Ignoring --jobs arguments.")
+        if is_using_stdin(styleguide.paths):
+            warnings.warn("The --jobs option is not compatible with supplying "
+                          "input using - . Ignoring --jobs arguments.")
+        if options.diff:
+            warnings.warn("The --diff option was specified with --jobs but "
+                          "they are not compatible. Ignoring --jobs arguments."
+                          )
 
     if options.diff:
         options.jobs = None

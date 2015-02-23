@@ -128,11 +128,10 @@ def run(command, raw_output=False, decode=True):
     # endswith to be given a bytes object or a tuple of bytes but not native
     # string objects. This is simply less mysterious than using b'.py' in the
     # endswith method. That should work but might still fail horribly.
-    if hasattr(stdout, 'decode'):
-        if decode:
+    if decode:
+        if hasattr(stdout, 'decode'):
             stdout = stdout.decode('utf-8')
-    if hasattr(stderr, 'decode'):
-        if decode:
+        if hasattr(stderr, 'decode'):
             stderr = stderr.decode('utf-8')
     if not raw_output:
         stdout = [line.strip() for line in stdout.splitlines()]
@@ -164,16 +163,49 @@ def find_vcs():
     return ''
 
 
+def get_git_config(option, type='', convert_type=True):
+    # type can be --bool, --int or an empty string
+    _, git_cfg_value, _ = run('git config --get %s %s' % (type, option),
+                              raw_output=True)
+    git_cfg_value = git_cfg_value.strip()
+    if not convert_type:
+        return git_cfg_value
+    if type == '--bool':
+        git_cfg_value = git_cfg_value == 'true'
+    elif git_cfg_value and type == '--int':
+        git_cfg_value = int(git_cfg_value)
+    return git_cfg_value
+
+
+_params = dict([
+    ('FLAKE8_COMPLEXITY', '--int'),
+    ('FLAKE8_STRICT', '--bool'),
+    ('FLAKE8_IGNORE', ''),
+    ('FLAKE8_LAZY', '--bool'),
+])
+
+
+def get_git_param(option, default=''):
+    type = _params[option]
+    param_value = get_git_config(option.lower().replace('_', '.'),
+                                 type=type, convert_type=False)
+    if param_value == '':
+        param_value = os.getenv(option, default)
+    if (type == '--bool') and not isinstance(param_value, bool):
+        param_value = param_value.lower() == 'true'
+    elif param_value and type == '--int':
+        param_value = int(param_value)
+    return param_value
+
+
 git_hook_file = """#!/usr/bin/env python
 import sys
-import os
-from flake8.hooks import git_hook
+from flake8.hooks import git_hook, get_git_param
 
-COMPLEXITY = os.getenv('FLAKE8_COMPLEXITY', 10)
-STRICT = os.getenv('FLAKE8_STRICT', False)
-IGNORE = os.getenv('FLAKE8_IGNORE')
-LAZY = os.getenv('FLAKE8_LAZY', False)
-
+COMPLEXITY = get_git_param('FLAKE8_COMPLEXITY', 10)
+STRICT = get_git_param('FLAKE8_STRICT', False)
+IGNORE = get_git_param('FLAKE8_IGNORE')
+LAZY = get_git_param('FLAKE8_LAZY', False)
 
 if __name__ == '__main__':
     sys.exit(git_hook(

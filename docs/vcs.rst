@@ -14,21 +14,21 @@ In the case of Git, the hook won't be installed if a custom
 ``pre-commit`` hook file is already present in
 the ``.git/hooks`` directory.
 
-You can control the behavior of the pre-commit hook using environment
-variables:
+You can control the behavior of the pre-commit hook using configuration file
+settings or environment variables:
 
-``FLAKE8_COMPLEXITY``
+``flake8.complexity`` or ``FLAKE8_COMPLEXITY``
   Any value > 0 enables complexity checking with McCabe. (defaults
   to 10)
 
-``FLAKE8_STRICT``
+``flake8.strict`` or ``FLAKE8_STRICT``
   If True, this causes the commit to fail in case of any errors at
   all. (defaults to False)
 
-``FLAKE8_IGNORE``
+``flake8.ignore`` or ``FLAKE8_IGNORE``
   Comma-separated list of errors and warnings to ignore.  (defaults to
   empty)
 
-``FLAKE8_LAZY``
+``flake8.lazy`` or ``FLAKE8_LAZY``
   If True, also scans those files not added to the index before
   commit. (defaults to False)

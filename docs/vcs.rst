@@ -32,3 +32,19 @@ settings or environment variables:
 ``flake8.lazy`` or ``FLAKE8_LAZY``
   If True, also scans those files not added to the index before
   commit. (defaults to False)
+
+You can set these either through the git command line
+
+.. code-block:: bash-session
+
+    $ git config flake8.complexity 10
+    $ git config flake8.strict true
+
+Or by directly editing ``.git/config`` and adding a section like
+
+.. code-block:: ini
+
+    [flake8]
+        complexity = 10
+        strict = true
+        lazy = false

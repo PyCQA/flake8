@@ -163,37 +163,38 @@ def find_vcs():
     return ''
 
 
-def get_git_config(option, type='', convert_type=True):
+def get_git_config(option, opt_type='', convert_type=True):
     # type can be --bool, --int or an empty string
-    _, git_cfg_value, _ = run('git config --get %s %s' % (type, option),
+    _, git_cfg_value, _ = run('git config --get %s %s' % (opt_type, option),
                               raw_output=True)
     git_cfg_value = git_cfg_value.strip()
     if not convert_type:
         return git_cfg_value
-    if type == '--bool':
-        git_cfg_value = git_cfg_value == 'true'
-    elif git_cfg_value and type == '--int':
+    if opt_type == '--bool':
+        git_cfg_value = git_cfg_value.lower() == 'true'
+    elif git_cfg_value and opt_type == '--int':
         git_cfg_value = int(git_cfg_value)
     return git_cfg_value
 
 
-_params = dict([
-    ('FLAKE8_COMPLEXITY', '--int'),
-    ('FLAKE8_STRICT', '--bool'),
-    ('FLAKE8_IGNORE', ''),
-    ('FLAKE8_LAZY', '--bool'),
-])
+_params = {
+    'FLAKE8_COMPLEXITY': '--int',
+    'FLAKE8_STRICT': '--bool',
+    'FLAKE8_IGNORE': '',
+    'FLAKE8_LAZY': '--bool',
+}
 
 
 def get_git_param(option, default=''):
-    type = _params[option]
+    global _params
+    opt_type = _params[option]
     param_value = get_git_config(option.lower().replace('_', '.'),
-                                 type=type, convert_type=False)
+                                 opt_type=opt_type, convert_type=False)
     if param_value == '':
-        param_value = os.getenv(option, default)
-    if (type == '--bool') and not isinstance(param_value, bool):
+        param_value = os.environ.get(option, default)
+    if opt_type == '--bool' and not isinstance(param_value, bool):
         param_value = param_value.lower() == 'true'
-    elif param_value and type == '--int':
+    elif param_value and opt_type == '--int':
         param_value = int(param_value)
     return param_value
 
@@ -202,6 +203,11 @@ git_hook_file = """#!/usr/bin/env python
 import sys
 from flake8.hooks import git_hook, get_git_param
 
+# `get_git_param` will retrieve configuration from your local git config and
+# then fall back to using the environment variables that the hook has always
+# supported.
+# For example, to set the complexity, you'll need to do:
+#   git config flake8.complexity 10
 COMPLEXITY = get_git_param('FLAKE8_COMPLEXITY', 10)
 STRICT = get_git_param('FLAKE8_STRICT', False)
 IGNORE = get_git_param('FLAKE8_IGNORE')
@@ -218,6 +224,7 @@ if __name__ == '__main__':
 
 
 def _install_hg_hook(path):
+    getenv = os.environ.get
     if not os.path.isfile(path):
         # Make the file so we can avoid IOError's
         open(path, 'w').close()
@@ -237,16 +244,16 @@ def _install_hg_hook(path):
         c.add_section('flake8')
 
     if not c.has_option('flake8', 'complexity'):
-        c.set('flake8', 'complexity', str(os.getenv('FLAKE8_COMPLEXITY', 10)))
+        c.set('flake8', 'complexity', str(getenv('FLAKE8_COMPLEXITY', 10)))
 
     if not c.has_option('flake8', 'strict'):
-        c.set('flake8', 'strict', os.getenv('FLAKE8_STRICT', False))
+        c.set('flake8', 'strict', getenv('FLAKE8_STRICT', False))
 
     if not c.has_option('flake8', 'ignore'):
-        c.set('flake8', 'ignore', os.getenv('FLAKE8_IGNORE', ''))
+        c.set('flake8', 'ignore', getenv('FLAKE8_IGNORE', ''))
 
     if not c.has_option('flake8', 'lazy'):
-        c.set('flake8', 'lazy', os.getenv('FLAKE8_LAZY', False))
+        c.set('flake8', 'lazy', getenv('FLAKE8_LAZY', False))
 
     with open(path, 'w') as fd:
         c.write(fd)

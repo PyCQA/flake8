@@ -124,7 +124,10 @@ def get_style_guide(**kwargs):
     for options_hook in options_hooks:
         options_hook(options)
 
-    if options.jobs and options.jobs.isdigit() and int(options.jobs) > 1:
+    if (options.verbose
+            and options.jobs
+            and options.jobs.isdigit()
+            and int(options.jobs) > 1):
         if not multiprocessing:
             warnings.warn("The multiprocessing module is not available. "
                           "Ignoring --jobs arguments.")

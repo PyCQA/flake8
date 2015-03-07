@@ -12,6 +12,7 @@ try:
 except ImportError:   # Python 2
     from ConfigParser import ConfigParser
 
+from flake8 import compat
 from flake8.engine import get_parser, get_style_guide
 from flake8.main import DEFAULT_CONFIG
 
@@ -65,7 +66,7 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
             # avoid overwriting files with the same name
             dirname, filename = os.path.split(os.path.abspath(file_))
             prefix = os.path.commonprefix([dirname, tmpdir])
-            dirname = os.path.relpath(dirname, start=prefix)
+            dirname = compat.relpath(dirname, start=prefix)
             dirname = os.path.join(tmpdir, dirname)
             if not os.path.isdir(dirname):
                 os.makedirs(dirname)

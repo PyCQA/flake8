@@ -35,3 +35,7 @@ class TestGitHook(unittest.TestCase):
         tmpdir = os.path.join('/fake/tmp', dirname[1:])
         tmpfile = os.path.join(tmpdir, 'bfile.py')
         style_guide.check_files.assert_called_once_with([tmpfile])
+
+
+if __name__ == '__main__':
+    unittest.main()

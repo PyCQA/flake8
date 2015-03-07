@@ -17,9 +17,14 @@ CHANGES
 
   See also `GitLab#32`_
 
+- **Feature** Allow git hook configuration to live in ``.git/config``.
+  See the updated `VCS hooks docs`_ for more details. (`GitLab!20`_)
+
 .. _GitLab#31: https://gitlab.com/pycqa/flake8/issues/31
 .. _GitLab#32: https://gitlab.com/pycqa/flake8/issues/32
 .. _GitLab#35: https://gitlab.com/pycqa/flake8/issues/35
+.. _GitLab!20: https://gitlab.com/pycqa/flake8/merge_requests/20
+.. _VCS hooks docs: https://flake8.readthedocs.org/en/latest/vcs.html
 
 2.3.0 - 2015-01-04
 ------------------

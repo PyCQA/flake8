@@ -48,12 +48,18 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
     if complexity > -1:
         options['max_complexity'] = complexity
 
+    tmpdir = mkdtemp()
+
     flake8_style = get_style_guide(config_file=DEFAULT_CONFIG, paths=['.'],
                                    **options)
+    # Since we use a temporary directory, the exclude path needs to be fixed
+    # to prepend that.
+    path_join = os.path.join
+    flake8_style.options.exclude = [path_join(tmpdir, x) if "/" in x else x
+                                    for x in flake8_style.options.exclude]
     filepatterns = flake8_style.options.filename
 
     # Copy staged versions to temporary directory
-    tmpdir = mkdtemp()
     files_to_check = []
     try:
         for file_ in files_modified:

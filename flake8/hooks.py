@@ -6,7 +6,7 @@ import sys
 import stat
 from subprocess import Popen, PIPE
 import shutil
-from tempfile import mkdtemp
+import tempfile
 try:
     from configparser import ConfigParser
 except ImportError:   # Python 2
@@ -14,11 +14,6 @@ except ImportError:   # Python 2
 
 from flake8.engine import get_parser, get_style_guide
 from flake8.main import DEFAULT_CONFIG
-
-
-def fix_exclude(flake8_style, tmpdir):
-    flake8_style.options.exclude = [tmpdir + x if "/" in x else x
-                                    for x in flake8_style.options.exclude]
 
 
 def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
@@ -53,11 +48,10 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
     if complexity > -1:
         options['max_complexity'] = complexity
 
-    tmpdir = mkdtemp()
+    tmpdir = tempfile.mkdtemp()
 
     flake8_style = get_style_guide(config_file=DEFAULT_CONFIG, paths=['.'],
                                    **options)
-    fix_exclude(flake8_style, tmpdir)
     filepatterns = flake8_style.options.filename
 
     # Copy staged versions to temporary directory
@@ -75,15 +69,16 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
             dirname = os.path.join(tmpdir, dirname)
             if not os.path.isdir(dirname):
                 os.makedirs(dirname)
-            filename = os.path.join(dirname, filename)
-            # write staged version of file to temporary directory
-            with open(filename, "wb") as fh:
-                fh.write(out)
 
             # check_files() only does this check if passed a dir; so we do it
-            if ((pep8.filename_match(filename, filepatterns) and
-                 not flake8_style.excluded(filename))):
+            if ((pep8.filename_match(file_, filepatterns) and
+                 not flake8_style.excluded(file_))):
+
+                filename = os.path.join(dirname, filename)
                 files_to_check.append(filename)
+                # write staged version of file to temporary directory
+                with open(filename, "wb") as fh:
+                    fh.write(out)
 
         # Run the checks
         report = flake8_style.check_files(files_to_check)

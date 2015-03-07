@@ -16,11 +16,6 @@ from flake8.engine import get_parser, get_style_guide
 from flake8.main import DEFAULT_CONFIG
 
 
-def fix_exclude(flake8_style, tmpdir):
-    flake8_style.options.exclude = [tmpdir + x if "/" in x else x
-                                    for x in flake8_style.options.exclude]
-
-
 def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
     """This is the function used by the git hook.
 
@@ -57,7 +52,11 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
 
     flake8_style = get_style_guide(config_file=DEFAULT_CONFIG, paths=['.'],
                                    **options)
-    fix_exclude(flake8_style, tmpdir)
+    # Since we use a temporary directory, the exclude path needs to be fixed
+    # to prepend that.
+    path_join = os.path.join
+    flake8_style.options.exclude = [path_join(tmpdir, x) if "/" in x else x
+                                    for x in flake8_style.options.exclude]
     filepatterns = flake8_style.options.filename
 
     # Copy staged versions to temporary directory

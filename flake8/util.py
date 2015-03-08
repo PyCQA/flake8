@@ -54,6 +54,15 @@ def is_using_stdin(paths):
     return '-' in paths
 
 
+def warn_when_using_jobs(options):
+    return (options.verbose and options.jobs and options.jobs.isdigit() and
+            int(options.jobs) > 1)
+
+
+def force_disable_jobs(styleguide):
+    return is_windows() or is_using_stdin(styleguide.paths)
+
+
 def flag_on(val):
     """Return true if flag is on"""
     return str(val).upper() in ('1', 'T', 'TRUE', 'ON')

@@ -9,7 +9,7 @@ from flake8 import __version__
 from flake8 import callbacks
 from flake8.reporter import (multiprocessing, BaseQReport, FileQReport,
                              QueueReport)
-from flake8.util import OrderedSet, is_windows, is_using_stdin
+from flake8 import util
 
 _flake8_noqa = re.compile(r'\s*# flake8[:=]\s*noqa', re.I).search
 
@@ -18,7 +18,7 @@ EXTRA_EXCLUDE = ['.tox', '.eggs', '*.egg']
 
 def _register_extensions():
     """Register all the extensions."""
-    extensions = OrderedSet()
+    extensions = util.OrderedSet()
     extensions.add(('pep8', pep8.__version__))
     parser_hooks = []
     options_hooks = []
@@ -124,17 +124,14 @@ def get_style_guide(**kwargs):
     for options_hook in options_hooks:
         options_hook(options)
 
-    if (options.verbose
-            and options.jobs
-            and options.jobs.isdigit()
-            and int(options.jobs) > 1):
+    if util.warn_when_using_jobs(options):
         if not multiprocessing:
             warnings.warn("The multiprocessing module is not available. "
                           "Ignoring --jobs arguments.")
-        if is_windows():
+        if util.is_windows():
             warnings.warn("The --jobs option is not available on Windows. "
                           "Ignoring --jobs arguments.")
-        if is_using_stdin(styleguide.paths):
+        if util.is_using_stdin(styleguide.paths):
             warnings.warn("The --jobs option is not compatible with supplying "
                           "input using - . Ignoring --jobs arguments.")
         if options.diff:
@@ -145,7 +142,7 @@ def get_style_guide(**kwargs):
     if options.diff:
         options.jobs = None
 
-    force_disable_jobs = is_windows() or is_using_stdin(styleguide.paths)
+    force_disable_jobs = util.force_disable_jobs(styleguide)
 
     if multiprocessing and options.jobs and not force_disable_jobs:
         if options.jobs.isdigit():

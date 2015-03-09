@@ -20,3 +20,4 @@ Contributors (by order of appearance) :
 - Bruno Miguel Custódio
 - Florent Xicluna
 - Austin Morton
+- Michael McNeil Forbes

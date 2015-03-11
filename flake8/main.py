@@ -134,4 +134,5 @@ class Flake8Command(setuptools.Command):
         # Run the checkers
         report = flake8_style.check_files()
         exit_code = print_report(report, flake8_style)
-        raise SystemExit(exit_code > 0)
+        if exit_code > 0:
+            raise SystemExit(exit_code > 0)

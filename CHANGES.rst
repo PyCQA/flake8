@@ -1,6 +1,15 @@
 CHANGES
 =======
 
+2.x.x - 2015-yy-zz
+------------------
+
+- **Bug** Do not raise a ``SystemError`` unless there were errors in the
+  setuptools command. (`GitLab#39`_, `GitLab!23`_)
+
+.. _GitLab#39: https://gitlab.com/pycqa/flake8/issues/39
+.. _GitLab!23: https://gitlab.com/pycqa/flake8/merge_requests/23
+
 2.4.0 - 2015-03-07
 ------------------
 

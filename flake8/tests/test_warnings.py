@@ -9,6 +9,8 @@
     tests (nosetests --with-isolation doesn't help).
 
     In tox.ini, these tests are run separately.
+
+    See https://gitlab.com/pycqa/flake8/issues/44 for an explanation.
 """
 
 from __future__ import with_statement

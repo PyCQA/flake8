@@ -21,3 +21,4 @@ Contributors (by order of appearance) :
 - Florent Xicluna
 - Austin Morton
 - Michael McNeil Forbes
+- Christian Long

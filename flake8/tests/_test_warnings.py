@@ -3,15 +3,34 @@
 
     Tests for the warnings that are emitted by flake8.
 
-    This module is named _test_warnings instead of test_warnings so that a
-    normal nosetests run does not collect it. The tests in this module pass
-    when they are run alone, but they fail when they are run along with other
-    tests (nosetests --with-isolation doesn't help).
-
-    In tox.ini, these tests are run separately.
-
-    See https://gitlab.com/pycqa/flake8/issues/44 for an explanation.
 """
+
+# Flake8 issues warnings when the --jobs option is used in an incompatible way
+# (e.g. with the --diff option). This file contains the tests for that
+# feature.
+#
+# If these tests are run with the rest of the test suite, in certain
+# environments they fail.
+#
+# Pass
+# Linux - Ubuntu 14.10  Python 2.6, 2.7, 3.2, 3.3, 3.4
+# Windows - 8.1         Python 3.4
+#
+# Fail
+# Windows - 8.1         Python 2.7, 3.3
+#
+# They fail because the warnings are not issued, or are not captured. However,
+# when the tests in test_warnings.py are run alone, without the rest of the
+# test suite, they pass. Using the nosetests --isolation option does not help.
+#
+# The nature of the tests (patching stdin, stdout) and the pattern of failure
+# (Windows, Python < 3.4) makes me think the failure might have something to
+# do with PEP 446 "Make newly created file descriptors non-inheritable".
+#
+# The current solution is to name this file with a leading underscore
+# (_test_warnings.py) and run the tests separately, using a separate line in
+# the tox [testenv] stanza.
+
 
 from __future__ import with_statement
 

@@ -295,11 +295,11 @@ class IntegrationTestCaseWarnings(unittest.TestCase):
             self.verify_warnings(collected_warnings, expected_warings)
         self.assertEqual(self.count, 1)
 
-    def test_no_args_no_warnings_verbose(self):
-        self.test_no_args_no_warnings(verbose=True)
-
     def test_jobs_verbose(self):
         self.test_jobs(verbose=True)
+
+    def test_no_args_no_warnings_verbose(self):
+        self.test_no_args_no_warnings(verbose=True)
 
     def test_stdin_jobs_warning_verbose(self):
         self.test_stdin_jobs_warning(verbose=True)

@@ -9,6 +9,7 @@
     tests (nosetests --with-isolation doesn't help).
 
     In tox.ini, these tests are run separately.
+
 """
 
 from __future__ import with_statement
@@ -23,6 +24,115 @@ except ImportError:
 
 from flake8 import engine
 from flake8.util import is_windows
+
+# The Problem
+# ------------
+#
+# Some of the tests in this module pass when this module is run on its own, but
+# they fail when this module is run as part of the whole test suite. These are
+# the problematic tests:
+#
+#   test_jobs_verbose
+#   test_stdin_jobs_warning
+#
+# On some platforms, the warnings.capture_warnings function doesn't work
+# properly when run with the other flake8 tests. It drops some warnings, even
+# though the warnings filter is set to 'always'. However, when run separately,
+# these tests pass.
+#
+# This problem only occurs on Windows, with Python 3.3 and older. Maybe it's
+# related to PEP 446 - Inheritable file descriptors?
+#
+#
+#
+#
+# Things that didn't work
+# ------------
+#
+# Nose --attr
+#   I tried using the nosetests --attr feature to run the tests separately. I
+#   put the following in setup.cfg
+#
+#   [nosetests]
+#   atttr=!run_alone
+#
+#   Then I added a tox section thst did this
+#
+#   nosetests --attr=run_alone
+#
+#   However, the command line --attr would not override the config file --attr,
+#   so the special tox section wound up runing all the tests, and failing.
+#
+#
+#
+# Nose --with-isolation
+#   The nosetests --with-isolation flag did not help.
+#
+#
+#
+# unittest.skipIf
+#   I tried decorating the problematic tests with the unittest.skipIf
+#   decorator.
+#
+#    @unittest.skipIf(is_windows() and sys.version_info < (3, 4),
+#                     "Fails on Windows with Python < 3.4 when run with other"
+#                     " tests.")
+#
+#   The idea is, skip the tests in the main test run, on affected platforms.
+#   Then, only on those platforms, come back in later and run the tests
+#   separately.
+#
+#   I added a new stanza to tox.ini, to run the tests separately on the
+#   affected platforms.
+#
+#   nosetests --no-skip
+#
+#   I ran in to a bug in the nosetests skip plugin. It would report the test as
+#   having been run, but it would not actually run the test. So, when run with
+#   --no-skip, the following test would be reported as having run and passed!
+#
+#   @unittest.skip("This passes o_o")
+#   def test_should_fail(self):
+#       assert 0
+#
+#   This bug has been reported here:
+#   "--no-skip broken with Python 2.7"
+#   https://github.com/nose-devs/nose/issues/512
+#
+#
+#
+# py.test
+#
+#   I tried using py.test, and its @pytest.mark.xfail decorator. I added some
+#   separate stanzas in tox, and useing the pytest --runxfail option to run the
+#   tests separately. This allows us to run all the tests together, on
+#   platforms that allow it. On platforms that don't allow us to run the tests
+#   all together, this still runs all the tests, but in two separate steps.
+#
+#   This is the same solution as the nosetests --no-skip solution I described
+#   above, but --runxfail does not have the same bug as --no-skip.
+#
+#   This has the advantage that all tests are discoverable by default, outside
+#   of tox. However, nose does not recognize the pytest.mark.xfail decorator.
+#   So, if a user runs nosetests, it still tries to run the problematic tests
+#   together with the rest of the test suite, causing them to fail.
+#
+#
+#
+#
+#
+#
+# Solution
+# ------------
+# Move the problematic tests to _test_warnings.py, so nose.collector will not
+# find them. Set up a separate section in tox.ini that runs this:
+#
+#     nosetests flake8.tests._test_warnings
+#
+# This allows all tests to pass on all platforms, when run through tox.
+# However, it means that, even on unaffected platforms, the problematic tests
+# are not discovered and run outside of tox (if the user just runs nosetests
+# manually, for example).
 
 
 class IntegrationTestCaseWarnings(unittest.TestCase):
@@ -68,8 +178,7 @@ class IntegrationTestCaseWarnings(unittest.TestCase):
             style_guide = engine.get_style_guide(*args, **kwargs)
 
         # Now that the warnings have been collected, return the style guide and
-        # the
-        # warnings.
+        # the warnings.
         return (style_guide, collected_warnings)
 
     def verify_warnings(self, collected_warnings, expected_warnings):

@@ -101,14 +101,29 @@ from flake8.util import is_windows
 #
 #
 #
+# py.test
+#
+#   I tried using py.test, and its @pytest.mark.xfail decorator. I added some
+#   separate stanzas in tox, and useing the pytest --runxfail option to run the
+#   tests separately. This allows us to run all the tests together, on
+#   platforms that allow it. On platforms that don't allow us to run the tests
+#   all together, this still runs all the tests, but in two separate steps.
+#
+#   This is the same solution as the nosetests --no-skip solution I described
+#   above, but --runxfail does not have the same bug as --no-skip.
+#
+#   This has the advantage that all tests are discoverable by default, outside
+#   of tox. However, nose does not recognize the pytest.mark.xfail decorator.
+#   So, if a user runs nosetests, it still tries to run the problematic tests
+#   together with the rest of the test suite, causing them to fail.
 #
 #
 #
 #
-# Possible solutions
+#
+#
+# Solution
 # ------------
-#
-# Solution 1
 # Move the problematic tests to _test_warnings.py, so nose.collector will not
 # find them. Set up a separate section in tox.ini that runs this:
 #
@@ -118,58 +133,6 @@ from flake8.util import is_windows
 # However, it means that, even on unaffected platforms, the problematic tests
 # are not discovered and run outside of tox (if the user just runs nosetests
 # manually, for example).
-#
-#
-#
-# Solution 2
-# Use py.test, and its @pytest.mark.xfail decorator. Add some separate stanzas
-# in tox, and use the pytest --runxfail option to run the tests separately.
-# This will allow us to run all the tests together, on platforms that allow it.
-# On platforms that don't allow us to run the tests all together, this still
-# runs all the tests, but in two separate steps.
-#
-#
-#     [tox]
-#     envlist =
-#         . . .
-#         py27-run-alone,
-#         py33-run-alone,
-#
-#     [testenv:py27-run-alone]
-#     basepython = python2.7
-#     usedevelop = True
-#     deps =
-#         mock
-#         pytest
-#     commands =
-#         py.test --runxfail --pyargs flake8.tests.test_warnings
-#
-#     [testenv:py33-run-alone]
-#     basepython = python3.3
-#     usedevelop = True
-#     deps =
-#         mock
-#         pytest
-#     commands =
-#         py.test --runxfail --pyargs flake8.tests.test_warnings
-#
-#
-# This is the same solution as the nosetests --no-skip solution I described
-# above, but --runxfail does not have the same bug as --no-skip.
-#
-# One small problem with solution 2 is that the extra stanzas (py27-run-alone
-# and py33-run-alone) get run even on Linux, where they are not needed because
-# these tests were already run as part of the main test run. As far as I can
-# tell, there is no way to restrict tox stanzas so they only run on certain
-# platforms.
-#
-#
-#
-#
-#
-#
-# I have chosen to use solution 1 because it is simpler and does not introduce
-# a dependency on py.test.
 
 
 class IntegrationTestCaseWarnings(unittest.TestCase):

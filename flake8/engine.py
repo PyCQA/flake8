@@ -46,7 +46,7 @@ def get_parser():
     extensions registered and options set. This wraps ``pep8.get_parser``.
     """
     (extensions, parser_hooks, options_hooks, ignored) = _register_extensions()
-    details = ', '.join(['%s: %s' % ext for ext in extensions])
+    details = ', '.join('%s: %s' % ext for ext in extensions)
     python_version = get_python_version()
     parser = pep8.get_parser('flake8', '%s (%s) %s' % (
         __version__, details, python_version

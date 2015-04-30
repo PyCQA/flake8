@@ -23,3 +23,4 @@ Contributors (by order of appearance) :
 - Michael McNeil Forbes
 - Christian Long
 - Tyrel Souza
+- Corey Farwell

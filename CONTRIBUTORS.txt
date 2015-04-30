@@ -22,3 +22,4 @@ Contributors (by order of appearance) :
 - Austin Morton
 - Michael McNeil Forbes
 - Christian Long
+- Tyrel Souza

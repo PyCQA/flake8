@@ -118,7 +118,7 @@ def get_style_guide(**kwargs):
     elif not options.exclude:
         options.exclude = []
 
-    # Add pattersn in EXTRA_EXCLUDE to the list of excluded patterns
+    # Add patterns in EXTRA_EXCLUDE to the list of excluded patterns
     options.exclude.extend(pep8.normalize_paths(EXTRA_EXCLUDE))
 
     for options_hook in options_hooks:

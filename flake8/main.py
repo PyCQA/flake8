@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import re
 import sys
 
 import setuptools
@@ -105,6 +106,10 @@ class Flake8Command(setuptools.Command):
                 continue
             if is_flag(value):
                 value = flag_on(value)
+            # Check if there's any values that need to be fixed.
+            if option_name == "include" and isinstance(value, str):
+                value = re.findall('[^,;\s]+', value)
+
             self.options_dict[option_name] = value
 
     def distribution_files(self):

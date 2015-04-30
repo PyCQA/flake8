@@ -6,7 +6,7 @@ The behaviour may be configured at two levels.
 Global
 ------
 
-The user settings are read from the ``~/.config/flake8`` file.
+The user settings are read from the ``~/.config/flake8`` file (or the ``~/.flake8`` file on Windows).
 Example::
 
   [flake8]

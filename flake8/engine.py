@@ -29,7 +29,8 @@ def _register_extensions():
         pass
     else:
         for entry in iter_entry_points('flake8.extension'):
-            checker = entry.load()
+            # Do not verify that the requirements versions are valid
+            checker = entry.load(require=False)
             pep8.register_check(checker, codes=[entry.name])
             extensions.add((checker.name, checker.version))
             if hasattr(checker, 'add_options'):

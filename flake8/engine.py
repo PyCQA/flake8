@@ -115,7 +115,8 @@ def get_style_guide(**kwargs):
     _disable_extensions(kwargs['parser'], options)
 
     if options.exclude and not isinstance(options.exclude, list):
-        options.exclude = pep8.normalize_paths(options.exclude)
+        options.exclude = [p.strip('\\\r\n')
+                           for p in pep8.normalize_paths(options.exclude)]
     elif not options.exclude:
         options.exclude = []
 

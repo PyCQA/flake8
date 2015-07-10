@@ -1,3 +1,4 @@
+sudo: false
 language: python
 before_script:
 - pip install tox

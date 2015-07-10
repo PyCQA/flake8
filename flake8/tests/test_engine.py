@@ -52,7 +52,7 @@ class TestEngine(unittest.TestCase):
             self.assertTrue(len(registered_exts[0]) > 0)
             for i in registered_exts[1:]:
                 self.assertTrue(isinstance(i, list))
-            register_check.assert_called()
+            self.assertTrue(register_check.called)
 
     def test_get_parser(self):
         # setup
@@ -67,13 +67,13 @@ class TestEngine(unittest.TestCase):
         # actual call we're testing
         parser, hooks = engine.get_parser()
         # assertions
-        re.assert_called()
-        gpv.assert_called()
+        self.assertTrue(re.called)
+        self.assertTrue(gpv.called)
         pgp.assert_called_once_with(
             'flake8',
             '%s (pyflakes: 0.7, mccabe: 0.2) Python Version' % __version__)
-        m.remove_option.assert_called()
-        m.add_option.assert_called()
+        self.assertTrue(m.remove_option.called)
+        self.assertTrue(m.add_option.called)
         self.assertEqual(parser, m)
         self.assertEqual(hooks, [])
         # clean-up

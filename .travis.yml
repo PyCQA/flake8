@@ -3,18 +3,18 @@ before_script:
 - pip install tox
 
 # test script
-script:  tox -e ${TOX_ENV}
+script:  tox
 notifications:
   on_success: change
   on_failure: always
 
 env:
   matrix:
-  - TOX_ENV=py26
-  - TOX_ENV=py27
-  - TOX_ENV=py32
-  - TOX_ENV=py33
-  - TOX_ENV=py34
-  - TOX_ENV=pypy
-  - TOX_ENV=py27-flake8
-  - TOX_ENV=py34-flake8
+  - TOXENV=py26
+  - TOXENV=py27
+  - TOXENV=py32
+  - TOXENV=py33
+  - TOXENV=py34
+  - TOXENV=pypy
+  - TOXENV=py27-flake8
+  - TOXENV=py34-flake8

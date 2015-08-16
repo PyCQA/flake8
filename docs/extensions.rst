@@ -121,6 +121,8 @@ listing of the ones we are aware of:
 
 * `radon <https://github.com/rubik/radon>`_
 
+* `flake8-import-order <https://github.com/public/flake8-import-order>`_
+
 .. links
 .. _mccabe: https://github.com/flintwork/mccabe
 .. _PyPI: https://pypi.python.org/pypi/

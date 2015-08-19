@@ -2,6 +2,7 @@
 # Adapted from a contribution of Johan Dahlin
 
 import collections
+import errno
 import re
 import sys
 try:
@@ -17,6 +18,20 @@ __all__ = ['multiprocessing', 'BaseQReport', 'QueueReport']
 class BaseQReport(pep8.BaseReport):
     """Base Queue Report."""
     _loaded = False   # Windows support
+
+    # Reasoning for ignored error numbers is in-line below
+    ignored_errors = set([
+        # EPIPE: Added by sigmavirus24
+        # > If output during processing is piped to something that may close
+        # > its own stdin before we've finished printing results, we need to
+        # > catch a Broken pipe error and continue on.
+        # > (See also: https://gitlab.com/pycqa/flake8/issues/69)
+        errno.EPIPE,
+        # NOTE(sigmavirus24): When adding to this list, include the reasoning
+        # on the lines before the error code and always append your error
+        # code. Further, please always add a trailing `,` to reduce the visual
+        # noise in diffs.
+    ])
 
     def __init__(self, options):
         assert options.jobs > 0
@@ -74,6 +89,11 @@ class BaseQReport(pep8.BaseReport):
             self._process_main()
         except KeyboardInterrupt:
             pass
+        except IOError as ioerr:
+            # If we happen across an IOError that we aren't certain can/should
+            # be ignored, we should re-raise the exception.
+            if ioerr.errno not in self.ignored_errors:
+                raise
         finally:
             # ensure all output is flushed before main process continues
             sys.stdout.flush()

@@ -104,7 +104,7 @@ class StyleGuide(object):
     """
 
     # Reasoning for error numbers is in-line below
-    turn_off_multiprocessing_errors = set([
+    serial_retry_errors = set([
         # ENOSPC: Added by sigmavirus24
         # > On some operating systems (OSX), multiprocessing may cause an
         # > ENOSPC error while trying to trying to create a Semaphore.
@@ -130,15 +130,24 @@ class StyleGuide(object):
     def paths(self):
         return self._styleguide.paths
 
-    def check_files(self, paths=None):
+    def _retry_serial(self, func, *args, **kwargs):
+        """This will retry the passed function in serial if necessary.
+
+        In the event that we encounter an OSError with an errno in
+        :attr:`serial_retry_errors`, this function will retry this function
+        using pep8's default Report class which operates in serial.
+        """
         try:
-            return self._styleguide.check_files(paths)
+            return func(*args, **kwargs)
         except IOError as ioerr:
-            if ioerr.errno in self.turn_off_multiprocessing_errors:
+            if ioerr.errno in self.serial_retry_errors:
                 self.init_report(pep8.StandardReport)
             else:
                 raise
-            return self._styleguide.check_files(paths)
+            return func(*args, **kwargs)
+
+    def check_files(self, paths=None):
+        return self._retry_serial(self._styleguide.check_files, paths=paths)
 
     def excluded(self, filename, parent=None):
         return self._styleguide.excluded(filename, parent=parent)
@@ -147,7 +156,8 @@ class StyleGuide(object):
         return self._styleguide.init_report(reporter)
 
     def input_file(self, filename, lines=None, expected=None, line_offset=0):
-        return self._styleguide.input_file(
+        return self._retry_serial(
+            self._styleguide.input_file,
             filename=filename,
             lines=lines,
             expected=expected,

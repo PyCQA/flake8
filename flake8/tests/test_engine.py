@@ -1,5 +1,6 @@
 from __future__ import with_statement
 
+import errno
 import unittest
 try:
     from unittest import mock
@@ -7,6 +8,7 @@ except ImportError:
     import mock  # < PY33
 
 from flake8 import engine, util, __version__, reporter
+import pep8
 
 
 class TestEngine(unittest.TestCase):
@@ -111,6 +113,88 @@ class TestEngine(unittest.TestCase):
             sg = engine.StyleGuide(parser=parser)
             assert 'X' not in sg.options.ignore
 
+
+def oserror_generator(error_number, message='Ominous OSError message'):
+    def oserror_side_effect(*args, **kwargs):
+        if hasattr(oserror_side_effect, 'used'):
+            return
+
+        oserror_side_effect.used = True
+        raise OSError(error_number, message)
+
+    return oserror_side_effect
+
+
+class TestStyleGuide(unittest.TestCase):
+    def setUp(self):
+        mocked_styleguide = mock.Mock(spec=engine.NoQAStyleGuide)
+        self.styleguide = engine.StyleGuide(styleguide=mocked_styleguide)
+        self.mocked_sg = mocked_styleguide
+
+    def test_proxies_excluded(self):
+        self.styleguide.excluded('file.py', parent='.')
+
+        self.mocked_sg.excluded.assert_called_once_with('file.py', parent='.')
+
+    def test_proxies_init_report(self):
+        reporter = object()
+        self.styleguide.init_report(reporter)
+
+        self.mocked_sg.init_report.assert_called_once_with(reporter)
+
+    def test_proxies_check_files(self):
+        self.styleguide.check_files(['foo', 'bar'])
+
+        self.mocked_sg.check_files.assert_called_once_with(
+            paths=['foo', 'bar']
+        )
+
+    def test_proxies_input_file(self):
+        self.styleguide.input_file('file.py',
+                                   lines=[9, 10],
+                                   expected='foo',
+                                   line_offset=20)
+
+        self.mocked_sg.input_file.assert_called_once_with(filename='file.py',
+                                                          lines=[9, 10],
+                                                          expected='foo',
+                                                          line_offset=20)
+
+    def test_check_files_retries_on_specific_OSErrors(self):
+        self.mocked_sg.check_files.side_effect = oserror_generator(
+            errno.ENOSPC, 'No space left on device'
+        )
+
+        self.styleguide.check_files(['foo', 'bar'])
+
+        self.mocked_sg.init_report.assert_called_once_with(pep8.StandardReport)
+
+    def test_input_file_retries_on_specific_OSErrors(self):
+        self.mocked_sg.input_file.side_effect = oserror_generator(
+            errno.ENOSPC, 'No space left on device'
+        )
+
+        self.styleguide.input_file('file.py')
+
+        self.mocked_sg.init_report.assert_called_once_with(pep8.StandardReport)
+
+    def test_check_files_reraises_unknown_OSErrors(self):
+        self.mocked_sg.check_files.side_effect = oserror_generator(
+            errno.EADDRINUSE,
+            'lol why are we talking about binding to sockets'
+        )
+
+        self.assertRaises(OSError, self.styleguide.check_files,
+                          ['foo', 'bar'])
+
+    def test_input_file_reraises_unknown_OSErrors(self):
+        self.mocked_sg.input_file.side_effect = oserror_generator(
+            errno.EADDRINUSE,
+            'lol why are we talking about binding to sockets'
+        )
+
+        self.assertRaises(OSError, self.styleguide.input_file,
+                          ['foo', 'bar'])
 
 if __name__ == '__main__':
     unittest.main()

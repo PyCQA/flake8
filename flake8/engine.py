@@ -120,7 +120,8 @@ class StyleGuide(object):
     ])
 
     def __init__(self, **kwargs):
-        self._styleguide = NoQAStyleGuide(**kwargs)
+        # This allows us to inject a mocked StyleGuide in the tests.
+        self._styleguide = kwargs.pop('styleguide', NoQAStyleGuide(**kwargs))
 
     @property
     def options(self):
@@ -139,8 +140,8 @@ class StyleGuide(object):
         """
         try:
             return func(*args, **kwargs)
-        except IOError as ioerr:
-            if ioerr.errno in self.serial_retry_errors:
+        except OSError as oserr:
+            if oserr.errno in self.serial_retry_errors:
                 self.init_report(pep8.StandardReport)
             else:
                 raise
@@ -161,7 +162,7 @@ class StyleGuide(object):
             filename=filename,
             lines=lines,
             expected=expected,
-            line_offset=0,
+            line_offset=line_offset,
         )
 
 

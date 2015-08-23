@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-import re
+import errno
 import platform
+import re
 import warnings
 
 import pep8
@@ -81,7 +82,7 @@ def get_parser():
     return parser, options_hooks
 
 
-class StyleGuide(pep8.StyleGuide):
+class NoQAStyleGuide(pep8.StyleGuide):
 
     def input_file(self, filename, lines=None, expected=None, line_offset=0):
         """Run all checks on a Python source file."""
@@ -93,6 +94,76 @@ class StyleGuide(pep8.StyleGuide):
         if any(_flake8_noqa(line) for line in fchecker.lines):
             return 0
         return fchecker.check_all(expected=expected, line_offset=line_offset)
+
+
+class StyleGuide(object):
+    """A wrapper StyleGuide object for Flake8 usage.
+
+    This allows for OSErrors to be caught in the styleguide and special logic
+    to be used to handle those errors.
+    """
+
+    # Reasoning for error numbers is in-line below
+    serial_retry_errors = set([
+        # ENOSPC: Added by sigmavirus24
+        # > On some operating systems (OSX), multiprocessing may cause an
+        # > ENOSPC error while trying to trying to create a Semaphore.
+        # > In those cases, we should replace the customized Queue Report
+        # > class with pep8's StandardReport class to ensure users don't run
+        # > into this problem.
+        # > (See also: https://gitlab.com/pycqa/flake8/issues/74)
+        errno.ENOSPC,
+        # NOTE(sigmavirus24): When adding to this list, include the reasoning
+        # on the lines before the error code and always append your error
+        # code. Further, please always add a trailing `,` to reduce the visual
+        # noise in diffs.
+    ])
+
+    def __init__(self, **kwargs):
+        # This allows us to inject a mocked StyleGuide in the tests.
+        self._styleguide = kwargs.pop('styleguide', NoQAStyleGuide(**kwargs))
+
+    @property
+    def options(self):
+        return self._styleguide.options
+
+    @property
+    def paths(self):
+        return self._styleguide.paths
+
+    def _retry_serial(self, func, *args, **kwargs):
+        """This will retry the passed function in serial if necessary.
+
+        In the event that we encounter an OSError with an errno in
+        :attr:`serial_retry_errors`, this function will retry this function
+        using pep8's default Report class which operates in serial.
+        """
+        try:
+            return func(*args, **kwargs)
+        except OSError as oserr:
+            if oserr.errno in self.serial_retry_errors:
+                self.init_report(pep8.StandardReport)
+            else:
+                raise
+            return func(*args, **kwargs)
+
+    def check_files(self, paths=None):
+        return self._retry_serial(self._styleguide.check_files, paths=paths)
+
+    def excluded(self, filename, parent=None):
+        return self._styleguide.excluded(filename, parent=parent)
+
+    def init_report(self, reporter=None):
+        return self._styleguide.init_report(reporter)
+
+    def input_file(self, filename, lines=None, expected=None, line_offset=0):
+        return self._retry_serial(
+            self._styleguide.input_file,
+            filename=filename,
+            lines=lines,
+            expected=expected,
+            line_offset=line_offset,
+        )
 
 
 def _disable_extensions(parser, options):

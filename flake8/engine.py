@@ -168,9 +168,16 @@ class StyleGuide(object):
 
 def _disable_extensions(parser, options):
     ignored_extensions = set(getattr(parser, 'ignored_extensions', []))
+    select = set(options.select)
+
+    enabled_extensions = ignored_extensions.intersection(select)
     # Remove any of the selected extensions from the extensions ignored by
     # default.
-    ignored_extensions -= set(options.select)
+    ignored_extensions -= select
+
+    for extension in enabled_extensions:
+        options.select.remove(extension)
+
     # Whatever is left afterwards should be unioned with options.ignore and
     # options.ignore should be updated with that.
     options.ignore = tuple(ignored_extensions.union(options.ignore))

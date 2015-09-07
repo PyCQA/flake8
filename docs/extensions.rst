@@ -123,6 +123,8 @@ listing of the ones we are aware of:
 
 * `flake8-import-order <https://github.com/public/flake8-import-order>`_
 
+* `flake8-respect-noqa <https://pypi.python.org/pypi/flake8-respect-noqa>`_
+
 .. links
 .. _mccabe: https://github.com/flintwork/mccabe
 .. _PyPI: https://pypi.python.org/pypi/

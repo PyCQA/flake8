@@ -17,6 +17,26 @@ _flake8_noqa = re.compile(r'\s*# flake8[:=]\s*noqa', re.I).search
 EXTRA_EXCLUDE = ['.tox', '.eggs', '*.egg']
 
 
+def _load_entry_point(entry_point, verify_requirements):
+    """Based on the version of setuptools load an entry-point correctly.
+
+    setuptools 11.3 deprecated `require=False` in the call to EntryPoint.load.
+    To load entry points correctly after that without requiring all
+    dependencies be present, the proper way is to call EntryPoint.resolve.
+
+    This function will provide backwards compatibility for older versions of
+    setuptools while also ensuring we do the right thing for the future.
+    """
+    if hasattr(entry_point, 'resolve') and hasattr(entry_point, 'require'):
+        if verify_requirements:
+            entry_point.require()
+        plugin = entry_point.resolve()
+    else:
+        plugin = entry_point.load(require=verify_requirements)
+
+    return plugin
+
+
 def _register_extensions():
     """Register all the extensions."""
     extensions = util.OrderedSet()
@@ -31,7 +51,7 @@ def _register_extensions():
     else:
         for entry in iter_entry_points('flake8.extension'):
             # Do not verify that the requirements versions are valid
-            checker = entry.load(require=False)
+            checker = _load_entry_point(entry, verify_requirements=False)
             pep8.register_check(checker, codes=[entry.name])
             extensions.add((checker.name, checker.version))
             if hasattr(checker, 'add_options'):

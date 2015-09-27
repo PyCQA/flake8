@@ -78,6 +78,11 @@ def get_parser():
                       help='Redirect report to a file.',
                       type='string', nargs=1, action='callback',
                       callback=callbacks.redirect_stdout)
+    parser.add_option('--enable-extensions', default='',
+                      dest='enabled_extensions',
+                      help='Enable plugins and extensions that are disabled '
+                           'by default',
+                      type='string')
     parser.ignored_extensions = ignored
     return parser, options_hooks
 
@@ -166,17 +171,31 @@ class StyleGuide(object):
         )
 
 
+def _parse_multi_options(options, split_token=','):
+    r"""Split and strip and discard empties.
+
+    Turns the following:
+
+    A,
+    B,
+
+    into ["A", "B"].
+
+    Credit: Kristian Glass as contributed to pep8
+    """
+    if options:
+        return [o.strip() for o in options.split(split_token) if o.strip()]
+    else:
+        return options
+
+
 def _disable_extensions(parser, options):
     ignored_extensions = set(getattr(parser, 'ignored_extensions', []))
-    select = set(options.select)
+    enabled = set(_parse_multi_options(options.enabled_extensions))
 
-    enabled_extensions = ignored_extensions.intersection(select)
     # Remove any of the selected extensions from the extensions ignored by
     # default.
-    ignored_extensions -= select
-
-    for extension in enabled_extensions:
-        options.select.remove(extension)
+    ignored_extensions -= enabled
 
     # Whatever is left afterwards should be unioned with options.ignore and
     # options.ignore should be updated with that.

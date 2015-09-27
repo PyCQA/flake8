@@ -56,6 +56,18 @@ class TestEngine(unittest.TestCase):
                 self.assertTrue(isinstance(i, list))
             self.assertTrue(register_check.called)
 
+    def test_disable_extensions(self):
+        parser = mock.MagicMock()
+        options = mock.MagicMock()
+
+        parser.ignored_extensions = ['I123', 'I345', 'I678', 'I910']
+
+        options.enabled_extensions = 'I345,\nI678,I910'
+        options.ignore = ('E121', 'E123')
+
+        engine._disable_extensions(parser, options)
+        self.assertEqual(set(options.ignore), set(['E121', 'E123', 'I123']))
+
     def test_get_parser(self):
         # setup
         re = self.start_patch('flake8.engine._register_extensions')

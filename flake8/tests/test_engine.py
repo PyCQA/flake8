@@ -113,6 +113,30 @@ class TestEngine(unittest.TestCase):
             sg = engine.StyleGuide(parser=parser)
             assert 'X' not in sg.options.ignore
 
+    def test_load_entry_point_verifies_requirements(self):
+        entry_point = mock.Mock(spec=['require', 'resolve', 'load'])
+
+        engine._load_entry_point(entry_point, verify_requirements=True)
+        entry_point.require.assert_called_once_with()
+        entry_point.resolve.assert_called_once_with()
+
+    def test_load_entry_point_does_not_verify_requirements(self):
+        entry_point = mock.Mock(spec=['require', 'resolve', 'load'])
+
+        engine._load_entry_point(entry_point, verify_requirements=False)
+        self.assertFalse(entry_point.require.called)
+        entry_point.resolve.assert_called_once_with()
+
+    def test_load_entry_point_passes_require_argument_to_load(self):
+        entry_point = mock.Mock(spec=['load'])
+
+        engine._load_entry_point(entry_point, verify_requirements=True)
+        entry_point.load.assert_called_once_with(require=True)
+        entry_point.reset_mock()
+
+        engine._load_entry_point(entry_point, verify_requirements=False)
+        entry_point.load.assert_called_once_with(require=False)
+
 
 def oserror_generator(error_number, message='Ominous OSError message'):
     def oserror_side_effect(*args, **kwargs):

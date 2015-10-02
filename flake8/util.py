@@ -38,12 +38,6 @@ class OrderedSet(list):
             self.append(value)
 
 
-def is_flag(val):
-    """Guess if the value could be an on/off toggle"""
-    val = str(val)
-    return val.upper() in ('1', '0', 'F', 'T', 'TRUE', 'FALSE', 'ON', 'OFF')
-
-
 def is_windows():
     """Determine if the system is Windows."""
     return os.name == 'nt'
@@ -61,11 +55,6 @@ def warn_when_using_jobs(options):
 
 def force_disable_jobs(styleguide):
     return is_windows() or is_using_stdin(styleguide.paths)
-
-
-def flag_on(val):
-    """Return true if flag is on"""
-    return str(val).upper() in ('1', 'T', 'TRUE', 'ON')
 
 
 def option_normalizer(value):

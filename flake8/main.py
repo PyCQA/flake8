@@ -6,7 +6,7 @@ import sys
 import setuptools
 
 from flake8.engine import get_parser, get_style_guide
-from flake8.util import is_flag, flag_on, option_normalizer
+from flake8.util import option_normalizer
 
 if sys.platform.startswith('win'):
     DEFAULT_CONFIG = os.path.expanduser(r'~\.flake8')

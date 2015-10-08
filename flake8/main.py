@@ -6,7 +6,7 @@ import sys
 import setuptools
 
 from flake8.engine import get_parser, get_style_guide
-from flake8.util import is_flag, flag_on
+from flake8.util import option_normalizer
 
 if sys.platform.startswith('win'):
     DEFAULT_CONFIG = os.path.expanduser(r'~\.flake8')
@@ -104,8 +104,7 @@ class Flake8Command(setuptools.Command):
             value = getattr(self, option_name)
             if value is None:
                 continue
-            if is_flag(value):
-                value = flag_on(value)
+            value = option_normalizer(value)
             # Check if there's any values that need to be fixed.
             if option_name == "include" and isinstance(value, str):
                 value = re.findall('[^,;\s]+', value)

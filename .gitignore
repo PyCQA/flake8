@@ -2,3 +2,6 @@
 .tox
 *.egg
 *.egg-info
+build
+dist
+*.zip

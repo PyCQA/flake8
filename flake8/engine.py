@@ -16,6 +16,8 @@ _flake8_noqa = re.compile(r'\s*# flake8[:=]\s*noqa', re.I).search
 
 EXTRA_EXCLUDE = ['.tox', '.eggs', '*.egg']
 
+pep8.PROJECT_CONFIG += ('.flake8',)
+
 
 def _load_entry_point(entry_point, verify_requirements):
     """Based on the version of setuptools load an entry-point correctly.

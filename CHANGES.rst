@@ -1,6 +1,14 @@
 CHANGES
 =======
 
+2.x.y - 2015-aa-bb
+------------------
+
+- **Bug** Properly look for ``.flake8`` in current working directory
+  (`GitLab#103`_)
+
+.. _GitLab#103: https://gitlab.com/pycqa/flake8/issues/103
+
 2.5.0 - 2015-10-26
 ------------------
 

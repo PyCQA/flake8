@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import errno
+import io
 import platform
 import re
+import sys
 import warnings
 
 import pep8
@@ -293,3 +295,15 @@ def get_python_version():
     except AttributeError:  # Python 2.5
         impl = ''
     return '%s%s on %s' % (impl, platform.python_version(), platform.system())
+
+
+def make_stdin_get_value():
+    value = pep8.stdin_get_value()
+    if sys.version_info < (3, 0):
+        stdin = io.BytesIO(value)
+    else:
+        stdin = io.StringIO(value)
+    return stdin.getvalue
+
+
+pep8.stdin_get_value = make_stdin_get_value()

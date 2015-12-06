@@ -17,6 +17,8 @@ Outline
 
    #. :ref:`plugin-default-ignore`
 
+   #. :ref:`report-generation`
+
 #. :ref:`options`
 
    #. :ref:`better-select-ignore`
@@ -24,10 +26,6 @@ Outline
 #. :ref:`standard-in`
 
 #. :ref:`multiprocessing`
-
-#. :ref:`formatting`
-
-#. :ref:`report-generation`
 
 .. _plugins:
 
@@ -87,6 +85,14 @@ necessary.
 
 See https://gitlab.com/pycqa/flake8/issues/66
 
+.. _report-generation:
+
+Support for Report Generation
++++++++++++++++++++++++++++++
+
+Flake8 should support pluggable report formats. See also pluggable report
+formats for https://github.com/openstack/bandit
+
 .. _options-passing:
 
 Support for Plugins Require Parsed Options
@@ -139,18 +145,25 @@ See https://github.com/PyCQA/pep8/issues/390
 Better stdin support
 --------------------
 
+Currently, flake8 accepts input from standard-in to check. It also currently
+monkey-patches pep8 to cache that value. It would be better if there was one
+way to retrieve the stdin input for plugins. Flake8 should provide this
+directly instead of pep8 providing it.
+
+See
+https://gitlab.com/pycqa/flake8/commit/41393c9b6de513ea169b61c175b71018e8a12336
+
 .. _multiprocessing:
 
 Multiprocessing Support
 -----------------------
 
-.. _formatting:
+Flake8's existing multiprocessing support (and handling for different error
+cases needs to persist through this redesign).
 
-Better (Flake8-centralized) Formatting Support
-----------------------------------------------
+See:
 
-.. _report-generation:
-
-
-Better (Flake8-centralized) Report Generation Support
------------------------------------------------------
+- https://gitlab.com/pycqa/flake8/issues/8
+- https://gitlab.com/pycqa/flake8/issues/17
+- https://gitlab.com/pycqa/flake8/issues/44
+- https://gitlab.com/pycqa/flake8/issues/74

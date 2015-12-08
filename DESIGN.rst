@@ -72,6 +72,8 @@ errors so those plugins can auto-fix the problems in the file.
 
 See https://gitlab.com/pycqa/flake8/issues/84
 
+.. note:: Will probably need a Trie implementation for this
+
 .. _reporter-plugins:
 
 Support for Plugins that Format Output

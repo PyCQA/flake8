@@ -297,13 +297,20 @@ def get_python_version():
     return '%s%s on %s' % (impl, platform.python_version(), platform.system())
 
 
-def make_stdin_get_value():
-    value = pep8.stdin_get_value()
-    if sys.version_info < (3, 0):
-        stdin = io.BytesIO(value)
-    else:
-        stdin = io.StringIO(value)
-    return stdin.getvalue
+def make_stdin_get_value(original):
+    def stdin_get_value():
+        if not hasattr(stdin_get_value, 'cached_stdin'):
+            value = original()
+            if sys.version_info < (3, 0):
+                stdin = io.BytesIO(value)
+            else:
+                stdin = io.StringIO(value)
+            stdin_get_value.cached_stdin = stdin
+        else:
+            stdin = stdin_get_value.cached_stdin
+        return stdin.getvalue()
+
+    return stdin_get_value
 
 
-pep8.stdin_get_value = make_stdin_get_value()
+pep8.stdin_get_value = make_stdin_get_value(pep8.stdin_get_value)

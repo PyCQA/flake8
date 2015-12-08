@@ -1,13 +1,19 @@
 CHANGES
 =======
 
-2.x.y - 2015-aa-bb
+2.5.1 - 2015-12-15
 ------------------
 
 - **Bug** Properly look for ``.flake8`` in current working directory
   (`GitLab#103`_)
 
+- **Bug** Monkey-patch ``pep8.stdin_get_value`` to cache the actual value in
+  stdin. This helps plugins relying on the function when run with
+  multiprocessing. (`GitLab#105`_, `GitLab#107`_)
+
 .. _GitLab#103: https://gitlab.com/pycqa/flake8/issues/103
+.. _GitLab#105: https://gitlab.com/pycqa/flake8/issues/105
+.. _GitLab#107: https://gitlab.com/pycqa/flake8/issues/107
 
 2.5.0 - 2015-10-26
 ------------------

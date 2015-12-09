@@ -18,9 +18,10 @@ Example::
 Per-Project
 -----------
 
-At the project level, a ``tox.ini`` file or a ``setup.cfg`` file is read
-if present.  Only the first file is considered.  If this file does not
-have a ``[flake8]`` section, no project specific configuration is loaded.
+At the project level, the ``tox.ini``, ``setup.cfg``, ``.pep8`` or ``.flake8``
+files are read if present.  Only the first file is considered.  If this file
+does not have a ``[flake8]`` section, no project specific configuration is
+loaded.
 
 Default
 -------

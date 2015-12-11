@@ -57,6 +57,28 @@ This feature is quite useful to detect over-complex code.  According to McCabe,
 anything that goes beyond 10 is too complex.
 See https://en.wikipedia.org/wiki/Cyclomatic_complexity.
 
+
+Frequently Asked Questions
+==========================
+
+Why does flake8 pin the version of pep8?
+----------------------------------------
+
+Version 1.6 of pep8 doesn't work properly with flake8.  Until pep8 releases a
+version that works, flake8 pins the version of pep8 so that flake8 will work as
+a whole.
+
+Is flake8 broken?
+-----------------
+
+Flake8 combines two other projects that are significant on their own: pep8 and
+PyFlakes. If flake8 is doing something you don't like, it is quite likely that
+the problem lies in one of those other projects.  You can run them separately
+to see if they are the cause of your difficulties.  We greatly appreciate your
+efforts to diagnose the source of the problem before reporting bugs against
+flake8.
+
+
 Questions or Feedback
 =====================
 

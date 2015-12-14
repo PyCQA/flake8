@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-2.5.1 - 2015-12-15
+2.5.1 - 2015-12-08
 ------------------
 
 - **Bug** Properly look for ``.flake8`` in current working directory

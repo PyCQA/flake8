@@ -157,18 +157,20 @@ def _get_files(repo, **kwargs):
 def find_vcs():
     try:
         _, git_dir, _ = run('git rev-parse --git-dir')
+    except OSError:
+        pass
+    else:
         if git_dir and os.path.isdir(git_dir[0]):
             if not os.path.isdir(os.path.join(git_dir[0], 'hooks')):
                 os.mkdir(os.path.join(git_dir[0], 'hooks'))
             return os.path.join(git_dir[0], 'hooks', 'pre-commit')
-    except OSError:
-        pass
     try:
         _, hg_dir, _ = run('hg root')
-        if hg_dir and os.path.isdir(hg_dir[0]):
-            return os.path.join(hg_dir[0], '.hg', 'hgrc')
     except OSError:
         pass
+    else:
+        if hg_dir and os.path.isdir(hg_dir[0]):
+            return os.path.join(hg_dir[0], '.hg', 'hgrc')
     return ''
 
 

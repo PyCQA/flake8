@@ -70,6 +70,9 @@ mccabe as "plugins", it will aggregate the errors returned by all of the
 plugins and be able to "notify" other plugins that have chosen to listen for
 errors so those plugins can auto-fix the problems in the file.
 
+We should also be considerate of allowing these plugins to be composable. Each
+plugin should have a way of defining its capabilities.
+
 See https://gitlab.com/pycqa/flake8/issues/84
 
 .. note:: Will probably need a Trie implementation for this
@@ -94,6 +97,10 @@ Support for Report Generation
 
 Flake8 should support pluggable report formats. See also pluggable report
 formats for https://github.com/openstack/bandit
+
+Report generation plugins may also choose to implement a way to store previous
+runs of flake8. As such these plugins should be designed to be composable as
+well.
 
 .. _options-passing:
 

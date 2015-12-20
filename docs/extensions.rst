@@ -103,6 +103,25 @@ flake8 registers the extension:
 Since that is the defined entry point in the above ``setup.py``, flake8 finds
 it and uses it to register the extension.
 
+If we wanted the extension or a check to be optional, you can add
+``off_by_default = True`` to our entry point. For example, we could
+update ``mccabe.py`` with this variable as shown below:
+
+.. code-block:: python
+
+    # https://github.com/flintwork/mccabe/blob/0.2/mccabe.py#L225:L254
+    class McCabeChecker(object):
+        """McCabe cyclomatic complexity checker."""
+        name = 'mccabe'
+        version = __version__
+        off_by_default = True
+
+If we wanted to run the optional extension or check, we need to specify the
+error and warnings via the ``--enable-extension`` command line argument. In our
+case, we could run ``flake8 --enable-extension=C90`` which would enable our
+off_by_default example version of the mccabe extension.
+
+
 Existing Extensions
 ===================
 

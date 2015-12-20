@@ -117,9 +117,9 @@ update ``mccabe.py`` with this variable as shown below:
         off_by_default = True
 
 If we wanted to run the optional extension or check, we need to specify the
-error and warnings via the ``select`` setting or command line argument. In our
-case, we could run ``flake8 --select=C90`` which would run our off_by_default
-example version of the mccabe extension.
+error and warnings via the ``--enable-extension`` command line argument. In our
+case, we could run ``flake8 --enable-extension=C90`` which would enable our
+off_by_default example version of the mccabe extension.
 
 
 Existing Extensions

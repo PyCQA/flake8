@@ -6,6 +6,9 @@ except ImportError:
     pass
 else:
     demandimport.disable()
+import os
+
+import pep8
 import pyflakes
 import pyflakes.checker
 
@@ -39,8 +42,24 @@ class FlakesChecker(pyflakes.checker.Checker):
     version = pyflakes.__version__
 
     def __init__(self, tree, filename):
+        filename = pep8.normalize_paths(filename)[0]
+        withDoctest = self.withDoctest
+        included_by = [include for include in self.include_in_doctest
+                       if include != '' and filename.startswith(include)]
+        if included_by:
+            withDoctest = True
+
+        for exclude in self.exclude_from_doctest:
+            if exclude != '' and filename.startswith(exclude):
+                withDoctest = False
+                overlaped_by = [include for include in included_by
+                                if include.startswith(exclude)]
+
+                if overlaped_by:
+                    withDoctest = True
+
         super(FlakesChecker, self).__init__(tree, filename,
-                                            withDoctest=self.withDoctest)
+                                            withDoctest=withDoctest)
 
     @classmethod
     def add_options(cls, parser):
@@ -48,13 +67,52 @@ class FlakesChecker(pyflakes.checker.Checker):
                           help="define more built-ins, comma separated")
         parser.add_option('--doctests', default=False, action='store_true',
                           help="check syntax of the doctests")
-        parser.config_options.extend(['builtins', 'doctests'])
+        parser.add_option('--include-in-doctest', default='',
+                          dest='include_in_doctest',
+                          help='Run doctests only on these files',
+                          type='string')
+        parser.add_option('--exclude-from-doctest', default='',
+                          dest='exclude_from_doctest',
+                          help='Skip these files when running doctests',
+                          type='string')
+        parser.config_options.extend(['builtins', 'doctests',
+                                      'include-in-doctest',
+                                      'exclude-from-doctest'])
 
     @classmethod
     def parse_options(cls, options):
         if options.builtins:
             cls.builtIns = cls.builtIns.union(options.builtins.split(','))
         cls.withDoctest = options.doctests
+
+        included_files = []
+        for included_file in options.include_in_doctest.split(','):
+            if included_file == '':
+                continue
+            if not included_file.startswith((os.sep, './', '~/')):
+                included_files.append('./' + included_file)
+            else:
+                included_files.append(included_file)
+        cls.include_in_doctest = pep8.normalize_paths(','.join(included_files))
+
+        excluded_files = []
+        for excluded_file in options.exclude_from_doctest.split(','):
+            if excluded_file == '':
+                continue
+            if not excluded_file.startswith((os.sep, './', '~/')):
+                excluded_files.append('./' + excluded_file)
+            else:
+                excluded_files.append(excluded_file)
+        cls.exclude_from_doctest = pep8.normalize_paths(
+            ','.join(excluded_files))
+
+        inc_exc = set(cls.include_in_doctest).intersection(
+            set(cls.exclude_from_doctest))
+        if inc_exc:
+            raise ValueError('"%s" was specified in both the '
+                             'include-in-doctest and exclude-from-doctest '
+                             'options. You are not allowed to specify it in '
+                             'both for doctesting.' % inc_exc)
 
     def run(self):
         for m in self.messages:

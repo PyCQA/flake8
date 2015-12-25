@@ -40,17 +40,17 @@ class IntegrationTestCase(unittest.TestCase):
 
     def _job_tester(self, jobs):
         # mock stdout.flush so we can count the number of jobs created
-        with mock.patch('sys.stdout.flush') as mocked:
+        with mock.patch('sys.stdout') as mocked:
             guide, report = self.check_files(arglist=['--jobs=%s' % jobs])
             if is_windows():
                 # The code path where guide.options.jobs gets converted to an
                 # int is not run on windows. So, do the int conversion here.
                 self.assertEqual(int(guide.options.jobs), jobs)
                 # On windows, call count is always zero.
-                self.assertEqual(mocked.call_count, 0)
+                self.assertEqual(mocked.flush.call_count, 0)
             else:
                 self.assertEqual(guide.options.jobs, jobs)
-                self.assertEqual(mocked.call_count, jobs)
+                self.assertEqual(mocked.flush.call_count, jobs)
 
     def test_jobs(self):
         self._job_tester(2)

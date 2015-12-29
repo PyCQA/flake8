@@ -35,6 +35,16 @@ class Trie(object):
             node = child
         return node
 
+    def traverse(self):
+        """Traverse this tree.
+
+        This performs a depth-first pre-order traversal of children in this
+        tree. It returns the results consistently by first sorting the
+        children based on their prefix and then traversing them in
+        alphabetical order.
+        """
+        return self.root.traverse()
+
 
 class TrieNode(object):
     """The majority of the implementation details of a Trie."""
@@ -47,8 +57,8 @@ class TrieNode(object):
 
     def __repr__(self):
         """Generate an easy to read representation of the node."""
-        return 'TrieNode(prefix={0}, data={1}, children={2})'.format(
-            self.prefix, self.data, dict(self.children)
+        return 'TrieNode(prefix={0}, data={1})'.format(
+            self.prefix, self.data
         )
 
     def find_prefix(self, prefix):
@@ -70,5 +80,18 @@ class TrieNode(object):
         return new_node
 
     def traverse(self):
-        """Traverse children of this node in order."""
-        raise NotImplementedError()
+        """Traverse children of this node.
+
+        This performs a depth-first pre-order traversal of the remaining
+        children in this sub-tree. It returns the results consistently by
+        first sorting the children based on their prefix and then traversing
+        them in alphabetical order.
+        """
+        if not self.children:
+            return
+
+        for prefix in sorted(self.children.keys()):
+            child = self.children[prefix]
+            yield child
+            for child in child.traverse():
+                yield child

@@ -7,12 +7,13 @@ class Notifier(object):
 
     def listeners_for(self, error_code):
         node = self.listeners.find(error_code)
+        if node is None:
+            return
         for listener in node.data:
             yield listener
-        if node.children:
-            for child in node.traverse():
-                for listener in child.data:
-                    yield listener
+        for child in node.traverse():
+            for listener in child.data:
+                yield listener
 
     def notify(self, error_code, *args, **kwargs):
         for listener in self.listeners_for(error_code):

@@ -70,5 +70,4 @@ class TestFlakesChecker(unittest.TestCase):
         options = Options(builtins=None, doctests=False,
                           include_in_doctest='./cookies.txt',
                           exclude_from_doctest='./cookies.txt,cake_yuck.txt')
-        with self.assertRaises(ValueError):
-            FlakesChecker.parse_options(options)
+        self.assertRaises(ValueError, FlakesChecker.parse_options, options)

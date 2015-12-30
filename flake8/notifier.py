@@ -9,12 +9,12 @@ class Notifier(object):
     def listeners_for(self, error_code):
         """Retrieve listeners for an error_code.
 
-        The error code does not need to be a specific error code. For example,
-        There may be listeners registered for E100, E101, E110, E112, and
-        E126. If you wanted to get all listeners starting with 'E1' then you
-        would pass 'E1' as the error code here.
+        There may be listeners registered for E1, E100, E101, E110, E112, and
+        E126. To get all the listeners for one of E100, E101, E110, E112, or
+        E126 you would also need to incorporate the listeners for E1 (since
+        they're all in the same class).
 
-        Example usage
+        Example usage:
 
         .. code-block:: python
 
@@ -22,20 +22,15 @@ class Notifier(object):
 
             n = notifier.Notifier()
             # register listeners
-            for listener in n.listeners_for('E1'):
-                listener.notify(...)
-
             for listener in n.listeners_for('W102'):
                 listener.notify(...)
         """
-        node = self.listeners.find(error_code)
-        if node is None:
-            return
-        for listener in node.data:
-            yield listener
-        for child in node.traverse():
-            for listener in child.data:
+        path = error_code
+        while path:
+            node = self.listeners.find(path)
+            for listener in node.data:
                 yield listener
+            path = path[:-1]
 
     def notify(self, error_code, *args, **kwargs):
         """Notify all listeners for the specified error code."""

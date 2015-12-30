@@ -77,6 +77,18 @@ See https://gitlab.com/pycqa/flake8/issues/84
 
 .. note:: Will probably need a Trie implementation for this
 
+What we *might* want is for a autofix plugin to register something like
+
+::
+
+    'flake8.autofix_extension': [
+        'E1 = my_fixer.E1Listener',
+        'E2 = my_fixer.E2Listener',
+    ]
+
+This means that the notifer would need to take an error code like ``E111`` and
+then notify anything listening for ``E111``, ``E11``, ``E1``, and ``E``.
+
 .. _reporter-plugins:
 
 Support for Plugins that Format Output

@@ -232,7 +232,6 @@ def get_style_guide(**kwargs):
     kwargs['parser'], options_hooks = get_parser()
     styleguide = StyleGuide(**kwargs)
     options = styleguide.options
-
     _disable_extensions(kwargs['parser'], options)
 
     if options.exclude and not isinstance(options.exclude, list):

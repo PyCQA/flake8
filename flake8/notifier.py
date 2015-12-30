@@ -40,7 +40,7 @@ class Notifier(object):
     def notify(self, error_code, *args, **kwargs):
         """Notify all listeners for the specified error code."""
         for listener in self.listeners_for(error_code):
-            listener.notify(*args, **kwargs)
+            listener.notify(error_code, *args, **kwargs)
 
     def register_listener(self, error_code, listener):
         """Register a listener for a specific error_code."""

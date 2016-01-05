@@ -1,5 +1,4 @@
 import logging
-import optparse
 import os.path
 import sys
 
@@ -11,90 +10,6 @@ else:
 from . import utils
 
 LOG = logging.getLogger(__name__)
-
-
-class Option(object):
-    def __init__(self, short_option_name=None, long_option_name=None,
-                 # Options below here are taken from the optparse.Option class
-                 action=None, default=None, type=None, dest=None,
-                 nargs=None, const=None, choices=None, callback=None,
-                 callback_args=None, callback_kwargs=None, help=None,
-                 metavar=None,
-                 # Options below here are specific to Flake8
-                 parse_from_config=False, comma_separated_list=False,
-                 ):
-        """Initialize an Option instance wrapping optparse.Option.
-
-        :param str short_option_name:
-            The short name of the option (e.g., ``-x``). This will be the
-            first argument passed to :class:`~optparse.Option`.
-        :param str long_option_name:
-            The long name of the option (e.g., ``--xtra-long-option``). This
-            will be the second argument passed to :class:`~optparse.Option`.
-        :param str action:
-            Any action allowed by :mod:`optparse`.
-        :param default:
-            Default value of the option.
-        :param type:
-            Any type allowed by :mod:`optparse`.
-        :param dest:
-            Attribute name to store parsed option value as.
-        :param nargs:
-            Number of arguments to parse for this option.
-        :param const:
-            Constant value to store on a common destination.
-
-        """
-        self.short_option_name = short_option_name
-        self.long_option_name = long_option_name
-        self.option_args = filter(None, (short_option_name, long_option_name))
-        self.option_kwargs = {
-            'action': action,
-            'default': default,
-            'type': type,
-            'dest': dest,
-            'callback': callback,
-            'callback_args': callback_args,
-            'callback_kwargs': callback_kwargs,
-            'help': help,
-            'metavar': metavar,
-        }
-        for key, value in self.option_kwargs.items():
-            setattr(self, key, value)
-        self.parse_from_config = parse_from_config
-        self.comma_separated_list = comma_separated_list
-
-        if parse_from_config:
-            if not long_option_name:
-                raise ValueError('When specifying parse_from_config=True, '
-                                 'a long_option_name must also be specified.')
-            self.config_name = long_option_name.strip('-').replace('-', '_')
-
-    def to_optparse(self):
-        """Convert a Flake8 Option to an optparse Option."""
-        return optparse.Option(*self.option_args,
-                               **self.option_kwargs)
-
-
-class OptionManager(object):
-    def __init__(self, prog=None, version=None,
-                 usage='%prog [options] input'):
-        self.parser = optparse.OptionParser(prog=prog, version=version,
-                                            usage=usage)
-        self.config_options_dict = {}
-        self.options = []
-        self.program_name = prog
-        self.version = version
-
-    def add_option(self, *args, **kwargs):
-        option = Option(*args, **kwargs)
-        self.parser.add_option(option.to_optparse())
-        self.options.append(option)
-        if option.parse_from_config:
-            self.config_options_dict[option.config_name] = option
-
-    def parse_args(self, args=None, values=None):
-        return self.parser.parse_args(args, values)
 
 
 class ConfigFileFinder(object):

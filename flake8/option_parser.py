@@ -1,4 +1,16 @@
+import logging
 import optparse
+import os.path
+import sys
+
+if sys.version_info < (3, 0):
+    import ConfigParser as configparser
+else:
+    import configparser
+
+from . import utils
+
+LOG = logging.getLogger(__name__)
 
 
 class Option(object):

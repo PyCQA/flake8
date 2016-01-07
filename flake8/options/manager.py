@@ -5,6 +5,7 @@ LOG = logging.getLogger(__name__)
 
 
 class Option(object):
+    """Our wrapper around an optparse.Option object to add features."""
     def __init__(self, short_option_name=None, long_option_name=None,
                  # Options below here are taken from the optparse.Option class
                  action=None, default=None, type=None, dest=None,
@@ -13,6 +14,7 @@ class Option(object):
                  metavar=None,
                  # Options below here are specific to Flake8
                  parse_from_config=False, comma_separated_list=False,
+                 normalize_paths=False,
                  ):
         """Initialize an Option instance wrapping optparse.Option.
 
@@ -57,6 +59,9 @@ class Option(object):
         :param bool comma_separated_list:
             Whether the option is a comma separated list when parsing from a
             config file.
+        :param bool normalize_paths:
+            Whether the option is expecting a path or list of paths and should
+            attempt to normalize the paths to absolute paths.
         """
         self.short_option_name = short_option_name
         self.long_option_name = long_option_name
@@ -72,11 +77,16 @@ class Option(object):
             'help': help,
             'metavar': metavar,
         }
+        # Set attributes for our option arguments
         for key, value in self.option_kwargs.items():
             setattr(self, key, value)
+
+        # Set our custom attributes
         self.parse_from_config = parse_from_config
         self.comma_separated_list = comma_separated_list
+        self.normalize_paths = normalize_paths
 
+        self.config_name = None
         if parse_from_config:
             if not long_option_name:
                 raise ValueError('When specifying parse_from_config=True, '
@@ -108,6 +118,16 @@ class OptionManager(object):
         self.version = version
 
     def add_option(self, *args, **kwargs):
+        """Create and register a new option.
+
+        See parameters for :class:`~flake8.options.manager.Option` for
+        acceptable arguments to this method.
+
+        .. note::
+
+            ``short_option_name`` and ``long_option_name`` may be specified
+            positionally as they are with optparse normally.
+        """
         option = Option(*args, **kwargs)
         self.parser.add_option(option.to_optparse())
         self.options.append(option)
@@ -116,4 +136,11 @@ class OptionManager(object):
         LOG.debug('Registered option "%s".', option)
 
     def parse_args(self, args=None, values=None):
+        """Simple proxy to calling the OptionParser's parse_args method.
+
+        .. todo::
+
+            Normalize values based on our extra attributes from
+            :class:`~flake8.options.manager.OptionManager`.
+        """
         return self.parser.parse_args(args, values)

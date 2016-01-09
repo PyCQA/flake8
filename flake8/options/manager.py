@@ -150,13 +150,22 @@ class OptionManager(object):
         """Simple proxy to calling the OptionParser's parse_args method."""
         options, xargs = self.parser.parse_args(args, values)
         for option in self.options:
-            dest = option.dest
-            if option.normalize_paths:
-                old_value = getattr(options, dest)
-                setattr(options, dest, utils.normalize_paths(old_value))
-            elif option.comma_separated_list:
-                old_value = getattr(options, dest)
-                setattr(options, dest,
-                        utils.parse_comma_separated_list(old_value))
+            _normalize_option(options, option)
 
         return options, xargs
+
+
+def _normalize_option(options, option):
+    dest = option.dest
+    if option.normalize_paths:
+        old_value = getattr(options, dest)
+        # Decide whether to parse a list of paths or a single path
+        normalize = utils.normalize_path
+        if option.comma_separated_list:
+            normalize = utils.normalize_paths
+        setattr(options, dest, normalize(old_value))
+
+    elif option.comma_separated_list:
+        old_value = getattr(options, dest)
+        setattr(options, dest,
+                utils.parse_comma_separated_list(old_value))

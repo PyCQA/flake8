@@ -105,8 +105,10 @@ class Option(object):
 
     def to_optparse(self):
         """Convert a Flake8 Option to an optparse Option."""
-        return optparse.Option(*self.option_args,
-                               **self.option_kwargs)
+        if not hasattr(self, '_opt'):
+            self._opt = optparse.Option(*self.option_args,
+                                        **self.option_kwargs)
+        return self._opt
 
 
 class OptionManager(object):
@@ -130,6 +132,8 @@ class OptionManager(object):
             ``short_option_name`` and ``long_option_name`` may be specified
             positionally as they are with optparse normally.
         """
+        if len(args) == 1 and args[0].startswith('--'):
+            args = (None, args[0])
         option = Option(*args, **kwargs)
         self.parser.add_option(option.to_optparse())
         self.options.append(option)

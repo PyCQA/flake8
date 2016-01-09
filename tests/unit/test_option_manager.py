@@ -44,3 +44,16 @@ def test_add_short_and_long_option_names(optmanager):
     optmanager.add_option('-b', '--both', help='Test both opts')
     assert optmanager.options[0].short_option_name == '-b'
     assert optmanager.options[0].long_option_name == '--both'
+
+
+def test_add_option_with_custom_args(optmanager):
+    assert optmanager.options == []
+    assert optmanager.config_options_dict == {}
+
+    optmanager.add_option('--parse', parse_from_config=True)
+    optmanager.add_option('--commas', comma_separated_list=True)
+    optmanager.add_option('--files', normalize_paths=True)
+
+    attrs = ['parse_from_config', 'comma_separated_list', 'normalize_paths']
+    for option, attr in zip(optmanager.options, attrs):
+        assert getattr(option, attr) is True

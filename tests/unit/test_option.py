@@ -1,5 +1,6 @@
 """Unit tests for flake8.options.manager.Option."""
 import mock
+import pytest
 
 from flake8.options import manager
 
@@ -50,3 +51,9 @@ def test_config_name_generation():
                          parse_from_config=True)
 
     assert opt.config_name == 'some_very_long_option_name'
+
+
+def test_config_name_needs_long_option_name():
+    """Show that we error out if the Option should be parsed from config."""
+    with pytest.raises(ValueError):
+        manager.Option('-s', parse_from_config=True)

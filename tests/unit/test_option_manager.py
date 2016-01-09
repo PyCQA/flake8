@@ -1,5 +1,6 @@
 """Unit tests for flake.options.manager.OptionManager."""
 import optparse
+import os
 
 import pytest
 
@@ -57,3 +58,19 @@ def test_add_option_with_custom_args(optmanager):
     attrs = ['parse_from_config', 'comma_separated_list', 'normalize_paths']
     for option, attr in zip(optmanager.options, attrs):
         assert getattr(option, attr) is True
+
+
+def test_parse_args(optmanager):
+    assert optmanager.options == []
+    assert optmanager.config_options_dict == {}
+
+    optmanager.add_option('-v', '--verbose', action='count')
+    optmanager.add_option('--config', normalize_paths=True)
+    optmanager.add_option('--exclude', default='E123,W234',
+                          comma_separated_list=True)
+
+    options, args = optmanager.parse_args(
+        ['-v', '-v', '-v', '--config', '../config.ini']
+    )
+    assert options.verbose == 3
+    assert options.config == os.path.abspath('../config.ini')

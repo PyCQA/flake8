@@ -149,12 +149,12 @@ class OptionManager(object):
     def parse_args(self, args=None, values=None):
         """Simple proxy to calling the OptionParser's parse_args method."""
         options, xargs = self.parser.parse_args(args, values)
-        for config_name, option in self.config_options_dict.items():
-            dest = option.dest or config_name
-            if self.normalize_paths:
+        for option in self.options:
+            dest = option.dest
+            if option.normalize_paths:
                 old_value = getattr(options, dest)
                 setattr(options, dest, utils.normalize_paths(old_value))
-            elif self.comma_separated_list:
+            elif option.comma_separated_list:
                 old_value = getattr(options, dest)
                 setattr(options, dest,
                         utils.parse_comma_separated_list(old_value))

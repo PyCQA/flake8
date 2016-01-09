@@ -72,7 +72,7 @@ class Option(object):
             'action': action,
             'default': default,
             'type': type,
-            'dest': dest,
+            'dest': self._make_dest(dest),
             'callback': callback,
             'callback_args': callback_args,
             'callback_kwargs': callback_kwargs,
@@ -93,7 +93,7 @@ class Option(object):
             if not long_option_name:
                 raise ValueError('When specifying parse_from_config=True, '
                                  'a long_option_name must also be specified.')
-            self.config_name = long_option_name.strip('-').replace('-', '_')
+            self.config_name = self.dest
 
     def __repr__(self):
         return (
@@ -102,6 +102,11 @@ class Option(object):
             ' callback={callback}, callback_args={callback_args}, '
             'callback_kwargs={callback_kwargs}, metavar={metavar})'
             ).format(*self.option_args, **self.option_kwargs)
+
+    def _make_dest(self, dest):
+        if self.long_option_name:
+            return self.long_option_name[2:].replace('-', '_')
+        return self.short_option_name[1]
 
     def to_optparse(self):
         """Convert a Flake8 Option to an optparse Option."""

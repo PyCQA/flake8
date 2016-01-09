@@ -32,7 +32,7 @@ def test_to_optparse_creates_an_option_as_we_expect(Option):
         'action': 'count',
         'default': None,
         'type': None,
-        'dest': None,
+        'dest': 'test',
         'callback': None,
         'callback_args': None,
         'callback_kwargs': None,

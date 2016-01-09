@@ -1,6 +1,8 @@
 import logging
 import optparse
 
+from flake8 import utils
+
 LOG = logging.getLogger(__name__)
 
 
@@ -136,11 +138,16 @@ class OptionManager(object):
         LOG.debug('Registered option "%s".', option)
 
     def parse_args(self, args=None, values=None):
-        """Simple proxy to calling the OptionParser's parse_args method.
+        """Simple proxy to calling the OptionParser's parse_args method."""
+        options, xargs = self.parser.parse_args(args, values)
+        for config_name, option in self.config_options_dict.items():
+            dest = option.dest or config_name
+            if self.normalize_paths:
+                old_value = getattr(options, dest)
+                setattr(options, dest, utils.normalize_paths(old_value))
+            elif self.comma_separated_list:
+                old_value = getattr(options, dest)
+                setattr(options, dest,
+                        utils.parse_comma_separated_list(old_value))
 
-        .. todo::
-
-            Normalize values based on our extra attributes from
-            :class:`~flake8.options.manager.OptionManager`.
-        """
-        return self.parser.parse_args(args, values)
+        return options, xargs

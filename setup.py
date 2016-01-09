@@ -47,7 +47,7 @@ setup(
     maintainer="Ian Cordasco",
     maintainer_email="graffatcolmingov@gmail.com",
     url="https://gitlab.com/pycqa/flake8",
-    packages=["flake8"],
+    packages=["flake8", "flake8.options"],
     install_requires=[
         "pyflakes >= 0.8.1, < 1.1",
         "pep8 >= 1.5.7, != 1.6.0, != 1.6.1, != 1.6.2",

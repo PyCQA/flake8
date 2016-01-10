@@ -29,12 +29,7 @@ def normalize_paths(paths, parent=os.curdir):
     :rtype:
         [str]
     """
-    paths = []
-    for path in parse_comma_separated_list(paths):
-        if '/' in path:
-            path = os.path.abspath(os.path.join(parent, path))
-        paths.append(path.rstrip('/'))
-    return paths
+    return [normalize_path(p) for p in parse_comma_separated_list(paths)]
 
 
 def normalize_path(path, parent=os.curdir):
@@ -47,4 +42,4 @@ def normalize_path(path, parent=os.curdir):
     """
     if '/' in path:
         path = os.path.abspath(os.path.join(parent, path))
-    return path
+    return path.rstrip('/')

@@ -167,7 +167,6 @@ def _normalize_option(options, option):
         if option.comma_separated_list:
             normalize = utils.normalize_paths
         setattr(options, dest, normalize(old_value))
-
     elif option.comma_separated_list:
         old_value = getattr(options, dest)
         setattr(options, dest,

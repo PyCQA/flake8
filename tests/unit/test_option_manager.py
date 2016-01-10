@@ -60,7 +60,7 @@ def test_add_option_with_custom_args(optmanager):
         assert getattr(option, attr) is True
 
 
-def test_parse_args(optmanager):
+def test_parse_args_normalize_path(optmanager):
     assert optmanager.options == []
     assert optmanager.config_options_dict == {}
 
@@ -74,3 +74,4 @@ def test_parse_args(optmanager):
     )
     assert options.verbose == 3
     assert options.config == os.path.abspath('../config.ini')
+    assert options.exclude == ['E123', 'W234']

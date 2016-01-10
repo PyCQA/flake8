@@ -114,19 +114,17 @@ class Option(object):
             return self.long_option_name[2:].replace('-', '_')
         return self.short_option_name[1]
 
-    def normalize(self, options):
-        dest = self.dest
+    def normalize(self, value):
+        """Normalize the value based on the option configuration."""
         if self.normalize_paths:
-            old_value = getattr(options, dest)
             # Decide whether to parse a list of paths or a single path
             normalize = utils.normalize_path
             if self.comma_separated_list:
                 normalize = utils.normalize_paths
-            setattr(options, dest, normalize(old_value))
+            return normalize(value)
         elif self.comma_separated_list:
-            old_value = getattr(options, dest)
-            setattr(options, dest,
-                    utils.parse_comma_separated_list(old_value))
+            return utils.parse_comma_separated_list(value)
+        return value
 
     def to_optparse(self):
         """Convert a Flake8 Option to an optparse Option."""
@@ -181,6 +179,7 @@ class OptionManager(object):
         """Simple proxy to calling the OptionParser's parse_args method."""
         options, xargs = self.parser.parse_args(args, values)
         for option in self.options:
-            option.normalize(options)
+            old_value = getattr(options, option.dest)
+            setattr(options, option.dest, option.normalize(old_value))
 
         return options, xargs

@@ -73,7 +73,7 @@ def test_parse_args_normalize_path(optmanager):
 
 
 def test_parse_args_handles_comma_separated_defaults(optmanager):
-    """Show that parse_args handles defaults that are comma separated."""
+    """Show that parse_args handles defaults that are comma-separated."""
     assert optmanager.options == []
     assert optmanager.config_options_dict == {}
 
@@ -85,7 +85,7 @@ def test_parse_args_handles_comma_separated_defaults(optmanager):
 
 
 def test_parse_args_handles_comma_separated_lists(optmanager):
-    """Show that parse_args handles user-specified comma separated lists."""
+    """Show that parse_args handles user-specified comma-separated lists."""
     assert optmanager.options == []
     assert optmanager.config_options_dict == {}
 
@@ -94,3 +94,21 @@ def test_parse_args_handles_comma_separated_lists(optmanager):
 
     options, args = optmanager.parse_args(['--exclude', 'E201,W111,F280'])
     assert options.exclude == ['E201', 'W111', 'F280']
+
+
+def test_parse_args_normalize_paths(optmanager):
+    """Verify parse_args normalizes a comma-separated list of paths."""
+    assert optmanager.options == []
+    assert optmanager.config_options_dict == {}
+
+    optmanager.add_option('--extra-config', normalize_paths=True,
+                          comma_separated_list=True)
+
+    options, args = optmanager.parse_args([
+        '--extra-config', '../config.ini,tox.ini,flake8/some-other.cfg'
+    ])
+    assert options.extra_config == [
+        os.path.abspath('../config.ini'),
+        'tox.ini',
+        os.path.abspath('flake8/some-other.cfg'),
+    ]

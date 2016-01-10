@@ -29,7 +29,11 @@ class ConfigFileFinder(object):
             Extra configuration files specified by the user to read.
         """
         # The values of --append-config from the CLI
-        self.extra_config_files = extra_config_files
+        extra_config_files = extra_config_files or []
+        self.extra_config_files = [
+            # Ensure the paths are absolute paths for local_config_files
+            os.path.abspath(f) for f in extra_config_files
+        ]
 
         # Platform specific settings
         self.is_windows = sys.platform == 'win32'
@@ -77,12 +81,23 @@ class ConfigFileFinder(object):
             (parent, tail) = os.path.split(parent)
 
     def local_config_files(self):
-        """Find all local config files."""
+        """Find all local config files which actually exist.
+
+        Filter results from
+        :meth:`~ConfigFileFinder.generate_possible_local_config_files` based
+        on whether the filename exists or not.
+
+        :returns:
+            List of files that exist that are local project config files with
+            extra config files appended to that list (which also exist).
+        :rtype:
+            [str]
+        """
         return [
             filename
             for filename in self.generate_possible_local_config_files()
             if os.path.exists(filename)
-        ] + self.extra_config_files
+        ] + list(filter(os.path.exists, self.extra_config_files))
 
     def local_configs(self):
         """Parse all local config files into one config object."""

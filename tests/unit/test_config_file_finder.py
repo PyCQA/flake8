@@ -67,3 +67,27 @@ def test_generate_possible_local_config_files(args, expected):
 
     assert (list(finder.generate_possible_local_config_files()) ==
             expected)
+
+
+@pytest.mark.parametrize('args,extra_config_files,expected', [
+    # No arguments, common prefix of abspath('.')
+    ([],
+        [],
+        [os.path.abspath('setup.cfg'),
+            os.path.abspath('tox.ini')]),
+    # Common prefix of "flake8/"
+    (['flake8/options', 'flake8/'],
+        [],
+        [os.path.abspath('setup.cfg'),
+            os.path.abspath('tox.ini')]),
+    # Common prefix of "flake8/options"
+    (['flake8/options', 'flake8/options/sub'],
+        [],
+        [os.path.abspath('setup.cfg'),
+            os.path.abspath('tox.ini')]),
+])
+def test_local_config_files(args, extra_config_files, expected):
+    """Verify discovery of local config files."""
+    finder = config.ConfigFileFinder('flake8', args, extra_config_files)
+
+    assert list(finder.local_config_files()) == expected

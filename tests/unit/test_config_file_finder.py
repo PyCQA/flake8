@@ -93,6 +93,13 @@ def test_generate_possible_local_config_files(args, expected):
         [os.path.abspath('setup.cfg'),
             os.path.abspath('tox.ini'),
             os.path.abspath(CLI_SPECIFIED_FILEPATH)]),
+    # Common prefix of "flake8/" with missing extra config files specified
+    (['flake8/'],
+        [CLI_SPECIFIED_FILEPATH,
+            'tests/fixtures/config_files/missing.ini'],
+        [os.path.abspath('setup.cfg'),
+            os.path.abspath('tox.ini'),
+            os.path.abspath(CLI_SPECIFIED_FILEPATH)]),
 ])
 def test_local_config_files(args, extra_config_files, expected):
     """Verify discovery of local config files."""

@@ -1,7 +1,10 @@
+"""Implementation of the class that registers and notifies listeners."""
 from flake8 import _trie
 
 
 class Notifier(object):
+    """Object that tracks and notifies listener objects."""
+
     def __init__(self):
         """Initialize an empty notifier object."""
         self.listeners = _trie.Trie()

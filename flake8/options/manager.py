@@ -104,8 +104,8 @@ class Option(object):
             'dest={dest}, type={type}, callback={callback}, help={help},'
             ' callback={callback}, callback_args={callback_args}, '
             'callback_kwargs={callback_kwargs}, metavar={metavar})'
-            ).format(self.short_option_name, self.long_option_name,
-                     **self.option_kwargs)
+        ).format(self.short_option_name, self.long_option_name,
+                 **self.option_kwargs)
 
     def _make_dest(self, dest):
         if dest:

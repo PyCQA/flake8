@@ -40,6 +40,7 @@ def test_creates_its_own_config_file_finder(args, extra_config_files,
 
 
 def test_parse_cli_config(optmanager):
+    """Parse the specified config file as a cli config file."""
     optmanager.add_option('--exclude', parse_from_config=True,
                           comma_separated_list=True,
                           normalize_paths=True)

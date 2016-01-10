@@ -1,3 +1,14 @@
+"""Top-level module for Flake8.
+
+This module
+
+- initializes logging for the command-line tool
+- tracks the version of the package
+- provides a way to configure logging for the command-line tool
+
+.. autofunction:: flake8.configure_logging
+
+"""
 import logging
 import sys
 
@@ -5,7 +16,10 @@ try:
     from logging import NullHandler
 except ImportError:
     class NullHandler(logging.Handler):
+        """Shim for version of Python < 2.7."""
+
         def emit(self, record):
+            """Do nothing."""
             pass
 
 LOG = logging.getLogger(__name__)

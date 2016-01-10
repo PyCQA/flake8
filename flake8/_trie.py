@@ -5,7 +5,7 @@ __all__ = ('Trie', 'TrieNode')
 
 def _iterate_stringlike_objects(string):
     for i in range(len(string)):
-        yield string[i:i+1]
+        yield string[i:i + 1]
 
 
 class Trie(object):

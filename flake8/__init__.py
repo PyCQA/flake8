@@ -63,6 +63,9 @@ def configure_logging(verbosity, filename=None):
     else:
         handler = logging.FileHandler(filename)
 
+    handler.setFormatter(
+        logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+    )
     LOG.addHandler(handler)
     LOG.setLevel(log_level)
     LOG.debug('Added a %s logging handler to logger root at %s',

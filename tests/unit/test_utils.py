@@ -38,4 +38,5 @@ def test_normalize_path(value, expected):
         [os.path.abspath("../" + p) for p in RELATIVE_PATHS]),
 ])
 def test_normalize_paths(value, expected):
+    """Verify we normalize comma-separated paths provided to the tool."""
     assert utils.normalize_paths(value) == expected

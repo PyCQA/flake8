@@ -1,3 +1,4 @@
+"""Unit test for the _trie module."""
 from flake8 import _trie as trie
 
 

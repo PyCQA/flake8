@@ -1,6 +1,8 @@
+"""Unit tests for the Notifier object."""
 import pytest
 
 from flake8 import notifier
+
 
 class _Listener(object):
     def __init__(self, error_code):
@@ -13,8 +15,11 @@ class _Listener(object):
 
 
 class TestNotifier(object):
+    """Notifier unit tests."""
+
     @pytest.fixture(autouse=True)
     def setup(self):
+        """Set up each TestNotifier instance."""
         self.notifier = notifier.Notifier()
         self.listener_map = {}
 

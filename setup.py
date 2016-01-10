@@ -1,3 +1,4 @@
+"""Packaging logic for Flake8."""
 # -*- coding: utf-8 -*-
 from __future__ import with_statement
 import setuptools
@@ -25,6 +26,7 @@ if mock is None:
 
 
 def get_long_description():
+    """Generate a long description from the README and CHANGES files."""
     descr = []
     for fname in ('README.rst', 'CHANGES.rst'):
         with open(fname) as f:

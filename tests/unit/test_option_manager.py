@@ -9,6 +9,7 @@ from flake8.options import manager
 
 @pytest.fixture
 def optmanager():
+    """Generate a simple OptionManager with default test arguments."""
     return manager.OptionManager(prog='flake8', version='3.0.0b1')
 
 

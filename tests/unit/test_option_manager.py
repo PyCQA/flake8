@@ -48,6 +48,7 @@ def test_add_short_and_long_option_names(optmanager):
 
 
 def test_add_option_with_custom_args(optmanager):
+    """Verify that add_option handles custom Flake8 parameters."""
     assert optmanager.options == []
     assert optmanager.config_options_dict == {}
 
@@ -61,17 +62,35 @@ def test_add_option_with_custom_args(optmanager):
 
 
 def test_parse_args_normalize_path(optmanager):
+    """Show that parse_args handles path normalization."""
     assert optmanager.options == []
     assert optmanager.config_options_dict == {}
 
-    optmanager.add_option('-v', '--verbose', action='count')
     optmanager.add_option('--config', normalize_paths=True)
+
+    options, args = optmanager.parse_args(['--config', '../config.ini'])
+    assert options.config == os.path.abspath('../config.ini')
+
+
+def test_parse_args_handles_comma_separated_defaults(optmanager):
+    """Show that parse_args handles defaults that are comma separated."""
+    assert optmanager.options == []
+    assert optmanager.config_options_dict == {}
+
     optmanager.add_option('--exclude', default='E123,W234',
                           comma_separated_list=True)
 
-    options, args = optmanager.parse_args(
-        ['-v', '-v', '-v', '--config', '../config.ini']
-    )
-    assert options.verbose == 3
-    assert options.config == os.path.abspath('../config.ini')
+    options, args = optmanager.parse_args([])
     assert options.exclude == ['E123', 'W234']
+
+
+def test_parse_args_handles_comma_separated_lists(optmanager):
+    """Show that parse_args handles user-specified comma separated lists."""
+    assert optmanager.options == []
+    assert optmanager.config_options_dict == {}
+
+    optmanager.add_option('--exclude', default='E123,W234',
+                          comma_separated_list=True)
+
+    options, args = optmanager.parse_args(['--exclude', 'E201,W111,F280'])
+    assert options.exclude == ['E201', 'W111', 'F280']

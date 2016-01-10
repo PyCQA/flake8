@@ -1,3 +1,4 @@
+"""Option handling and Option management logic."""
 import logging
 import optparse
 
@@ -8,6 +9,7 @@ LOG = logging.getLogger(__name__)
 
 class Option(object):
     """Our wrapper around an optparse.Option object to add features."""
+
     def __init__(self, short_option_name=None, long_option_name=None,
                  # Options below here are taken from the optparse.Option class
                  action=None, default=None, type=None, dest=None,
@@ -96,6 +98,7 @@ class Option(object):
             self.config_name = long_option_name[2:].replace('-', '_')
 
     def __repr__(self):
+        """Simple representation of an Option class."""
         return (
             'Option({0}, {1}, action={action}, default={default}, '
             'dest={dest}, type={type}, callback={callback}, help={help},'
@@ -134,8 +137,19 @@ class Option(object):
 
 
 class OptionManager(object):
+    """Manage Options and OptionParser while adding post-processing."""
+
     def __init__(self, prog=None, version=None,
                  usage='%prog [options] input'):
+        """Initialize an instance of an OptionManager.
+
+        :param str prog:
+            Name of the actual program (e.g., flake8).
+        :param str version:
+            Version string for the program.
+        :param str usage:
+            Basic usage string used by the OptionParser.
+        """
         self.parser = optparse.OptionParser(prog=prog, version=version,
                                             usage=usage)
         self.config_options_dict = {}

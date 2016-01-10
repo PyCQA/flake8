@@ -93,7 +93,7 @@ class Option(object):
             if not long_option_name:
                 raise ValueError('When specifying parse_from_config=True, '
                                  'a long_option_name must also be specified.')
-            self.config_name = self.dest
+            self.config_name = long_option_name[2:].replace('-', '_')
 
     def __repr__(self):
         return (
@@ -104,6 +104,9 @@ class Option(object):
             ).format(*self.option_args, **self.option_kwargs)
 
     def _make_dest(self, dest):
+        if dest:
+            return dest
+
         if self.long_option_name:
             return self.long_option_name[2:].replace('-', '_')
         return self.short_option_name[1]

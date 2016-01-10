@@ -57,3 +57,8 @@ def test_config_name_needs_long_option_name():
     """Show that we error out if the Option should be parsed from config."""
     with pytest.raises(ValueError):
         manager.Option('-s', parse_from_config=True)
+
+
+def test_dest_is_not_overridden():
+    opt = manager.Option('-s', '--short', dest='something_not_short')
+    assert opt.dest == 'something_not_short'

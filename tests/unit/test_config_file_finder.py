@@ -7,6 +7,8 @@ import pytest
 
 from flake8.options import config
 
+CLI_SPECIFIED_FILEPATH = 'tests/fixtures/config_files/cli-specified.ini'
+
 
 def test_uses_default_args():
     """Show that we default the args value."""
@@ -28,7 +30,7 @@ def test_windows_detection(platform, is_windows):
 
 def test_cli_config():
     """Verify opening and reading the file specified via the cli."""
-    cli_filepath = 'tests/fixtures/config_files/cli-specified.ini'
+    cli_filepath = CLI_SPECIFIED_FILEPATH
     finder = config.ConfigFileFinder('flake8', None, [])
 
     parsed_config = finder.cli_config(cli_filepath)
@@ -85,6 +87,12 @@ def test_generate_possible_local_config_files(args, expected):
         [],
         [os.path.abspath('setup.cfg'),
             os.path.abspath('tox.ini')]),
+    # Common prefix of "flake8/" with extra config files specified
+    (['flake8/'],
+        [CLI_SPECIFIED_FILEPATH],
+        [os.path.abspath('setup.cfg'),
+            os.path.abspath('tox.ini'),
+            os.path.abspath(CLI_SPECIFIED_FILEPATH)]),
 ])
 def test_local_config_files(args, extra_config_files, expected):
     """Verify discovery of local config files."""

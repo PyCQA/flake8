@@ -1,3 +1,4 @@
+"""Test configuration for py.test."""
 import sys
 
 import flake8

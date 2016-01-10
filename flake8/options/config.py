@@ -128,8 +128,12 @@ class MergedConfigParser(object):
     dictionaries with the parsed values.
     """
 
-    GETINT_METHODS = set(['int', 'count'])
-    GETBOOL_METHODS = set(['store_true', 'store_false'])
+    #: Set of types that should use the
+    #: :meth:`~configparser.RawConfigParser.getint` method.
+    GETINT_TYPES = set(['int', 'count'])
+    #: Set of actions that should use the
+    #: :meth:`~configparser.RawConfigParser.getbool` method.
+    GETBOOL_ACTIONS = set(['store_true', 'store_false'])
 
     def __init__(self, option_manager, extra_config_files=None, args=None):
         """Initialize the MergedConfigParser instance.
@@ -141,18 +145,20 @@ class MergedConfigParser(object):
         :params list args:
             The extra parsed arguments from the command-line.
         """
-        # Our instance of flake8.options.manager.OptionManager
+        #: Our instance of flake8.options.manager.OptionManager
         self.option_manager = option_manager
-        # The prog value for the cli parser
+        #: The prog value for the cli parser
         self.program_name = option_manager.program_name
-        # Parsed extra arguments
+        #: Parsed extra arguments
         self.args = args
-        # Our instance of our ConfigFileFinder
-        self.config_finder = ConfigFileFinder(self.program_name, self.args)
-        # Mapping of configuration option names to
-        # flake8.options.manager.Option instances
+        #: Mapping of configuration option names to
+        #: :class:`~flake8.options.manager.Option` instances
         self.config_options = option_manager.config_options_dict
+        #: List of extra config files
         self.extra_config_files = extra_config_files or []
+        #: Our instance of our :class:`~ConfigFileFinder`
+        self.config_finder = ConfigFileFinder(self.program_name, self.args,
+                                              self.extra_config_files)
 
     @staticmethod
     def _normalize_value(option, value):
@@ -172,9 +178,9 @@ class MergedConfigParser(object):
 
             # Use the appropriate method to parse the config value
             method = config_parser.get
-            if option.type in self.GETINT_METHODS:
+            if option.type in self.GETINT_TYPES:
                 method = config_parser.getint
-            elif option.action in self.GETBOOL_METHODS:
+            elif option.action in self.GETBOOL_ACTIONS:
                 method = config_parser.getboolean
 
             value = method(self.program_name, option_name)

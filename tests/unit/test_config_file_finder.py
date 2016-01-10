@@ -36,12 +36,25 @@ def test_cli_config():
 
 
 @pytest.mark.parametrize('args,expected', [
-    ([],  # No arguments
+    # No arguments, common prefix of abspath('.')
+    ([],
         [os.path.abspath('setup.cfg'),
             os.path.abspath('tox.ini'),
             os.path.abspath('.flake8')]),
-    (['flake8/options', 'flake8/'],  # Common prefix of "flake8/"
+    # Common prefix of "flake8/"
+    (['flake8/options', 'flake8/'],
         [os.path.abspath('flake8/setup.cfg'),
+            os.path.abspath('flake8/tox.ini'),
+            os.path.abspath('flake8/.flake8'),
+            os.path.abspath('setup.cfg'),
+            os.path.abspath('tox.ini'),
+            os.path.abspath('.flake8')]),
+    # Common prefix of "flake8/options"
+    (['flake8/options', 'flake8/options/sub'],
+        [os.path.abspath('flake8/options/setup.cfg'),
+            os.path.abspath('flake8/options/tox.ini'),
+            os.path.abspath('flake8/options/.flake8'),
+            os.path.abspath('flake8/setup.cfg'),
             os.path.abspath('flake8/tox.ini'),
             os.path.abspath('flake8/.flake8'),
             os.path.abspath('setup.cfg'),

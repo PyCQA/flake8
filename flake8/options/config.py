@@ -228,6 +228,22 @@ class MergedConfigParser(object):
         LOG.debug('Parsing CLI configuration files.')
         return self._parse_config(config)
 
+    def merge_user_and_local_config(self):
+        """Merge the parsed user and local configuration files.
+
+        :returns:
+            Dictionary of the parsed and merged configuration options.
+        :rtype:
+            dict
+        """
+        user_config = self.parse_user_config()
+        config = self.parse_local_config()
+
+        for option, value in user_config.items():
+            config.setdefault(option, value)
+
+        return config
+
     def parse(self, cli_config=None, isolated=False):
         """Parse and return the local and user config files.
 
@@ -257,10 +273,4 @@ class MergedConfigParser(object):
                       '--config by the user', cli_config)
             return self.parse_cli_config(cli_config)
 
-        user_config = self.parse_user_config()
-        config = self.parse_local_config()
-
-        for option, value in user_config.items():
-            config.setdefault(option, value)
-
-        return config
+        return self.merge_user_and_local_config()

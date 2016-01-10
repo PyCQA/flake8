@@ -1,4 +1,9 @@
 """Tests for the ConfigFileFinder."""
+try:
+    import ConfigParser as configparser
+except ImportError:
+    import configparser
+
 import os
 import sys
 
@@ -106,3 +111,10 @@ def test_local_config_files(args, extra_config_files, expected):
     finder = config.ConfigFileFinder('flake8', args, extra_config_files)
 
     assert list(finder.local_config_files()) == expected
+
+
+def test_local_configs():
+    """Verify we return a ConfigParser."""
+    finder = config.ConfigFileFinder('flake8', None, [])
+
+    assert isinstance(finder.local_configs(), configparser.RawConfigParser)

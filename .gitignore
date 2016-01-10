@@ -3,5 +3,5 @@
 *.pyc
 *.sw*
 *.egg-info
-
+*.log
 .eggs/

@@ -186,8 +186,10 @@ class MergedConfigParser(object):
             value = method(self.program_name, option_name)
             LOG.debug('Option "%s" returned value: %r', option_name, value)
 
-            final_value = self._normalize_value(value)
+            final_value = self._normalize_value(option, value)
             config_dict[option_name] = final_value
+
+        return config_dict
 
     def is_configured_by(self, config):
         """Check if the specified config parser has an appropriate section."""

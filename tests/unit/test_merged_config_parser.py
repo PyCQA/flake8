@@ -1,4 +1,6 @@
 """Unit tests for flake8.options.config.MergedConfigParser."""
+import os
+
 import mock
 import pytest
 
@@ -38,4 +40,21 @@ def test_creates_its_own_config_file_finder(args, extra_config_files,
 
 
 def test_parse_cli_config(optmanager):
-    pass
+    optmanager.add_option('--exclude', parse_from_config=True,
+                          comma_separated_list=True,
+                          normalize_paths=True)
+    optmanager.add_option('--ignore', parse_from_config=True,
+                          comma_separated_list=True)
+    parser = config.MergedConfigParser(optmanager)
+
+    parsed_config = parser.parse_cli_config(
+        'tests/fixtures/config_files/cli-specified.ini'
+    )
+    assert parsed_config == {
+        'ignore': ['E123', 'W234', 'E111'],
+        'exclude': [
+            os.path.abspath('foo/'),
+            os.path.abspath('bar/'),
+            os.path.abspath('bogus/'),
+        ]
+    }

@@ -14,11 +14,16 @@ def test_uses_default_args():
     assert finder.parent == os.path.abspath('.')
 
 
-@mock.patch.object(sys, 'platform', 'win32')
-def test_windows_detection():
+@pytest.mark.parametrize('platform,is_windows', [
+    ('win32', True),
+    ('linux', False),
+    ('darwin', False),
+])
+def test_windows_detection(platform, is_windows):
     """Verify we detect Windows to the best of our knowledge."""
-    finder = config.ConfigFileFinder('flake8', None, [])
-    assert finder.is_windows is True
+    with mock.patch.object(sys, 'platform', platform):
+        finder = config.ConfigFileFinder('flake8', None, [])
+    assert finder.is_windows is is_windows
 
 
 def test_cli_config():

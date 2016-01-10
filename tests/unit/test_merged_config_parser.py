@@ -60,3 +60,15 @@ def test_parse_cli_config(optmanager):
             os.path.abspath('bogus/'),
         ]
     }
+
+
+@pytest.mark.parametrize('filename,is_configured_by', [
+    ('tests/fixtures/config_files/cli-specified.ini', True),
+    ('tests/fixtures/config_files/no-flake8-section.ini', False),
+])
+def test_is_configured_by(filename, is_configured_by, optmanager):
+    """Verify the behaviour of the is_configured_by method."""
+    parsed_config, _ = config.ConfigFileFinder._read_config(filename)
+    parser = config.MergedConfigParser(optmanager)
+
+    assert parser.is_configured_by(parsed_config) is is_configured_by

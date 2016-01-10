@@ -3,3 +3,5 @@
 *.pyc
 *.sw*
 *.egg-info
+
+.eggs/

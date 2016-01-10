@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import with_statement
-from setuptools import setup
+import setuptools
+
+import flake8
+
 try:
     # Work around a traceback with Nose on Python 2.6
     # http://bugs.python.org/issue15881#msg170215
@@ -16,16 +19,9 @@ except ImportError:
     mock = None
 
 
-tests_require = ['nose']
+tests_require = ['pytest']
 if mock is None:
     tests_require += ['mock']
-
-
-def get_version(fname='flake8/__init__.py'):
-    with open(fname) as f:
-        for line in f:
-            if line.startswith('__version__'):
-                return eval(line.split('=')[-1])
 
 
 def get_long_description():
@@ -36,10 +32,10 @@ def get_long_description():
     return '\n\n'.join(descr)
 
 
-setup(
+setuptools.setup(
     name="flake8",
     license="MIT",
-    version=get_version(),
+    version=flake8.__version__,
     description="the modular source code checker: pep8, pyflakes and co",
     # long_description=get_long_description(),
     author="Tarek Ziade",
@@ -71,5 +67,5 @@ setup(
         "Topic :: Software Development :: Quality Assurance",
     ],
     tests_require=tests_require,
-    test_suite='nose.collector',
+    setup_requires=['pytest-runner'],
 )

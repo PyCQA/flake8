@@ -1,3 +1,4 @@
+"""Config handling logic for Flake8."""
 import logging
 import os.path
 import sys
@@ -7,17 +8,26 @@ if sys.version_info < (3, 0):
 else:
     import configparser
 
-from . import utils
-
 LOG = logging.getLogger(__name__)
 
-__all__('ConfigFileFinder', 'MergedConfigParser')
+__all__ = ('ConfigFileFinder', 'MergedConfigParser')
 
 
 class ConfigFileFinder(object):
+    """Encapsulate the logic for finding and reading config files."""
+
     PROJECT_FILENAMES = ('setup.cfg', 'tox.ini')
 
     def __init__(self, program_name, args, extra_config_files):
+        """Initialize object to find config files.
+
+        :param str program_name:
+            Name of the current program (e.g., flake8).
+        :param list args:
+            The extra arguments passed on the command-line.
+        :param list extra_config_files:
+            Extra configuration files specified by the user to read.
+        """
         # The values of --append-config from the CLI
         self.extra_config_files = extra_config_files
 
@@ -46,12 +56,14 @@ class ConfigFileFinder(object):
         return (config, found_files)
 
     def cli_config(self, files):
+        """Read and parse the config file specified on the command-line."""
         config, found_files = self._read_config(files)
         if found_files:
             LOG.debug('Found cli configuration files: %s', found_files)
         return config
 
     def generate_possible_local_config_files(self):
+        """Find and generate all local config files."""
         tail = self.tail
         parent = self.parent
         while tail:
@@ -62,6 +74,7 @@ class ConfigFileFinder(object):
             (parent, tail) = os.path.split(parent)
 
     def local_config_files(self):
+        """Find all local config files."""
         return [
             filename
             for filename in self.generate_possible_local_config_files()
@@ -69,17 +82,20 @@ class ConfigFileFinder(object):
         ] + self.extra_config_files
 
     def local_configs(self):
+        """Parse all local config files into one config object."""
         config, found_files = self._read_config(self.local_config_files())
         if found_files:
             LOG.debug('Found local configuration files: %s', found_files)
         return config
 
     def user_config_file(self):
+        """Find the user-level config file."""
         if self.is_windows:
             return os.path.expanduser('~\\' + self.program_config)
         return os.path.join(self.xdg_home, self.program_name)
 
     def user_config(self):
+        """Parse the user config file into a config object."""
         config, found_files = self._read_config(self.user_config_file())
         if found_files:
             LOG.debug('Found user configuration files: %s', found_files)
@@ -87,10 +103,26 @@ class ConfigFileFinder(object):
 
 
 class MergedConfigParser(object):
+    """Encapsulate merging different types of configuration files.
+
+    This parses out the options registered that were specified in the
+    configuration files, handles extra configuration files, and returns
+    dictionaries with the parsed values.
+    """
+
     GETINT_METHODS = set(['int', 'count'])
     GETBOOL_METHODS = set(['store_true', 'store_false'])
 
     def __init__(self, option_manager, extra_config_files=None, args=None):
+        """Initialize the MergedConfigParser instance.
+
+        :param flake8.option.manager.OptionManager option_manager:
+            Initialized OptionManager.
+        :param list extra_config_files:
+            List of extra config files to parse.
+        :params list args:
+            The extra parsed arguments from the command-line.
+        """
         # Our instance of flake8.options.manager.OptionManager
         self.option_manager = option_manager
         # The prog value for the cli parser
@@ -106,12 +138,7 @@ class MergedConfigParser(object):
 
     @staticmethod
     def _normalize_value(option, value):
-        if option.normalize_paths:
-            final_value = utils.normalize_paths(value)
-        elif option.comma_separated_list:
-            final_value = utils.parse_comma_separated_list(value)
-        else:
-            final_value = value
+        final_value = option.normalize(value)
         LOG.debug('%r has been normalized to %r for option "%s"',
                   value, final_value, option.config_name)
         return final_value
@@ -126,11 +153,11 @@ class MergedConfigParser(object):
             option = self.config_options[option_name]
 
             # Use the appropriate method to parse the config value
-            method = config.get
+            method = config_parser.get
             if option.type in self.GETINT_METHODS:
-                method = config.getint
+                method = config_parser.getint
             elif option.action in self.GETBOOL_METHODS:
-                method = config.getboolean
+                method = config_parser.getboolean
 
             value = method(self.program_name, option_name)
             LOG.debug('Option "%s" returned value: %r', option_name, value)

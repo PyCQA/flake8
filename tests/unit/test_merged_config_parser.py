@@ -121,3 +121,53 @@ def test_parse_local_config(optmanager):
             os.path.abspath('bogus/'),
         ]
     }
+
+
+def test_merge_user_and_local_config(optmanager):
+    """Verify merging of parsed user and local config files."""
+    optmanager.add_option('--exclude', parse_from_config=True,
+                          comma_separated_list=True,
+                          normalize_paths=True)
+    optmanager.add_option('--ignore', parse_from_config=True,
+                          comma_separated_list=True)
+    optmanager.add_option('--select', parse_from_config=True,
+                          comma_separated_list=True)
+    parser = config.MergedConfigParser(optmanager)
+    config_finder = parser.config_finder
+
+    with mock.patch.object(config_finder, 'local_config_files') as localcfs:
+        localcfs.return_value = [
+            'tests/fixtures/config_files/local-config.ini'
+        ]
+        with mock.patch.object(config_finder,
+                               'user_config_file') as usercf:
+            usercf.return_value = ('tests/fixtures/config_files/'
+                                   'user-config.ini')
+            parsed_config = parser.merge_user_and_local_config()
+
+    assert parsed_config == {
+        'exclude': [
+            os.path.abspath('docs/')
+        ],
+        'ignore': ['D203'],
+        'select': ['E', 'W', 'F'],
+    }
+
+
+@mock.patch('flake8.options.config.ConfigFileFinder')
+def test_parse_isolates_config(ConfigFileManager, optmanager):
+    """Verify behaviour of the parse method with isolated=True."""
+    parser = config.MergedConfigParser(optmanager)
+
+    assert parser.parse(isolated=True) == {}
+    assert parser.config_finder.local_configs.called is False
+    assert parser.config_finder.user_config.called is False
+
+
+@mock.patch('flake8.options.config.ConfigFileFinder')
+def test_parse_uses_cli_config(ConfigFileManager, optmanager):
+    """Verify behaviour of the parse method with a specified config."""
+    parser = config.MergedConfigParser(optmanager)
+
+    parser.parse(cli_config='foo.ini')
+    parser.config_finder.cli_config.assert_called_once_with('foo.ini')

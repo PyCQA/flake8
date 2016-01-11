@@ -72,3 +72,52 @@ def test_is_configured_by(filename, is_configured_by, optmanager):
     parser = config.MergedConfigParser(optmanager)
 
     assert parser.is_configured_by(parsed_config) is is_configured_by
+
+
+def test_parse_user_config(optmanager):
+    """Verify parsing of user config files."""
+    optmanager.add_option('--exclude', parse_from_config=True,
+                          comma_separated_list=True,
+                          normalize_paths=True)
+    optmanager.add_option('--ignore', parse_from_config=True,
+                          comma_separated_list=True)
+    parser = config.MergedConfigParser(optmanager)
+
+    with mock.patch.object(parser.config_finder, 'user_config_file') as usercf:
+        usercf.return_value = 'tests/fixtures/config_files/cli-specified.ini'
+        parsed_config = parser.parse_user_config()
+
+    assert parsed_config == {
+        'ignore': ['E123', 'W234', 'E111'],
+        'exclude': [
+            os.path.abspath('foo/'),
+            os.path.abspath('bar/'),
+            os.path.abspath('bogus/'),
+        ]
+    }
+
+
+def test_parse_local_config(optmanager):
+    """Verify parsing of local config files."""
+    optmanager.add_option('--exclude', parse_from_config=True,
+                          comma_separated_list=True,
+                          normalize_paths=True)
+    optmanager.add_option('--ignore', parse_from_config=True,
+                          comma_separated_list=True)
+    parser = config.MergedConfigParser(optmanager)
+    config_finder = parser.config_finder
+
+    with mock.patch.object(config_finder, 'local_config_files') as localcfs:
+        localcfs.return_value = [
+            'tests/fixtures/config_files/cli-specified.ini'
+        ]
+        parsed_config = parser.parse_local_config()
+
+    assert parsed_config == {
+        'ignore': ['E123', 'W234', 'E111'],
+        'exclude': [
+            os.path.abspath('foo/'),
+            os.path.abspath('bar/'),
+            os.path.abspath('bogus/'),
+        ]
+    }

@@ -39,7 +39,8 @@ _VERBOSITY_TO_LOG_LEVEL = {
 }
 
 
-def configure_logging(verbosity, filename=None):
+def configure_logging(verbosity, filename=None,
+                      logformat='%(asctime)s %(levelname)s %(message)s'):
     """Configure logging for flake8.
 
     :param int verbosity:
@@ -63,9 +64,7 @@ def configure_logging(verbosity, filename=None):
     else:
         handler = logging.FileHandler(filename)
 
-    handler.setFormatter(
-        logging.Formatter('%(asctime)s %(levelname)s %(message)s')
-    )
+    handler.setFormatter(logging.Formatter(logformat))
     LOG.addHandler(handler)
     LOG.setLevel(log_level)
     LOG.debug('Added a %s logging handler to logger root at %s',

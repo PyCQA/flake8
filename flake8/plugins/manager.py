@@ -1,4 +1,5 @@
 """Plugin loading and management logic and classes."""
+import collections
 import logging
 
 import pkg_resources
@@ -21,12 +22,21 @@ class Plugin(object):
         """
         self.name = name
         self.entry_point = entry_point
-        self.plugin = None
+        self._plugin = None
 
     def __repr__(self):
         return 'Plugin(name="{0}", entry_point="{1}")'.format(
             self.name, self.entry_point
         )
+
+    @property
+    def plugin(self):
+        self.load_plugin()
+        return self._plugin
+
+    @property
+    def version(self):
+        return self.plugin.version
 
     def execute(self, *args, **kwargs):
         r"""Call the plugin with \*args and \*\*kwargs."""
@@ -45,7 +55,22 @@ class Plugin(object):
         :returns:
             The plugin resolved from the entry-point.
         """
-        if self.plugin is None:
+        return self.plugin
+
+    def load_plugin(self, verify_requirements=False):
+        """Retrieve the plugin for this entry-point.
+
+        This loads the plugin, stores it on the instance and then returns it.
+        It does not reload it after the first time, it merely returns the
+        cached plugin.
+
+        :param bool verify_requirements:
+            Whether or not to make setuptools verify that the requirements for
+            the plugin are satisfied.
+        :returns:
+            Nothing
+        """
+        if self._plugin is None:
             LOG.debug('Loading plugin "%s" from entry-point.', self.name)
             # Avoid relying on hasattr() here.
             resolve = getattr(self.entry_point, 'resolve', None)
@@ -55,13 +80,11 @@ class Plugin(object):
                     LOG.debug('Verifying plugin "%s"\'s requirements.',
                               self.name)
                     require()
-                self.plugin = resolve()
+                self._plugin = resolve()
             else:
-                self.plugin = self.entry_point.load(
+                self._plugin = self.entry_point.load(
                     require=verify_requirements
                 )
-
-        return self.plugin
 
     def provide_options(self, optmanager, options, extra_args):
         """Pass the parsed options and extra arguments to the plugin."""
@@ -152,48 +175,68 @@ class PluginManager(object):
             yield func(self.plugins[name], *args, **kwargs)
 
 
-class Checkers(object):
-    """All of the checkers registered through entry-ponits."""
+class PluginTypeManager(object):
+    """Parent class for most of the specific plugin types."""
 
-    def __init__(self, namespace='flake8.extension'):
-        """Initialize the Checkers collection."""
-        self.manager = PluginManager(namespace)
+    def __init__(self):
+        """Initialize the plugin type's manager."""
+        self.manager = PluginManager(self.namespace)
 
     @property
     def names(self):
+        """Proxy attribute to underlying manager."""
         return self.manager.names
+
+    @property
+    def plugins(self):
+        """Proxy attribute to underlying manager."""
+        return self.manager.plugins
+
+    @staticmethod
+    def _generate_call_function(method_name, optmanager, *args, **kwargs):
+        def generated_function(plugin):
+            method = getattr(plugin, method_name, None)
+            if (method is not None and
+                    isinstance(method, collections.Callable)):
+                return method(optmanager, *args, **kwargs)
+
+    def load_plugins(self):
+        def load_plugin(plugin):
+            return plugin.load()
+
+        return list(self.manager.map(load_plugin))
 
     def register_options(self, optmanager):
         """Register all of the checkers' options to the OptionManager."""
-        def call_register_options(plugin, optmanager):
-            return plugin.register_options(optmanager)
+        call_register_options = self._generate_call_function(
+            'register_options', optmanager,
+        )
 
-        list(self.map(call_register_options, optmanager))
+        list(self.manager.map(call_register_options, optmanager))
 
     def provide_options(self, optmanager, options, extra_args):
-        def call_provide_options(plugin, optmanager, options, extra_args):
-            return plugin.provide_options(optmanager, options, extra_args)
+        """Provide parsed options and extra arguments to the plugins."""
+        call_provide_options = self._generate_call_function(
+            'provide_options', optmanager, options, extra_args,
+        )
 
-        list(self.map(call_provide_options, optmanager, options, extra_args))
+        list(self.manager.map(call_provide_options, optmanager, options,
+                              extra_args))
+
+
+class Checkers(PluginTypeManager):
+    """All of the checkers registered through entry-ponits."""
+
+    namespace = 'flake8.extension'
 
 
 class Listeners(object):
     """All of the listeners registered through entry-points."""
 
-    def __init__(self, namespace='flake8.listener'):
-        self.manager = PluginManager(namespace)
-
-    @property
-    def names(self):
-        return self.manager.names
+    namespace = 'flake8.listen'
 
 
 class ReportFormatters(object):
     """All of the report formatters registered through entry-points."""
 
-    def __init__(self, namespace='flake8.report'):
-        self.manager = PluginManager(namespace)
-
-    @property
-    def names(self):
-        return self.manager.names
+    namespace = 'flake8.report'

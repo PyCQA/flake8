@@ -164,6 +164,7 @@ class PluginTypeManager(object):
     def __init__(self):
         """Initialize the plugin type's manager."""
         self.manager = PluginManager(self.namespace)
+        self.plugins_loaded = False
 
     @property
     def names(self):
@@ -182,20 +183,29 @@ class PluginTypeManager(object):
             if (method is not None and
                     isinstance(method, collections.Callable)):
                 return method(optmanager, *args, **kwargs)
+        return generated_function
 
     def load_plugins(self):
-        def load_plugin(plugin):
-            return plugin.load()
+        """Load all plugins of this type that are managed by this manager."""
+        if self.plugins_loaded:
+            return
 
-        return list(self.manager.map(load_plugin))
+        def load_plugin(plugin):
+            return plugin.load_plugin()
+
+        plugins = list(self.manager.map(load_plugin))
+        # Do not set plugins_loaded if we run into an exception
+        self.plugins_loaded = True
+        return plugins
 
     def register_options(self, optmanager):
         """Register all of the checkers' options to the OptionManager."""
+        self.load_plugins()
         call_register_options = self._generate_call_function(
             'register_options', optmanager,
         )
 
-        list(self.manager.map(call_register_options, optmanager))
+        list(self.manager.map(call_register_options))
 
     def provide_options(self, optmanager, options, extra_args):
         """Provide parsed options and extra arguments to the plugins."""
@@ -203,8 +213,7 @@ class PluginTypeManager(object):
             'provide_options', optmanager, options, extra_args,
         )
 
-        list(self.manager.map(call_provide_options, optmanager, options,
-                              extra_args))
+        list(self.manager.map(call_provide_options))
 
 
 class Checkers(PluginTypeManager):
@@ -213,13 +222,13 @@ class Checkers(PluginTypeManager):
     namespace = 'flake8.extension'
 
 
-class Listeners(object):
+class Listeners(PluginTypeManager):
     """All of the listeners registered through entry-points."""
 
     namespace = 'flake8.listen'
 
 
-class ReportFormatters(object):
+class ReportFormatters(PluginTypeManager):
     """All of the report formatters registered through entry-points."""
 
     namespace = 'flake8.report'

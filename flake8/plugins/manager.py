@@ -42,21 +42,6 @@ class Plugin(object):
         r"""Call the plugin with \*args and \*\*kwargs."""
         return self.plugin(*args, **kwargs)
 
-    def load(self, verify_requirements=False):
-        """Retrieve the plugin for this entry-point.
-
-        This loads the plugin, stores it on the instance and then returns it.
-        It does not reload it after the first time, it merely returns the
-        cached plugin.
-
-        :param bool verify_requirements:
-            Whether or not to make setuptools verify that the requirements for
-            the plugin are satisfied.
-        :returns:
-            The plugin resolved from the entry-point.
-        """
-        return self.plugin
-
     def load_plugin(self, verify_requirements=False):
         """Retrieve the plugin for this entry-point.
 
@@ -88,8 +73,7 @@ class Plugin(object):
 
     def provide_options(self, optmanager, options, extra_args):
         """Pass the parsed options and extra arguments to the plugin."""
-        plugin = self.load()
-        parse_options = getattr(plugin, 'parse_options', None)
+        parse_options = getattr(self.plugin, 'parse_options', None)
         if parse_options is not None:
             LOG.debug('Providing options to plugin "%s".', self.name)
             try:
@@ -107,14 +91,13 @@ class Plugin(object):
         :returns:
             Nothing
         """
-        plugin = self.load()
-        add_options = getattr(plugin, 'add_options', None)
+        add_options = getattr(self.plugin, 'add_options', None)
         if add_options is not None:
             LOG.debug(
                 'Registering options from plugin "%s" on OptionManager %r',
                 self.name, optmanager
             )
-            plugin.add_options(optmanager)
+            add_options(optmanager)
 
 
 class PluginManager(object):

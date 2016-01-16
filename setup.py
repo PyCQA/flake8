@@ -45,17 +45,22 @@ setuptools.setup(
     maintainer="Ian Cordasco",
     maintainer_email="graffatcolmingov@gmail.com",
     url="https://gitlab.com/pycqa/flake8",
-    packages=["flake8", "flake8.options"],
+    packages=[
+        "flake8",
+        "flake8.main",
+        "flake8.options",
+        "flake8.plugins",
+    ],
     install_requires=[
         "pyflakes >= 0.8.1, < 1.1",
         "pep8 >= 1.5.7, != 1.6.0, != 1.6.1, != 1.6.2",
-        "mccabe >= 0.2.1, < 0.4",
+        # "mccabe >= 0.2.1, < 0.4",
     ],
     entry_points={
         'distutils.commands': ['flake8 = flake8.main:Flake8Command'],
-        'console_scripts': ['flake8 = flake8.main:main'],
+        'console_scripts': ['flake8 = flake8.main.cli:main'],
         'flake8.extension': [
-            'F = flake8._pyflakes:FlakesChecker',
+            'F = flake8.plugins.pyflakes:FlakesChecker',
         ],
     },
     classifiers=[

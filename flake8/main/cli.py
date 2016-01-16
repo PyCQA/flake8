@@ -1,5 +1,9 @@
 """Command-line implementation of flake8."""
+import flake8
 from flake8 import defaults
+from flake8.options import aggregator
+from flake8.options import manager
+from flake8.plugins import manager as plugin_manager
 
 
 def register_default_options(option_manager):
@@ -120,3 +124,39 @@ def register_default_options(option_manager):
         # callback=callbacks.redirect_stdout,
         help='Redirect report to a file.',
     )
+
+    # Config file options
+
+    add_option(
+        '--isolated', default=False, action='store_true',
+        help='Ignore all found configuration files.',
+    )
+
+    add_option(
+        '--append-config', action='append',
+        help='Provide extra config files to parse in addition to the files '
+             'found by Flake8 by default. These files are the last ones read '
+             'and so they take the highest precedence when multiple files '
+             'provide the same option.',
+    )
+
+
+def main(argv=None):
+    """Main entry-point for the flake8 command-line tool."""
+    option_manager = manager.OptionManager(
+        prog='flake8', version=flake8.__version__
+    )
+    # Load our plugins
+    check_plugins = plugin_manager.Checkers()
+    listening_plugins = plugin_manager.Listeners()
+    formatting_plugins = plugin_manager.ReportFormatters()
+
+    # Register all command-line and config-file options
+    register_default_options(option_manager)
+    check_plugins.register_options(option_manager)
+    listening_plugins.register_options(option_manager)
+    formatting_plugins.register_options(option_manager)
+
+    # Parse out our options from our found config files and user-provided CLI
+    # options
+    options, args = aggregator.aggregate_options(option_manager)

@@ -155,6 +155,11 @@ class OptionManager(object):
         self.options = []
         self.program_name = prog
         self.version = version
+        self.registered_plugins = set()
+
+    @staticmethod
+    def format_plugin(plugin_tuple):
+        return dict(zip(["entry", "name", "version"], plugin_tuple))
 
     def add_option(self, *args, **kwargs):
         """Create and register a new option.
@@ -176,11 +181,47 @@ class OptionManager(object):
             self.config_options_dict[option.config_name] = option
         LOG.debug('Registered option "%s".', option)
 
+    def generate_versions(self, format_str='%(name)s: %(version)s'):
+        """Generate a comma-separated list of versions of plugins."""
+        return ', '.join(
+            format_str % self.format_plugin(plugin)
+            for plugin in self.registered_plugins
+        )
+
+    def update_version_string(self):
+        """Update the flake8 version string."""
+        self.parser.version = (self.version + ' (' +
+                               self.generate_versions() + ')')
+
+    def generate_epilog(self):
+        """Create an epilog with the version and name of each of plugin."""
+        plugin_version_format = '%(name)s(%(entry)s): %(version)s'
+        self.parser.epilog = 'Installed plugins: ' + self.generate_versions(
+            plugin_version_format
+        )
+
     def parse_args(self, args=None, values=None):
         """Simple proxy to calling the OptionParser's parse_args method."""
+        self.generate_epilog()
+        self.update_version_string()
         options, xargs = self.parser.parse_args(args, values)
         for option in self.options:
             old_value = getattr(options, option.dest)
             setattr(options, option.dest, option.normalize(old_value))
 
         return options, xargs
+
+    def register_plugin(self, entry_point_name, name, version):
+        """Register a plugin relying on the OptionManager.
+
+        :param str entry_point_name:
+            The name of the entry-point loaded with pkg_resources. For
+            example, if the entry-point looks like: ``C90 = mccabe.Checker``
+            then the ``entry_point_name`` would be ``C90``.
+        :param str name:
+            The name of the checker itself. This will be the ``name``
+            attribute of the class or function loaded from the entry-point.
+        :param str version:
+            The version of the checker that we're using.
+        """
+        self.registered_plugins.add((entry_point_name, name, version))

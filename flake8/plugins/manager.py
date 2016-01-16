@@ -98,6 +98,11 @@ class Plugin(object):
                 self.name, optmanager
             )
             add_options(optmanager)
+            optmanager.register_plugin(
+                entry_point_name=self.name,
+                name=self.plugin.name,
+                version=self.plugin.version
+            )
 
 
 class PluginManager(object):

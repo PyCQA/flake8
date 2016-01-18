@@ -139,7 +139,7 @@ class OptionManager(object):
     """Manage Options and OptionParser while adding post-processing."""
 
     def __init__(self, prog=None, version=None,
-                 usage='%prog [options] input'):
+                 usage='%prog [options] file file ...'):
         """Initialize an instance of an OptionManager.
 
         :param str prog:

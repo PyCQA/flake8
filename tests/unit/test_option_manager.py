@@ -6,11 +6,13 @@ import pytest
 
 from flake8.options import manager
 
+TEST_VERSION = '3.0.0b1'
+
 
 @pytest.fixture
 def optmanager():
     """Generate a simple OptionManager with default test arguments."""
-    return manager.OptionManager(prog='flake8', version='3.0.0b1')
+    return manager.OptionManager(prog='flake8', version=TEST_VERSION)
 
 
 def test_option_manager_creates_option_parser(optmanager):
@@ -113,3 +115,72 @@ def test_parse_args_normalize_paths(optmanager):
         'tox.ini',
         os.path.abspath('flake8/some-other.cfg'),
     ]
+
+
+def test_format_plugin():
+    """Verify that format_plugin turns a tuple into a dictionary."""
+    plugin = manager.OptionManager.format_plugin(('T101', 'Testing', '0.0.0'))
+    assert plugin['entry'] == 'T101'
+    assert plugin['name'] == 'Testing'
+    assert plugin['version'] == '0.0.0'
+
+
+def test_generate_versions(optmanager):
+    """Verify a comma-separated string is generated of registered plugins."""
+    optmanager.registered_plugins = [
+        ('T100', 'Testing 100', '0.0.0'),
+        ('T101', 'Testing 101', '0.0.0'),
+        ('T300', 'Testing 300', '0.0.0'),
+    ]
+    assert (optmanager.generate_versions() ==
+            'Testing 100: 0.0.0, Testing 101: 0.0.0, Testing 300: 0.0.0')
+
+
+def test_generate_versions_with_format_string(optmanager):
+    """Verify a comma-separated string is generated of registered plugins."""
+    optmanager.registered_plugins = [
+        ('T100', 'Testing', '0.0.0'),
+        ('T101', 'Testing', '0.0.0'),
+        ('T300', 'Testing', '0.0.0'),
+    ]
+    assert (
+        optmanager.generate_versions('%(name)s(%(entry)s): %(version)s') ==
+        'Testing(T100): 0.0.0, Testing(T101): 0.0.0, Testing(T300): 0.0.0'
+    )
+
+
+def test_update_version_string(optmanager):
+    """Verify we update the version string idempotently."""
+    assert optmanager.version == TEST_VERSION
+    assert optmanager.parser.version == TEST_VERSION
+
+    optmanager.registered_plugins = [
+        ('T100', 'Testing 100', '0.0.0'),
+        ('T101', 'Testing 101', '0.0.0'),
+        ('T300', 'Testing 300', '0.0.0'),
+    ]
+
+    optmanager.update_version_string()
+
+    assert optmanager.version == TEST_VERSION
+    assert (optmanager.parser.version == TEST_VERSION + ' ('
+            'Testing 100: 0.0.0, Testing 101: 0.0.0, Testing 300: 0.0.0)')
+
+
+def test_generate_epilog(optmanager):
+    """Verify how we generate the epilog for help text."""
+    assert optmanager.parser.epilog is None
+
+    optmanager.registered_plugins = [
+        ('T100', 'Testing 100', '0.0.0'),
+        ('T101', 'Testing 101', '0.0.0'),
+        ('T300', 'Testing 300', '0.0.0'),
+    ]
+
+    expected_value = (
+        'Installed plugins: Testing 100(T100): 0.0.0, Testing 101(T101): '
+        '0.0.0, Testing 300(T300): 0.0.0'
+    )
+
+    optmanager.generate_epilog()
+    assert optmanager.parser.epilog == expected_value

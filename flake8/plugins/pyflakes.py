@@ -97,7 +97,7 @@ class FlakesChecker(pyflakes.checker.Checker):
     def parse_options(cls, options):
         """Parse option values from Flake8's OptionManager."""
         if options.builtins:
-            cls.builtIns = cls.builtIns.union(options.builtins.split(','))
+            cls.builtIns = cls.builtIns.union(options.builtins)
         cls.withDoctest = options.doctests
 
         included_files = []

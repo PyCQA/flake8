@@ -6,6 +6,14 @@ import pkg_resources
 
 LOG = logging.getLogger(__name__)
 
+__all__ = (
+    'Checkers',
+    'Listeners',
+    'Plugin',
+    'PluginManager',
+    'ReportFormatters',
+)
+
 
 class Plugin(object):
     """Wrap an EntryPoint from setuptools and other logic."""
@@ -25,17 +33,23 @@ class Plugin(object):
         self._plugin = None
 
     def __repr__(self):
+        """Provide an easy to read description of the current plugin."""
         return 'Plugin(name="{0}", entry_point="{1}")'.format(
             self.name, self.entry_point
         )
 
     @property
     def plugin(self):
+        """The loaded (and cached) plugin associated with the entry-point.
+
+        This property implicitly loads the plugin and then caches it.
+        """
         self.load_plugin()
         return self._plugin
 
     @property
     def version(self):
+        """Return the version attribute on the plugin."""
         return self.plugin.version
 
     def execute(self, *args, **kwargs):
@@ -124,10 +138,12 @@ class PluginManager(object):
         self._load_all_plugins()
 
     def __contains__(self, name):
+        """Check if the entry-point name is in this plugin manager."""
         LOG.debug('Checking for "%s" in plugin manager.', name)
         return name in self.plugins
 
     def __getitem__(self, name):
+        """Retrieve a plugin by its entry-point name."""
         LOG.debug('Retrieving plugin for "%s".', name)
         return self.plugins[name]
 

@@ -1,3 +1,4 @@
+"""Plugin built-in to Flake8 to treat pyflakes as a plugin."""
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 try:
@@ -40,10 +41,12 @@ patch_pyflakes()
 
 class FlakesChecker(pyflakes.checker.Checker):
     """Subclass the Pyflakes checker to conform with the flake8 API."""
+
     name = 'pyflakes'
     version = pyflakes.__version__
 
     def __init__(self, tree, filename):
+        """Initialize the PyFlakes plugin with an AST tree and filename."""
         filename = utils.normalize_paths(filename)[0]
         withDoctest = self.withDoctest
         included_by = [include for include in self.include_in_doctest
@@ -65,6 +68,7 @@ class FlakesChecker(pyflakes.checker.Checker):
 
     @classmethod
     def add_options(cls, parser):
+        """Register options for PyFlakes on the Flake8 OptionManager."""
         parser.add_option(
             '--builtins', parse_from_config=True, comma_separated_list=True,
             help="define more built-ins, comma separated",
@@ -91,6 +95,7 @@ class FlakesChecker(pyflakes.checker.Checker):
 
     @classmethod
     def parse_options(cls, options):
+        """Parse option values from Flake8's OptionManager."""
         if options.builtins:
             cls.builtIns = cls.builtIns.union(options.builtins.split(','))
         cls.withDoctest = options.doctests
@@ -125,6 +130,7 @@ class FlakesChecker(pyflakes.checker.Checker):
                              'both for doctesting.' % inc_exc)
 
     def run(self):
+        """Run the plugin."""
         for m in self.messages:
             col = getattr(m, 'col', 0)
             yield m.lineno, col, (m.flake8_msg % m.message_args), m.__class__

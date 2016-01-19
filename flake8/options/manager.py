@@ -159,6 +159,7 @@ class OptionManager(object):
 
     @staticmethod
     def format_plugin(plugin_tuple):
+        """Convert a plugin tuple into a dictionary mapping name to value."""
         return dict(zip(["entry", "name", "version"], plugin_tuple))
 
     def add_option(self, *args, **kwargs):

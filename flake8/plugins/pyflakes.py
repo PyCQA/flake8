@@ -111,7 +111,7 @@ class FlakesChecker(pyflakes.checker.Checker):
         cls.include_in_doctest = utils.normalize_paths(included_files)
 
         excluded_files = []
-        for excluded_file in options.exclude_from_doctest.split(','):
+        for excluded_file in options.exclude_from_doctest:
             if excluded_file == '':
                 continue
             if not excluded_file.startswith((os.sep, './', '~/')):

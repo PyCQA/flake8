@@ -169,7 +169,8 @@ class PluginManager(object):
                      pass
 
             Any extra positional or keyword arguments specified with map will
-            be passed along to this function after the plugin.
+            be passed along to this function after the plugin. The plugin
+            passed is a :class:`~flake8.plugins.manager.Plugin`.
         :param args:
             Positional arguments to pass to ``func`` after each plugin.
         :param kwargs:

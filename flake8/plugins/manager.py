@@ -5,6 +5,7 @@ import logging
 import pkg_resources
 
 from flake8 import _trie
+from flake8 import exceptions
 
 LOG = logging.getLogger(__name__)
 
@@ -58,6 +59,21 @@ class Plugin(object):
         r"""Call the plugin with \*args and \*\*kwargs."""
         return self.plugin(*args, **kwargs)
 
+    def _load(self, verify_requirements):
+        # Avoid relying on hasattr() here.
+        resolve = getattr(self.entry_point, 'resolve', None)
+        require = getattr(self.entry_point, 'require', None)
+        if resolve and require:
+            if verify_requirements:
+                LOG.debug('Verifying plugin "%s"\'s requirements.',
+                          self.name)
+                require()
+            self._plugin = resolve()
+        else:
+            self._plugin = self.entry_point.load(
+                require=verify_requirements
+            )
+
     def load_plugin(self, verify_requirements=False):
         """Retrieve the plugin for this entry-point.
 
@@ -73,19 +89,16 @@ class Plugin(object):
         """
         if self._plugin is None:
             LOG.debug('Loading plugin "%s" from entry-point.', self.name)
-            # Avoid relying on hasattr() here.
-            resolve = getattr(self.entry_point, 'resolve', None)
-            require = getattr(self.entry_point, 'require', None)
-            if resolve and require:
-                if verify_requirements:
-                    LOG.debug('Verifying plugin "%s"\'s requirements.',
-                              self.name)
-                    require()
-                self._plugin = resolve()
-            else:
-                self._plugin = self.entry_point.load(
-                    require=verify_requirements
+            try:
+                self._load(verify_requirements)
+            except Exception as load_exception:
+                LOG.exception(load_exception, exc_info=True)
+                failed_to_load = exceptions.FailedToLoadPlugin(
+                    plugin=self,
+                    exception=load_exception,
                 )
+                LOG.critical(str(failed_to_load))
+                raise failed_to_load
 
     def provide_options(self, optmanager, options, extra_args):
         """Pass the parsed options and extra arguments to the plugin."""

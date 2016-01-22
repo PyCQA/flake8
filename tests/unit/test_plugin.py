@@ -1,6 +1,8 @@
 """Tests for flake8.plugins.manager.Plugin."""
 import mock
+import pytest
 
+from flake8 import exceptions
 from flake8.plugins import manager
 
 
@@ -46,6 +48,16 @@ def test_load_plugin_only_calls_require_when_verifying_requirements():
     assert entry_point.load.called is False
     assert entry_point.require.called is False
     entry_point.resolve.assert_called_once_with()
+
+
+def test_load_plugin_catches_and_reraises_exceptions():
+    """Verify we raise our own FailedToLoadPlugin."""
+    entry_point = mock.Mock(spec=['require', 'resolve'])
+    entry_point.resolve.side_effect = ValueError('Test failure')
+    plugin = manager.Plugin('T000', entry_point)
+
+    with pytest.raises(exceptions.FailedToLoadPlugin):
+        plugin.load_plugin()
 
 
 def test_plugin_property_loads_plugin_on_first_use():

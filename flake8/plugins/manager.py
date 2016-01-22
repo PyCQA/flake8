@@ -4,6 +4,8 @@ import logging
 
 import pkg_resources
 
+from flake8 import _trie
+
 LOG = logging.getLogger(__name__)
 
 __all__ = (
@@ -248,6 +250,13 @@ class Listeners(PluginTypeManager):
     """All of the listeners registered through entry-points."""
 
     namespace = 'flake8.listen'
+
+    def build_trie(self):
+        """Build a Trie for our Listeners."""
+        trie = _trie.Trie()
+        for name in self.names:
+            trie.add(name, self.manager[name])
+        return trie
 
 
 class ReportFormatters(PluginTypeManager):

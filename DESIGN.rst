@@ -81,7 +81,7 @@ What we *might* want is for a autofix plugin to register something like
 
 ::
 
-    'flake8.autofix_extension': [
+    'flake8.listen': [
         'E1 = my_fixer.E1Listener',
         'E2 = my_fixer.E2Listener',
     ]
@@ -100,19 +100,14 @@ compose formatters would allow for certain formatters to highlight more
 important information over less important information as the user deems
 necessary.
 
+::
+
+    'flake8.format': [
+        'json = my_formatter.JsonFormatter',
+        'xml = my_formatter.XMLFormatter',
+    ]
+
 See https://gitlab.com/pycqa/flake8/issues/66
-
-.. _report-generation:
-
-Support for Report Generation
-+++++++++++++++++++++++++++++
-
-Flake8 should support pluggable report formats. See also pluggable report
-formats for https://github.com/openstack/bandit
-
-Report generation plugins may also choose to implement a way to store previous
-runs of flake8. As such these plugins should be designed to be composable as
-well.
 
 .. _options-passing:
 

@@ -156,6 +156,7 @@ class OptionManager(object):
         self.program_name = prog
         self.version = version
         self.registered_plugins = set()
+        self.extended_default_ignore = set()
 
     @staticmethod
     def format_plugin(plugin_tuple):
@@ -181,6 +182,15 @@ class OptionManager(object):
         if option.parse_from_config:
             self.config_options_dict[option.config_name] = option
         LOG.debug('Registered option "%s".', option)
+
+    def extend_default_ignore(self, error_codes):
+        """Extend the default ignore list with the error codes provided.
+
+        :param list error_codes:
+            List of strings that are the error/warning codes with which to
+            extend the default ignore list.
+        """
+        self.extended_default_ignore.update(error_codes)
 
     def generate_versions(self, format_str='%(name)s: %(version)s'):
         """Generate a comma-separated list of versions of plugins."""

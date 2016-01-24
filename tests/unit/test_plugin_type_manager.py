@@ -21,6 +21,20 @@ def create_plugin_mock(raise_exception=False):
     return plugin
 
 
+def create_mapping_manager_mock(plugins):
+    """Create a mock for the PluginManager."""
+    # Have a function that will actually call the method underneath
+    def fake_map(func):
+        for plugin in plugins:
+            yield func(plugin)
+
+    # Mock out the PluginManager instance
+    manager_mock = mock.Mock(spec=['map'])
+    # Replace the map method
+    manager_mock.map = fake_map
+    return manager_mock
+
+
 class TestType(manager.PluginTypeManager):
     """Fake PluginTypeManager."""
 
@@ -77,18 +91,8 @@ def test_load_plugins(PluginManager):
                create_plugin_mock(), create_plugin_mock(),
                create_plugin_mock(), create_plugin_mock(),
                create_plugin_mock(), create_plugin_mock()]
-
-    # Have a function that will actually call the method underneath
-    def fake_map(func):
-        for plugin in plugins:
-            yield func(plugin)
-
-    # Mock out the PluginManager instance
-    manager_mock = mock.Mock(spec=['map'])
-    # Replace the map method
-    manager_mock.map = fake_map
     # Return our PluginManager mock
-    PluginManager.return_value = manager_mock
+    PluginManager.return_value = create_mapping_manager_mock(plugins)
 
     type_mgr = TestType()
     # Load the tests (do what we're actually testing)
@@ -106,18 +110,8 @@ def test_load_plugins_fails(PluginManager):
                create_plugin_mock(), create_plugin_mock(),
                create_plugin_mock(), create_plugin_mock(),
                create_plugin_mock(), create_plugin_mock()]
-
-    # Have a function that will actually call the method underneath
-    def fake_map(func):
-        for plugin in plugins:
-            yield func(plugin)
-
-    # Mock out the PluginManager instance
-    manager_mock = mock.Mock(spec=['map'])
-    # Replace the map method
-    manager_mock.map = fake_map
     # Return our PluginManager mock
-    PluginManager.return_value = manager_mock
+    PluginManager.return_value = create_mapping_manager_mock(plugins)
 
     type_mgr = TestType()
     with pytest.raises(exceptions.FailedToLoadPlugin):
@@ -131,3 +125,43 @@ def test_load_plugins_fails(PluginManager):
     # Assert the rest of the plugins were not loaded
     for plugin in plugins[2:]:
         assert plugin.load_plugin.called is False
+
+
+@mock.patch('flake8.plugins.manager.PluginManager')
+def test_register_options(PluginManager):
+    """Test that we map over every plugin to register options."""
+    plugins = [create_plugin_mock(), create_plugin_mock(),
+               create_plugin_mock(), create_plugin_mock(),
+               create_plugin_mock(), create_plugin_mock(),
+               create_plugin_mock(), create_plugin_mock()]
+    # Return our PluginManager mock
+    PluginManager.return_value = create_mapping_manager_mock(plugins)
+    optmanager = object()
+
+    type_mgr = TestType()
+    type_mgr.register_options(optmanager)
+
+    for plugin in plugins:
+        plugin.register_options.assert_called_with(optmanager)
+
+
+@mock.patch('flake8.plugins.manager.PluginManager')
+def test_provide_options(PluginManager):
+    """Test that we map over every plugin to provide parsed options."""
+    plugins = [create_plugin_mock(), create_plugin_mock(),
+               create_plugin_mock(), create_plugin_mock(),
+               create_plugin_mock(), create_plugin_mock(),
+               create_plugin_mock(), create_plugin_mock()]
+    # Return our PluginManager mock
+    PluginManager.return_value = create_mapping_manager_mock(plugins)
+    optmanager = object()
+    options = object()
+    extra_args = []
+
+    type_mgr = TestType()
+    type_mgr.provide_options(optmanager, options, extra_args)
+
+    for plugin in plugins:
+        plugin.provide_options.assert_called_with(optmanager,
+                                                  options,
+                                                  extra_args)

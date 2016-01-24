@@ -4,7 +4,7 @@ import logging
 
 import pkg_resources
 
-from flake8 import _trie
+from flake8 import notifier
 from flake8 import exceptions
 
 LOG = logging.getLogger(__name__)
@@ -264,12 +264,19 @@ class Listeners(PluginTypeManager):
 
     namespace = 'flake8.listen'
 
-    def build_trie(self):
-        """Build a Trie for our Listeners."""
-        trie = _trie.Trie()
+    def build_notifier(self):
+        """Build a Notifier for our Listeners.
+
+        :returns:
+            Object to notify our listeners of certain error codes and
+            warnings.
+        :rtype:
+            :class:`~flake8.notifier.Notifier`
+        """
+        notifier_trie = notifier.Notifier()
         for name in self.names:
-            trie.add(name, self.manager[name])
-        return trie
+            notifier_trie.register_listener(name, self.manager[name])
+        return notifier_trie
 
 
 class ReportFormatters(PluginTypeManager):

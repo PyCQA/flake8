@@ -165,3 +165,31 @@ def test_provide_options(PluginManager):
         plugin.provide_options.assert_called_with(optmanager,
                                                   options,
                                                   extra_args)
+
+
+class FakePluginTypeManager(manager.NotifierBuilder):
+    """Provide an easy way to test the NotifierBuilder."""
+
+    def __init__(self, manager):
+        """Initialize with our fake manager."""
+        self.names = sorted(manager.keys())
+        self.manager = manager
+
+
+@pytest.fixture
+def notifier_builder():
+    """Create a fake plugin type manager."""
+    return FakePluginTypeManager(manager={
+        'T100': object(),
+        'T101': object(),
+        'T110': object(),
+    })
+
+
+def test_build_notifier(notifier_builder):
+    """Verify we properly build a Notifier object."""
+    notifier = notifier_builder.build_notifier()
+    for name in ('T100', 'T101', 'T110'):
+        assert list(notifier.listeners_for(name)) == [
+            notifier_builder.manager[name]
+        ]

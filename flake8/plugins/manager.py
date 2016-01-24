@@ -253,16 +253,8 @@ class PluginTypeManager(object):
         list(self.manager.map(call_provide_options))
 
 
-class Checkers(PluginTypeManager):
-    """All of the checkers registered through entry-ponits."""
-
-    namespace = 'flake8.extension'
-
-
-class Listeners(PluginTypeManager):
-    """All of the listeners registered through entry-points."""
-
-    namespace = 'flake8.listen'
+class NotifierBuilder(object):
+    """Mixin class that builds a Notifier from a PluginManager."""
 
     def build_notifier(self):
         """Build a Notifier for our Listeners.
@@ -277,6 +269,18 @@ class Listeners(PluginTypeManager):
         for name in self.names:
             notifier_trie.register_listener(name, self.manager[name])
         return notifier_trie
+
+
+class Checkers(PluginTypeManager):
+    """All of the checkers registered through entry-ponits."""
+
+    namespace = 'flake8.extension'
+
+
+class Listeners(PluginTypeManager, NotifierBuilder):
+    """All of the listeners registered through entry-points."""
+
+    namespace = 'flake8.listen'
 
 
 class ReportFormatters(PluginTypeManager):

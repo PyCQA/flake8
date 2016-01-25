@@ -31,6 +31,12 @@ def aggregate_options(manager, arglist=None, values=None):
     parsed_config = config_parser.parse(original_values.config,
                                         original_values.isolated)
 
+    # Extend the default ignore value with the extended default ignore list,
+    # registered by plugins.
+    extended_default_ignore = manager.extended_default_ignore.copy()
+    extended_default_ignore.update(default_values.ignore)
+    default_values.ignore = list(extended_default_ignore)
+
     # Merge values parsed from config onto the default values returned
     for config_name, value in parsed_config.items():
         dest_name = config_name

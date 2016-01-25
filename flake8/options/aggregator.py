@@ -17,7 +17,7 @@ def aggregate_options(manager, arglist=None, values=None):
     default_values, _ = manager.parse_args([], values=values)
     # Get original CLI values so we can find additional config file paths and
     # see if --config was specified.
-    original_values, original_args = manager.parse_args()
+    original_values, original_args = manager.parse_args(arglist)
     extra_config_files = utils.normalize_paths(original_values.append_config)
 
     # Make our new configuration file mergerator

@@ -190,6 +190,7 @@ class OptionManager(object):
             List of strings that are the error/warning codes with which to
             extend the default ignore list.
         """
+        LOG.debug('Extending default ignore list with %r', error_codes)
         self.extended_default_ignore.update(error_codes)
 
     def generate_versions(self, format_str='%(name)s: %(version)s'):

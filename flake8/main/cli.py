@@ -128,16 +128,23 @@ def register_default_options(option_manager):
     # Config file options
 
     add_option(
-        '--isolated', default=False, action='store_true',
-        help='Ignore all found configuration files.',
-    )
-
-    add_option(
         '--append-config', action='append',
         help='Provide extra config files to parse in addition to the files '
              'found by Flake8 by default. These files are the last ones read '
              'and so they take the highest precedence when multiple files '
              'provide the same option.',
+    )
+
+    add_option(
+        '--config', default=None,
+        help='Path to the config file that will be the authoritative config '
+             'source. This will cause Flake8 to ignore all other '
+             'configuration files.'
+    )
+
+    add_option(
+        '--isolated', default=False, action='store_true',
+        help='Ignore all found configuration files.',
     )
 
 

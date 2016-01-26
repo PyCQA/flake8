@@ -3,14 +3,28 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to flake8's documentation!
-==================================
+Flake8: Your Tool For Style Guide Enforcement
+=============================================
 
-Contents:
+User Guide
+----------
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
+Plugin Developer Guide
+----------------------
+
+.. toctree::
+    :maxdepth: 2
+
+    internal/option_handling.rst
+
+Developer Guide
+---------------
+
+.. toctree::
+    :maxdepth: 2
 
 
 Indices and tables
@@ -19,4 +33,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

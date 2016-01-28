@@ -169,15 +169,45 @@ to parse those configuration files.
 Configuration file merging and managemnt is controlled by the
 :class:`~flake8.options.config.MergedConfigParser`. This requires the instance
 of :class:`~flake8.options.manager.OptionManager` that the program is using,
-the list of appended config files, and the list of extra arguments.
+the list of appended config files, and the list of extra arguments. This
+object is currently the sole user of the
+:class:`~flake8.options.config.ConfigFileFinder` object. It appropriately
+initializes the object and uses it in each of
 
-.. todo:: Describe how the MergedConfigParser parses and merges config options
+- :meth:`~flake8.options.config.MergedConfigParser.parse_cli_config`
+- :meth:`~flake8.options.config.MergedConfigParser.parse_local_config`
+- :meth:`~flake8.options.config.MergedConfigParser.parse_user_config`
+
+Finally,
+:meth:`~flake8.options.config.MergedConfigParser.merge_user_and_local_config`
+takes the user and local configuration files that are parsed by
+:meth:`~flake8.options.config.MergedConfigParser.parse_local_config` and
+:meth:`~flake8.options.config.MergedConfigParser.parse_user_config`. The
+main usage of the ``MergedConfigParser`` is in
+:func:`~flake8.options.aggregator.aggregate_options`.
+
+Aggregating Configuration File and Command Line Arguments
+---------------------------------------------------------
+
+:func:`~flake8.options.aggregator.aggregate_options` accepts an instance of
+:class:`~flake8.options.maanger.OptionManager` and does the work to parse the
+command-line arguments passed by the user necessary for creating an instance
+of :class:`~flake8.options.config.MergedConfigParser`.
+
+After parsing the configuration file, we determine the default ignore list. We
+use the defaults from the OptionManager and update those with the parsed
+configuration files. Finally we parse the user-provided options one last time
+using the option defaults and configuration file values as defaults. The
+parser merges on the command-line specified arguments for us so we have our
+final, definitive, aggregated options.
 
 .. _66 lines of very terse python:
     https://github.com/PyCQA/pep8/blob/b8088a2b6bc5b76bece174efad877f764529bc74/pep8.py#L1981..L2047
 
 API Documentation
 -----------------
+
+.. autofunction:: flake8.options.aggregator.aggregate_options
 
 .. autoclass:: flake8.options.manager.Option
     :members: __init__, normalize, to_optparse

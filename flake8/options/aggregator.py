@@ -12,7 +12,22 @@ LOG = logging.getLogger(__name__)
 
 
 def aggregate_options(manager, arglist=None, values=None):
-    """Function that aggregates the CLI and Config options."""
+    """Aggregate and merge CLI and config file options.
+
+    :param flake8.option.manager.OptionManager manager:
+        The instance of the OptionManager that we're presently using.
+    :param list arglist:
+        The list of arguments to pass to ``manager.parse_args``. In most cases
+        this will be None so ``parse_args`` uses ``sys.argv``. This is mostly
+        available to make testing easier.
+    :param optparse.Values values:
+        Previously parsed set of parsed options.
+    :returns:
+        Tuple of the parsed options and extra arguments returned by
+        ``manager.parse_args``.
+    :rtype:
+        tuple(optparse.Values, list)
+    """
     # Get defaults from the option parser
     default_values, _ = manager.parse_args([], values=values)
     # Get original CLI values so we can find additional config file paths and
@@ -34,8 +49,11 @@ def aggregate_options(manager, arglist=None, values=None):
     # Extend the default ignore value with the extended default ignore list,
     # registered by plugins.
     extended_default_ignore = manager.extended_default_ignore.copy()
+    LOG.debug('Extended default ignore list: %s',
+              list(extended_default_ignore))
     extended_default_ignore.update(default_values.ignore)
     default_values.ignore = list(extended_default_ignore)
+    LOG.debug('Merged default ignore list: %s', default_values.ignore)
 
     # Merge values parsed from config onto the default values returned
     for config_name, value in parsed_config.items():

@@ -107,6 +107,7 @@ def get_parser():
                       help='Enable plugins and extensions that are disabled '
                            'by default',
                       type='string')
+    parser.config_options.extend(['output_file', 'enable_extensions'])
     parser.ignored_extensions = ignored
     return parser, options_hooks
 

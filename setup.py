@@ -51,7 +51,7 @@ setup(
     install_requires=[
         "pyflakes >= 0.8.1, < 1.1",
         "pep8 >= 1.5.7, != 1.6.0, != 1.6.1, != 1.6.2",
-        "mccabe >= 0.2.1, < 0.4",
+        "mccabe >= 0.2.1, < 0.5",
     ],
     entry_points={
         'distutils.commands': ['flake8 = flake8.main:Flake8Command'],

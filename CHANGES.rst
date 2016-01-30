@@ -1,6 +1,14 @@
 CHANGES
 =======
 
+2.5.2 - 2016-01-30
+------------------
+
+- **Bug** Parse ``output_file`` and ``enable_extensions`` from config files
+
+- **Improvement** Raise upper bound on mccabe plugin to allow for version
+  0.4.0
+
 2.5.1 - 2015-12-08
 ------------------
 

@@ -19,6 +19,7 @@ Plugin Developer Guide
     :maxdepth: 2
 
     internal/option_handling
+    internal/plugin_handling
 
 Developer Guide
 ---------------

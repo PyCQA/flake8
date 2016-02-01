@@ -171,7 +171,7 @@ class PluginManager(object):
             LOG.info('Loaded %r for plugin "%s".', self.plugins[name], name)
 
     def map(self, func, *args, **kwargs):
-        """Call ``func`` with the plugin and *args and **kwargs after.
+        r"""Call ``func`` with the plugin and \*args and \**kwargs after.
 
         This yields the return value from ``func`` for each plugin.
 

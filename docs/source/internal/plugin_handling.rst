@@ -48,6 +48,11 @@ Finally, we create three classes of plugins:
 
 These are used to interact with each of the types of plugins individually.
 
+.. note::
+
+    Our inspiration for our plugin handling comes from the author's extensive
+    experience with ``stevedore``.
+
 API Documentation
 -----------------
 

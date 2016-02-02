@@ -35,6 +35,13 @@ def create_mapping_manager_mock(plugins):
     return manager_mock
 
 
+def create_manager_with_plugins(plugins):
+    """Create a fake PluginManager with a plugins dictionary."""
+    manager_mock = mock.create_autospec(manager.PluginManager)
+    manager_mock.plugins = plugins
+    return manager_mock
+
+
 class TestType(manager.PluginTypeManager):
     """Fake PluginTypeManager."""
 
@@ -165,6 +172,32 @@ def test_provide_options(PluginManager):
         plugin.provide_options.assert_called_with(optmanager,
                                                   options,
                                                   extra_args)
+
+
+@mock.patch('flake8.plugins.manager.PluginManager')
+def test_proxy_contains_to_managers_plugins_dict(PluginManager):
+    """Verify that we proxy __contains__ to the manager's dictionary."""
+    plugins = {'T10%i' % i: create_plugin_mock() for i in range(8)}
+    # Return our PluginManager mock
+    PluginManager.return_value = create_manager_with_plugins(plugins)
+
+    type_mgr = TestType()
+    for i in range(8):
+        key = 'T10%i' % i
+        assert key in type_mgr
+
+
+@mock.patch('flake8.plugins.manager.PluginManager')
+def test_proxies_getitem_to_managers_plugins_dictionary(PluginManager):
+    """Verify that we can use the PluginTypeManager like a dictionary."""
+    plugins = {'T10%i' % i: create_plugin_mock() for i in range(8)}
+    # Return our PluginManager mock
+    PluginManager.return_value = create_manager_with_plugins(plugins)
+
+    type_mgr = TestType()
+    for i in range(8):
+        key = 'T10%i' % i
+        assert type_mgr[key] is plugins[key]
 
 
 class FakePluginTypeManager(manager.NotifierBuilder):

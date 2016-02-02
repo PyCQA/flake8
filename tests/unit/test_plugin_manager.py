@@ -37,32 +37,6 @@ def test_calls_pkg_resources_creates_plugins_automaticaly(iter_entry_points):
 
 
 @mock.patch('pkg_resources.iter_entry_points')
-def test_proxies_contains_to_plugins_dictionary(iter_entry_points):
-    """Verify that we can use the PluginManager like a dictionary."""
-    iter_entry_points.return_value = [
-        create_entry_point_mock('T100'),
-        create_entry_point_mock('T200'),
-    ]
-    plugin_mgr = manager.PluginManager(namespace='testing.pkg_resources')
-
-    assert 'T100' in plugin_mgr
-    assert 'T200' in plugin_mgr
-
-
-@mock.patch('pkg_resources.iter_entry_points')
-def test_proxies_getitem_to_plugins_dictionary(iter_entry_points):
-    """Verify that we can use the PluginManager like a dictionary."""
-    iter_entry_points.return_value = [
-        create_entry_point_mock('T100'),
-        create_entry_point_mock('T200'),
-    ]
-    plugin_mgr = manager.PluginManager(namespace='testing.pkg_resources')
-
-    assert isinstance(plugin_mgr['T100'], manager.Plugin)
-    assert isinstance(plugin_mgr['T200'], manager.Plugin)
-
-
-@mock.patch('pkg_resources.iter_entry_points')
 def test_handles_mapping_functions_across_plugins(iter_entry_points):
     """Verify we can use the PluginManager call functions on all plugins."""
     entry_point_mocks = [
@@ -71,6 +45,6 @@ def test_handles_mapping_functions_across_plugins(iter_entry_points):
     ]
     iter_entry_points.return_value = entry_point_mocks
     plugin_mgr = manager.PluginManager(namespace='testing.pkg_resources')
-    plugins = [plugin_mgr[name] for name in plugin_mgr.names]
+    plugins = [plugin_mgr.plugins[name] for name in plugin_mgr.names]
 
     assert list(plugin_mgr.map(lambda x: x)) == plugins

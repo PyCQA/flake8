@@ -152,16 +152,6 @@ class PluginManager(object):
         self.names = []
         self._load_all_plugins()
 
-    def __contains__(self, name):
-        """Check if the entry-point name is in this plugin manager."""
-        LOG.debug('Checking for "%s" in plugin manager.', name)
-        return name in self.plugins
-
-    def __getitem__(self, name):
-        """Retrieve a plugin by its entry-point name."""
-        LOG.debug('Retrieving plugin for "%s".', name)
-        return self.plugins[name]
-
     def _load_all_plugins(self):
         LOG.debug('Loading entry-points for "%s".', self.namespace)
         for entry_point in pkg_resources.iter_entry_points(self.namespace):
@@ -202,6 +192,16 @@ class PluginTypeManager(object):
         """Initialize the plugin type's manager."""
         self.manager = PluginManager(self.namespace)
         self.plugins_loaded = False
+
+    def __contains__(self, name):
+        """Check if the entry-point name is in this plugin type manager."""
+        LOG.debug('Checking for "%s" in plugin type manager.', name)
+        return name in self.plugins
+
+    def __getitem__(self, name):
+        """Retrieve a plugin by its name."""
+        LOG.debug('Retrieving plugin for "%s".', name)
+        return self.plugins[name]
 
     @property
     def names(self):

@@ -53,6 +53,9 @@ These are used to interact with each of the types of plugins individually.
     Our inspiration for our plugin handling comes from the author's extensive
     experience with ``stevedore``.
 
+Notifying Listener Plugins
+--------------------------
+
 API Documentation
 -----------------
 

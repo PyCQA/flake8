@@ -1,5 +1,5 @@
 """Unit test for the _trie module."""
-from flake8 import _trie as trie
+from flake8.plugins import _trie as trie
 
 
 class TestTrie(object):

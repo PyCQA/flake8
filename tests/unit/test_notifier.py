@@ -1,7 +1,7 @@
 """Unit tests for the Notifier object."""
 import pytest
 
-from flake8 import notifier
+from flake8.plugins import notifier
 
 
 class _Listener(object):

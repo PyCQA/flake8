@@ -4,8 +4,8 @@ import logging
 
 import pkg_resources
 
-from flake8 import notifier
 from flake8 import exceptions
+from flake8.plugins import notifier
 
 LOG = logging.getLogger(__name__)
 

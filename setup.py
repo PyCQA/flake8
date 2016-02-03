@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import with_statement
 import setuptools
+import sys
 
 import flake8
 
@@ -23,6 +24,16 @@ except ImportError:
 tests_require = ['pytest']
 if mock is None:
     tests_require += ['mock']
+
+
+requires = [
+    "pyflakes >= 0.8.1, < 1.1",
+    "pep8 >= 1.5.7, != 1.6.0, != 1.6.1, != 1.6.2",
+    # "mccabe >= 0.2.1, < 0.4",
+]
+
+if sys.version_info < (3, 4):
+    requires.append("enum34")
 
 
 def get_long_description():
@@ -51,11 +62,7 @@ setuptools.setup(
         "flake8.options",
         "flake8.plugins",
     ],
-    install_requires=[
-        "pyflakes >= 0.8.1, < 1.1",
-        "pep8 >= 1.5.7, != 1.6.0, != 1.6.1, != 1.6.2",
-        # "mccabe >= 0.2.1, < 0.4",
-    ],
+    install_requires=requires,
     entry_points={
         'distutils.commands': ['flake8 = flake8.main:Flake8Command'],
         'console_scripts': ['flake8 = flake8.main.cli:main'],

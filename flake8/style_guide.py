@@ -1,11 +1,16 @@
 """Implementation of the StyleGuide used by Flake8."""
+import logging
+
 import enum
 
 __all__ = (
     'StyleGuide',
 )
 
+LOG = logging.getLogger(__name__)
 
+
+# TODO(sigmavirus24): Determine if we need to use enum/enum34
 class Selected(enum.Enum):
     """Enum representing an explicitly or implicitly selected code."""
 
@@ -99,8 +104,11 @@ class StyleGuide(object):
         """
         decision = self._decision_cache.get(code)
         if decision is None:
+            LOG.debug('Deciding if "%s" should be reported', code)
             selected = self.is_user_selected(code)
             ignored = self.is_user_ignored(code)
+            LOG.debug('The user configured "%s" to be "%s", "%s"',
+                      code, selected, ignored)
 
             if ((selected is Selected.Explicitly or
                     selected is Selected.Implicitly) and
@@ -114,6 +122,7 @@ class StyleGuide(object):
                 decision = Decision.Ignored
 
             self._decision_cache[code] = decision
+            LOG.debug('"%s" will be "%s"', code, decision)
         return decision
 
 

@@ -1,5 +1,7 @@
 """Utility methods for flake8."""
+import io
 import os
+import sys
 
 
 def parse_comma_separated_list(value):
@@ -43,3 +45,16 @@ def normalize_path(path, parent=os.curdir):
     if '/' in path:
         path = os.path.abspath(os.path.join(parent, path))
     return path.rstrip('/')
+
+
+def stdin_get_value():
+    """Get and cache it so plugins can use it."""
+    cached_value = getattr(stdin_get_value, 'cached_stdin', None)
+    if cached_value is None:
+        stdin_value = sys.stdin.read()
+        if sys.version_info < (3, 0):
+            cached_value = io.BytesIO(stdin_value)
+        else:
+            cached_value = io.StringIO(stdin_value)
+        stdin_get_value.cached_stdin = cached_value
+    return cached_value.getvalue()

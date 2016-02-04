@@ -86,6 +86,13 @@ def register_default_options(option_manager):
              ' For example, ``--select=E4,E51,W234``. (Default: %default)',
     )
 
+    add_option(
+        '--disable-noqa', default=False, parse_from_config=True,
+        action='store_true',
+        help='Disable the effect of "# noqa". This will report errors on '
+             'lines with "# noqa" at the end.'
+    )
+
     # TODO(sigmavirus24): Decide what to do about --show-pep8
 
     add_option(

@@ -70,6 +70,9 @@ setuptools.setup(
         'flake8.extension': [
             'F = flake8.plugins.pyflakes:FlakesChecker',
         ],
+        'flake8.format': [
+            'default = flake8.formatting.default.Default',
+        ],
     },
     classifiers=[
         "Environment :: Console",

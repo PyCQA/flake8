@@ -54,7 +54,7 @@ def register_default_options(option_manager):
     # TODO(sigmavirus24): Figure out --first/--repeat
 
     add_option(
-        '--format', metavar='format', default='default', choices=['default'],
+        '--format', metavar='format', default='default',
         parse_from_config=True,
         help='Format errors according to the chosen formatter.',
     )

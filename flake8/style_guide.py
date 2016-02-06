@@ -1,4 +1,5 @@
 """Implementation of the StyleGuide used by Flake8."""
+import collections
 import logging
 
 import enum
@@ -30,6 +31,13 @@ class Decision(enum.Enum):
 
     Ignored = 'ignored error'
     Selected = 'selected error'
+
+
+Error = collections.namedtuple('Error', ['code',
+                                         'filename',
+                                         'line_number',
+                                         'column_number',
+                                         'text'])
 
 
 class StyleGuide(object):

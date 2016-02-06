@@ -5,6 +5,7 @@ import sys
 
 
 def parse_comma_separated_list(value):
+    # type: (Union[Sequence[str], str]) -> List[str]
     """Parse a comma-separated list.
 
     :param value:
@@ -24,6 +25,7 @@ def parse_comma_separated_list(value):
 
 
 def normalize_paths(paths, parent=os.curdir):
+    # type: (Union[Sequence[str], str], str) -> List[str]
     """Parse a comma-separated list of paths.
 
     :returns:
@@ -35,6 +37,7 @@ def normalize_paths(paths, parent=os.curdir):
 
 
 def normalize_path(path, parent=os.curdir):
+    # type: (str, str) -> str
     """Normalize a single-path.
 
     :returns:
@@ -48,6 +51,7 @@ def normalize_path(path, parent=os.curdir):
 
 
 def stdin_get_value():
+    # type: () -> str
     """Get and cache it so plugins can use it."""
     cached_value = getattr(stdin_get_value, 'cached_stdin', None)
     if cached_value is None:

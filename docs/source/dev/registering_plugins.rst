@@ -1,3 +1,5 @@
+.. _register-a-plugin:
+
 ==================================
  Registering a Plugin with Flake8
 ==================================

@@ -58,6 +58,7 @@ setuptools.setup(
     url="https://gitlab.com/pycqa/flake8",
     packages=[
         "flake8",
+        "flake8.formatting",
         "flake8.main",
         "flake8.options",
         "flake8.plugins",

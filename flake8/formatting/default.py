@@ -29,3 +29,17 @@ class Default(base.BaseFormatter):
             "row": error.line_number,
             "col": error.column_number,
         }
+
+
+class Pylint(Default):
+    """Pylint formatter for Flake8."""
+
+    error_format = '%(path)s:%(row)d: [%(code)s] %(text)s'
+
+    def after_init(self):
+        """Do not check the value of --format.
+
+        In the default formatter, this makes sense for backwards
+        compatibility, but it does not make sense here.
+        """
+        pass

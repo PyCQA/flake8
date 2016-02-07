@@ -72,6 +72,7 @@ setuptools.setup(
         ],
         'flake8.report': [
             'default = flake8.formatting.default:Default',
+            'pylint = flake8.formatting.default:Pylint',
         ],
     },
     classifiers=[

@@ -48,7 +48,7 @@ like:
         install_requires=requires,
         entry_points={
             flake8_entry_point: [
-                'X = flake8_example.ExamplePlugin',
+                'X = flake8_example:ExamplePlugin',
             ],
         },
         classifiers=[
@@ -73,7 +73,7 @@ Note specifically these lines:
         # snip ...
         entry_points={
             flake8_entry_point: [
-                'X = flake8_example.ExamplePlugin',
+                'X = flake8_example:ExamplePlugin',
             ],
         },
         # snip ...
@@ -86,14 +86,14 @@ Flake8 presently looks at three groups:
 
 - ``flake8.extension``
 
-- ``flake8.format``
+- ``flake8.listen``
 
 - ``flake8.report``
 
 If your plugin is one that adds checks to Flake8, you will use
-``flake8.extension``. If your plugin formats the output and provides that to
-the user, you will use ``flake8.format``. Finally, if your plugin performs
-extra report handling (filtering, etc.) it will use ``flake8.report``.
+``flake8.extension``. If your plugin automatically fixes errors in code, you
+will use ``flake8.listen``.  Finally, if your plugin performs extra report
+handling (formatting, filtering, etc.) it will use ``flake8.report``.
 
 If our ``ExamplePlugin`` is something that adds checks, our code would look
 like:
@@ -104,7 +104,7 @@ like:
         # snip ...
         entry_points={
             'flake8.extension': [
-                'X = flake8_example.ExamplePlugin',
+                'X = flake8_example:ExamplePlugin',
             ],
         },
         # snip ...

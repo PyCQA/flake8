@@ -96,7 +96,7 @@ class BaseFormatter(object):
         if self.output_fd is not None:
             self.output_fd.write(line + self.newline)
         else:
-            print(self.output_fd)
+            print(line)
 
     def stop(self):
         """Clean up after reporting is finished."""

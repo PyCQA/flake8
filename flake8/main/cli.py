@@ -174,3 +174,7 @@ def main(argv=None):
     # Parse out our options from our found config files and user-provided CLI
     # options
     options, args = aggregator.aggregate_options(option_manager)
+
+    # formatter = formatting_plugins.get(
+    #     options.format, formatting_plugins['default']
+    # ).execute(options)

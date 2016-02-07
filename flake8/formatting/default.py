@@ -13,7 +13,6 @@ class Default(base.BaseFormatter):
 
     def after_init(self):
         """Check for a custom format string."""
-        self.output_fd = None
         if self.options.format.lower() != 'default':
             self.error_format = self.options.format
 

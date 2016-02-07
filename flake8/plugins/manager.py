@@ -203,6 +203,22 @@ class PluginTypeManager(object):
         LOG.debug('Retrieving plugin for "%s".', name)
         return self.plugins[name]
 
+    def get(self, name, default=None):
+        """Retrieve the plugin referred to by ``name`` or return the default.
+
+        :param str name:
+            Name of the plugin to retrieve.
+        :param default:
+            Default value to return.
+        :returns:
+            Plugin object referred to by name, if it exists.
+        :rtype:
+            :class:`Plugin`
+        """
+        if name in self:
+            return self[name]
+        return default
+
     @property
     def names(self):
         """Proxy attribute to underlying manager."""

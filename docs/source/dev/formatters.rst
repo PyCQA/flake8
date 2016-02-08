@@ -48,3 +48,4 @@ API Documentation
 =================
 
 .. autoclass:: flake8.formatting.base.BaseFormatter
+    :members:

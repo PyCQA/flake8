@@ -18,8 +18,8 @@ Plugin Developer Guide
 .. toctree::
     :maxdepth: 2
 
-    internal/option_handling
-    internal/plugin_handling
+    dev/formatters
+    dev/registering_plugins
 
 Developer Guide
 ---------------
@@ -27,6 +27,9 @@ Developer Guide
 .. toctree::
     :maxdepth: 2
 
+    internal/option_handling
+    internal/plugin_handling
+    internal/utils
 
 Indices and tables
 ==================

@@ -216,7 +216,7 @@ def _parse_multi_options(options, split_token=','):
 
 def _disable_extensions(parser, options):
     ignored_extensions = set(getattr(parser, 'ignored_extensions', []))
-    enabled = set(_parse_multi_options(options.enabled_extensions))
+    enabled = set(_parse_multi_options(options.enable_extensions))
 
     # Remove any of the selected extensions from the extensions ignored by
     # default.

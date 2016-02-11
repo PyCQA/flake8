@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+2.5.4 - 2016-02-11
+------------------
+
+- **Bug** Missed an attribute rename during the v2.5.3 release.
+
 2.5.3 - 2016-02-11
 ------------------
 

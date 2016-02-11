@@ -4,6 +4,7 @@ from flake8 import defaults
 from flake8.options import aggregator
 from flake8.options import manager
 from flake8.plugins import manager as plugin_manager
+from flake8 import style_guide
 
 
 def register_default_options(option_manager):
@@ -178,3 +179,5 @@ def main(argv=None):
     # formatter = formatting_plugins.get(
     #     options.format, formatting_plugins['default']
     # ).execute(options)
+    # listener_trie = listening_plugins.build_notifier()
+    # guide = style_guide.StyleGuide(options, args, listener_trie, formatter)

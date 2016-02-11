@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+2.5.3 - 2016-02-11
+------------------
+
+- **Bug** Actually parse ``output_file`` and ``enable_extensions`` from config
+  files
+
 2.5.2 - 2016-01-30
 ------------------
 

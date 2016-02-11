@@ -43,22 +43,21 @@ Error = collections.namedtuple('Error', ['code',
 class StyleGuide(object):
     """Manage a Flake8 user's style guide."""
 
-    def __init__(self, options, arguments, checker_plugins, listening_plugins,
-                 formatting_plugins):
+    def __init__(self, options, arguments, listener_trie, formatter):
         """Initialize our StyleGuide.
 
         .. todo:: Add parameter documentation.
         """
         self.options = options
         self.arguments = arguments
-        self.checkers = checker_plugins
-        self.listeners = listening_plugins
-        self.formatters = formatting_plugins
+        self.listener = listener_trie
+        self.formatter = formatter
         self._selected = tuple(options.select)
         self._ignored = tuple(options.ignore)
         self._decision_cache = {}
 
     def is_user_selected(self, code):
+        # type: (Error) -> Union[Selected, Ignored]
         """Determine if the code has been selected by the user.
 
         :param str code:
@@ -79,6 +78,7 @@ class StyleGuide(object):
         return Ignored.Implicitly
 
     def is_user_ignored(self, code):
+        # type: (Error) -> Union[Selected, Ignored]
         """Determine if the code has been ignored by the user.
 
         :param str code:
@@ -96,6 +96,7 @@ class StyleGuide(object):
         return Selected.Implicitly
 
     def _decision_for(self, code):
+        # type: (Error) -> Decision
         startswith = code.startswith
         selected = sorted([s for s in self._selected if startswith(s)])[0]
         ignored = sorted([i for i in self._ignored if startswith(i)])[0]
@@ -105,6 +106,7 @@ class StyleGuide(object):
         return Decision.Ignored
 
     def should_report_error(self, code):
+        # type: (Error) -> Decision
         """Determine if the error code should be reported or ignored.
 
         :param str code:
@@ -133,6 +135,13 @@ class StyleGuide(object):
             LOG.debug('"%s" will be "%s"', code, decision)
         return decision
 
+    def handle_error(self, code, filename, line_number, column_number, text):
+        # type: (str, str, int, int, str) -> NoneType
+        """Handle an error reported by a check."""
+        error = Error(code, filename, line_number, column_number, text)
+        if self.should_report_error(error):
+            self.formatter.handle(error)
+            self.notifier.notify(error.code, error)
 
 # Should separate style guide logic from code that runs checks
 # StyleGuide should manage select/ignore logic as well as include/exclude

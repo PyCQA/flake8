@@ -27,6 +27,7 @@ Developer Guide
 .. toctree::
     :maxdepth: 2
 
+    internal/formatters
     internal/option_handling
     internal/plugin_handling
     internal/utils

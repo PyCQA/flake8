@@ -2,19 +2,21 @@
 from flake8.formatting import base
 
 
-class Default(base.BaseFormatter):
-    """Default formatter for Flake8.
+class SimpleFormatter(base.BaseFormatter):
+    """Simple abstraction for Default and Pylint formatter commonality.
 
-    This also handles backwards compatibility for people specifying a custom
-    format string.
+    Sub-classes of this need to define an ``error_format`` attribute in order
+    to succeed. The ``format`` method relies on that attribute and expects the
+    ``error_format`` string to use the old-style formatting strings with named
+    parameters:
+
+    * code
+    * text
+    * path
+    * row
+    * col
+
     """
-
-    error_format = '%(path)s:%(row)d:%(col)d: %(code)s %(text)s'
-
-    def after_init(self):
-        """Check for a custom format string."""
-        if self.options.format.lower() != 'default':
-            self.error_format = self.options.format
 
     def format(self, error):
         """Format and write error out.
@@ -31,15 +33,22 @@ class Default(base.BaseFormatter):
         }
 
 
-class Pylint(Default):
+class Default(SimpleFormatter):
+    """Default formatter for Flake8.
+
+    This also handles backwards compatibility for people specifying a custom
+    format string.
+    """
+
+    error_format = '%(path)s:%(row)d:%(col)d: %(code)s %(text)s'
+
+    def after_init(self):
+        """Check for a custom format string."""
+        if self.options.format.lower() != 'default':
+            self.error_format = self.options.format
+
+
+class Pylint(SimpleFormatter):
     """Pylint formatter for Flake8."""
 
     error_format = '%(path)s:%(row)d: [%(code)s] %(text)s'
-
-    def after_init(self):
-        """Do not check the value of --format.
-
-        In the default formatter, this makes sense for backwards
-        compatibility, but it does not make sense here.
-        """
-        pass

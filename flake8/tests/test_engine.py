@@ -62,7 +62,7 @@ class TestEngine(unittest.TestCase):
 
         parser.ignored_extensions = ['I123', 'I345', 'I678', 'I910']
 
-        options.enabled_extensions = 'I345,\nI678,I910'
+        options.enable_extensions = 'I345,\nI678,I910'
         options.ignore = ('E121', 'E123')
 
         engine._disable_extensions(parser, options)

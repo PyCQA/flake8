@@ -103,11 +103,11 @@ def get_parser():
                       type='string', nargs=1, action='callback',
                       callback=callbacks.redirect_stdout)
     parser.add_option('--enable-extensions', default='',
-                      dest='enabled_extensions',
+                      dest='enable_extensions',
                       help='Enable plugins and extensions that are disabled '
                            'by default',
                       type='string')
-    parser.config_options.extend(['output_file', 'enable_extensions'])
+    parser.config_options.extend(['output-file', 'enable-extensions'])
     parser.ignored_extensions = ignored
     return parser, options_hooks
 

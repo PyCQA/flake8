@@ -57,13 +57,21 @@ def force_disable_jobs(styleguide):
     return is_windows() or is_using_stdin(styleguide.paths)
 
 
-def option_normalizer(value):
-    if str(value).upper() in ('1', 'T', 'TRUE', 'ON'):
-        value = True
-    if str(value).upper() in ('0', 'F', 'FALSE', 'OFF'):
-        value = False
+INT_TYPES = ('int', 'count')
+BOOL_TYPES = ('store_true', 'store_false')
+LIST_OPTIONS = ('select', 'ignore', 'exclude', 'enable_extensions')
 
-    if isinstance(value, str):
-        value = [opt.strip() for opt in value.split(',') if opt.strip()]
+
+def option_normalizer(value, option, option_name):
+    if option.action in BOOL_TYPES:
+        if str(value).upper() in ('1', 'T', 'TRUE', 'ON'):
+            value = True
+        if str(value).upper() in ('0', 'F', 'FALSE', 'OFF'):
+            value = False
+    elif option.type in INT_TYPES:
+        value = int(value)
+    elif option_name in LIST_OPTIONS:
+        if isinstance(value, str):
+            value = [opt.strip() for opt in value.split(',') if opt.strip()]
 
     return value

@@ -93,18 +93,18 @@ class Flake8Command(setuptools.Command):
         for opt in parser.option_list:
             cmd_name = opt._long_opts[0][2:]
             option_name = cmd_name.replace('-', '_')
-            self.option_to_cmds[option_name] = cmd_name
+            self.option_to_cmds[option_name] = opt
             setattr(self, option_name, None)
 
     def finalize_options(self):
         self.options_dict = {}
-        for (option_name, cmd_name) in self.option_to_cmds.items():
+        for (option_name, opt) in self.option_to_cmds.items():
             if option_name in ['help', 'verbose']:
                 continue
             value = getattr(self, option_name)
             if value is None:
                 continue
-            value = option_normalizer(value)
+            value = option_normalizer(value, opt, option_name)
             # Check if there's any values that need to be fixed.
             if option_name == "include" and isinstance(value, str):
                 value = re.findall('[^,;\s]+', value)

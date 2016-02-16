@@ -139,9 +139,9 @@ class StyleGuide(object):
         # type: (str, str, int, int, str) -> NoneType
         """Handle an error reported by a check."""
         error = Error(code, filename, line_number, column_number, text)
-        if self.should_report_error(error):
+        if self.should_report_error(error.code) is Decision.Selected:
             self.formatter.handle(error)
-            self.notifier.notify(error.code, error)
+            self.listener.notify(error.code, error)
 
 # Should separate style guide logic from code that runs checks
 # StyleGuide should manage select/ignore logic as well as include/exclude

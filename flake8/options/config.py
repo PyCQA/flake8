@@ -66,7 +66,7 @@ class ConfigFileFinder(object):
             LOG.debug('Found cli configuration files: %s', found_files)
         return config
 
-    def generate_possible_local_config_files(self):
+    def generate_possible_local_files(self):
         """Find and generate all local config files."""
         tail = self.tail
         parent = self.parent
@@ -84,7 +84,7 @@ class ConfigFileFinder(object):
         """Find all local config files which actually exist.
 
         Filter results from
-        :meth:`~ConfigFileFinder.generate_possible_local_config_files` based
+        :meth:`~ConfigFileFinder.generate_possible_local_files` based
         on whether the filename exists or not.
 
         :returns:
@@ -93,11 +93,12 @@ class ConfigFileFinder(object):
         :rtype:
             [str]
         """
+        exists = os.path.exists
         return [
             filename
-            for filename in self.generate_possible_local_config_files()
+            for filename in self.generate_possible_local_files()
             if os.path.exists(filename)
-        ] + list(filter(os.path.exists, self.extra_config_files))
+        ] + [f for f in self.extra_config_files if exists(f)]
 
     def local_configs(self):
         """Parse all local config files into one config object."""

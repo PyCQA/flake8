@@ -68,11 +68,11 @@ def test_cli_config():
             os.path.abspath('tox.ini'),
             os.path.abspath('.flake8')]),
 ])
-def test_generate_possible_local_config_files(args, expected):
+def test_generate_possible_local_files(args, expected):
     """Verify generation of all possible config paths."""
     finder = config.ConfigFileFinder('flake8', args, [])
 
-    assert (list(finder.generate_possible_local_config_files()) ==
+    assert (list(finder.generate_possible_local_files()) ==
             expected)
 
 

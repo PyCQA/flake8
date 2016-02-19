@@ -57,7 +57,7 @@ class Plugin(object):
 
     def execute(self, *args, **kwargs):
         r"""Call the plugin with \*args and \*\*kwargs."""
-        return self.plugin(*args, **kwargs)
+        return self.plugin(*args, **kwargs)  # pylint: disable=not-callable
 
     def _load(self, verify_requirements):
         # Avoid relying on hasattr() here.
@@ -134,7 +134,7 @@ class Plugin(object):
             )
 
 
-class PluginManager(object):
+class PluginManager(object):  # pylint: disable=too-few-public-methods
     """Find and manage plugins consistently."""
 
     def __init__(self, namespace, verify_requirements=False):
@@ -188,6 +188,8 @@ class PluginManager(object):
 class PluginTypeManager(object):
     """Parent class for most of the specific plugin types."""
 
+    namespace = None
+
     def __init__(self):
         """Initialize the plugin type's manager."""
         self.manager = PluginManager(self.namespace)
@@ -232,6 +234,7 @@ class PluginTypeManager(object):
     @staticmethod
     def _generate_call_function(method_name, optmanager, *args, **kwargs):
         def generated_function(plugin):
+            """Function that attempts to call a specific method on a plugin."""
             method = getattr(plugin, method_name, None)
             if (method is not None and
                     isinstance(method, collections.Callable)):
@@ -244,6 +247,7 @@ class PluginTypeManager(object):
             return
 
         def load_plugin(plugin):
+            """Call each plugin's load_plugin method."""
             return plugin.load_plugin()
 
         plugins = list(self.manager.map(load_plugin))
@@ -269,7 +273,7 @@ class PluginTypeManager(object):
         list(self.manager.map(call_provide_options))
 
 
-class NotifierBuilder(object):
+class NotifierBuilderMixin(object):  # pylint: disable=too-few-public-methods
     """Mixin class that builds a Notifier from a PluginManager."""
 
     def build_notifier(self):
@@ -293,7 +297,7 @@ class Checkers(PluginTypeManager):
     namespace = 'flake8.extension'
 
 
-class Listeners(PluginTypeManager, NotifierBuilder):
+class Listeners(PluginTypeManager, NotifierBuilderMixin):
     """All of the listeners registered through entry-points."""
 
     namespace = 'flake8.listen'

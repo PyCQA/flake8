@@ -71,5 +71,4 @@ def aggregate_options(manager, arglist=None, values=None):
         setattr(default_values, dest_name, value)
 
     # Finally parse the command-line options
-    final_values, args = manager.parse_args(arglist, default_values)
-    return final_values, args
+    return manager.parse_args(arglist, default_values)

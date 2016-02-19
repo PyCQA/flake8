@@ -1,6 +1,6 @@
 """Option handling and Option management logic."""
 import logging
-import optparse
+import optparse  # pylint: disable=deprecated-module
 
 from flake8 import utils
 
@@ -18,8 +18,7 @@ class Option(object):
                  metavar=None,
                  # Options below here are specific to Flake8
                  parse_from_config=False, comma_separated_list=False,
-                 normalize_paths=False,
-                 ):
+                 normalize_paths=False):
         """Initialize an Option instance wrapping optparse.Option.
 
         The following are all passed directly through to optparse.
@@ -69,12 +68,17 @@ class Option(object):
         """
         self.short_option_name = short_option_name
         self.long_option_name = long_option_name
-        self.option_args = filter(None, (short_option_name, long_option_name))
+        self.option_args = [
+            x for x in (short_option_name, long_option_name) if x is not None
+        ]
         self.option_kwargs = {
             'action': action,
             'default': default,
             'type': type,
             'dest': self._make_dest(dest),
+            'nargs': nargs,
+            'const': const,
+            'choices': choices,
             'callback': callback,
             'callback_args': callback_args,
             'callback_kwargs': callback_kwargs,
@@ -96,6 +100,8 @@ class Option(object):
                 raise ValueError('When specifying parse_from_config=True, '
                                  'a long_option_name must also be specified.')
             self.config_name = long_option_name[2:].replace('-', '_')
+
+        self._opt = None
 
     def __repr__(self):
         """Simple representation of an Option class."""
@@ -129,7 +135,7 @@ class Option(object):
 
     def to_optparse(self):
         """Convert a Flake8 Option to an optparse Option."""
-        if not hasattr(self, '_opt'):
+        if self._opt is None:
             self._opt = optparse.Option(*self.option_args,
                                         **self.option_kwargs)
         return self._opt

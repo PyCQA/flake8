@@ -23,7 +23,7 @@ def patch_pyflakes():
         'F402 ImportShadowedByLoopVar',
         'F403 ImportStarUsed',
         'F404 LateFutureImport',
-        'F810 Redefined',               # XXX Obsolete?
+        'F810 Redefined',
         'F811 RedefinedWhileUnused',
         'F812 RedefinedInListComp',
         'F821 UndefinedName',
@@ -48,23 +48,23 @@ class FlakesChecker(pyflakes.checker.Checker):
     def __init__(self, tree, filename):
         """Initialize the PyFlakes plugin with an AST tree and filename."""
         filename = utils.normalize_paths(filename)[0]
-        withDoctest = self.withDoctest
+        with_doctest = self.with_doctest
         included_by = [include for include in self.include_in_doctest
                        if include != '' and filename.startswith(include)]
         if included_by:
-            withDoctest = True
+            with_doctest = True
 
         for exclude in self.exclude_from_doctest:
             if exclude != '' and filename.startswith(exclude):
-                withDoctest = False
+                with_doctest = False
                 overlaped_by = [include for include in included_by
                                 if include.startswith(exclude)]
 
                 if overlaped_by:
-                    withDoctest = True
+                    with_doctest = True
 
         super(FlakesChecker, self).__init__(tree, filename,
-                                            withDoctest=withDoctest)
+                                            withDoctest=with_doctest)
 
     @classmethod
     def add_options(cls, parser):
@@ -98,7 +98,7 @@ class FlakesChecker(pyflakes.checker.Checker):
         """Parse option values from Flake8's OptionManager."""
         if options.builtins:
             cls.builtIns = cls.builtIns.union(options.builtins)
-        cls.withDoctest = options.doctests
+        cls.with_doctest = options.doctests
 
         included_files = []
         for included_file in options.include_in_doctest:
@@ -131,6 +131,9 @@ class FlakesChecker(pyflakes.checker.Checker):
 
     def run(self):
         """Run the plugin."""
-        for m in self.messages:
-            col = getattr(m, 'col', 0)
-            yield m.lineno, col, (m.flake8_msg % m.message_args), m.__class__
+        for message in self.messages:
+            col = getattr(message, 'col', 0)
+            yield (message.lineno,
+                   col,
+                   (message.flake8_msg % message.message_args),
+                   message.__class__)

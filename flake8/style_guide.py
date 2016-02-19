@@ -145,15 +145,15 @@ class StyleGuide(object):
                       code, selected, ignored)
 
             if ((selected is Selected.Explicitly or
-                    selected is Selected.Implicitly) and
+                 selected is Selected.Implicitly) and
                     ignored is Selected.Implicitly):
                 decision = Decision.Selected
             elif (selected is Selected.Explicitly and
-                    ignored is Ignored.Explicitly):
+                  ignored is Ignored.Explicitly):
                 decision = self._decision_for(code)
             elif (selected is Ignored.Implicitly or
-                    ignored is Ignored.Explicitly):
-                decision = Decision.Ignored
+                  ignored is Ignored.Explicitly):
+                decision = Decision.Ignored  # pylint: disable=R0204
 
             self._decision_cache[code] = decision
             LOG.debug('"%s" will be "%s"', code, decision)

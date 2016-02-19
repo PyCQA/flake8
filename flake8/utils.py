@@ -33,7 +33,8 @@ def normalize_paths(paths, parent=os.curdir):
     :rtype:
         [str]
     """
-    return [normalize_path(p) for p in parse_comma_separated_list(paths)]
+    return [normalize_path(p, parent)
+            for p in parse_comma_separated_list(paths)]
 
 
 def normalize_path(path, parent=os.curdir):
@@ -57,8 +58,8 @@ def stdin_get_value():
     if cached_value is None:
         stdin_value = sys.stdin.read()
         if sys.version_info < (3, 0):
-            cached_value = io.BytesIO(stdin_value)
+            cached_type = io.BytesIO
         else:
-            cached_value = io.StringIO(stdin_value)
-        stdin_get_value.cached_stdin = cached_value
+            cached_type = io.StringIO
+        stdin_get_value.cached_stdin = cached_type(stdin_value)
     return cached_value.getvalue()

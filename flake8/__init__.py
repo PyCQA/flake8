@@ -10,8 +10,6 @@ This module
 
 """
 import logging
-import sys
-
 try:
     from logging import NullHandler
 except ImportError:
@@ -21,6 +19,7 @@ except ImportError:
         def emit(self, record):
             """Do nothing."""
             pass
+import sys
 
 LOG = logging.getLogger(__name__)
 LOG.addHandler(NullHandler())
@@ -51,7 +50,6 @@ def configure_logging(verbosity, filename=None,
         If the name is "stdout" or "stderr" this will log to the appropriate
         stream.
     """
-    global LOG
     if verbosity <= 0:
         return
     if verbosity > 2:
@@ -60,12 +58,14 @@ def configure_logging(verbosity, filename=None,
     log_level = _VERBOSITY_TO_LOG_LEVEL[verbosity]
 
     if not filename or filename in ('stderr', 'stdout'):
-        handler = logging.StreamHandler(getattr(sys, filename))
+        fileobj = getattr(sys, filename or 'stderr')
+        handler = logging.StreamHandler
     else:
-        handler = logging.FileHandler(filename)
+        fileobj = filename
+        handler = logging.FileHandler
 
     handler.setFormatter(logging.Formatter(logformat))
-    LOG.addHandler(handler)
+    LOG.addHandler(handler(fileobj))
     LOG.setLevel(log_level)
     LOG.debug('Added a %s logging handler to logger root at %s',
               filename, __name__)

@@ -174,10 +174,11 @@ def main(argv=None):
 
     # Parse out our options from our found config files and user-provided CLI
     # options
-    options, args = aggregator.aggregate_options(option_manager)
+    options, args = aggregator.aggregate_options(option_manager, argv)
 
-    # formatter = formatting_plugins.get(
-    #     options.format, formatting_plugins['default']
-    # ).execute(options)
-    # listener_trie = listening_plugins.build_notifier()
-    # guide = style_guide.StyleGuide(options, args, listener_trie, formatter)
+    formatter = formatting_plugins.get(
+        options.format, formatting_plugins['default']
+    ).execute(options)
+    listener_trie = listening_plugins.build_notifier()
+    guide = style_guide.StyleGuide(options, args, listener_trie, formatter)
+    guide.handle_error('E111', 'stdin', 1, 1, 'faketext')

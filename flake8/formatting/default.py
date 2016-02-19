@@ -18,6 +18,8 @@ class SimpleFormatter(base.BaseFormatter):
 
     """
 
+    error_format = None
+
     def format(self, error):
         """Format and write error out.
 

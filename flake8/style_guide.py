@@ -1,8 +1,12 @@
 """Implementation of the StyleGuide used by Flake8."""
 import collections
+import linecache
 import logging
+import re
 
 import enum
+
+from flake8 import utils
 
 __all__ = (
     'StyleGuide',
@@ -42,6 +46,20 @@ Error = collections.namedtuple('Error', ['code',
 
 class StyleGuide(object):
     """Manage a Flake8 user's style guide."""
+
+    NOQA_INLINE_REGEXP = re.compile(
+        # We're looking for items that look like this:
+        # ``# noqa``
+        # ``# noqa: E123``
+        # ``# noqa: E123,W451,F921``
+        # ``# NoQA: E123,W451,F921``
+        # ``# NOQA: E123,W451,F921``
+        # We do not care about the ``: `` that follows ``noqa``
+        # We do not care about the casing of ``noqa``
+        # We want a comma-separated list of errors
+        '# noqa(?:: )?(?P<codes>[A-Z0-9,]+)?$',
+        re.IGNORECASE
+    )
 
     def __init__(self, options, arguments, listener_trie, formatter):
         """Initialize our StyleGuide.
@@ -109,6 +127,12 @@ class StyleGuide(object):
         # type: (Error) -> Decision
         """Determine if the error code should be reported or ignored.
 
+        This method only cares about the select and ignore rules as specified
+        by the user in their configuration files and command-line flags.
+
+        This method does not look at whether the specific line is being
+        ignored in the file itself.
+
         :param str code:
             The code for the check that has been run.
         """
@@ -135,11 +159,35 @@ class StyleGuide(object):
             LOG.debug('"%s" will be "%s"', code, decision)
         return decision
 
+    def is_inline_ignored(self, error):
+        """Determine if an comment has been added to ignore this line."""
+        physical_line = linecache.getline(error.filename, error.line_number)
+        noqa_match = self.NOQA_INLINE_REGEXP.search(physical_line)
+        if noqa_match is None:
+            LOG.debug('%r is not inline ignored', error)
+            return False
+
+        codes_str = noqa_match.groupdict()['codes']
+        if codes_str is None:
+            LOG.debug('%r is ignored by a blanket ``# noqa``', error)
+            return True
+
+        codes = set(utils.parse_comma_separated_list(codes_str))
+        if error.code in codes:
+            LOG.debug('%r is ignored specifically inline with ``# noqa: %s``',
+                      error, codes_str)
+            return True
+
+        LOG.debug('%r is not ignored inline with ``# noqa: %s``',
+                  error, codes_str)
+        return False
+
     def handle_error(self, code, filename, line_number, column_number, text):
         # type: (str, str, int, int, str) -> NoneType
         """Handle an error reported by a check."""
         error = Error(code, filename, line_number, column_number, text)
-        if self.should_report_error(error.code) is Decision.Selected:
+        if (self.should_report_error(error.code) is Decision.Selected and
+                self.is_inline_ignored(error) is False):
             self.formatter.handle(error)
             self.listener.notify(error.code, error)
 

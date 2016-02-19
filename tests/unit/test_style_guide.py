@@ -142,7 +142,8 @@ def test_handle_error_notifies_listeners(select_list, ignore_list, error_code):
                                    listener_trie=listener_trie,
                                    formatter=formatter)
 
-    guide.handle_error(error_code, 'stdin', 1, 1, 'error found')
+    with mock.patch('linecache.getline', return_value=''):
+        guide.handle_error(error_code, 'stdin', 1, 1, 'error found')
     error = style_guide.Error(error_code, 'stdin', 1, 1, 'error found')
     listener_trie.notify.assert_called_once_with(error_code, error)
     formatter.handle.assert_called_once_with(error)
@@ -170,6 +171,7 @@ def test_handle_error_does_not_notify_listeners(select_list, ignore_list,
                                    listener_trie=listener_trie,
                                    formatter=formatter)
 
-    guide.handle_error(error_code, 'stdin', 1, 1, 'error found')
+    with mock.patch('linecache.getline', return_value=''):
+        guide.handle_error(error_code, 'stdin', 1, 1, 'error found')
     assert listener_trie.notify.called is False
     assert formatter.handle.called is False

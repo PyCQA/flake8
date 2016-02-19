@@ -59,13 +59,14 @@ def configure_logging(verbosity, filename=None,
 
     if not filename or filename in ('stderr', 'stdout'):
         fileobj = getattr(sys, filename or 'stderr')
-        handler = logging.StreamHandler
+        handler_cls = logging.StreamHandler
     else:
         fileobj = filename
-        handler = logging.FileHandler
+        handler_cls = logging.FileHandler
 
+    handler = handler_cls(fileobj)
     handler.setFormatter(logging.Formatter(logformat))
-    LOG.addHandler(handler(fileobj))
+    LOG.addHandler(handler)
     LOG.setLevel(log_level)
     LOG.debug('Added a %s logging handler to logger root at %s',
               filename, __name__)

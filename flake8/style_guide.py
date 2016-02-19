@@ -61,13 +61,12 @@ class StyleGuide(object):
         re.IGNORECASE
     )
 
-    def __init__(self, options, arguments, listener_trie, formatter):
+    def __init__(self, options, listener_trie, formatter):
         """Initialize our StyleGuide.
 
         .. todo:: Add parameter documentation.
         """
         self.options = options
-        self.arguments = arguments
         self.listener = listener_trie
         self.formatter = formatter
         self._selected = tuple(options.select)
@@ -161,6 +160,10 @@ class StyleGuide(object):
 
     def is_inline_ignored(self, error):
         """Determine if an comment has been added to ignore this line."""
+        # TODO(sigmavirus24): Determine how to handle stdin with linecache
+        if self.options.disable_noqa:
+            return False
+
         physical_line = linecache.getline(error.filename, error.line_number)
         noqa_match = self.NOQA_INLINE_REGEXP.search(physical_line)
         if noqa_match is None:

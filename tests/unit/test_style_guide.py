@@ -13,6 +13,7 @@ def create_options(**kwargs):
     """Create and return an instance of optparse.Values."""
     kwargs.setdefault('select', [])
     kwargs.setdefault('ignore', [])
+    kwargs.setdefault('disable_noqa', False)
     return optparse.Values(kwargs)
 
 
@@ -26,7 +27,6 @@ def create_options(**kwargs):
 def test_is_user_ignored_ignores_errors(ignore_list, error_code):
     """Verify we detect users explicitly ignoring an error."""
     guide = style_guide.StyleGuide(create_options(ignore=ignore_list),
-                                   arguments=[],
                                    listener_trie=None,
                                    formatter=None)
 
@@ -43,7 +43,6 @@ def test_is_user_ignored_ignores_errors(ignore_list, error_code):
 def test_is_user_ignored_implicitly_selects_errors(ignore_list, error_code):
     """Verify we detect users does not explicitly ignore an error."""
     guide = style_guide.StyleGuide(create_options(ignore=ignore_list),
-                                   arguments=[],
                                    listener_trie=None,
                                    formatter=None)
 
@@ -60,7 +59,6 @@ def test_is_user_ignored_implicitly_selects_errors(ignore_list, error_code):
 def test_is_user_selected_selects_errors(select_list, error_code):
     """Verify we detect users explicitly selecting an error."""
     guide = style_guide.StyleGuide(create_options(select=select_list),
-                                   arguments=[],
                                    listener_trie=None,
                                    formatter=None)
 
@@ -73,7 +71,6 @@ def test_is_user_selected_implicitly_selects_errors():
     select_list = []
     error_code = 'E121'
     guide = style_guide.StyleGuide(create_options(select=select_list),
-                                   arguments=[],
                                    listener_trie=None,
                                    formatter=None)
 
@@ -91,7 +88,6 @@ def test_is_user_selected_implicitly_selects_errors():
 def test_is_user_selected_excludes_errors(select_list, error_code):
     """Verify we detect users implicitly excludes an error."""
     guide = style_guide.StyleGuide(create_options(select=select_list),
-                                   arguments=[],
                                    listener_trie=None,
                                    formatter=None)
 
@@ -118,7 +114,6 @@ def test_should_report_error(select_list, ignore_list, error_code, expected):
     """Verify we decide when to report an error."""
     guide = style_guide.StyleGuide(create_options(select=select_list,
                                                   ignore=ignore_list),
-                                   arguments=[],
                                    listener_trie=None,
                                    formatter=None)
 
@@ -136,13 +131,25 @@ def test_should_report_error(select_list, ignore_list, error_code, expected):
 def test_is_inline_ignored(error_code, physical_line, expected_result):
     """Verify that we detect inline usage of ``# noqa``."""
     guide = style_guide.StyleGuide(create_options(select=['E', 'W', 'F']),
-                                   arguments=[],
                                    listener_trie=None,
                                    formatter=None)
     error = style_guide.Error(error_code, 'filename.py', 1, 1, 'error text')
 
     with mock.patch('linecache.getline', return_value=physical_line):
         assert guide.is_inline_ignored(error) is expected_result
+
+
+def test_disable_is_inline_ignored():
+    """Verify that is_inline_ignored exits immediately if disabling NoQA."""
+    guide = style_guide.StyleGuide(create_options(disable_noqa=True),
+                                   listener_trie=None,
+                                   formatter=None)
+    error = style_guide.Error('E121', 'filename.py', 1, 1, 'error text')
+
+    with mock.patch('linecache.getline') as getline:
+        assert guide.is_inline_ignored(error) is False
+
+    assert getline.called is False
 
 
 @pytest.mark.parametrize('select_list,ignore_list,error_code', [
@@ -158,7 +165,6 @@ def test_handle_error_notifies_listeners(select_list, ignore_list, error_code):
     formatter = mock.create_autospec(base.BaseFormatter, instance=True)
     guide = style_guide.StyleGuide(create_options(select=select_list,
                                                   ignore=ignore_list),
-                                   arguments=[],
                                    listener_trie=listener_trie,
                                    formatter=formatter)
 
@@ -187,7 +193,6 @@ def test_handle_error_does_not_notify_listeners(select_list, ignore_list,
     formatter = mock.create_autospec(base.BaseFormatter, instance=True)
     guide = style_guide.StyleGuide(create_options(select=select_list,
                                                   ignore=ignore_list),
-                                   arguments=[],
                                    listener_trie=listener_trie,
                                    formatter=formatter)
 

@@ -200,8 +200,8 @@ def test_proxies_getitem_to_managers_plugins_dictionary(PluginManager):
         assert type_mgr[key] is plugins[key]
 
 
-class FakePluginTypeManager(manager.NotifierBuilder):
-    """Provide an easy way to test the NotifierBuilder."""
+class FakePluginTypeManager(manager.NotifierBuilderMixin):
+    """Provide an easy way to test the NotifierBuilderMixin."""
 
     def __init__(self, manager):
         """Initialize with our fake manager."""

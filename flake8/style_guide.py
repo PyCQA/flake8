@@ -173,7 +173,7 @@ class StyleGuide(object):
             return True
 
         codes = set(utils.parse_comma_separated_list(codes_str))
-        if error.code in codes:
+        if error.code in codes or error.code.startswith(tuple(codes)):
             LOG.debug('%r is ignored specifically inline with ``# noqa: %s``',
                       error, codes_str)
             return True

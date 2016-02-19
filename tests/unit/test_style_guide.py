@@ -125,6 +125,26 @@ def test_should_report_error(select_list, ignore_list, error_code, expected):
     assert guide.should_report_error(error_code) is expected
 
 
+@pytest.mark.parametrize('error_code,physical_line,expected_result', [
+    ('E111', 'a = 1', False),
+    ('E121', 'a = 1  # noqa: E111', False),
+    ('E121', 'a = 1  # noqa: E111,W123,F821', False),
+    ('E111', 'a = 1  # noqa: E111,W123,F821', True),
+    ('W123', 'a = 1  # noqa: E111,W123,F821', True),
+    ('E111', 'a = 1  # noqa: E11,W123,F821', True),
+])
+def test_is_inline_ignored(error_code, physical_line, expected_result):
+    """Verify that we detect inline usage of ``# noqa``."""
+    guide = style_guide.StyleGuide(create_options(select=['E', 'W', 'F']),
+                                   arguments=[],
+                                   listener_trie=None,
+                                   formatter=None)
+    error = style_guide.Error(error_code, 'filename.py', 1, 1, 'error text')
+
+    with mock.patch('linecache.getline', return_value=physical_line):
+        assert guide.is_inline_ignored(error) is expected_result
+
+
 @pytest.mark.parametrize('select_list,ignore_list,error_code', [
     (['E111', 'E121'], [], 'E111'),
     (['E111', 'E121'], [], 'E121'),

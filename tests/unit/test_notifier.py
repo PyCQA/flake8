@@ -38,3 +38,17 @@ class TestNotifier(object):
         self.notifier.notify('E111', 'extra', 'args')
         assert self.listener_map['E111'].was_notified is True
         assert self.listener_map['E1'].was_notified is True
+
+    @pytest.mark.parametrize('code', ['W123', 'W12', 'W1', 'W'])
+    def test_no_listeners_for(self, code):
+        """Show that we return an empty list of listeners."""
+        assert list(self.notifier.listeners_for(code)) == []
+
+    @pytest.mark.parametrize('code,expected', [
+        ('E101', ['E101', 'E1']),
+        ('E211', ['E211', 'E2']),
+    ])
+    def test_listeners_for(self, code, expected):
+        """Verify that we retrieve the correct listeners."""
+        assert ([l.error_code for l in self.notifier.listeners_for(code)] ==
+                expected)

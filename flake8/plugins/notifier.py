@@ -31,7 +31,8 @@ class Notifier(object):
         path = error_code
         while path:
             node = self.listeners.find(path)
-            for listener in node.data:
+            listeners = getattr(node, 'data', [])
+            for listener in listeners:
                 yield listener
             path = path[:-1]
 

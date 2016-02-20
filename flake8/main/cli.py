@@ -172,6 +172,8 @@ def main(argv=None):
     listening_plugins.register_options(option_manager)
     formatting_plugins.register_options(option_manager)
 
+    preliminary_opts, _ = option_manager.parse_args(argv)
+    flake8.configure_logging(preliminary_opts.verbose)
     # Parse out our options from our found config files and user-provided CLI
     # options
     options, args = aggregator.aggregate_options(option_manager, argv)

@@ -37,9 +37,10 @@ _VERBOSITY_TO_LOG_LEVEL = {
     2: logging.DEBUG,
 }
 
+LOG_FORMAT = '[flake8] %(asctime)s %(levelname)s %(message)s'
 
-def configure_logging(verbosity, filename=None,
-                      logformat='%(asctime)s %(levelname)s %(message)s'):
+
+def configure_logging(verbosity, filename=None, logformat=LOG_FORMAT):
     """Configure logging for flake8.
 
     :param int verbosity:

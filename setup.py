@@ -23,7 +23,7 @@ except ImportError:
 
 tests_require = ['pytest']
 if mock is None:
-    tests_require += ['mock']
+    tests_require.append('mock')
 
 
 requires = [

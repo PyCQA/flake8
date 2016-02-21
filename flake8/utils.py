@@ -63,3 +63,29 @@ def stdin_get_value():
             cached_type = io.StringIO
         stdin_get_value.cached_stdin = cached_type(stdin_value)
     return cached_value.getvalue()
+
+
+def is_windows():
+    # type: () -> bool
+    """Determine if we're running on Windows.
+
+    :returns:
+        True if running on Windows, otherwise False
+    :rtype:
+        bool
+    """
+    return os.name == 'nt'
+
+
+def is_using_stdin(paths):
+    # type: (List[str]) -> bool
+    """Determine if we're going to read from stdin.
+
+    :param list paths:
+        The paths that we're going to check.
+    :returns:
+        True if stdin (-) is in the path, otherwise False
+    :rtype:
+        bool
+    """
+    return '-' in paths

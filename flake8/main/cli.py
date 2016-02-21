@@ -156,31 +156,105 @@ def register_default_options(option_manager):
     )
 
 
+class Application(object):
+    """Abstract our application into a class."""
+
+    def __init__(self, program='flake8', version=flake8.__version__):
+        # type: (str, str) -> NoneType
+        """Initialize our application.
+
+        :param str program:
+            The name of the program/application that we're executing.
+        :param str version:
+            The version of the program/application we're executing.
+        """
+        self.program = program
+        self.version = version
+        self.option_manager = manager.OptionManager(
+            prog='flake8', version=flake8.__version__
+        )
+        register_default_options(self.option_manager)
+
+        # Set the verbosity of the program
+        preliminary_opts, _ = self.option_manager.parse_args()
+        flake8.configure_logging(preliminary_opts.verbose)
+
+        self.check_plugins = None
+        self.listening_plugins = None
+        self.formatting_plugigns = None
+        self.formatter = None
+        self.listener_trie = None
+        self.guide = None
+
+        self.options = None
+        self.args = None
+
+    def find_plugins(self):
+        # type: () -> NoneType
+        """Find and load the plugins for this application."""
+        if self.check_plugins is None:
+            self.check_plugins = plugin_manager.Checkers()
+
+        if self.listening_plugins is None:
+            self.listening_plugins = plugin_manager.Listeners()
+
+        if self.formatting_plugins is None:
+            self.formatting_plugins = plugin_manager.ReportFormatters()
+
+    def register_plugin_options(self):
+        # type: () -> NoneType
+        """Register options provided by plugins to our option manager."""
+        self.check_plugins.register_options(self.option_manager)
+        self.listening_plugins.register_options(self.option_manager)
+        self.formatting_plugins.register_options(self.option_manager)
+
+    def parse_configuration_and_cli(self, argv=None):
+        # type: (Union[NoneType, List[str]]) -> NoneType
+        """Parse configuration files and the CLI options.
+
+        :param list argv:
+            Command-line arguments passed in directly.
+        """
+        if self.options is None and self.args is None:
+            self.options, self.args = aggregator.aggregate_options(
+                self.option_manager, argv
+            )
+
+    def make_formatter(self):
+        # type: () -> NoneType
+        """Initialize a formatter based on the parsed options."""
+        if self.formatter is None:
+            self.formatter = self.formatting_plugins.get(
+                self.options.format, self.formatting_plugins['default']
+            ).execute(self.options)
+
+    def make_notifier(self):
+        # type: () -> NoneType
+        """Initialize our listener Notifier."""
+        if self.listener_trie is None:
+            self.listener_trie = self.listening_plugins.build_notifier()
+
+    def make_guide(self):
+        # type: () -> NoneType
+        """Initialize our StyleGuide."""
+        if self.guide is None:
+            self.guide = style_guide.StyleGuide(
+                self.options, self.listener_trie, self.formatter
+            )
+
+    def run(self, argv=None):
+        # type: (Union[NoneType, List[str]]) -> NoneType
+        """Run our application."""
+        self.find_plugins()
+        self.register_plugin_options()
+        self.parse_configuration_and_cli(argv)
+        self.make_formatter()
+        self.make_notifier()
+        self.make_guide()
+
+
 def main(argv=None):
+    # type: (Union[NoneType, List[str]]) -> NoneType
     """Main entry-point for the flake8 command-line tool."""
-    option_manager = manager.OptionManager(
-        prog='flake8', version=flake8.__version__
-    )
-    # Load our plugins
-    check_plugins = plugin_manager.Checkers()
-    listening_plugins = plugin_manager.Listeners()
-    formatting_plugins = plugin_manager.ReportFormatters()
-
-    # Register all command-line and config-file options
-    register_default_options(option_manager)
-    check_plugins.register_options(option_manager)
-    listening_plugins.register_options(option_manager)
-    formatting_plugins.register_options(option_manager)
-
-    preliminary_opts, _ = option_manager.parse_args(argv)
-    flake8.configure_logging(preliminary_opts.verbose)
-    # Parse out our options from our found config files and user-provided CLI
-    # options
-    options, args = aggregator.aggregate_options(option_manager, argv)
-
-    formatter = formatting_plugins.get(
-        options.format, formatting_plugins['default']
-    ).execute(options)
-    listener_trie = listening_plugins.build_notifier()
-    guide = style_guide.StyleGuide(options, listener_trie, formatter)
-    guide.handle_error('E111', 'stdin', 1, 1, 'faketext')
+    app = Application()
+    app.run(argv)

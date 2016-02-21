@@ -74,7 +74,7 @@ class StyleGuide(object):
         self._decision_cache = {}
 
     def is_user_selected(self, code):
-        # type: (Error) -> Union[Selected, Ignored]
+        # type: (str) -> Union[Selected, Ignored]
         """Determine if the code has been selected by the user.
 
         :param str code:
@@ -95,7 +95,7 @@ class StyleGuide(object):
         return Ignored.Implicitly
 
     def is_user_ignored(self, code):
-        # type: (Error) -> Union[Selected, Ignored]
+        # type: (str) -> Union[Selected, Ignored]
         """Determine if the code has been ignored by the user.
 
         :param str code:
@@ -123,7 +123,7 @@ class StyleGuide(object):
         return Decision.Ignored
 
     def should_report_error(self, code):
-        # type: (Error) -> Decision
+        # type: (str) -> Decision
         """Determine if the error code should be reported or ignored.
 
         This method only cares about the select and ignore rules as specified
@@ -159,6 +159,7 @@ class StyleGuide(object):
         return decision
 
     def is_inline_ignored(self, error):
+        # type: (Error) -> bool
         """Determine if an comment has been added to ignore this line."""
         # TODO(sigmavirus24): Determine how to handle stdin with linecache
         if self.options.disable_noqa:

@@ -187,27 +187,65 @@ class FileChecker(object):
             return self.read_lines_from_stdin()
         return self.read_lines_from_filename()
 
-    def read_lines_from_stdin(self):
-        """Read the lines from standard in."""
-        return utils.stdin_get_value().splitlines(True)
+    def _readlines_py2(self):
+        with open(self.filename, 'rU') as fd:
+            return fd.readlines()
+
+    def _readlines_py3(self):
+        try:
+            with open(self.filename, 'rb') as fd:
+                (coding, lines) = tokenize.detect_encoding(fd.readline)
+                textfd = io.TextIOWrapper(fd, coding, line_buffering=True)
+                return ([l.decode(coding) for l in lines] +
+                        textfd.readlines())
+        except (LookupError, SyntaxError, UnicodeError):
+            # If we can't detect the codec with tokenize.detect_encoding, or
+            # the detected encoding is incorrect, just fallback to latin-1.
+            with open(self.filename, encoding='latin-1') as fd:
+                return fd.readlines()
 
     def read_lines_from_filename(self):
         """Read the lines for a file."""
         if (2, 6) <= sys.version_info < (3, 0):
-            with open(self.filename, 'rU') as fd:
-                return fd.readlines()
-
+            readlines = self._readlines_py2
         elif (3, 0) <= sys.version_info < (4, 0):
-            try:
-                with open(self.filename, 'rb') as fd:
-                    (coding, lines) = tokenize.detect_encoding(fd.readline)
-                    textfd = io.TextIOWrapper(fd, coding, line_buffering=True)
-                    return ([l.decode(coding) for l in lines] +
-                            textfd.readlines())
-            except (LookupError, SyntaxError, UnicodeError):
-                with open(self.filename, encoding='latin-1') as fd:
-                    return fd.readlines()
+            readlines = self._readlines_py3
+
+        try:
+            return readlines()
+        except IOError:
+            # If we can not read the file due to an IOError (e.g., the file
+            # does not exist or we do not have the permissions to open it)
+            # then we need to format that exception for the user.
+            # NOTE(sigmavirus24): Historically, pep8 has always reported this
+            # as an E902. We probably *want* a better error code for this
+            # going forward.
+            (exc_type, exception) = sys.exc_info()[:2]
+            message = '{0}: {1}'.format(exc_type.__name__, exception)
+            self.results.append('E902', self.filename, 0, 0, message)
+            return []
+
+    def read_lines_from_stdin(self):
+        """Read the lines from standard in."""
+        return utils.stdin_get_value().splitlines(True)
 
     def run_checks(self):
         """Run checks against the file."""
         self.lines = self.read_lines()
+        self.strip_utf_bom()
+
+    def strip_utf_bom(self):
+        """Strip the UTF bom from the lines of the file."""
+        if not self.lines:
+            # If we have nothing to analyze quit early
+            return
+
+        first_byte = ord(self.lines[0][0])
+        if first_byte not in (0xEF, 0xFEFF):
+            return
+
+        # If the first byte of the file is a UTF-8 BOM, strip it
+        if first_byte == 0xFEFF:
+            self.lines[0] = self.lines[0][1:]
+        elif self.lines[0][:3] == '\xEF\xBB\xBF':
+            self.lines[0] = self.lines[0][3:]

@@ -79,7 +79,7 @@ Note specifically these lines:
         # snip ...
     )
 
-We tell setuptools to register our entry point "X" inside the specific 
+We tell setuptools to register our entry point "X" inside the specific
 grouping of entry-points that flake8 should look in.
 
 Flake8 presently looks at three groups:

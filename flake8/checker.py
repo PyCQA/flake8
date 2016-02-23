@@ -1,6 +1,9 @@
 """Checker Manager and Checker classes."""
+import io
 import logging
 import os
+import sys
+import tokenize
 
 try:
     import multiprocessing
@@ -175,3 +178,36 @@ class FileChecker(object):
         self.filename = filename
         self.checks = checks
         self.results = []
+        self.lines = []
+
+    def read_lines(self):
+        """Read the lines for this file checker."""
+        if self.filename is None or self.filename == '-':
+            self.filename = 'stdin'
+            return self.read_lines_from_stdin()
+        return self.read_lines_from_filename()
+
+    def read_lines_from_stdin(self):
+        """Read the lines from standard in."""
+        return utils.stdin_get_value().splitlines(True)
+
+    def read_lines_from_filename(self):
+        """Read the lines for a file."""
+        if (2, 6) <= sys.version_info < (3, 0):
+            with open(self.filename, 'rU') as fd:
+                return fd.readlines()
+
+        elif (3, 0) <= sys.version_info < (4, 0):
+            try:
+                with open(self.filename, 'rb') as fd:
+                    (coding, lines) = tokenize.detect_encoding(fd.readline)
+                    textfd = io.TextIOWrapper(fd, coding, line_buffering=True)
+                    return ([l.decode(coding) for l in lines] +
+                            textfd.readlines())
+            except (LookupError, SyntaxError, UnicodeError):
+                with open(self.filename, encoding='latin-1') as fd:
+                    return fd.readlines()
+
+    def run_checks(self):
+        """Run checks against the file."""
+        self.lines = self.read_lines()

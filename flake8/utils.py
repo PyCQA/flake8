@@ -1,4 +1,5 @@
 """Utility methods for flake8."""
+import fnmatch as _fnmatch
 import io
 import os
 import sys
@@ -89,3 +90,57 @@ def is_using_stdin(paths):
         bool
     """
     return '-' in paths
+
+
+def _default_predicate(*args):
+    return False
+
+
+def filenames_from(arg, predicate=None):
+    # type: (str) -> Generator
+    """Generate filenames from an argument.
+
+    :param str arg:
+        Parameter from the command-line.
+    :param callable predicate:
+        Predicate to use to filter out filenames. If the predicate
+        returns ``True`` we will exclude the filename, otherwise we
+        will yield it.
+    :returns:
+        Generator of paths
+    """
+    if predicate is None:
+        predicate = _default_predicate
+    if os.path.isdir(arg):
+        for root, sub_directories, files in os.walk(arg):
+            for filename in files:
+                joined = os.path.join(root, filename)
+                if predicate(filename) or predicate(joined):
+                    continue
+                yield joined
+            # NOTE(sigmavirus24): os.walk() will skip a directory if you
+            # remove it from the list of sub-directories.
+            for directory in sub_directories:
+                if predicate(directory):
+                    sub_directories.remove(directory)
+    else:
+        yield arg
+
+
+def fnmatch(filename, patterns, default=True):
+    # type: (str, List[str], bool) -> bool
+    """Wrap :func:`fnmatch.fnmatch` to add some functionality.
+
+    :param str filename:
+        Name of the file we're trying to match.
+    :param list patterns:
+        Patterns we're using to try to match the filename.
+    :param bool default:
+        The default value if patterns is empty
+    :returns:
+        True if a pattern matches the filename, False if it doesn't.
+        ``default`` if patterns is empty.
+    """
+    if not patterns:
+        return default
+    return any(_fnmatch.fnmatch(filename, pattern) for pattern in patterns)

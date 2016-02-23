@@ -2,14 +2,14 @@
 import logging
 import os
 
-LOG = logging.getLogger(__name__)
-
 try:
     import multiprocessing
 except ImportError:
     multiprocessing = None
 
 from flake8 import utils
+
+LOG = logging.getLogger(__name__)
 
 
 class Manager(object):

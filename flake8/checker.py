@@ -1,5 +1,6 @@
 """Checker Manager and Checker classes."""
 import logging
+import os
 
 LOG = logging.getLogger(__name__)
 
@@ -48,6 +49,14 @@ class Manager(object):
         self.options = options
         self.checks = checker_plugins
         self.jobs = self._job_count()
+        self.process_queue = None
+        self.using_multiprocessing = False
+        self.processes = []
+        self.checkers = []
+
+        if self.jobs is not None and self.jobs > 1:
+            self.using_multiprocessing = True
+            self.process_queue = multiprocessing.Queue()
 
     def _job_count(self):
         # First we walk through all of our error cases:
@@ -93,8 +102,76 @@ class Manager(object):
             try:
                 return multiprocessing.cpu_count()
             except NotImplementedError:
-                return 1
+                return 0
 
         # Otherwise, we know jobs should be an integer and we can just convert
         # it to an integer
         return int(jobs)
+
+    def start(self):
+        """Start checking files."""
+        pass
+        # for i in range(self.jobs or 0):
+        #     proc = multiprocessing.Process(target=self.process_files)
+        #     proc.daemon = True
+        #     proc.start()
+        #     self.processes.append(proc)
+
+    def make_checkers(self, paths=None):
+        # type: (List[str]) -> NoneType
+        """Create checkers for each file."""
+        if paths is None:
+            paths = self.arguments
+        filename_patterns = self.options.filename
+        self.checkers = [
+            FileChecker(filename, self.checks)
+            for argument in paths
+            for filename in utils.filenames_from(argument,
+                                                 self.is_path_excluded)
+            if utils.fnmatch(filename, filename_patterns)
+        ]
+
+    def is_path_excluded(self, path):
+        # type: (str) -> bool
+        """Check if a path is excluded.
+
+        :param str path:
+            Path to check against the exclude patterns.
+        :returns:
+            True if there are exclude patterns and the path matches,
+            otherwise False.
+        :rtype:
+            bool
+        """
+        exclude = self.options.exclude
+        if not exclude:
+            return False
+        basename = os.path.basename(path)
+        if utils.fnmatch(basename, exclude):
+            LOG.info('"%s" has been excluded', basename)
+            return True
+
+        absolute_path = os.path.abspath(path)
+        match = utils.fnmatch(absolute_path, exclude)
+        LOG.info('"%s" has %sbeen excluded', absolute_path,
+                 '' if match else 'not ')
+        return match
+
+
+class FileChecker(object):
+    """Manage running checks for a file and aggregate the results."""
+
+    def __init__(self, filename, checks):
+        # type: (str, flake8.plugins.manager.Checkers) -> NoneType
+        """Initialize our file checker.
+
+        :param str filename:
+            Name of the file to check.
+        :param checks:
+            The plugins registered to check the file.
+        :type checks:
+            flake8.plugins.manager.Checkers
+        """
+        self.filename = filename
+        self.checks = checks
+        self.results = []

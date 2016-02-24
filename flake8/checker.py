@@ -62,6 +62,7 @@ class Manager(object):
             self.process_queue = multiprocessing.Queue()
 
     def _job_count(self):
+        # type: () -> Union[int, NoneType]
         # First we walk through all of our error cases:
         # - multiprocessing library is not present
         # - we're running on windows in which case we know we have significant
@@ -181,6 +182,7 @@ class FileChecker(object):
         self.lines = []
 
     def read_lines(self):
+        # type: () -> List[str]
         """Read the lines for this file checker."""
         if self.filename is None or self.filename == '-':
             self.filename = 'stdin'
@@ -188,10 +190,12 @@ class FileChecker(object):
         return self.read_lines_from_filename()
 
     def _readlines_py2(self):
+        # type: () -> List[str]
         with open(self.filename, 'rU') as fd:
             return fd.readlines()
 
     def _readlines_py3(self):
+        # type: () -> List[str]
         try:
             with open(self.filename, 'rb') as fd:
                 (coding, lines) = tokenize.detect_encoding(fd.readline)
@@ -205,6 +209,7 @@ class FileChecker(object):
                 return fd.readlines()
 
     def read_lines_from_filename(self):
+        # type: () -> List[str]
         """Read the lines for a file."""
         if (2, 6) <= sys.version_info < (3, 0):
             readlines = self._readlines_py2
@@ -222,12 +227,19 @@ class FileChecker(object):
             # going forward.
             (exc_type, exception) = sys.exc_info()[:2]
             message = '{0}: {1}'.format(exc_type.__name__, exception)
-            self.results.append('E902', self.filename, 0, 0, message)
+            self.report('E902', 0, 0, message)
             return []
 
     def read_lines_from_stdin(self):
+        # type: () -> List[str]
         """Read the lines from standard in."""
         return utils.stdin_get_value().splitlines(True)
+
+    def report(self, error_code, line_number, column, text):
+        # type: (str, int, int, str) -> NoneType
+        """Report an error by storing it in the results list."""
+        error = (error_code, self.filename, line_number, column, text)
+        self.results.append(error)
 
     def run_checks(self):
         """Run checks against the file."""
@@ -235,6 +247,7 @@ class FileChecker(object):
         self.strip_utf_bom()
 
     def strip_utf_bom(self):
+        # type: () -> NoneType
         """Strip the UTF bom from the lines of the file."""
         if not self.lines:
             # If we have nothing to analyze quit early

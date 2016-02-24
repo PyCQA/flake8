@@ -97,7 +97,7 @@ def _default_predicate(*args):
 
 
 def filenames_from(arg, predicate=None):
-    # type: (str) -> Generator
+    # type: (str, callable) -> Generator
     """Generate filenames from an argument.
 
     :param str arg:

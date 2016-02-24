@@ -304,8 +304,26 @@ class Checkers(PluginTypeManager):
         """
         for plugin in self.plugins.values():
             parameters = utils.parameters_for(plugin)
-            if argument_name in parameters:
+            if argument_name == parameters[0]:
                 yield plugin
+
+    @property
+    def ast_plugins(self):
+        """List of plugins that expect the AST tree."""
+        plugins = getattr(self, '_ast_plugins', [])
+        if not plugins:
+            plugins = list(self.checks_expecting('tree'))
+            self._ast_plugins = plugins
+        return plugins
+
+    @property
+    def logical_line_plugins(self):
+        """List of plugins that expect the logical lines."""
+        plugins = getattr(self, '_logical_line_plugins', [])
+        if not plugins:
+            plugins = list(self.checks_expecting('logical_line'))
+            self._logical_line_plugins = plugins
+        return plugins
 
     @property
     def physical_line_plugins(self):

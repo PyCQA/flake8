@@ -6,6 +6,7 @@ import pkg_resources
 
 from flake8 import exceptions
 from flake8.plugins import notifier
+from flake8 import utils
 
 LOG = logging.getLogger(__name__)
 
@@ -295,6 +296,25 @@ class Checkers(PluginTypeManager):
     """All of the checkers registered through entry-ponits."""
 
     namespace = 'flake8.extension'
+
+    def checks_expecting(self, argument_name):
+        """Retrieve checks that expect an argument with the specified name.
+
+        Find all checker plugins that are expecting a specific argument.
+        """
+        for plugin in self.plugins.values():
+            parameters = utils.parameters_for(plugin)
+            if argument_name in parameters:
+                yield plugin
+
+    @property
+    def physical_line_plugins(self):
+        """List of plugins that expect the physical lines."""
+        plugins = getattr(self, '_physical_line_plugins', [])
+        if not plugins:
+            plugins = list(self.checks_expecting('physical_line'))
+            self._physical_line_plugins = plugins
+        return plugins
 
 
 class Listeners(PluginTypeManager, NotifierBuilderMixin):

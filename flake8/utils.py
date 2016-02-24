@@ -1,5 +1,6 @@
 """Utility methods for flake8."""
 import fnmatch as _fnmatch
+import inspect
 import io
 import os
 import sys
@@ -144,3 +145,40 @@ def fnmatch(filename, patterns, default=True):
     if not patterns:
         return default
     return any(_fnmatch.fnmatch(filename, pattern) for pattern in patterns)
+
+
+def parameters_for(plugin):
+    # type: (flake8.plugins.manager.Plugin) -> List[str]
+    """Return the parameters for the plugin.
+
+    This will inspect the plugin and return either the function parameters
+    if the plugin is a function or the parameters for ``__init__`` after
+    ``self`` if the plugin is a class.
+
+    :param plugin:
+        The internal plugin object.
+    :type plugin:
+        flake8.plugins.manager.Plugin
+    :returns:
+        Parameters to the plugin.
+    :rtype:
+        list(str)
+    """
+    func = plugin.plugin
+    is_class = not inspect.isfunction(func)
+    if is_class:  # The plugin is a class
+        func = plugin.plugin.__init__
+
+    if sys.version_info < (3, 3):
+        parameters = inspect.getargspec(func)[0]
+    else:
+        parameters = [
+            parameter.name
+            for parameter in inspect.signature(func).parameters.values()
+            if parameter.kind == parameter.POSITIONAL_OR_KEYWORD
+        ]
+
+    if is_class:
+        parameters.remove('self')
+
+    return parameters

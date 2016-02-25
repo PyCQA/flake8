@@ -1,11 +1,12 @@
 """Tests for flake8's utils module."""
 import os
+
+from flake8 import utils
+from flake8.plugins import manager as plugin_manager
+
 import mock
 
 import pytest
-
-from flake8.plugins import manager as plugin_manager
-from flake8 import utils
 
 
 RELATIVE_PATHS = ["flake8", "pep8", "pyflakes", "mccabe"]

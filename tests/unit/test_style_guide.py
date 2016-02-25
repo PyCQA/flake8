@@ -1,11 +1,12 @@
 """Tests for the flake8.style_guide.StyleGuide class."""
 import optparse
 
+from flake8 import style_guide
 from flake8.formatting import base
 from flake8.plugins import notifier
-from flake8 import style_guide
 
 import mock
+
 import pytest
 
 

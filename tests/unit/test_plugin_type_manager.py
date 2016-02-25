@@ -1,11 +1,12 @@
 """Tests for flake8.plugins.manager.PluginTypeManager."""
 import collections
 
-import mock
-import pytest
-
 from flake8 import exceptions
 from flake8.plugins import manager
+
+import mock
+
+import pytest
 
 TEST_NAMESPACE = "testing.plugin-type-manager"
 

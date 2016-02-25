@@ -7,10 +7,11 @@ except ImportError:
 import os
 import sys
 
-import mock
-import pytest
-
 from flake8.options import config
+
+import mock
+
+import pytest
 
 CLI_SPECIFIED_FILEPATH = 'tests/fixtures/config_files/cli-specified.ini'
 

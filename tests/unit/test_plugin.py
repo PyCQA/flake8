@@ -1,9 +1,10 @@
 """Tests for flake8.plugins.manager.Plugin."""
-import mock
-import pytest
-
 from flake8 import exceptions
 from flake8.plugins import manager
+
+import mock
+
+import pytest
 
 
 def test_load_plugin_fallsback_on_old_setuptools():

@@ -1,11 +1,11 @@
 """Test aggregation of config files and command-line options."""
 import os
 
-import pytest
-
 from flake8.main import cli
 from flake8.options import aggregator
 from flake8.options import manager
+
+import pytest
 
 CLI_SPECIFIED_CONFIG = 'tests/fixtures/config_files/cli-specified.ini'
 

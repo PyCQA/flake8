@@ -1,8 +1,9 @@
 """Unit tests for flake8.options.manager.Option."""
-import mock
-import pytest
-
 from flake8.options import manager
+
+import mock
+
+import pytest
 
 
 def test_to_optparse():

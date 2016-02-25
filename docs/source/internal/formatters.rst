@@ -30,7 +30,7 @@ The former allows us to inspect the value provided to ``--format`` by the
 user and alter our own format based on that value. The second simply uses
 that format string to format the error.
 
-.. autoclass:: flake8.formatters.default.Default
+.. autoclass:: flake8.formatting.default.Default
     :members:
 
 Pylint Formatter
@@ -39,9 +39,9 @@ Pylint Formatter
 The |PylintFormatter| simply defines the default Pylint format string from
 pep8: ``'%(path)s:%(row)d: [%(code)s] %(text)s'``.
 
-.. autoclass:: flake8.formatters.default.Pylint
+.. autoclass:: flake8.formatting.default.Pylint
     :members:
 
 
-.. |DefaultFormatter| replace:: :class:`~flake8.formatters.default.Default`
-.. |PylintFormatter| replace:: :class:`~flake8.formatters.default.Pylint`
+.. |DefaultFormatter| replace:: :class:`~flake8.formatting.default.Default`
+.. |PylintFormatter| replace:: :class:`~flake8.formatting.default.Pylint`

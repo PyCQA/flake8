@@ -106,7 +106,8 @@ def filenames_from(arg, predicate=None):
     :param callable predicate:
         Predicate to use to filter out filenames. If the predicate
         returns ``True`` we will exclude the filename, otherwise we
-        will yield it.
+        will yield it. By default, we include every filename
+        generated.
     :returns:
         Generator of paths
     """

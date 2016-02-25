@@ -98,8 +98,10 @@ API Documentation
     :members:
 
 .. autoclass:: flake8.plugins.manager.Checkers
+    :members:
 
 .. autoclass:: flake8.plugins.manager.Listeners
+    :members: build_notifier
 
 .. autoclass:: flake8.plugins.manager.ReportFormatters
 

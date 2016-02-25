@@ -1,10 +1,12 @@
 """Packaging logic for Flake8."""
 # -*- coding: utf-8 -*-
 from __future__ import with_statement
-import setuptools
+
 import sys
 
-import flake8
+import setuptools
+
+import flake8  # noqa
 
 try:
     # Work around a traceback with Nose on Python 2.6

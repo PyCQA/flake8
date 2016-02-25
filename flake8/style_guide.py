@@ -1,10 +1,9 @@
 """Implementation of the StyleGuide used by Flake8."""
 import collections
+import enum
 import linecache
 import logging
 import re
-
-import enum
 
 from flake8 import utils
 

@@ -5,8 +5,8 @@ applies the user-specified command-line configuration on top of it.
 """
 import logging
 
-from flake8.options import config
 from flake8 import utils
+from flake8.options import config
 
 LOG = logging.getLogger(__name__)
 

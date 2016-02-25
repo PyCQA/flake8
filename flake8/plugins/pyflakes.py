@@ -1,6 +1,7 @@
 """Plugin built-in to Flake8 to treat pyflakes as a plugin."""
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
+
 try:
     # The 'demandimport' breaks pyflakes and flake8.plugins.pyflakes
     from mercurial import demandimport
@@ -10,10 +11,10 @@ else:
     demandimport.disable()
 import os
 
+from flake8 import utils
+
 import pyflakes
 import pyflakes.checker
-
-from flake8 import utils
 
 
 def patch_pyflakes():

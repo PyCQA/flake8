@@ -1,10 +1,10 @@
 """Command-line implementation of flake8."""
 import flake8
 from flake8 import defaults
+from flake8 import style_guide
 from flake8.options import aggregator
 from flake8.options import manager
 from flake8.plugins import manager as plugin_manager
-from flake8 import style_guide
 
 
 def register_default_options(option_manager):

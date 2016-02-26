@@ -35,12 +35,20 @@ class Plugin(object):
         self.name = name
         self.entry_point = entry_point
         self._plugin = None
+        self._parameters = None
 
     def __repr__(self):
         """Provide an easy to read description of the current plugin."""
         return 'Plugin(name="{0}", entry_point="{1}")'.format(
             self.name, self.entry_point
         )
+
+    @property
+    def parameters(self):
+        """List of arguments that need to be passed to the plugin."""
+        if self._parameters is None:
+            self._parameters = utils.parameters_for(self)
+        return self._parameters
 
     @property
     def plugin(self):
@@ -303,8 +311,7 @@ class Checkers(PluginTypeManager):
         Find all checker plugins that are expecting a specific argument.
         """
         for plugin in self.plugins.values():
-            parameters = utils.parameters_for(plugin)
-            if argument_name == parameters[0]:
+            if argument_name == plugin.parameters[0]:
                 yield plugin
 
     @property

@@ -179,7 +179,73 @@ class FileChecker(object):
         self.filename = filename
         self.checks = checks
         self.results = []
-        self.lines = []
+        self.processor = FileProcessor(filename)
+
+    def report(self, error_code, line_number, column, text):
+        # type: (str, int, int, str) -> NoneType
+        """Report an error by storing it in the results list."""
+        error = (error_code, self.filename, line_number, column, text)
+        self.results.append(error)
+
+    def run_check(self, plugin):
+        """Run the check in a single plugin."""
+        arguments = {}
+        for parameter in plugin.parameters:
+            arguments[parameter] = self.attributes[parameter]
+        return plugin.execute(**arguments)
+
+    def run_checks(self):
+        """Run checks against the file."""
+        self.run_ast_checks()
+        self.run_physical_checks()
+        self.run_logical_checks()
+
+    def run_ast_checks(self):
+        """Run checks that require an abstract syntax tree."""
+        pass
+
+    def run_physical_checks(self):
+        """Run checks that require the physical line."""
+        pass
+
+    def run_logical_checks(self):
+        """Run checks that require the logical line from a file."""
+        pass
+
+
+class FileProcessor(object):
+    """Processes a file and holdes state.
+
+    This processes a file by generating tokens, logical and physical lines,
+    and AST trees. This also provides a way of passing state about the file
+    to checks expecting that state. Any public attribute on this object can
+    be requested by a plugin. The known public attributes are:
+
+    - multiline
+    - max_line_length
+    - tokens
+    - indent_level
+    - indect_char
+    - noqa
+    - verbose
+    - line_number
+    - total_lines
+    - previous_logical
+    - logical_line
+    - previous_indent_level
+    - blank_before
+    - blank_lines
+    """
+
+    def __init__(self, filename):
+        """Initialice our file processor.
+
+        :param str filename:
+            Name of the file to process
+        """
+        self.filename = filename
+        self.lines = self.read_lines()
+        self.strip_utf_bom()
 
     def read_lines(self):
         # type: () -> List[str]
@@ -234,17 +300,6 @@ class FileChecker(object):
         # type: () -> List[str]
         """Read the lines from standard in."""
         return utils.stdin_get_value().splitlines(True)
-
-    def report(self, error_code, line_number, column, text):
-        # type: (str, int, int, str) -> NoneType
-        """Report an error by storing it in the results list."""
-        error = (error_code, self.filename, line_number, column, text)
-        self.results.append(error)
-
-    def run_checks(self):
-        """Run checks against the file."""
-        self.lines = self.read_lines()
-        self.strip_utf_bom()
 
     def strip_utf_bom(self):
         # type: () -> NoneType

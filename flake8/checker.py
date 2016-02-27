@@ -36,13 +36,13 @@ class Manager(object):
       together and make our output deterministic.
     """
 
-    def __init__(self, options, arguments, checker_plugins):
+    def __init__(self, style_guide, arguments, checker_plugins):
         """Initialize our Manager instance.
 
-        :param options:
-            The options parsed from config files and CLI.
-        :type options:
-            optparse.Values
+        :param style_guide:
+            The instantiated style guide for this instance of Flake8.
+        :type style_guide:
+            flake8.style_guide.StyleGuide
         :param list arguments:
             The extra arguments parsed from the CLI (if any)
         :param checker_plugins:
@@ -51,7 +51,8 @@ class Manager(object):
             flake8.plugins.manager.Checkers
         """
         self.arguments = arguments
-        self.options = options
+        self.style_guide = style_guide
+        self.options = style_guide.options
         self.checks = checker_plugins
         self.jobs = self._job_count()
         self.process_queue = None
@@ -130,7 +131,7 @@ class Manager(object):
             paths = self.arguments
         filename_patterns = self.options.filename
         self.checkers = [
-            FileChecker(filename, self.checks, self.options)
+            FileChecker(filename, self.checks, self.style_guide)
             for argument in paths
             for filename in utils.filenames_from(argument,
                                                  self.is_path_excluded)
@@ -167,7 +168,7 @@ class Manager(object):
 class FileChecker(object):
     """Manage running checks for a file and aggregate the results."""
 
-    def __init__(self, filename, checks, options):
+    def __init__(self, filename, checks, style_guide):
         """Initialize our file checker.
 
         :param str filename:
@@ -179,13 +180,13 @@ class FileChecker(object):
         """
         self.filename = filename
         self.checks = checks
-        self.options = options
+        self.style_guide = style_guide
         self.results = []
         self.processor = self._make_processor()
 
     def _make_processor(self):
         try:
-            return FileProcessor(self.filename, self.options)
+            return FileProcessor(self.filename, self.style_guide.options)
         except IOError:
             # If we can not read the file due to an IOError (e.g., the file
             # does not exist or we do not have the permissions to open it)

@@ -10,6 +10,8 @@ try:
 except ImportError:
     multiprocessing = None
 
+from flake8 import defaults
+from flake8 import exceptions
 from flake8 import utils
 
 LOG = logging.getLogger(__name__)
@@ -128,7 +130,7 @@ class Manager(object):
             paths = self.arguments
         filename_patterns = self.options.filename
         self.checkers = [
-            FileChecker(filename, self.checks)
+            FileChecker(filename, self.checks, self.options)
             for argument in paths
             for filename in utils.filenames_from(argument,
                                                  self.is_path_excluded)
@@ -165,8 +167,7 @@ class Manager(object):
 class FileChecker(object):
     """Manage running checks for a file and aggregate the results."""
 
-    def __init__(self, filename, checks):
-        # type: (str, flake8.plugins.manager.Checkers) -> NoneType
+    def __init__(self, filename, checks, options):
         """Initialize our file checker.
 
         :param str filename:
@@ -178,8 +179,24 @@ class FileChecker(object):
         """
         self.filename = filename
         self.checks = checks
+        self.options = options
         self.results = []
-        self.processor = FileProcessor(filename)
+        self.processor = self._make_processor()
+
+    def _make_processor(self):
+        try:
+            return FileProcessor(self.filename, self.options)
+        except IOError:
+            # If we can not read the file due to an IOError (e.g., the file
+            # does not exist or we do not have the permissions to open it)
+            # then we need to format that exception for the user.
+            # NOTE(sigmavirus24): Historically, pep8 has always reported this
+            # as an E902. We probably *want* a better error code for this
+            # going forward.
+            (exc_type, exception) = sys.exc_info()[:2]
+            message = '{0}: {1}'.format(exc_type.__name__, exception)
+            self.report('E902', 0, 0, message)
+            return None
 
     def report(self, error_code, line_number, column, text):
         # type: (str, int, int, str) -> NoneType
@@ -196,21 +213,12 @@ class FileChecker(object):
 
     def run_checks(self):
         """Run checks against the file."""
-        self.run_ast_checks()
-        self.run_physical_checks()
-        self.run_logical_checks()
-
-    def run_ast_checks(self):
-        """Run checks that require an abstract syntax tree."""
-        pass
-
-    def run_physical_checks(self):
-        """Run checks that require the physical line."""
-        pass
-
-    def run_logical_checks(self):
-        """Run checks that require the logical line from a file."""
-        pass
+        try:
+            for token in self.processor.generate_tokens():
+                pass
+        except exceptions.InvalidSyntax as exc:
+            self.report(exc.error_code, exc.line_number, exc.column_number,
+                        exc.error_message)
 
 
 class FileProcessor(object):
@@ -221,23 +229,23 @@ class FileProcessor(object):
     to checks expecting that state. Any public attribute on this object can
     be requested by a plugin. The known public attributes are:
 
-    - multiline
-    - max_line_length
-    - tokens
-    - indent_level
-    - indect_char
-    - noqa
-    - verbose
-    - line_number
-    - total_lines
-    - previous_logical
-    - logical_line
-    - previous_indent_level
     - blank_before
     - blank_lines
+    - indect_char
+    - indent_level
+    - line_number
+    - logical_line
+    - max_line_length
+    - multiline
+    - noqa
+    - previous_indent_level
+    - previous_logical
+    - tokens
+    - total_lines
+    - verbose
     """
 
-    def __init__(self, filename):
+    def __init__(self, filename, options):
         """Initialice our file processor.
 
         :param str filename:
@@ -246,6 +254,69 @@ class FileProcessor(object):
         self.filename = filename
         self.lines = self.read_lines()
         self.strip_utf_bom()
+        self.options = options
+
+        # Defaults for public attributes
+        #: Number of preceding blank lines
+        self.blank_before = 0
+        #: Number of blank lines
+        self.blank_lines = 0
+        #: Character used for indentation
+        self.indent_char = None
+        #: Current level of indentation
+        self.indent_level = 0
+        #: Line number in the file
+        self.line_number = 0
+        #: Current logical line
+        self.logical_line = ''
+        #: Maximum line length as configured by the user
+        self.max_line_length = options.max_line_length
+        #: Whether the current physical line is multiline
+        self.multiline = False
+        #: Whether or not we're observing NoQA
+        self.noqa = False
+        #: Previous level of indentation
+        self.previous_indent_level = 0
+        #: Previous logical line
+        self.previous_logical = ''
+        #: Current set of tokens
+        self.tokens = []
+        #: Total number of lines in the file
+        self.total_lines = len(self.lines)
+        #: Verbosity level of Flake8
+        self.verbosity = options.verbosity
+
+    def generate_tokens(self):
+        """Tokenize the file and yield the tokens.
+
+        :raises flake8.exceptions.InvalidSyntax:
+            If a :class:`tokenize.TokenError` is raised while generating
+            tokens.
+        """
+        try:
+            for token in tokenize.generate_tokens(self.next_line):
+                if token[2][0] > self.total_lines:
+                    break
+                self.tokens.append(token)
+                yield token
+        # NOTE(sigmavirus24): pycodestyle was catching both a SyntaxError
+        # and a tokenize.TokenError. In looking a the source on Python 2 and
+        # Python 3, the SyntaxError should never arise from generate_tokens.
+        # If we were using tokenize.tokenize, we would have to catch that. Of
+        # course, I'm going to be unsurprised to be proven wrong at a later
+        # date.
+        except tokenize.TokenError as exc:
+            raise exceptions.InvalidSyntax(exc.message, exception=exc)
+
+    def next_line(self):
+        """Get the next line from the list."""
+        if self.line_number >= self.total_lines:
+            return ''
+        line = self.lines[self.line_number]
+        self.line_number += 1
+        if self.indent_char is None and line[:1] in defaults.WHITESPACE:
+            self.indent_char = line[0]
+        return line
 
     def read_lines(self):
         # type: () -> List[str]
@@ -281,20 +352,7 @@ class FileProcessor(object):
             readlines = self._readlines_py2
         elif (3, 0) <= sys.version_info < (4, 0):
             readlines = self._readlines_py3
-
-        try:
-            return readlines()
-        except IOError:
-            # If we can not read the file due to an IOError (e.g., the file
-            # does not exist or we do not have the permissions to open it)
-            # then we need to format that exception for the user.
-            # NOTE(sigmavirus24): Historically, pep8 has always reported this
-            # as an E902. We probably *want* a better error code for this
-            # going forward.
-            (exc_type, exception) = sys.exc_info()[:2]
-            message = '{0}: {1}'.format(exc_type.__name__, exception)
-            self.report('E902', 0, 0, message)
-            return []
+        return readlines()
 
     def read_lines_from_stdin(self):
         # type: () -> List[str]

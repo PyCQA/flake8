@@ -23,3 +23,21 @@ class FailedToLoadPlugin(Flake8Exception):
         """Return a nice string for our exception."""
         return self.FORMAT % {'name': self.ep_name,
                               'exc': self.original_exception}
+
+
+class InvalidSyntax(Flake8Exception):
+    """Exception raised when tokenizing a file fails."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize our InvalidSyntax exception."""
+        self.original_exception = kwargs.pop('exception')
+        self.error_code = 'E902'
+        self.line_number = 1
+        self.column_number = 0
+        try:
+            self.error_message = self.original_exception.message
+        except AttributeError:
+            # On Python 3, the IOError is an OSError which has a
+            # strerror attribute instead of a message attribute
+            self.error_message = self.original_exception.strerror
+        super(InvalidSyntax, self).__init__(*args, **kwargs)

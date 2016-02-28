@@ -61,13 +61,6 @@ See https://en.wikipedia.org/wiki/Cyclomatic_complexity.
 Frequently Asked Questions
 ==========================
 
-Why does flake8 pin the version of pep8?
-----------------------------------------
-
-Version 1.6 of pep8 doesn't work properly with flake8.  Until pep8 releases a
-version that works, flake8 pins the version of pep8 so that flake8 will work as
-a whole.
-
 Is flake8 broken?
 -----------------
 

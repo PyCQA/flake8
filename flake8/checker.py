@@ -1,4 +1,5 @@
 """Checker Manager and Checker classes."""
+import contextlib
 import io
 import logging
 import os
@@ -205,21 +206,56 @@ class FileChecker(object):
         error = (error_code, self.filename, line_number, column, text)
         self.results.append(error)
 
-    def run_check(self, plugin):
+    def run_check(self, plugin, **arguments):
         """Run the check in a single plugin."""
-        arguments = {}
-        for parameter in plugin.parameters:
-            arguments[parameter] = self.attributes[parameter]
+        self.processor.keyword_arguments_for(plugin.parameters, arguments)
         return plugin.execute(**arguments)
+
+    def run_physical_checks(self, physical_line):
+        for plugin in self.checks.physical_line_plugins:
+            result = self.run_check(plugin, physical_line=physical_line)
+            if result is not None:
+                column_offset, text = result
+                error_code, error_text = text.split(' ', 1)
+                self.report(
+                    error_code=error_code,
+                    line_number=self.processor.line_number,
+                    column=column_offset,
+                    text=error_text,
+                )
+
+                self.processor.check_physical_error(error_code, physical_line)
 
     def run_checks(self):
         """Run checks against the file."""
         try:
             for token in self.processor.generate_tokens():
-                pass
+                self.check_physical_eol(token)
         except exceptions.InvalidSyntax as exc:
             self.report(exc.error_code, exc.line_number, exc.column_number,
                         exc.error_message)
+
+    def check_physical_eol(self, token):
+        """Run physical checks if and only if it is at the end of the line."""
+        if utils.is_eol_token(token):
+            # Obviously, a newline token ends a single physical line.
+            self.run_physical_checks(token[4])
+        elif utils.is_multiline_string(token):
+            # Less obviously, a string that contains newlines is a
+            # multiline string, either triple-quoted or with internal
+            # newlines backslash-escaped. Check every physical line in the
+            # string *except* for the last one: its newline is outside of
+            # the multiline string, so we consider it a regular physical
+            # line, and will check it like any other physical line.
+            #
+            # Subtleties:
+            # - have to wind self.line_number back because initially it
+            #   points to the last line of the string, and we want
+            #   check_physical() to give accurate feedback
+            line_no = token[2][0]
+            with self.processor.inside_multiline(line_number=line_no):
+                for line in self.processor.split_line(token):
+                    self.run_physical_checks(line + '\n')
 
 
 class FileProcessor(object):
@@ -286,6 +322,37 @@ class FileProcessor(object):
         self.total_lines = len(self.lines)
         #: Verbosity level of Flake8
         self.verbosity = options.verbosity
+
+    @contextlib.contextmanager
+    def inside_multiline(self, line_number):
+        """Context-manager to toggle the multiline attribute."""
+        self.line_number = line_number
+        self.multiline = True
+        yield
+        self.multiline = False
+
+    def split_line(self, token):
+        """Split a physical line's line based on new-lines.
+
+        This also auto-increments the line number for the caller.
+        """
+        for line in token[1].split('\n')[:-1]:
+            yield line
+            self.line_number += 1
+
+    def keyword_arguments_for(self, parameters, arguments=None):
+        """Generate the keyword arguments for a list of parameters."""
+        if arguments is None:
+            arguments = {}
+        for param in parameters:
+            if param not in arguments:
+                arguments[param] = getattr(self, param)
+        return arguments
+
+    def check_physical_error(self, error_code, line):
+        """Update attributes based on error code and line."""
+        if error_code == 'E101':
+            self.indent_char = line[0]
 
     def generate_tokens(self):
         """Tokenize the file and yield the tokens.

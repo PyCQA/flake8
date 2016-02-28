@@ -4,6 +4,7 @@ import inspect
 import io
 import os
 import sys
+import tokenize
 
 
 def parse_comma_separated_list(value):
@@ -183,3 +184,24 @@ def parameters_for(plugin):
         parameters.remove('self')
 
     return parameters
+
+NEWLINE = frozenset([tokenize.NL, tokenize.NEWLINE])
+# Work around Python < 2.6 behaviour, which does not generate NL after
+# a comment which is on a line by itself.
+COMMENT_WITH_NL = tokenize.generate_tokens(['#\n'].pop).send(None)[1] == '#\n'
+
+
+def is_eol_token(token):
+    """Check if the token is an end-of-line token."""
+    return token[0] in NEWLINE or token[4][token[3][1]:].lstrip() == '\\\n'
+
+if COMMENT_WITH_NL:  # If on Python 2.6
+    def is_eol_token(token, _is_eol_token=is_eol_token):
+        """Check if the token is an end-of-line token."""
+        return (_is_eol_token(token) or
+                (token[0] == tokenize.COMMENT and token[1] == token[4]))
+
+
+def is_multiline_string(token):
+    """Check if this is a multiline string."""
+    return token[0] == tokenize.STRING and '\n' in token[1]

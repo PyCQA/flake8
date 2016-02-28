@@ -157,14 +157,16 @@ class StyleGuide(object):
             LOG.debug('"%s" will be "%s"', code, decision)
         return decision
 
-    def is_inline_ignored(self, error):
+    def is_inline_ignored(self, error, physical_line=None):
         # type: (Error) -> bool
         """Determine if an comment has been added to ignore this line."""
         # TODO(sigmavirus24): Determine how to handle stdin with linecache
         if self.options.disable_noqa:
             return False
 
-        physical_line = linecache.getline(error.filename, error.line_number)
+        if physical_line is None:
+            physical_line = linecache.getline(error.filename,
+                                              error.line_number)
         noqa_match = self.NOQA_INLINE_REGEXP.search(physical_line)
         if noqa_match is None:
             LOG.debug('%r is not inline ignored', error)

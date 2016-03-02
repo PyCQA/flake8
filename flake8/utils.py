@@ -205,3 +205,21 @@ if COMMENT_WITH_NL:  # If on Python 2.6
 def is_multiline_string(token):
     """Check if this is a multiline string."""
     return token[0] == tokenize.STRING and '\n' in token[1]
+
+
+def token_is_newline(token):
+    """Check if the token type is a newline token type."""
+    return token[0] in NEWLINE
+
+
+def token_is_comment(token):
+    """Check if the token type is a comment."""
+    return COMMENT_WITH_NL and token[0] == tokenize.COMMENT
+
+
+def count_parentheses(current_parentheses_count, token_text):
+    """Count the number of parentheses."""
+    if token_text in '([{':
+        return current_parentheses_count + 1
+    elif token_text in '}])':
+        return current_parentheses_count - 1

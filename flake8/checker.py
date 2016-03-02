@@ -201,39 +201,111 @@ class FileChecker(object):
             return None
 
     def report(self, error_code, line_number, column, text):
-        # type: (str, int, int, str) -> NoneType
+        # type: (str, int, int, str) -> str
         """Report an error by storing it in the results list."""
+        if error_code is None:
+            error_code, text = text.split(' ', 1)
         error = (error_code, self.filename, line_number, column, text)
         self.results.append(error)
+        return error_code
 
     def run_check(self, plugin, **arguments):
         """Run the check in a single plugin."""
         self.processor.keyword_arguments_for(plugin.parameters, arguments)
         return plugin.execute(**arguments)
 
+    def run_logical_checks(self):
+        """Run all checks expecting a logical line."""
+        for plugin in self.checks.logical_line_plugins:
+            result = self.run_check(plugin)  # , logical_line=logical_line)
+            if result is not None:
+                column_offset, text = result
+                self.report(
+                    error_code=None,
+                    line_number=self.processor.line_number,
+                    column=column_offset,
+                    text=text,
+                )
+
     def run_physical_checks(self, physical_line):
+        """Run all checks for a given physical line."""
         for plugin in self.checks.physical_line_plugins:
             result = self.run_check(plugin, physical_line=physical_line)
             if result is not None:
                 column_offset, text = result
-                error_code, error_text = text.split(' ', 1)
-                self.report(
-                    error_code=error_code,
+                error_code = self.report(
+                    error_code=None,
                     line_number=self.processor.line_number,
                     column=column_offset,
-                    text=error_text,
+                    text=text,
                 )
 
                 self.processor.check_physical_error(error_code, physical_line)
 
+    def _log_token(self, token):
+        if token[2][0] == token[3][0]:
+            pos = '[%s:%s]' % (token[2][1] or '', token[3][1])
+        else:
+            pos = 'l.%s' % token[3][0]
+        LOG.debug('l.%s\t%s\t%s\t%r' %
+                  (token[2][0], pos, tokenize.tok_name[token[0]],
+                      token[1]))
+
+    def process_tokens(self):
+        """Process tokens and trigger checks.
+
+        This can raise a :class:`flake8.exceptions.InvalidSyntax` exception.
+        Instead of using this directly, you should use
+        :meth:`flake8.checker.FileChecker.run_checks`.
+        """
+        parens = 0
+        processor = self.processor
+        for token in processor.generate_tokens():
+            self.check_physical_eol(token)
+            token_type, text = token[0:2]
+            self._log_token(token)
+            if token_type == tokenize.OP:
+                parens = utils.count_parentheses(parens, text)
+            elif parens == 0:
+                if utils.token_is_newline(token):
+                    self.handle_newline(token_type)
+                elif (utils.token_is_comment(token) and
+                        len(processor.tokens) == 1):
+                    self.handle_comment(token, text)
+
+        if processor.tokens:
+            # If any tokens are left over, process them
+            self.run_physical_checks(processor.lines[-1])
+            self.run_logical_checks()
+
     def run_checks(self):
         """Run checks against the file."""
         try:
-            for token in self.processor.generate_tokens():
-                self.check_physical_eol(token)
+            self.process_tokens()
         except exceptions.InvalidSyntax as exc:
             self.report(exc.error_code, exc.line_number, exc.column_number,
                         exc.error_message)
+
+    def handle_comment(self, token, token_text):
+        """Handle the logic when encountering a comment token."""
+        # The comment also ends a physical line
+        token = list(token)
+        token[1] = token_text.rstrip('\r\n')
+        token[3] = (token[2][0], token[2][1] + len(token[1]))
+        self.processor.tokens = [tuple(token)]
+        self.run_logical_checks()
+
+    def handle_newline(self, token_type):
+        """Handle the logic when encountering a newline token."""
+        if token_type == tokenize.NEWLINE:
+            self.check_logical()
+            self.processor.reset_blank_before()
+        elif len(self.processor.tokens) == 1:
+            # The physical line contains only this token.
+            self.processor.visited_new_blank_line()
+            self.processor.delete_first_token()
+        else:
+            self.run_logical_checks()
 
     def check_physical_eol(self, token):
         """Run physical checks if and only if it is at the end of the line."""
@@ -330,6 +402,18 @@ class FileProcessor(object):
         self.multiline = True
         yield
         self.multiline = False
+
+    def reset_blank_before(self):
+        """Reset the blank_before attribute to zero."""
+        self.blank_before = 0
+
+    def delete_first_token(self):
+        """Delete the first token in the list of tokens."""
+        del self.tokens[0]
+
+    def visited_new_blank_line(self):
+        """Note that we visited a new blank line."""
+        self.blank_lines += 1
 
     def split_line(self, token):
         """Split a physical line's line based on new-lines.

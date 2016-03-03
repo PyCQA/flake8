@@ -17,6 +17,9 @@ from flake8 import utils
 
 LOG = logging.getLogger(__name__)
 
+SKIP_TOKENS = frozenset([tokenize.NL, tokenize.NEWLINE, tokenize.INDENT,
+                         tokenize.DEDENT])
+
 
 class Manager(object):
     """Manage the parallelism and checker instances for each plugin and file.
@@ -216,8 +219,15 @@ class FileChecker(object):
 
     def run_logical_checks(self):
         """Run all checks expecting a logical line."""
+        comments, logical_line, mapping = self.processor.build_logical_line()
+        if not mapping:
+            return
+        self.processor.update_state(mapping)
+
+        LOG.debug('Logical line: "%s"', logical_line.rstrip())
+
         for plugin in self.checks.logical_line_plugins:
-            result = self.run_check(plugin)  # , logical_line=logical_line)
+            result = self.run_check(plugin, logical_line=logical_line)
             if result is not None:
                 column_offset, text = result
                 self.report(
@@ -414,6 +424,45 @@ class FileProcessor(object):
     def visited_new_blank_line(self):
         """Note that we visited a new blank line."""
         self.blank_lines += 1
+
+    def build_logical_line_tokens(self):
+        """Build the mapping, comments, and logical line lists."""
+        logical = []
+        comments = []
+        length = 0
+        previous_row = previous_column = mapping = None
+        for token_type, text, start, end, line in self.tokens:
+            if token_type in SKIP_TOKENS:
+                continue
+            if not mapping:
+                mapping = [(0, start)]
+            if token_type == tokenize.COMMENT:
+                comments.append(text)
+                continue
+            if token_type == tokenize.STRING:
+                text = utils.mutate_string(text)
+            if previous_row:
+                (start_row, start_column) = start
+                if previous_row != start_row:
+                    row_index = previous_row - 1
+                    column_index = previous_column - 1
+                    previous_text = self.lines[row_index][column_index]
+                    if (previous_text == ',' or
+                            (previous_text not in '{[(' and
+                             text not in '}])')):
+                        text = ' ' + text
+                    elif previous_column != start_column:
+                        text = line[previous_column:start_column] + text
+            logical.append(text)
+            length += len(text)
+            mapping.append((length, end))
+            (previous_row, previous_column) = end
+        return comments, logical, mapping
+
+    def build_logical_line(self):
+        """Build a logical line from the current tokens list."""
+        comments, logical, mapping_list = self.build_logical_line_tokens()
+        return ''.join(comments), ''.join(logical), mapping_list
 
     def split_line(self, token):
         """Split a physical line's line based on new-lines.

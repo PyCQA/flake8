@@ -223,3 +223,23 @@ def count_parentheses(current_parentheses_count, token_text):
         return current_parentheses_count + 1
     elif token_text in '}])':
         return current_parentheses_count - 1
+
+
+def mutate_string(text):
+    """Replace contents with 'xxx' to prevent syntax matching.
+
+    >>> mute_string('"abc"')
+    '"xxx"'
+    >>> mute_string("'''abc'''")
+    "'''xxx'''"
+    >>> mute_string("r'abc'")
+    "r'xxx'"
+    """
+    # String modifiers (e.g. u or r)
+    start = text.index(text[-1]) + 1
+    end = len(text) - 1
+    # Triple quotes
+    if text[-3:] in ('"""', "'''"):
+        start += 2
+        end -= 2
+    return text[:start] + 'x' * (end - start) + text[end:]

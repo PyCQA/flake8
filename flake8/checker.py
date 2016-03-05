@@ -223,15 +223,18 @@ class FileChecker(object):
         LOG.debug('Logical line: "%s"', logical_line.rstrip())
 
         for plugin in self.checks.logical_line_plugins:
-            result = self.run_check(plugin, logical_line=logical_line)
-            if result is not None:
-                column_offset, text = result
+            results = self.run_check(plugin, logical_line=logical_line) or ()
+            for offset, text in results:
+                offset = find_offset(offset, mapping)
+                line_number, column_offset = offset
                 self.report(
                     error_code=None,
-                    line_number=self.processor.line_number,
+                    line_number=line_number,
                     column=column_offset,
                     text=text,
                 )
+
+        self.processor.next_logical_line()
 
     def run_physical_checks(self, physical_line):
         """Run all checks for a given physical line."""
@@ -325,3 +328,14 @@ class FileChecker(object):
             with self.processor.inside_multiline(line_number=line_no):
                 for line in self.processor.split_line(token):
                     self.run_physical_checks(line + '\n')
+
+
+def find_offset(offset, mapping):
+    """Find the offset tuple for a single offset."""
+    if isinstance(offset, tuple):
+        return offset
+
+    for token_offset, position in mapping:
+        if offset <= token_offset:
+            break
+    return (position[0], position[1] + offset - token_offset)

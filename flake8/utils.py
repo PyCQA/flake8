@@ -4,7 +4,6 @@ import inspect
 import io
 import os
 import sys
-import tokenize
 
 
 def parse_comma_separated_list(value):
@@ -184,62 +183,3 @@ def parameters_for(plugin):
         parameters.remove('self')
 
     return parameters
-
-NEWLINE = frozenset([tokenize.NL, tokenize.NEWLINE])
-# Work around Python < 2.6 behaviour, which does not generate NL after
-# a comment which is on a line by itself.
-COMMENT_WITH_NL = tokenize.generate_tokens(['#\n'].pop).send(None)[1] == '#\n'
-
-
-def is_eol_token(token):
-    """Check if the token is an end-of-line token."""
-    return token[0] in NEWLINE or token[4][token[3][1]:].lstrip() == '\\\n'
-
-if COMMENT_WITH_NL:  # If on Python 2.6
-    def is_eol_token(token, _is_eol_token=is_eol_token):
-        """Check if the token is an end-of-line token."""
-        return (_is_eol_token(token) or
-                (token[0] == tokenize.COMMENT and token[1] == token[4]))
-
-
-def is_multiline_string(token):
-    """Check if this is a multiline string."""
-    return token[0] == tokenize.STRING and '\n' in token[1]
-
-
-def token_is_newline(token):
-    """Check if the token type is a newline token type."""
-    return token[0] in NEWLINE
-
-
-def token_is_comment(token):
-    """Check if the token type is a comment."""
-    return COMMENT_WITH_NL and token[0] == tokenize.COMMENT
-
-
-def count_parentheses(current_parentheses_count, token_text):
-    """Count the number of parentheses."""
-    if token_text in '([{':
-        return current_parentheses_count + 1
-    elif token_text in '}])':
-        return current_parentheses_count - 1
-
-
-def mutate_string(text):
-    """Replace contents with 'xxx' to prevent syntax matching.
-
-    >>> mute_string('"abc"')
-    '"xxx"'
-    >>> mute_string("'''abc'''")
-    "'''xxx'''"
-    >>> mute_string("r'abc'")
-    "r'xxx'"
-    """
-    # String modifiers (e.g. u or r)
-    start = text.index(text[-1]) + 1
-    end = len(text) - 1
-    # Triple quotes
-    if text[-3:] in ('"""', "'''"):
-        start += 2
-        end -= 2
-    return text[:start] + 'x' * (end - start) + text[end:]

@@ -102,6 +102,25 @@ class FileProcessor(object):
         """Note that we visited a new blank line."""
         self.blank_lines += 1
 
+    def update_state(self, mapping):
+        """Update the indent level based on the logical line mapping."""
+        (start_row, start_col) = mapping[0][1]
+        start_line = self.lines[start_row - 1]
+        self.indent_level = expand_indent(start_line[:start_col])
+        if self.blank_before < self.blank_lines:
+            self.blank_before = self.blank_lines
+
+    def next_logical_line(self):
+        """Record the previous logical line.
+
+        This also resets the tokens list and the blank_lines count.
+        """
+        if self.logical_line:
+            self.previous_indent_level = self.indent_level
+            self.previous_logical = self.logical_line
+        self.blank_lines = 0
+        self.tokens = []
+
     def build_logical_line_tokens(self):
         """Build the mapping, comments, and logical line lists."""
         logical = []
@@ -117,7 +136,7 @@ class FileProcessor(object):
                 comments.append(text)
                 continue
             if token_type == tokenize.STRING:
-                text = utils.mutate_string(text)
+                text = mutate_string(text)
             if previous_row:
                 (start_row, start_column) = start
                 if previous_row != start_row:
@@ -298,3 +317,50 @@ def log_token(log, token):
     log.debug('l.%s\t%s\t%s\t%r' %
               (token[2][0], pos, tokenize.tok_name[token[0]],
                   token[1]))
+
+
+def expand_indent(line):
+    r"""Return the amount of indentation.
+
+    Tabs are expanded to the next multiple of 8.
+
+    >>> expand_indent('    ')
+    4
+    >>> expand_indent('\t')
+    8
+    >>> expand_indent('       \t')
+    8
+    >>> expand_indent('        \t')
+    16
+    """
+    if '\t' not in line:
+        return len(line) - len(line.lstrip())
+    result = 0
+    for char in line:
+        if char == '\t':
+            result = result // 8 * 8 + 8
+        elif char == ' ':
+            result += 1
+        else:
+            break
+    return result
+
+
+def mutate_string(text):
+    """Replace contents with 'xxx' to prevent syntax matching.
+
+    >>> mute_string('"abc"')
+    '"xxx"'
+    >>> mute_string("'''abc'''")
+    "'''xxx'''"
+    >>> mute_string("r'abc'")
+    "r'xxx'"
+    """
+    # String modifiers (e.g. u or r)
+    start = text.index(text[-1]) + 1
+    end = len(text) - 1
+    # Triple quotes
+    if text[-3:] in ('"""', "'''"):
+        start += 2
+        end -= 2
+    return text[:start] + 'x' * (end - start) + text[end:]

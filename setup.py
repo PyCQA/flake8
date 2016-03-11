@@ -71,7 +71,43 @@ setuptools.setup(
         'console_scripts': ['flake8 = flake8.main.cli:main'],
         'flake8.extension': [
             'F = flake8.plugins.pyflakes:FlakesChecker',
+            # PEP-0008 checks provied by PyCQA/pycodestyle
             'pep8.tabs_or_spaces = pep8:tabs_or_spaces',
+            'pep8.tabs_obsolete = pep8:tabs_obsolete',
+            'pep8.trailing_whitespace = pep8:trailing_whitespace',
+            'pep8.trailing_blank_lines = pep8:trailing_blank_lines',
+            'pep8.maximum_line_length = pep8:maximum_line_length',
+            'pep8.blank_lines = pep8:blank_lines',
+            'pep8.extraneous_whitespace = pep8:extraneous_whitespace',
+            ('pep8.whitespace_around_keywords = '
+                'pep8:whitespace_around_keywords'),
+            'pep8.missing_whitespace = pep8:missing_whitespace',
+            'pep8.indentation = pep8:indentation',
+            'pep8.continued_indentation = pep8:continued_indentation',
+            ('pep8.whitespace_before_parameters = '
+                'pep8:whitespace_before_parameters'),
+            ('pep8.whitespace_around_operator = '
+                'pep8:whitespace_around_operator'),
+            ('pep8.missing_whitespace_around_operator = '
+                'pep8:missing_whitespace_around_operator'),
+            'pep8.whitespace_around_comma = pep8:whitespace_around_comma',
+            ('pep8.whitespace_around_named_parameter_equals = '
+                'pep8:whitespace_around_named_parameter_equals'),
+            'pep8.whitespace_before_comment = pep8:whitespace_before_comment',
+            'pep8.imports_on_separate_lines = pep8:imports_on_separate_lines',
+            ('pep8.module_imports_on_top_of_file = '
+                'pep8:module_imports_on_top_of_file'),
+            'pep8.compound_statements = pep8:compound_statements',
+            'pep8.explicit_line_join = pep8:explicit_line_join',
+            ('pep8.break_around_binary_operator = '
+                'pep8:break_around_binary_operator'),
+            'pep8.comparison_to_singleton = pep8:comparison_to_singleton',
+            'pep8.comparison_negative = pep8:comparison_negative',
+            'pep8.comparison_type = pep8:comparison_type',
+            'pep8.python_3000_has_key = pep8:python_3000_has_key',
+            'pep8.python_3000_raise_comma = pep8:python_3000_raise_comma',
+            'pep8.python_3000_not_equal = pep8:python_3000_not_equal',
+            'pep8.python_3000_backticks = pep8:python_3000_backticks',
         ],
         'flake8.report': [
             'default = flake8.formatting.default:Default',

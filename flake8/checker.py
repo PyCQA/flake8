@@ -137,6 +137,14 @@ class Manager(object):
             if utils.fnmatch(filename, filename_patterns)
         ]
 
+    def run(self):
+        """Run checks.
+
+        TODO(sigmavirus24): Get rid of this
+        """
+        for checker in self.checkers:
+            checker.run_checks()
+
     def is_path_excluded(self, path):
         # type: (str) -> bool
         """Check if a path is excluded.
@@ -210,6 +218,7 @@ class FileChecker(object):
 
     def run_check(self, plugin, **arguments):
         """Run the check in a single plugin."""
+        LOG.debug('Running %r with %r', plugin, arguments)
         self.processor.keyword_arguments_for(plugin.parameters, arguments)
         return plugin.execute(**arguments)
 
@@ -263,7 +272,7 @@ class FileChecker(object):
         for token in file_processor.generate_tokens():
             self.check_physical_eol(token)
             token_type, text = token[0:2]
-            processor.log_token(token)
+            processor.log_token(LOG, token)
             if token_type == tokenize.OP:
                 parens = processor.count_parentheses(parens, text)
             elif parens == 0:
@@ -298,7 +307,7 @@ class FileChecker(object):
     def handle_newline(self, token_type):
         """Handle the logic when encountering a newline token."""
         if token_type == tokenize.NEWLINE:
-            self.check_logical()
+            self.run_logical_checks()
             self.processor.reset_blank_before()
         elif len(self.processor.tokens) == 1:
             # The physical line contains only this token.

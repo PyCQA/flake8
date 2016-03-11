@@ -71,6 +71,7 @@ setuptools.setup(
         'console_scripts': ['flake8 = flake8.main.cli:main'],
         'flake8.extension': [
             'F = flake8.plugins.pyflakes:FlakesChecker',
+            'pep8.tabs_or_spaces = pep8:tabs_or_spaces',
         ],
         'flake8.report': [
             'default = flake8.formatting.default:Default',

@@ -80,7 +80,7 @@ class FileProcessor(object):
         #: Total number of lines in the file
         self.total_lines = len(self.lines)
         #: Verbosity level of Flake8
-        self.verbosity = options.verbosity
+        self.verbosity = options.verbose
 
     @contextlib.contextmanager
     def inside_multiline(self, line_number):
@@ -302,10 +302,12 @@ def token_is_comment(token):
 
 def count_parentheses(current_parentheses_count, token_text):
     """Count the number of parentheses."""
+    current_parentheses_count = current_parentheses_count or 0
     if token_text in '([{':
         return current_parentheses_count + 1
     elif token_text in '}])':
         return current_parentheses_count - 1
+    return current_parentheses_count
 
 
 def log_token(log, token):

@@ -1,5 +1,6 @@
 """Command-line implementation of flake8."""
 import flake8
+from flake8 import checker
 from flake8 import defaults
 from flake8 import style_guide
 from flake8.options import aggregator
@@ -181,10 +182,11 @@ class Application(object):
 
         self.check_plugins = None
         self.listening_plugins = None
-        self.formatting_plugigns = None
+        self.formatting_plugins = None
         self.formatter = None
         self.listener_trie = None
         self.guide = None
+        self.file_checker_manager = None
 
         self.options = None
         self.args = None
@@ -242,6 +244,17 @@ class Application(object):
                 self.options, self.listener_trie, self.formatter
             )
 
+    def make_file_checker_manager(self):
+        # type: () -> NoneType
+        """Initialize our FileChecker Manager."""
+        if self.file_checker_manager is None:
+            self.file_checker_manager = checker.Manager(
+                style_guide=self.guide,
+                arguments=self.args,
+                checker_plugins=self.check_plugins,
+            )
+            self.file_checker_manager.make_checkers()
+
     def run(self, argv=None):
         # type: (Union[NoneType, List[str]]) -> NoneType
         """Run our application."""
@@ -251,6 +264,8 @@ class Application(object):
         self.make_formatter()
         self.make_notifier()
         self.make_guide()
+        self.make_file_checker_manager()
+        self.file_checker_manager.run()
 
 
 def main(argv=None):

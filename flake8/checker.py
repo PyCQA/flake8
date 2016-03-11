@@ -232,6 +232,7 @@ class FileChecker(object):
         LOG.debug('Logical line: "%s"', logical_line.rstrip())
 
         for plugin in self.checks.logical_line_plugins:
+            self.processor.update_checker_state_for(plugin)
             results = self.run_check(plugin, logical_line=logical_line) or ()
             for offset, text in results:
                 offset = find_offset(offset, mapping)
@@ -248,6 +249,7 @@ class FileChecker(object):
     def run_physical_checks(self, physical_line):
         """Run all checks for a given physical line."""
         for plugin in self.checks.physical_line_plugins:
+            self.processor.update_checker_state_for(plugin)
             result = self.run_check(plugin, physical_line=physical_line)
             if result is not None:
                 column_offset, text = result

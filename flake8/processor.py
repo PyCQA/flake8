@@ -57,6 +57,12 @@ class FileProcessor(object):
         self.blank_before = 0
         #: Number of blank lines
         self.blank_lines = 0
+        #: Checker states for each plugin?
+        self._checker_states = {}
+        #: Current checker state
+        self.checker_state = None
+        #: User provided option for hang closing
+        self.hang_closing = options.hang_closing
         #: Character used for indentation
         self.indent_char = None
         #: Current level of indentation
@@ -80,7 +86,7 @@ class FileProcessor(object):
         #: Total number of lines in the file
         self.total_lines = len(self.lines)
         #: Verbosity level of Flake8
-        self.verbosity = options.verbose
+        self.verbose = options.verbose
 
     @contextlib.contextmanager
     def inside_multiline(self, line_number):
@@ -109,6 +115,13 @@ class FileProcessor(object):
         self.indent_level = expand_indent(start_line[:start_col])
         if self.blank_before < self.blank_lines:
             self.blank_before = self.blank_lines
+
+    def update_checker_state_for(self, plugin):
+        """Update the checker_state attribute for the plugin."""
+        if 'checker_state' in plugin.parameters:
+            self.checker_state = self._checker_states.setdefault(
+                plugin.name, {}
+            )
 
     def next_logical_line(self):
         """Record the previous logical line.

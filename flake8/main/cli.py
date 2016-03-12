@@ -178,7 +178,8 @@ class Application(object):
 
         # Set the verbosity of the program
         preliminary_opts, _ = self.option_manager.parse_args()
-        flake8.configure_logging(preliminary_opts.verbose)
+        flake8.configure_logging(preliminary_opts.verbose,
+                                 preliminary_opts.output_file)
 
         self.check_plugins = None
         self.listening_plugins = None

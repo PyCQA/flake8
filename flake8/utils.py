@@ -117,7 +117,7 @@ def filenames_from(arg, predicate=None):
         for root, sub_directories, files in os.walk(arg):
             for filename in files:
                 joined = os.path.join(root, filename)
-                if predicate(filename) or predicate(joined):
+                if predicate(joined):
                     continue
                 yield joined
             # NOTE(sigmavirus24): os.walk() will skip a directory if you

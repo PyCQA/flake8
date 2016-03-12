@@ -37,7 +37,8 @@ _VERBOSITY_TO_LOG_LEVEL = {
     2: logging.DEBUG,
 }
 
-LOG_FORMAT = '[flake8] %(asctime)s %(levelname)s %(message)s'
+LOG_FORMAT = ('[%(name)-25s]:%(threadName)s %(relativeCreated)6d '
+              '%(levelname)-8s %(message)s')
 
 
 def configure_logging(verbosity, filename=None, logformat=LOG_FORMAT):

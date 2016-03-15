@@ -1,4 +1,6 @@
 """Command-line implementation of flake8."""
+import logging
+
 import flake8
 from flake8 import checker
 from flake8 import defaults
@@ -6,6 +8,8 @@ from flake8 import style_guide
 from flake8.options import aggregator
 from flake8.options import manager
 from flake8.plugins import manager as plugin_manager
+
+LOG = logging.getLogger(__name__)
 
 
 def register_default_options(option_manager):
@@ -267,9 +271,7 @@ class Application(object):
         """Report all the errors found by flake8 3.0."""
         self.file_checker_manager.report()
 
-    def run(self, argv=None):
-        # type: (Union[NoneType, List[str]]) -> NoneType
-        """Run our application."""
+    def _run(self, argv):
         self.find_plugins()
         self.register_plugin_options()
         self.parse_configuration_and_cli(argv)
@@ -279,6 +281,16 @@ class Application(object):
         self.make_file_checker_manager()
         self.run_checks()
         self.report_errors()
+
+    def run(self, argv=None):
+        # type: (Union[NoneType, List[str]]) -> NoneType
+        """Run our application."""
+        try:
+            self._run(argv)
+        except KeyboardInterrupt as exc:
+            LOG.critical('Caught keyboard interrupt from user')
+            LOG.exception(exc)
+            self.file_checker_manager._force_cleanup()
 
 
 def main(argv=None):

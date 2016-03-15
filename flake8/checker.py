@@ -291,6 +291,9 @@ class FileChecker(object):
 
     def run_checks(self):
         """Run checks against the file."""
+        if self.processor.should_ignore_file():
+            return
+
         try:
             self.process_tokens()
         except exceptions.InvalidSyntax as exc:

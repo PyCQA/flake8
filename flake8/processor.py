@@ -1,6 +1,7 @@
 """Module containing our file processor that tokenizes a file for checks."""
 import contextlib
 import io
+import re
 import sys
 import tokenize
 
@@ -40,6 +41,8 @@ class FileProcessor(object):
     - total_lines
     - verbose
     """
+
+    NOQA_FILE = re.compile(r'\s*# flake8[:=]\s*noqa', re.I)
 
     def __init__(self, filename, options):
         """Initialice our file processor.
@@ -268,6 +271,19 @@ class FileProcessor(object):
         # type: () -> List[str]
         """Read the lines from standard in."""
         return utils.stdin_get_value().splitlines(True)
+
+    def should_ignore_file(self):
+        # type: () -> bool
+        """Check if ``# flake8: noqa`` is in the file to be ignored.
+
+        :returns:
+            True if a line matches :attr:`FileProcessor.NOQA_FILE`,
+            otherwise False
+        :rtype:
+            bool
+        """
+        ignore_file = self.NOQA_FILE.search
+        return any(ignore_file(line) for line in self.lines)
 
     def strip_utf_bom(self):
         # type: () -> NoneType

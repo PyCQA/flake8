@@ -254,7 +254,6 @@ class Application(object):
                 arguments=self.args,
                 checker_plugins=self.check_plugins,
             )
-            self.file_checker_manager.make_checkers()
 
     def run(self, argv=None):
         # type: (Union[NoneType, List[str]]) -> NoneType
@@ -266,7 +265,9 @@ class Application(object):
         self.make_notifier()
         self.make_guide()
         self.make_file_checker_manager()
+        self.file_checker_manager.start()
         self.file_checker_manager.run()
+        self.file_checker_manager.stop()
 
 
 def main(argv=None):

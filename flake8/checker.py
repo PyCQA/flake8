@@ -116,12 +116,27 @@ class Manager(object):
 
     def start(self):
         """Start checking files."""
-        pass
-        # for i in range(self.jobs or 0):
-        #     proc = multiprocessing.Process(target=self.process_files)
-        #     proc.daemon = True
-        #     proc.start()
-        #     self.processes.append(proc)
+        LOG.info('Making checkers')
+        self.make_checkers()
+        if not self.using_multiprocessing:
+            return
+
+        LOG.info('Populating process queue')
+        for checker in self.checkers:
+            self.process_queue.put(checker)
+
+    def stop(self):
+        """Stop checking files."""
+        if not self.using_multiprocessing:
+            return
+
+        LOG.info('Notifying process workers of completion')
+        for i in range(self.jobs or 0):
+            self.process_queue.put('DONE')
+
+        LOG.info('Joining process workers')
+        for process in self.processes:
+            process.join()
 
     def make_checkers(self, paths=None):
         # type: (List[str]) -> NoneType
@@ -137,13 +152,30 @@ class Manager(object):
             if utils.fnmatch(filename, filename_patterns)
         ]
 
-    def run(self):
-        """Run checks.
-
-        TODO(sigmavirus24): Get rid of this
-        """
-        for checker in self.checkers:
+    def _run_checks_from_queue(self):
+        LOG.info('Running checks in parallel')
+        for checker in iter(self.process_queue.get, 'DONE'):
+            LOG.debug('Running checker for file "%s"', checker.filename)
             checker.run_checks()
+
+    def run(self):
+        """Run all the checkers.
+
+        This handles starting the process workers or just simply running all
+        of the checks in serial.
+        """
+        if self.using_multiprocessing:
+            LOG.info('Starting process workers')
+            for i in range(self.jobs or 0):
+                proc = multiprocessing.Process(
+                    target=self._run_checks_from_queue
+                )
+                proc.daemon = True
+                proc.start()
+                self.processes.append(proc)
+        else:
+            for checker in self.checkers:
+                checker.run_checks()
 
     def is_path_excluded(self, path):
         # type: (str) -> bool

@@ -149,7 +149,7 @@ class Manager(object):
 
         for checker in self.checkers:
             filename = checker.filename
-            results = sorted(final_results[filename],
+            results = sorted(final_results.get(filename, []),
                              key=lambda tup: (tup[1], tup[2]))
             for (error_code, line_number, column, text, line) in results:
                 style_guide.handle_error(

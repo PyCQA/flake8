@@ -5,6 +5,7 @@ import re
 import sys
 import tokenize
 
+import flake8
 from flake8 import defaults
 from flake8 import exceptions
 from flake8 import utils
@@ -345,9 +346,9 @@ def log_token(log, token):
         pos = '[%s:%s]' % (token[2][1] or '', token[3][1])
     else:
         pos = 'l.%s' % token[3][0]
-    log.debug('l.%s\t%s\t%s\t%r' %
-              (token[2][0], pos, tokenize.tok_name[token[0]],
-                  token[1]))
+    log.log(flake8._EXTRA_VERBOSE, 'l.%s\t%s\t%s\t%r' %
+            (token[2][0], pos, tokenize.tok_name[token[0]],
+                token[1]))
 
 
 def expand_indent(line):

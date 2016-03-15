@@ -151,13 +151,14 @@ class Manager(object):
             filename = checker.filename
             results = sorted(final_results[filename],
                              key=lambda tup: (tup[1], tup[2]))
-            for (error_code, line_number, column, text) in results:
+            for (error_code, line_number, column, text, line) in results:
                 style_guide.handle_error(
                     code=error_code,
                     filename=filename,
                     line_number=line_number,
                     column_number=column,
-                    text=text
+                    text=text,
+                    physical_line=line,
                 )
 
     def _report_after_serial(self):
@@ -165,13 +166,14 @@ class Manager(object):
         for checker in self.checkers:
             results = sorted(checker.results, key=lambda tup: (tup[2], tup[3]))
             filename = checker.filename
-            for (error_code, line_number, column, text) in results:
+            for (error_code, line_number, column, text, line) in results:
                 style_guide.handle_error(
                     code=error_code,
                     filename=filename,
                     line_number=line_number,
                     column_number=column,
-                    text=text
+                    text=text,
+                    physical_line=line,
                 )
 
     def _run_checks_from_queue(self):
@@ -313,7 +315,8 @@ class FileChecker(object):
         """Report an error by storing it in the results list."""
         if error_code is None:
             error_code, text = text.split(' ', 1)
-        error = (error_code, line_number, column, text)
+        physical_line = self.processor.line_for(line_number)
+        error = (error_code, line_number, column, text, physical_line)
         self.results.append(error)
         return error_code
 

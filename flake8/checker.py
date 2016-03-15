@@ -55,6 +55,7 @@ class Manager(object):
         self.checks = checker_plugins
         self.jobs = self._job_count()
         self.process_queue = None
+        self.results_queue = None
         self.using_multiprocessing = False
         self.processes = []
         self.checkers = []
@@ -62,6 +63,7 @@ class Manager(object):
         if self.jobs is not None and self.jobs > 1:
             self.using_multiprocessing = True
             self.process_queue = multiprocessing.Queue()
+            self.results_queue = multiprocessing.Queue()
 
     def _job_count(self):
         # type: () -> Union[int, NoneType]

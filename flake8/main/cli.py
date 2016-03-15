@@ -264,11 +264,13 @@ class Application(object):
         """Run the actual checks with the FileChecker Manager."""
         self.file_checker_manager.start()
         self.file_checker_manager.run()
+        LOG.info('Finished running')
         self.file_checker_manager.stop()
 
     def report_errors(self):
         # type: () -> NoneType
         """Report all the errors found by flake8 3.0."""
+        LOG.info('Reporting errors')
         self.file_checker_manager.report()
 
     def _run(self, argv):

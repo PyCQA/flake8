@@ -175,7 +175,8 @@ class FileProcessor(object):
     def build_logical_line(self):
         """Build a logical line from the current tokens list."""
         comments, logical, mapping_list = self.build_logical_line_tokens()
-        return ''.join(comments), ''.join(logical), mapping_list
+        self.logical_line = ''.join(logical)
+        return ''.join(comments), self.logical_line, mapping_list
 
     def split_line(self, token):
         """Split a physical line's line based on new-lines.

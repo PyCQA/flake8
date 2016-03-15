@@ -163,8 +163,8 @@ class FileProcessor(object):
                             (previous_text not in '{[(' and
                              text not in '}])')):
                         text = ' ' + text
-                    elif previous_column != start_column:
-                        text = line[previous_column:start_column] + text
+                elif previous_column != start_column:
+                    text = line[previous_column:start_column] + text
             logical.append(text)
             length += len(text)
             mapping.append((length, end))

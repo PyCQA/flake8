@@ -116,68 +116,38 @@ class Manager(object):
         # it to an integer
         return int(jobs)
 
-    def start(self):
-        """Start checking files."""
-        LOG.info('Making checkers')
-        self.make_checkers()
-        if not self.using_multiprocessing:
-            return
+    def _report_after_parallel(self):
+        style_guide = self.style_guide
+        for (filename, results) in iter(self.results_queue.get, 'DONE'):
+            results = sorted(results, key=lambda tup: (tup[2], tup[3]))
+            for (error_code, line_number, column, text) in results:
+                style_guide.handle_error(
+                    code=error_code,
+                    filename=filename,
+                    line_number=line_number,
+                    column_number=column,
+                    text=text
+                )
 
-        LOG.info('Populating process queue')
+    def _report_after_serial(self):
+        style_guide = self.style_guide
         for checker in self.checkers:
-            self.process_queue.put(checker)
-
-    def stop(self):
-        """Stop checking files."""
-        if not self.using_multiprocessing:
-            return
-
-        LOG.info('Notifying process workers of completion')
-        for i in range(self.jobs or 0):
-            self.process_queue.put('DONE')
-
-        LOG.info('Joining process workers')
-        for process in self.processes:
-            process.join()
-
-    def make_checkers(self, paths=None):
-        # type: (List[str]) -> NoneType
-        """Create checkers for each file."""
-        if paths is None:
-            paths = self.arguments
-        filename_patterns = self.options.filename
-        self.checkers = [
-            FileChecker(filename, self.checks, self.style_guide)
-            for argument in paths
-            for filename in utils.filenames_from(argument,
-                                                 self.is_path_excluded)
-            if utils.fnmatch(filename, filename_patterns)
-        ]
+            results = sorted(checker.results, key=lambda tup: (tup[2], tup[3]))
+            filename = checker.filename
+            for (error_code, line_number, column, text) in results:
+                style_guide.handle_error(
+                    code=error_code,
+                    filename=filename,
+                    line_number=line_number,
+                    column_number=column,
+                    text=text
+                )
 
     def _run_checks_from_queue(self):
         LOG.info('Running checks in parallel')
         for checker in iter(self.process_queue.get, 'DONE'):
             LOG.debug('Running checker for file "%s"', checker.filename)
-            checker.run_checks()
-
-    def run(self):
-        """Run all the checkers.
-
-        This handles starting the process workers or just simply running all
-        of the checks in serial.
-        """
-        if self.using_multiprocessing:
-            LOG.info('Starting process workers')
-            for i in range(self.jobs or 0):
-                proc = multiprocessing.Process(
-                    target=self._run_checks_from_queue
-                )
-                proc.daemon = True
-                proc.start()
-                self.processes.append(proc)
-        else:
-            for checker in self.checkers:
-                checker.run_checks()
+            checker.run_checks(self.results_queue)
 
     def is_path_excluded(self, path):
         # type: (str) -> bool
@@ -204,6 +174,76 @@ class Manager(object):
         LOG.info('"%s" has %sbeen excluded', absolute_path,
                  '' if match else 'not ')
         return match
+
+    def make_checkers(self, paths=None):
+        # type: (List[str]) -> NoneType
+        """Create checkers for each file."""
+        if paths is None:
+            paths = self.arguments
+        filename_patterns = self.options.filename
+        self.checkers = [
+            FileChecker(filename, self.checks, self.style_guide)
+            for argument in paths
+            for filename in utils.filenames_from(argument,
+                                                 self.is_path_excluded)
+            if utils.fnmatch(filename, filename_patterns)
+        ]
+
+    def report(self):
+        """Report all of the errors found in the managed file checkers.
+
+        This iterates over each of the checkers and reports the errors sorted
+        by line number.
+        """
+        if self.using_multiprocessing:
+            self._report_after_parallel()
+        else:
+            self._report_after_serial()
+
+    def run(self):
+        """Run all the checkers.
+
+        This handles starting the process workers or just simply running all
+        of the checks in serial.
+        """
+        if self.using_multiprocessing:
+            LOG.info('Starting process workers')
+            for i in range(self.jobs or 0):
+                proc = multiprocessing.Process(
+                    target=self._run_checks_from_queue
+                )
+                proc.daemon = True
+                proc.start()
+                self.processes.append(proc)
+        else:
+            for checker in self.checkers:
+                checker.run_checks()
+
+    def start(self):
+        """Start checking files."""
+        LOG.info('Making checkers')
+        self.make_checkers()
+        if not self.using_multiprocessing:
+            return
+
+        LOG.info('Populating process queue')
+        for checker in self.checkers:
+            self.process_queue.put(checker)
+
+    def stop(self):
+        """Stop checking files."""
+        if not self.using_multiprocessing:
+            return
+
+        LOG.info('Notifying process workers of completion')
+        for i in range(self.jobs or 0):
+            self.process_queue.put('DONE')
+
+        LOG.info('Joining process workers')
+        for process in self.processes:
+            process.join()
+        LOG.info('Processes joined')
+        self.results_queue.put('DONE')
 
 
 class FileChecker(object):
@@ -246,7 +286,7 @@ class FileChecker(object):
         """Report an error by storing it in the results list."""
         if error_code is None:
             error_code, text = text.split(' ', 1)
-        error = (error_code, self.filename, line_number, column, text)
+        error = (error_code, line_number, column, text)
         self.results.append(error)
         return error_code
 
@@ -323,7 +363,7 @@ class FileChecker(object):
             self.run_physical_checks(file_processor.lines[-1])
             self.run_logical_checks()
 
-    def run_checks(self):
+    def run_checks(self, results_queue):
         """Run checks against the file."""
         if self.processor.should_ignore_file():
             return
@@ -333,6 +373,9 @@ class FileChecker(object):
         except exceptions.InvalidSyntax as exc:
             self.report(exc.error_code, exc.line_number, exc.column_number,
                         exc.error_message)
+
+        if results_queue is not None:
+            results_queue.put_nowait((self.filename, self.results))
 
     def handle_comment(self, token, token_text):
         """Handle the logic when encountering a comment token."""

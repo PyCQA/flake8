@@ -30,14 +30,21 @@ del NullHandler
 __version__ = '3.0.0a1'
 
 
+# There is nothing lower than logging.DEBUG (10) in the logging library,
+# but we want an extra level to avoid being too verbose when using -vv.
+_EXTRA_VERBOSE = 5
+logging.addLevelName(_EXTRA_VERBOSE, 'VERBOSE')
+
 _VERBOSITY_TO_LOG_LEVEL = {
     # output more than warnings but not debugging info
-    1: logging.INFO,
-    # output debugging information and everything else
-    2: logging.DEBUG,
+    1: logging.INFO,  # INFO is a numerical level of 20
+    # output debugging information
+    2: logging.DEBUG,  # DEBUG is a numerical level of 10
+    # output extra verbose debugging information
+    3: _EXTRA_VERBOSE,
 }
 
-LOG_FORMAT = ('[%(name)-25s]:%(threadName)s %(relativeCreated)6d '
+LOG_FORMAT = ('%(name)-25s %(processName)-11s %(relativeCreated)6d '
               '%(levelname)-8s %(message)s')
 
 
@@ -54,8 +61,8 @@ def configure_logging(verbosity, filename=None, logformat=LOG_FORMAT):
     """
     if verbosity <= 0:
         return
-    if verbosity > 2:
-        verbosity = 2
+    if verbosity > 3:
+        verbosity = 3
 
     log_level = _VERBOSITY_TO_LOG_LEVEL[verbosity]
 

@@ -60,7 +60,7 @@ class Manager(object):
         self.processes = []
         self.checkers = []
 
-        if self.jobs is not None and self.jobs > 1:
+        if self.jobs > 1:
             self.using_multiprocessing = True
             self.process_queue = multiprocessing.Queue()
             self.results_queue = multiprocessing.Queue()
@@ -79,28 +79,28 @@ class Manager(object):
         if not multiprocessing:
             LOG.warning('The multiprocessing module is not available. '
                         'Ignoring --jobs arguments.')
-            return None
+            return 0
 
         if utils.is_windows():
             LOG.warning('The --jobs option is not available on Windows. '
                         'Ignoring --jobs arguments.')
-            return None
+            return 0
 
         if utils.is_using_stdin(self.arguments):
             LOG.warning('The --jobs option is not compatible with supplying '
                         'input using - . Ignoring --jobs arguments.')
-            return None
+            return 0
 
         if self.options.diff:
             LOG.warning('The --diff option was specified with --jobs but '
                         'they are not compatible. Ignoring --jobs arguments.')
-            return None
+            return 0
 
         jobs = self.options.jobs
         if jobs != 'auto' and not jobs.isdigit():
             LOG.warning('"%s" is not a valid parameter to --jobs. Must be one '
                         'of "auto" or a numerical value, e.g., 4.', jobs)
-            return None
+            return 0
 
         # If the value is "auto", we want to let the multiprocessing library
         # decide the number based on the number of CPUs. However, if that
@@ -207,8 +207,8 @@ class Manager(object):
         of the checks in serial.
         """
         if self.using_multiprocessing:
-            LOG.info('Starting process workers')
-            for i in range(self.jobs or 0):
+            LOG.info('Starting %d process workers', self.jobs)
+            for i in range(self.jobs):
                 proc = multiprocessing.Process(
                     target=self._run_checks_from_queue
                 )
@@ -232,11 +232,7 @@ class Manager(object):
 
     def stop(self):
         """Stop checking files."""
-        if not self.using_multiprocessing:
-            return
-
-        LOG.info('Notifying process workers of completion')
-        for i in range(self.jobs or 0):
+        for i in range(self.jobs):
             self.process_queue.put('DONE')
 
         LOG.info('Joining process workers')

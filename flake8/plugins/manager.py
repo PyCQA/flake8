@@ -97,7 +97,7 @@ class Plugin(object):
             Nothing
         """
         if self._plugin is None:
-            LOG.debug('Loading plugin "%s" from entry-point.', self.name)
+            LOG.info('Loading plugin "%s" from entry-point.', self.name)
             try:
                 self._load(verify_requirements)
             except Exception as load_exception:
@@ -162,12 +162,12 @@ class PluginManager(object):  # pylint: disable=too-few-public-methods
         self._load_all_plugins()
 
     def _load_all_plugins(self):
-        LOG.debug('Loading entry-points for "%s".', self.namespace)
+        LOG.info('Loading entry-points for "%s".', self.namespace)
         for entry_point in pkg_resources.iter_entry_points(self.namespace):
             name = entry_point.name
             self.plugins[name] = Plugin(name, entry_point)
             self.names.append(name)
-            LOG.info('Loaded %r for plugin "%s".', self.plugins[name], name)
+            LOG.debug('Loaded %r for plugin "%s".', self.plugins[name], name)
 
     def map(self, func, *args, **kwargs):
         r"""Call ``func`` with the plugin and \*args and \**kwargs after.

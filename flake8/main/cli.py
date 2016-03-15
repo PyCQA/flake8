@@ -255,6 +255,18 @@ class Application(object):
                 checker_plugins=self.check_plugins,
             )
 
+    def run_checks(self):
+        # type: () -> NoneType
+        """Run the actual checks with the FileChecker Manager."""
+        self.file_checker_manager.start()
+        self.file_checker_manager.run()
+        self.file_checker_manager.stop()
+
+    def report_errors(self):
+        # type: () -> NoneType
+        """Report all the errors found by flake8 3.0."""
+        self.file_checker_manager.report()
+
     def run(self, argv=None):
         # type: (Union[NoneType, List[str]]) -> NoneType
         """Run our application."""
@@ -265,9 +277,8 @@ class Application(object):
         self.make_notifier()
         self.make_guide()
         self.make_file_checker_manager()
-        self.file_checker_manager.start()
-        self.file_checker_manager.run()
-        self.file_checker_manager.stop()
+        self.run_checks()
+        self.report_errors()
 
 
 def main(argv=None):

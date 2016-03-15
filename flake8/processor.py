@@ -10,6 +10,7 @@ from flake8 import defaults
 from flake8 import exceptions
 from flake8 import utils
 
+PyCF_ONLY_AST = 1024
 NEWLINE = frozenset([tokenize.NL, tokenize.NEWLINE])
 # Work around Python < 2.6 behaviour, which does not generate NL after
 # a comment which is on a line by itself.
@@ -172,6 +173,10 @@ class FileProcessor(object):
             (previous_row, previous_column) = end
         return comments, logical, mapping
 
+    def build_ast(self):
+        """Build an abstract syntax tree from the list of lines."""
+        return compile(''.join(self.lines), '', 'exec', PyCF_ONLY_AST)
+
     def build_logical_line(self):
         """Build a logical line from the current tokens list."""
         comments, logical, mapping_list = self.build_logical_line_tokens()
@@ -222,6 +227,10 @@ class FileProcessor(object):
         # date.
         except tokenize.TokenError as exc:
             raise exceptions.InvalidSyntax(exc.message, exception=exc)
+
+    def line_for(self, line_number):
+        """Retrieve the physical line at the specified line number."""
+        return self.lines[line_number - 1]
 
     def next_line(self):
         """Get the next line from the list."""

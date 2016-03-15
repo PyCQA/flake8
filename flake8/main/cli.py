@@ -227,6 +227,9 @@ class Application(object):
                 self.option_manager, argv
             )
 
+        self.check_plugins.provide_options(self.option_manager, self.options,
+                                           self.args)
+
     def make_formatter(self):
         # type: () -> NoneType
         """Initialize a formatter based on the parsed options."""

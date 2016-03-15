@@ -326,6 +326,37 @@ class FileChecker(object):
         self.processor.keyword_arguments_for(plugin.parameters, arguments)
         return plugin.execute(**arguments)
 
+    def run_ast_checks(self):
+        """Run all checks expecting an abstract syntax tree."""
+        try:
+            ast = self.processor.build_ast()
+        except (ValueError, SyntaxError, TypeError):
+            (exc_type, exception) = sys.exc_info()[:2]
+            if len(exception.args) > 1:
+                offset = exception.args[1]
+                if len(offset) > 2:
+                    offset = offset[1:3]
+            else:
+                offset = (1, 0)
+
+            self.report('E999', offset[0], offset[1], '%s: %s' %
+                        (exc_type.__name__, exception.args[0]))
+            return
+
+        for plugin in self.checks.ast_plugins:
+            checker = self.run_check(plugin, tree=ast)
+            # NOTE(sigmavirus24): If we want to allow for AST plugins that are
+            # not classes exclusively, we can do the following:
+            # retrieve_results = getattr(checker, 'run', lambda: checker)
+            # Otherwise, we just call run on the checker
+            for (line_number, offset, text, check) in checker.run():
+                self.report(
+                    error_code=None,
+                    line_number=line_number,
+                    column=offset,
+                    text=text,
+                )
+
     def run_logical_checks(self):
         """Run all checks expecting a logical line."""
         comments, logical_line, mapping = self.processor.build_logical_line()
@@ -403,6 +434,8 @@ class FileChecker(object):
         except exceptions.InvalidSyntax as exc:
             self.report(exc.error_code, exc.line_number, exc.column_number,
                         exc.error_message)
+
+        self.run_ast_checks()
 
         if results_queue is not None:
             results_queue.put((self.filename, self.results))

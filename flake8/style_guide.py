@@ -187,12 +187,13 @@ class StyleGuide(object):
                   error, codes_str)
         return False
 
-    def handle_error(self, code, filename, line_number, column_number, text):
+    def handle_error(self, code, filename, line_number, column_number, text,
+                     physical_line=None):
         # type: (str, str, int, int, str) -> NoneType
         """Handle an error reported by a check."""
         error = Error(code, filename, line_number, column_number, text)
         if (self.should_report_error(error.code) is Decision.Selected and
-                self.is_inline_ignored(error) is False):
+                self.is_inline_ignored(error, physical_line) is False):
             self.formatter.handle(error)
             self.listener.notify(error.code, error)
 

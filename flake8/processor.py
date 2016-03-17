@@ -46,14 +46,16 @@ class FileProcessor(object):
 
     NOQA_FILE = re.compile(r'\s*# flake8[:=]\s*noqa', re.I)
 
-    def __init__(self, filename, options):
+    def __init__(self, filename, options, lines=None):
         """Initialice our file processor.
 
         :param str filename:
             Name of the file to process
         """
         self.filename = filename
-        self.lines = self.read_lines()
+        self.lines = lines
+        if lines is None:
+            self.lines = self.read_lines()
         self.strip_utf_bom()
         self.options = options
 

@@ -32,3 +32,17 @@ def test_strip_utf_bom(first_line):
     file_processor = processor.FileProcessor('-', options_from(), lines[:])
     assert file_processor.lines != lines
     assert file_processor.lines[0] == '"""Module docstring."""\n'
+
+
+@pytest.mark.parametrize('lines, expected', [
+    (['\xEF\xBB\xBF"""Module docstring."""\n'], False),
+    ([u'\uFEFF"""Module docstring."""\n'], False),
+    (['#!/usr/bin/python', '# flake8 is great', 'a = 1'], False),
+    (['#!/usr/bin/python', '# flake8: noqa', 'a = 1'], True),
+    (['# flake8: noqa', '#!/usr/bin/python', 'a = 1'], True),
+    (['#!/usr/bin/python', 'a = 1', '# flake8: noqa'], True),
+])
+def test_should_ignore_file(lines, expected):
+    """Verify that we ignore a file if told to."""
+    file_processor = processor.FileProcessor('-', options_from(), lines)
+    assert file_processor.should_ignore_file() is expected

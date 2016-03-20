@@ -3,6 +3,7 @@ import optparse
 
 from flake8 import processor
 
+import mock
 import pytest
 
 
@@ -46,3 +47,14 @@ def test_should_ignore_file(lines, expected):
     """Verify that we ignore a file if told to."""
     file_processor = processor.FileProcessor('-', options_from(), lines)
     assert file_processor.should_ignore_file() is expected
+
+
+@mock.patch('flake8.utils.stdin_get_value')
+def test_read_lines_from_stdin(stdin_get_value):
+    """Verify that we use our own utility function to retrieve stdin."""
+    stdin_value = mock.Mock()
+    stdin_value.splitlines.return_value = []
+    stdin_get_value.return_value = stdin_value
+    file_processor = processor.FileProcessor('-', options_from())
+    stdin_get_value.assert_called_once_with()
+    stdin_value.splitlines.assert_called_once_with(True)

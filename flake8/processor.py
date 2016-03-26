@@ -1,6 +1,7 @@
 """Module containing our file processor that tokenizes a file for checks."""
 import contextlib
 import io
+import logging
 import re
 import sys
 import tokenize
@@ -10,6 +11,7 @@ from flake8 import defaults
 from flake8 import exceptions
 from flake8 import utils
 
+LOG = logging.getLogger(__name__)
 PyCF_ONLY_AST = 1024
 NEWLINE = frozenset([tokenize.NL, tokenize.NEWLINE])
 # Work around Python < 2.6 behaviour, which does not generate NL after
@@ -199,8 +201,13 @@ class FileProcessor(object):
         if arguments is None:
             arguments = {}
         for param in parameters:
-            if param not in arguments:
+            if param in arguments:
+                continue
+            try:
                 arguments[param] = getattr(self, param)
+            except AttributeError as exc:
+                LOG.exception(exc)
+                raise
         return arguments
 
     def check_physical_error(self, error_code, line):

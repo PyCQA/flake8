@@ -43,7 +43,7 @@ def create_manager_with_plugins(plugins):
     return manager_mock
 
 
-class TestType(manager.PluginTypeManager):
+class FakeTestType(manager.PluginTypeManager):
     """Fake PluginTypeManager."""
 
     namespace = TEST_NAMESPACE
@@ -52,7 +52,7 @@ class TestType(manager.PluginTypeManager):
 @mock.patch('flake8.plugins.manager.PluginManager')
 def test_instantiates_a_manager(PluginManager):
     """Verify we create a PluginManager on instantiation."""
-    TestType()
+    FakeTestType()
 
     PluginManager.assert_called_once_with(TEST_NAMESPACE)
 
@@ -63,7 +63,7 @@ def test_proxies_names_to_manager(PluginManager):
     PluginManager.return_value = mock.Mock(names=[
         'T100', 'T200', 'T300'
     ])
-    type_mgr = TestType()
+    type_mgr = FakeTestType()
 
     assert type_mgr.names == ['T100', 'T200', 'T300']
 
@@ -74,7 +74,7 @@ def test_proxies_plugins_to_manager(PluginManager):
     PluginManager.return_value = mock.Mock(plugins=[
         'T100', 'T200', 'T300'
     ])
-    type_mgr = TestType()
+    type_mgr = FakeTestType()
 
     assert type_mgr.plugins == ['T100', 'T200', 'T300']
 
@@ -102,7 +102,7 @@ def test_load_plugins(PluginManager):
     # Return our PluginManager mock
     PluginManager.return_value = create_mapping_manager_mock(plugins)
 
-    type_mgr = TestType()
+    type_mgr = FakeTestType()
     # Load the tests (do what we're actually testing)
     assert len(type_mgr.load_plugins()) == 8
     # Assert that our closure does what we think it does
@@ -121,7 +121,7 @@ def test_load_plugins_fails(PluginManager):
     # Return our PluginManager mock
     PluginManager.return_value = create_mapping_manager_mock(plugins)
 
-    type_mgr = TestType()
+    type_mgr = FakeTestType()
     with pytest.raises(exceptions.FailedToLoadPlugin):
         type_mgr.load_plugins()
 
@@ -146,7 +146,7 @@ def test_register_options(PluginManager):
     PluginManager.return_value = create_mapping_manager_mock(plugins)
     optmanager = object()
 
-    type_mgr = TestType()
+    type_mgr = FakeTestType()
     type_mgr.register_options(optmanager)
 
     for plugin in plugins:
@@ -166,7 +166,7 @@ def test_provide_options(PluginManager):
     options = object()
     extra_args = []
 
-    type_mgr = TestType()
+    type_mgr = FakeTestType()
     type_mgr.provide_options(optmanager, options, extra_args)
 
     for plugin in plugins:
@@ -182,7 +182,7 @@ def test_proxy_contains_to_managers_plugins_dict(PluginManager):
     # Return our PluginManager mock
     PluginManager.return_value = create_manager_with_plugins(plugins)
 
-    type_mgr = TestType()
+    type_mgr = FakeTestType()
     for i in range(8):
         key = 'T10%i' % i
         assert key in type_mgr
@@ -195,7 +195,7 @@ def test_proxies_getitem_to_managers_plugins_dictionary(PluginManager):
     # Return our PluginManager mock
     PluginManager.return_value = create_manager_with_plugins(plugins)
 
-    type_mgr = TestType()
+    type_mgr = FakeTestType()
     for i in range(8):
         key = 'T10%i' % i
         assert type_mgr[key] is plugins[key]

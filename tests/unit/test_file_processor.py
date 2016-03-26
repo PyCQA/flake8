@@ -58,3 +58,83 @@ def test_read_lines_from_stdin(stdin_get_value):
     file_processor = processor.FileProcessor('-', options_from())
     stdin_get_value.assert_called_once_with()
     stdin_value.splitlines.assert_called_once_with(True)
+
+
+@mock.patch('flake8.utils.stdin_get_value')
+def test_read_lines_sets_filename_attribute(stdin_get_value):
+    """Verify that we update the filename attribute."""
+    stdin_value = mock.Mock()
+    stdin_value.splitlines.return_value = []
+    stdin_get_value.return_value = stdin_value
+    file_processor = processor.FileProcessor('-', options_from())
+    assert file_processor.filename == 'stdin'
+
+
+def test_line_for():
+    """Verify we grab the correct line from the cached lines."""
+    file_processor = processor.FileProcessor('-', options_from(), lines=[
+        'Line 1',
+        'Line 2',
+        'Line 3',
+    ])
+
+    for i in range(1, 4):
+        assert file_processor.line_for(i) == 'Line {0}'.format(i)
+
+
+def test_next_line():
+    """Verify we update the file_processor state for each new line."""
+    file_processor = processor.FileProcessor('-', options_from(), lines=[
+        'Line 1',
+        'Line 2',
+        'Line 3',
+    ])
+
+    for i in range(1, 4):
+        assert file_processor.next_line() == 'Line {}'.format(i)
+        assert file_processor.line_number == i
+
+
+@pytest.mark.parametrize('error_code, line, expected_indent_char', [
+    ('E101', '\t\ta = 1', '\t'),
+    ('E101', '    a = 1', ' '),
+    ('W101', 'frobulate()', None),
+    ('F821', 'class FizBuz:', None),
+])
+def test_check_physical_error(error_code, line, expected_indent_char):
+    """Verify we update the indet char for the appropriate error code."""
+    file_processor = processor.FileProcessor('-', options_from(), lines=[
+        'Line 1',
+    ])
+
+    file_processor.check_physical_error(error_code, line)
+    assert file_processor.indent_char == expected_indent_char
+
+
+@pytest.mark.parametrize('params, args, expected_kwargs', [
+    (['blank_before', 'blank_lines'], None, {'blank_before': 0,
+                                             'blank_lines': 0}),
+    (['noqa', 'fake'], {'fake': 'foo'}, {'noqa': False, 'fake': 'foo'}),
+    (['blank_before', 'blank_lines', 'noqa'],
+        {'blank_before': 10, 'blank_lines': 5, 'noqa': True},
+        {'blank_before': 10, 'blank_lines': 5, 'noqa': True}),
+    ([], {'fake': 'foo'}, {'fake': 'foo'}),
+])
+def test_keyword_arguments_for(params, args, expected_kwargs):
+    """Verify the keyword args are generated properly."""
+    file_processor = processor.FileProcessor('-', options_from(), lines=[
+        'Line 1',
+    ])
+    kwargs_for = file_processor.keyword_arguments_for
+
+    assert kwargs_for(params, args) == expected_kwargs
+
+
+def test_keyword_arguments_for_does_not_handle_attribute_errors():
+    """Verify we re-raise AttributeErrors."""
+    file_processor = processor.FileProcessor('-', options_from(), lines=[
+        'Line 1',
+    ])
+
+    with pytest.raises(AttributeError):
+        file_processor.keyword_arguments_for(['fake'])

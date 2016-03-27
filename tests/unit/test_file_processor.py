@@ -138,3 +138,21 @@ def test_keyword_arguments_for_does_not_handle_attribute_errors():
 
     with pytest.raises(AttributeError):
         file_processor.keyword_arguments_for(['fake'])
+
+
+@pytest.mark.parametrize('unsplit_line, expected_lines', [
+    ('line', []),
+    ('line 1\n', ['line 1']),
+    ('line 1\nline 2\n', ['line 1', 'line 2']),
+    ('line 1\n\nline 2\n', ['line 1', '', 'line 2']),
+])
+def test_split_line(unsplit_line, expected_lines):
+    """Verify the token line spliting."""
+    file_processor = processor.FileProcessor('-', options_from(), lines=[
+        'Line 1',
+    ])
+
+    actual_lines = list(file_processor.split_line((1, unsplit_line)))
+    assert expected_lines == actual_lines
+
+    assert len(actual_lines) == file_processor.line_number

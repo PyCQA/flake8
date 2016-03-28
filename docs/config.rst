@@ -1,12 +1,20 @@
 Configuration
 =============
 
-The behaviour may be configured at two levels.
+Configuration settings are applied in three ways: user, project, and the
+``--config`` CLI argument. The user (global) configuration is read first. Next
+the project configuration is loaded, and overrides any settings found in both
+the user (global) and project configurations. Finally, if the ``--config``
+argument is used on the command line, the specified file is loaded and
+overrides any settings that overlap with the user (global) and project
+configurations.
 
-Global
-------
 
-The user settings are read from the ``~/.config/flake8`` file (or the ``~/.flake8`` file on Windows).
+User (Global)
+-------------
+
+The user settings are read from the ``~/.config/flake8`` file (or the
+``~/.flake8`` file on Windows).
 Example::
 
   [flake8]

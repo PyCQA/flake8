@@ -14,7 +14,6 @@ except ImportError:   # Python 2
 
 from flake8 import compat
 from flake8.engine import get_parser, get_style_guide
-from flake8.main import DEFAULT_CONFIG
 
 
 def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
@@ -51,8 +50,7 @@ def git_hook(complexity=-1, strict=False, ignore=None, lazy=False):
 
     tmpdir = tempfile.mkdtemp()
 
-    flake8_style = get_style_guide(config_file=DEFAULT_CONFIG, paths=['.'],
-                                   **options)
+    flake8_style = get_style_guide(paths=['.'], **options)
     filepatterns = flake8_style.options.filename
 
     # Copy staged versions to temporary directory
@@ -102,7 +100,7 @@ def hg_hook(ui, repo, **kwargs):
     complexity = ui.config('flake8', 'complexity', default=-1)
     strict = ui.configbool('flake8', 'strict', default=True)
     ignore = ui.config('flake8', 'ignore', default=None)
-    config = ui.config('flake8', 'config', default=DEFAULT_CONFIG)
+    config = ui.config('flake8', 'config', default=None)
 
     paths = _get_files(repo, **kwargs)
 

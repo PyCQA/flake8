@@ -3,18 +3,21 @@ import os
 import re
 import sys
 
+import pep8
 import setuptools
 
 from flake8.engine import get_parser, get_style_guide
 from flake8.util import option_normalizer
 
 if sys.platform.startswith('win'):
-    DEFAULT_CONFIG = os.path.expanduser(r'~\.flake8')
+    USER_CONFIG = os.path.expanduser(r'~\.flake8')
 else:
-    DEFAULT_CONFIG = os.path.join(
+    USER_CONFIG = os.path.join(
         os.getenv('XDG_CONFIG_HOME') or os.path.expanduser('~/.config'),
         'flake8'
     )
+
+pep8.USER_CONFIG = USER_CONFIG
 
 EXTRA_IGNORE = []
 
@@ -22,7 +25,7 @@ EXTRA_IGNORE = []
 def main():
     """Parse options and run checks on Python source."""
     # Prepare
-    flake8_style = get_style_guide(parse_argv=True, config_file=DEFAULT_CONFIG)
+    flake8_style = get_style_guide(parse_argv=True)
     options = flake8_style.options
 
     if options.install_hook:
@@ -61,8 +64,7 @@ def check_file(path, ignore=(), complexity=-1):
     :param int complexity: (optional), enables the mccabe check for values > 0
     """
     ignore = set(ignore).union(EXTRA_IGNORE)
-    flake8_style = get_style_guide(
-        config_file=DEFAULT_CONFIG, ignore=ignore, max_complexity=complexity)
+    flake8_style = get_style_guide(ignore=ignore, max_complexity=complexity)
     return flake8_style.input_file(path)
 
 
@@ -74,8 +76,7 @@ def check_code(code, ignore=(), complexity=-1):
     :param int complexity: (optional), enables the mccabe check for values > 0
     """
     ignore = set(ignore).union(EXTRA_IGNORE)
-    flake8_style = get_style_guide(
-        config_file=DEFAULT_CONFIG, ignore=ignore, max_complexity=complexity)
+    flake8_style = get_style_guide(ignore=ignore, max_complexity=complexity)
     return flake8_style.input_file(None, lines=code.splitlines(True))
 
 
@@ -131,9 +132,7 @@ class Flake8Command(setuptools.Command):
     def run(self):
         # Prepare
         paths = list(self.distribution_files())
-        flake8_style = get_style_guide(config_file=DEFAULT_CONFIG,
-                                       paths=paths,
-                                       **self.options_dict)
+        flake8_style = get_style_guide(paths=paths, **self.options_dict)
 
         # Run the checkers
         report = flake8_style.check_files()

@@ -370,6 +370,8 @@ def log_token(log, token):
                 token[1]))
 
 
+# NOTE(sigmavirus24): This was taken wholesale from
+# https://github.com/PyCQA/pycodestyle
 def expand_indent(line):
     r"""Return the amount of indentation.
 
@@ -397,6 +399,9 @@ def expand_indent(line):
     return result
 
 
+# NOTE(sigmavirus24): This was taken wholesale from
+# https://github.com/PyCQA/pycodestyle. The in-line comments were edited to be
+# more descriptive.
 def mutate_string(text):
     """Replace contents with 'xxx' to prevent syntax matching.
 
@@ -407,10 +412,12 @@ def mutate_string(text):
     >>> mute_string("r'abc'")
     "r'xxx'"
     """
-    # String modifiers (e.g. u or r)
+    # NOTE(sigmavirus24): If there are string modifiers (e.g., b, u, r)
+    # use the last "character" to determine if we're using single or double
+    # quotes and then find the first instance of it
     start = text.index(text[-1]) + 1
     end = len(text) - 1
-    # Triple quotes
+    # Check for triple-quoted strings
     if text[-3:] in ('"""', "'''"):
         start += 2
         end -= 2

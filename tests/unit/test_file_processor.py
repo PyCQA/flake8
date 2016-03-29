@@ -209,3 +209,43 @@ def test_inside_multiline():
         assert file_processor.line_number == 10
 
     assert file_processor.multiline is False
+
+
+@pytest.mark.parametrize('string, expected', [
+    ('""', '""'),
+    ("''", "''"),
+    ('"a"', '"x"'),
+    ("'a'", "'x'"),
+    ('"x"', '"x"'),
+    ("'x'", "'x'"),
+    ('"abcdef"', '"xxxxxx"'),
+    ("'abcdef'", "'xxxxxx'"),
+    ('""""""', '""""""'),
+    ("''''''", "''''''"),
+    ('"""a"""', '"""x"""'),
+    ("'''a'''", "'''x'''"),
+    ('"""x"""', '"""x"""'),
+    ("'''x'''", "'''x'''"),
+    ('"""abcdef"""', '"""xxxxxx"""'),
+    ("'''abcdef'''", "'''xxxxxx'''"),
+    ('"""xxxxxx"""', '"""xxxxxx"""'),
+    ("'''xxxxxx'''", "'''xxxxxx'''"),
+])
+def test_mutate_string(string, expected):
+    """Verify we appropriately mutate the string to sanitize it."""
+    actual = processor.mutate_string(string)
+    assert expected == actual
+
+
+@pytest.mark.parametrize('string, expected', [
+    ('    ', 4),
+    ('      ', 6),
+    ('\t', 8),
+    ('\t\t', 16),
+    ('       \t', 8),
+    ('        \t', 16),
+])
+def test_expand_indent(string, expected):
+    """Verify we correctly measure the amount of indentation."""
+    actual = processor.expand_indent(string)
+    assert expected == actual

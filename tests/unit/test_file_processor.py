@@ -167,3 +167,45 @@ def test_build_ast():
 
     module = file_processor.build_ast()
     assert isinstance(module, ast.Module)
+
+
+def test_next_logical_line_updates_the_previous_logical_line():
+    """Verify that we update our tracking of the previous logical line."""
+    file_processor = processor.FileProcessor('-', options_from(), lines=[
+        'a = 1\n'
+    ])
+
+    file_processor.indent_level = 1
+    file_processor.logical_line = 'a = 1'
+    assert file_processor.previous_logical == ''
+    assert file_processor.previous_indent_level is 0
+
+    file_processor.next_logical_line()
+    assert file_processor.previous_logical == 'a = 1'
+    assert file_processor.previous_indent_level == 1
+
+
+def test_visited_new_blank_line():
+    """Verify we update the number of blank lines seen."""
+    file_processor = processor.FileProcessor('-', options_from(), lines=[
+        'a = 1\n'
+    ])
+
+    assert file_processor.blank_lines == 0
+    file_processor.visited_new_blank_line()
+    assert file_processor.blank_lines == 1
+
+
+def test_inside_multiline():
+    """Verify we update the line number and reset multiline."""
+    file_processor = processor.FileProcessor('-', options_from(), lines=[
+        'a = 1\n'
+    ])
+
+    assert file_processor.multiline is False
+    assert file_processor.line_number == 0
+    with file_processor.inside_multiline(10):
+        assert file_processor.multiline is True
+        assert file_processor.line_number == 10
+
+    assert file_processor.multiline is False

@@ -1,4 +1,5 @@
 """Tests for the FileProcessor class."""
+import ast
 import optparse
 
 from flake8 import processor
@@ -156,3 +157,13 @@ def test_split_line(unsplit_line, expected_lines):
     assert expected_lines == actual_lines
 
     assert len(actual_lines) == file_processor.line_number
+
+
+def test_build_ast():
+    """Verify the logic for how we build an AST for plugins."""
+    file_processor = processor.FileProcessor('-', options_from(), lines=[
+        'a = 1\n'
+    ])
+
+    module = file_processor.build_ast()
+    assert isinstance(module, ast.Module)

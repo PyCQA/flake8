@@ -1,6 +1,7 @@
 """Tests for the FileProcessor class."""
 import ast
 import optparse
+import tokenize
 
 from flake8 import processor
 
@@ -249,3 +250,44 @@ def test_expand_indent(string, expected):
     """Verify we correctly measure the amount of indentation."""
     actual = processor.expand_indent(string)
     assert expected == actual
+
+
+@pytest.mark.parametrize('token, log_string', [
+    [(tokenize.COMMENT, '# this is a comment',
+      (1, 0),  # (start_row, start_column)
+      (1, 19),  # (end_ro, end_column)
+      '# this is a comment',),
+     "l.1\t[:19]\tCOMMENT\t'# this is a comment'"],
+    [(tokenize.COMMENT, '# this is a comment',
+      (1, 5),  # (start_row, start_column)
+      (1, 19),  # (end_ro, end_column)
+      '# this is a comment',),
+     "l.1\t[5:19]\tCOMMENT\t'# this is a comment'"],
+    [(tokenize.COMMENT, '# this is a comment',
+      (1, 0),  # (start_row, start_column)
+      (2, 19),  # (end_ro, end_column)
+      '# this is a comment',),
+     "l.1\tl.2\tCOMMENT\t'# this is a comment'"],
+])
+def test_log_token(token, log_string):
+    """Verify we use the log object passed in."""
+    LOG = mock.Mock()
+    processor.log_token(LOG, token)
+    LOG.log.assert_called_once_with(
+        5,  # flake8._EXTRA_VERBOSE
+        log_string,
+    )
+
+
+@pytest.mark.parametrize('current_count, token_text, expected', [
+    (None, '(', 1),
+    (None, '[', 1),
+    (None, '{', 1),
+    (1, ')', 0),
+    (1, ']', 0),
+    (1, '}', 0),
+    (10, '+', 10),
+])
+def test_count_parentheses(current_count, token_text, expected):
+    """Verify our arithmetic is correct."""
+    assert processor.count_parentheses(current_count, token_text) == expected

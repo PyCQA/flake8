@@ -76,13 +76,14 @@ class Manager(object):
         self.processes = []
         self.checkers = []
 
-        try:
-            self.process_queue = multiprocessing.Queue()
-            self.results_queue = multiprocessing.Queue()
-        except OSError as oserr:
-            if oserr.errno not in SERIAL_RETRY_ERRNOS:
-                raise
-            self.using_multiprocessing = False
+        if self.using_multiprocessing:
+            try:
+                self.process_queue = multiprocessing.Queue()
+                self.results_queue = multiprocessing.Queue()
+            except OSError as oserr:
+                if oserr.errno not in SERIAL_RETRY_ERRNOS:
+                    raise
+                self.using_multiprocessing = False
 
     @staticmethod
     def _cleanup_queue(q):
@@ -160,8 +161,19 @@ class Manager(object):
 
             yield result
 
-    def _report_after_parallel(self):
+    def _handle_results(self, filename, results):
         style_guide = self.style_guide
+        for (error_code, line_number, column, text, physical_line) in results:
+            style_guide.handle_error(
+                code=error_code,
+                filename=filename,
+                line_number=line_number,
+                column_number=column,
+                text=text,
+                physical_line=physical_line,
+            )
+
+    def _report_after_parallel(self):
         final_results = {}
         for (filename, results) in self._results():
             final_results[filename] = results
@@ -170,30 +182,12 @@ class Manager(object):
             filename = checker.filename
             results = sorted(final_results.get(filename, []),
                              key=lambda tup: (tup[1], tup[2]))
-            for (error_code, line_number, column, text, line) in results:
-                style_guide.handle_error(
-                    code=error_code,
-                    filename=filename,
-                    line_number=line_number,
-                    column_number=column,
-                    text=text,
-                    physical_line=line,
-                )
+            self._handle_results(filename, results)
 
     def _report_after_serial(self):
-        style_guide = self.style_guide
         for checker in self.checkers:
             results = sorted(checker.results, key=lambda tup: (tup[2], tup[3]))
-            filename = checker.filename
-            for (error_code, line_number, column, text, line) in results:
-                style_guide.handle_error(
-                    code=error_code,
-                    filename=filename,
-                    line_number=line_number,
-                    column_number=column,
-                    text=text,
-                    physical_line=line,
-                )
+            self._handle_results(checker.filename, results)
 
     def _run_checks_from_queue(self):
         LOG.info('Running checks in parallel')

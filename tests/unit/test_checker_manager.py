@@ -1,13 +1,15 @@
 """Tests for the Manager object for FileCheckers."""
 import errno
+
+from flake8 import checker
+
 import mock
 
 import pytest
 
-from flake8 import checker
-
 
 def style_guide_mock(**kwargs):
+    """Create a mock StyleGuide object."""
     kwargs.setdefault('diff', False)
     kwargs.setdefault('jobs', '4')
     style_guide = mock.Mock()

@@ -173,22 +173,6 @@ class Manager(object):
                 physical_line=physical_line,
             )
 
-    def _report_after_parallel(self):
-        final_results = {}
-        for (filename, results) in self._results():
-            final_results[filename] = results
-
-        for checker in self.checkers:
-            filename = checker.filename
-            results = sorted(final_results.get(filename, []),
-                             key=lambda tup: (tup[1], tup[2]))
-            self._handle_results(filename, results)
-
-    def _report_after_serial(self):
-        for checker in self.checkers:
-            results = sorted(checker.results, key=lambda tup: (tup[2], tup[3]))
-            self._handle_results(checker.filename, results)
-
     def _run_checks_from_queue(self):
         LOG.info('Running checks in parallel')
         for checker in iter(self.process_queue.get, 'DONE'):
@@ -242,12 +226,16 @@ class Manager(object):
         This iterates over each of the checkers and reports the errors sorted
         by line number.
         """
-        if not self.using_multiprocessing:
-            self._report_after_serial()
+        results_found = 0
+        for checker in self.checkers:
+            results = sorted(checker.results, key=lambda tup: (tup[2], tup[3]))
+            self._handle_results(checker.filename, results)
+            results_found += len(results)
+        return results_found
 
     def run_parallel(self):
         """Run the checkers in parallel."""
-        LOG.info('Starting %d process workers', self.jobs - 1)
+        LOG.info('Starting %d process workers', self.jobs)
         for i in range(self.jobs):
             proc = multiprocessing.Process(
                 target=self._run_checks_from_queue
@@ -256,10 +244,14 @@ class Manager(object):
             proc.start()
             self.processes.append(proc)
 
-        proc = multiprocessing.Process(target=self._report_after_parallel)
-        proc.start()
-        LOG.info('Started process to report errors')
-        self.processes.append(proc)
+        final_results = {}
+        for (filename, results) in self._results():
+            final_results[filename] = results
+
+        for checker in self.checkers:
+            filename = checker.filename
+            checker.results = sorted(final_results.get(filename, []),
+                                     key=lambda tup: (tup[1], tup[2]))
 
     def run_serial(self):
         """Run the checkers in serial."""
@@ -299,11 +291,11 @@ class Manager(object):
         for checker in self.checkers:
             self.process_queue.put(checker)
 
-    def stop(self):
-        """Stop checking files."""
         for i in range(self.jobs):
             self.process_queue.put('DONE')
 
+    def stop(self):
+        """Stop checking files."""
         for proc in self.processes:
             LOG.info('Joining %s to the main process', proc.name)
             proc.join()

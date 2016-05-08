@@ -195,6 +195,7 @@ class Application(object):
 
         self.options = None
         self.args = None
+        self.result_count = 0
 
     def find_plugins(self):
         # type: () -> NoneType
@@ -274,7 +275,7 @@ class Application(object):
         # type: () -> NoneType
         """Report all the errors found by flake8 3.0."""
         LOG.info('Reporting errors')
-        self.file_checker_manager.report()
+        self.result_count = self.file_checker_manager.report()
 
     def _run(self, argv):
         self.find_plugins()
@@ -289,7 +290,12 @@ class Application(object):
 
     def run(self, argv=None):
         # type: (Union[NoneType, List[str]]) -> NoneType
-        """Run our application."""
+        """Run our application.
+
+        This method will also handle KeyboardInterrupt exceptions for the
+        entirety of the flake8 application. If it sees a KeyboardInterrupt it
+        will forcibly clean up the :class:`~flake8.checker.Manager`.
+        """
         try:
             self._run(argv)
         except KeyboardInterrupt as exc:
@@ -303,3 +309,4 @@ def main(argv=None):
     """Main entry-point for the flake8 command-line tool."""
     app = Application()
     app.run(argv)
+    raise SystemExit(app.result_count > 0)

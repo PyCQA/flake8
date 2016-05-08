@@ -15,7 +15,32 @@ LOG = logging.getLogger(__name__)
 
 
 def register_default_options(option_manager):
-    """Register the default options on our OptionManager."""
+    """Register the default options on our OptionManager.
+
+    The default options include:
+
+    - ``-v``/``--verbose``
+    - ``-q``/``--quiet``
+    - ``--count``
+    - ``--diff``
+    - ``--exclude``
+    - ``--filename``
+    - ``--format``
+    - ``--hang-closing``
+    - ``--ignore``
+    - ``--max-line-length``
+    - ``--select``
+    - ``--disable-noqa``
+    - ``--show-source``
+    - ``--statistics``
+    - ``--enabled-extensions``
+    - ``--exit-zero``
+    - ``-j``/``--jobs``
+    - ``--output-file``
+    - ``--append-config``
+    - ``--config``
+    - ``--isolated``
+    """
     add_option = option_manager.add_option
 
     # pep8 options
@@ -175,8 +200,12 @@ class Application(object):
         :param str version:
             The version of the program/application we're executing.
         """
+        #: The name of the program being run
         self.program = program
+        #: The version of the program being run
         self.version = version
+        #: The instance of :class:`flake8.options.manager.OptionManager` used
+        #: to parse and handle the options and arguments passed by the user
         self.option_manager = manager.OptionManager(
             prog='flake8', version=flake8.__version__
         )
@@ -187,16 +216,31 @@ class Application(object):
         flake8.configure_logging(preliminary_opts.verbose,
                                  preliminary_opts.output_file)
 
+        #: The instance of :class:`flake8.plugins.manager.Checkers`
         self.check_plugins = None
+        #: The instance of :class:`flake8.plugins.manager.Listeners`
         self.listening_plugins = None
+        #: The instance of :class:`flake8.plugins.manager.ReportFormatters`
         self.formatting_plugins = None
+        #: The user-selected formatter from :attr:`formatting_plugins`
         self.formatter = None
+        #: The :class:`flake8.plugins.notifier.Notifier` for listening plugins
         self.listener_trie = None
+        #: The :class:`flake8.style_guide.StyleGuide` built from the user's
+        #: options
         self.guide = None
+        #: The :class:`flake8.checker.Manager` that will handle running all of
+        #: the checks selected by the user.
         self.file_checker_manager = None
 
+        #: The user-supplied options parsed into an instance of
+        #: :class:`optparse.Values`
         self.options = None
+        #: The left over arguments that were not parsed by
+        #: :attr:`option_manager`
         self.args = None
+        #: The number of errors, warnings, and other messages after running
+        #: flake8
         self.result_count = 0
 
     def exit(self):
@@ -214,7 +258,14 @@ class Application(object):
 
     def find_plugins(self):
         # type: () -> NoneType
-        """Find and load the plugins for this application."""
+        """Find and load the plugins for this application.
+
+        If :attr:`check_plugins`, :attr:`listening_plugins`, or
+        :attr:`formatting_plugins` are ``None`` then this method will update
+        them with the appropriate plugin manager instance. Given the expense
+        of finding plugins (via :mod:`pkg_resources`) we want this to be
+        idempotent and so only update those attributes if they are ``None``.
+        """
         if self.check_plugins is None:
             self.check_plugins = plugin_manager.Checkers()
 
@@ -280,7 +331,12 @@ class Application(object):
 
     def run_checks(self):
         # type: () -> NoneType
-        """Run the actual checks with the FileChecker Manager."""
+        """Run the actual checks with the FileChecker Manager.
+
+        This method encapsulates the logic to make a
+        :class:`~flake8.checker.Manger` instance run the checks it is
+        managing.
+        """
         self.file_checker_manager.start()
         self.file_checker_manager.run()
         LOG.info('Finished running')
@@ -288,11 +344,16 @@ class Application(object):
 
     def report_errors(self):
         # type: () -> NoneType
-        """Report all the errors found by flake8 3.0."""
+        """Report all the errors found by flake8 3.0.
+
+        This also updates the :attr:`result_count` attribute with the total
+        number of errors, warnings, and other messages found.
+        """
         LOG.info('Reporting errors')
         self.result_count = self.file_checker_manager.report()
 
     def _run(self, argv):
+        # type: (Union[NoneType, List[str]]) -> NoneType
         self.find_plugins()
         self.register_plugin_options()
         self.parse_configuration_and_cli(argv)
@@ -321,7 +382,14 @@ class Application(object):
 
 def main(argv=None):
     # type: (Union[NoneType, List[str]]) -> NoneType
-    """Main entry-point for the flake8 command-line tool."""
+    """Main entry-point for the flake8 command-line tool.
+
+    This handles the creation of an instance of :class:`Application`, runs it,
+    and then exits the application.
+
+    :param list argv:
+        The arguments to be passed to the application for parsing.
+    """
     app = Application()
     app.run(argv)
     app.exit()

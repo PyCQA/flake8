@@ -1,4 +1,6 @@
 """Command-line implementation of flake8."""
+from __future__ import print_function
+
 import logging
 
 import flake8
@@ -198,6 +200,15 @@ class Application(object):
         self.result_count = 0
 
     def exit(self):
+        # type: () -> NoneType
+        """Handle finalization and exiting the program.
+
+        This should be the last thing called on the application instance. It
+        will check certain options and exit appropriately.
+        """
+        if self.options.count:
+            print(self.result_count)
+
         if not self.options.exit_zero:
             raise SystemExit(self.result_count > 0)
 

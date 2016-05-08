@@ -197,6 +197,10 @@ class Application(object):
         self.args = None
         self.result_count = 0
 
+    def exit(self):
+        if not self.options.exit_zero:
+            raise SystemExit(self.result_count > 0)
+
     def find_plugins(self):
         # type: () -> NoneType
         """Find and load the plugins for this application."""
@@ -309,4 +313,4 @@ def main(argv=None):
     """Main entry-point for the flake8 command-line tool."""
     app = Application()
     app.run(argv)
-    raise SystemExit(app.result_count > 0)
+    app.exit()

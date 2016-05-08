@@ -349,7 +349,13 @@ class FileChecker(object):
         """Report an error by storing it in the results list."""
         if error_code is None:
             error_code, text = text.split(' ', 1)
-        physical_line = self.processor.line_for(line_number)
+
+        physical_line = ''
+        # If we're recovering from a problem in _make_processor, we will not
+        # have this attribute.
+        if getattr(self, 'processor', None):
+            physical_line = self.processor.line_for(line_number)
+
         error = (error_code, line_number, column, text, physical_line)
         self.results.append(error)
         return error_code

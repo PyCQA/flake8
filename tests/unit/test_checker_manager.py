@@ -41,3 +41,20 @@ def test_multiprocessing_is_disabled():
     with mock.patch('flake8.checker.multiprocessing', None):
         manager = checker.Manager(style_guide, [], [])
         assert manager.jobs == 0
+
+
+def test_make_checkers():
+    """Verify that we create a list of FileChecker instances."""
+    style_guide = style_guide_mock()
+    files = ['file1', 'file2']
+    with mock.patch('flake8.checker.multiprocessing', None):
+        manager = checker.Manager(style_guide, files, [])
+
+    with mock.patch('flake8.utils.filenames_from') as filenames_from:
+        filenames_from.side_effect = [['file1'], ['file2']]
+        with mock.patch('flake8.utils.fnmatch', return_value=True):
+            with mock.patch('flake8.processor.FileProcessor'):
+                manager.make_checkers()
+
+    for file_checker in manager.checkers:
+        assert file_checker.filename in files

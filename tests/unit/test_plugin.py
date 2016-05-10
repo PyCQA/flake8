@@ -114,12 +114,6 @@ def test_register_options():
 
     # Assert that we call add_options
     plugin_obj.add_options.assert_called_once_with(option_manager)
-    # Assert that we register the plugin
-    option_manager.register_plugin.assert_called_once_with(
-        entry_point_name='T000',
-        version=plugin_obj.version,
-        name=plugin_obj.name,
-    )
 
 
 def test_register_options_checks_plugin_for_method():

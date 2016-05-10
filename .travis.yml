@@ -22,6 +22,8 @@ matrix:
     - python: pypy
       env: TOXENV=pypy
     - python: 2.7
-      env: TOXENV=py27-flake8
+      env: TOXENV=readme
     - python: 3.4
-      env: TOXENV=py34-flake8
+      env: TOXENV=linters
+    - python: 3.4
+      env: TOXENV=docs

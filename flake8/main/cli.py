@@ -300,6 +300,12 @@ class Application(object):
 
         self.check_plugins.provide_options(self.option_manager, self.options,
                                            self.args)
+        self.listening_plugins.provide_options(self.option_manager,
+                                               self.options,
+                                               self.args)
+        self.formatting_plugins.provide_options(self.option_manager,
+                                                self.options,
+                                                self.args)
 
     def make_formatter(self):
         # type: () -> NoneType

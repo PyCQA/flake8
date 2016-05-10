@@ -212,10 +212,30 @@ class Application(object):
         )
         register_default_options(self.option_manager)
 
-        # Set the verbosity of the program
+        # We haven't found or registered our plugins yet, so let's defer
+        # printing the version until we aggregate options from config files
+        # and the command-line. First, let's clone our arguments on the CLI,
+        # then we'll attempt to remove ``--version`` so that we can avoid
+        # triggering the "version" action in optparse. If it's not there, we
+        # do not need to worry and we can continue. If it is, we successfully
+        # defer printing the version until just a little bit later.
+        # Similarly we have to defer printing the help text until later.
         args = sys.argv[:]
-        args.remove('--version')
+        try:
+            args.remove('--version')
+        except ValueError:
+            pass
+        try:
+            args.remove('--help')
+        except ValueError:
+            pass
+        try:
+            args.remove('-h')
+        except ValueError:
+            pass
+
         preliminary_opts, _ = self.option_manager.parse_args(args)
+        # Set the verbosity of the program
         flake8.configure_logging(preliminary_opts.verbose,
                                  preliminary_opts.output_file)
 

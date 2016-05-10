@@ -282,6 +282,7 @@ class Application(object):
         # type: () -> NoneType
         """Register options provided by plugins to our option manager."""
         self.check_plugins.register_options(self.option_manager)
+        self.check_plugins.register_plugin_versions(self.option_manager)
         self.listening_plugins.register_options(self.option_manager)
         self.formatting_plugins.register_options(self.option_manager)
 

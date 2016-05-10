@@ -167,7 +167,7 @@ class OptionManager(object):
     @staticmethod
     def format_plugin(plugin_tuple):
         """Convert a plugin tuple into a dictionary mapping name to value."""
-        return dict(zip(["entry", "name", "version"], plugin_tuple))
+        return dict(zip(["name", "version"], plugin_tuple))
 
     def add_option(self, *args, **kwargs):
         """Create and register a new option.
@@ -213,7 +213,7 @@ class OptionManager(object):
 
     def generate_epilog(self):
         """Create an epilog with the version and name of each of plugin."""
-        plugin_version_format = '%(name)s(%(entry)s): %(version)s'
+        plugin_version_format = '%(name)s: %(version)s'
         self.parser.epilog = 'Installed plugins: ' + self.generate_versions(
             plugin_version_format
         )
@@ -229,17 +229,13 @@ class OptionManager(object):
 
         return options, xargs
 
-    def register_plugin(self, entry_point_name, name, version):
+    def register_plugin(self, name, version):
         """Register a plugin relying on the OptionManager.
 
-        :param str entry_point_name:
-            The name of the entry-point loaded with pkg_resources. For
-            example, if the entry-point looks like: ``C90 = mccabe.Checker``
-            then the ``entry_point_name`` would be ``C90``.
         :param str name:
             The name of the checker itself. This will be the ``name``
             attribute of the class or function loaded from the entry-point.
         :param str version:
             The version of the checker that we're using.
         """
-        self.registered_plugins.add((entry_point_name, name, version))
+        self.registered_plugins.add((name, version))

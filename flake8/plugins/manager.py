@@ -18,6 +18,8 @@ __all__ = (
     'ReportFormatters',
 )
 
+NO_GROUP_FOUND = object()
+
 
 class Plugin(object):
     """Wrap an EntryPoint from setuptools and other logic."""
@@ -36,12 +38,37 @@ class Plugin(object):
         self.entry_point = entry_point
         self._plugin = None
         self._parameters = None
+        self._group = None
+        self._plugin_name = None
+        self._version = None
 
     def __repr__(self):
         """Provide an easy to read description of the current plugin."""
         return 'Plugin(name="{0}", entry_point="{1}")'.format(
             self.name, self.entry_point
         )
+
+    def is_in_a_group(self):
+        """Determine if this plugin is in a group.
+
+        :returns:
+            True if the plugin is in a group, otherwise False.
+        :rtype:
+            bool
+        """
+        return self.group() is not None
+
+    def group(self):
+        """Find and parse the group the plugin is in."""
+        if self._group is None:
+            name = self.name.split('.', 1)
+            if len(name) > 1:
+                self._group = name[0]
+            else:
+                self._group = NO_GROUP_FOUND
+        if self._group is NO_GROUP_FOUND:
+            return None
+        return self._group
 
     @property
     def parameters(self):
@@ -61,8 +88,25 @@ class Plugin(object):
 
     @property
     def version(self):
-        """Return the version attribute on the plugin."""
-        return self.plugin.version
+        """Return the version of the plugin."""
+        if self._version is None:
+            if self.is_in_a_group():
+                self._version = version_for(self)
+            else:
+                self._version = self.plugin.version
+
+        return self._version
+
+    @property
+    def plugin_name(self):
+        """Return the name of the plugin."""
+        if self._plugin_name is None:
+            if self.is_in_a_group():
+                self._plugin_name = self.group()
+            else:
+                self._plugin_name = self.plugin.name
+
+        return self._plugin_name
 
     def execute(self, *args, **kwargs):
         r"""Call the plugin with \*args and \*\*kwargs."""
@@ -136,11 +180,6 @@ class Plugin(object):
                 self.name, optmanager
             )
             add_options(optmanager)
-            optmanager.register_plugin(
-                entry_point_name=self.name,
-                name=self.plugin.name,
-                version=self.plugin.version
-            )
 
 
 class PluginManager(object):  # pylint: disable=too-few-public-methods
@@ -192,6 +231,46 @@ class PluginManager(object):  # pylint: disable=too-few-public-methods
         """
         for name in self.names:
             yield func(self.plugins[name], *args, **kwargs)
+
+    def versions(self):
+        # () -> (str, str)
+        """Generate the versions of plugins.
+
+        :returns:
+            Tuples of the plugin_name and version
+        :rtype:
+            tuple
+        """
+        plugins_seen = set()
+        for entry_point_name in self.names:
+            plugin = self.plugins[entry_point_name]
+            plugin_name = plugin.plugin_name
+            if plugin.plugin_name in plugins_seen:
+                continue
+            plugins_seen.add(plugin_name)
+            yield (plugin_name, plugin.version)
+
+
+def version_for(plugin):
+    # (Plugin) -> Union[str, NoneType]
+    """Determine the version of a plugin by it's module.
+
+    :param plugin:
+        The loaded plugin
+    :type plugin:
+        Plugin
+    :returns:
+        version string for the module
+    :rtype:
+        str
+    """
+    module_name = plugin.plugin.__module__
+    try:
+        module = __import__(module_name)
+    except ImportError:
+        return None
+
+    return getattr(module, '__version__', None)
 
 
 class PluginTypeManager(object):
@@ -263,6 +342,12 @@ class PluginTypeManager(object):
         # Do not set plugins_loaded if we run into an exception
         self.plugins_loaded = True
         return plugins
+
+    def register_plugin_versions(self, optmanager):
+        """Register the plugins and their versions with the OptionManager."""
+        self.load_plugins()
+        for (plugin_name, version) in self.manager.versions():
+            optmanager.register_plugin(name=plugin_name, version=version)
 
     def register_options(self, optmanager):
         """Register all of the checkers' options to the OptionManager."""

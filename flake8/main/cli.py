@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import logging
+import sys
 
 import flake8
 from flake8 import checker
@@ -212,7 +213,9 @@ class Application(object):
         register_default_options(self.option_manager)
 
         # Set the verbosity of the program
-        preliminary_opts, _ = self.option_manager.parse_args()
+        args = sys.argv[:]
+        args.remove('--version')
+        preliminary_opts, _ = self.option_manager.parse_args(args)
         flake8.configure_logging(preliminary_opts.verbose,
                                  preliminary_opts.output_file)
 

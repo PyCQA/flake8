@@ -83,6 +83,21 @@ Finally, Flake8 has always provided its own plugin shim for Pyflakes. As part
 of that we carry our own shim in-tree and now store that in
 :mod:`flake8.plugins.pyflakes`.
 
+Flake8 also registers plugins for pep8. Each check in pep8 requires different
+parameters and it cannot easily be shimmed together like Pyflakes was. As
+such, plugins have a concept of a "group". If you look at our :file:`setup.py`
+you will see that we register pep8 checks roughly like so:
+
+.. code::
+
+    pep8.<check-name> = pep8:<check-name>
+
+We do this to identify that ``<check-name>>`` is part of a group. This also
+enables us to special-case how we handle reporting those checks. Instead of
+reporting each check in the ``--version`` output, we report ``pep8`` and check
+``pep8`` the module for a ``__version__`` attribute. We only report it once
+to avoid confusing users.
+
 API Documentation
 -----------------
 

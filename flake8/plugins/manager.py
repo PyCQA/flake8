@@ -108,6 +108,11 @@ class Plugin(object):
 
         return self._plugin_name
 
+    @property
+    def off_by_default(self):
+        """Return whether the plugin is ignored by default."""
+        return getattr(self.plugin, 'off_by_default', False)
+
     def execute(self, *args, **kwargs):
         r"""Call the plugin with \*args and \*\*kwargs."""
         return self.plugin(*args, **kwargs)  # pylint: disable=not-callable
@@ -180,6 +185,9 @@ class Plugin(object):
                 self.name, optmanager
             )
             add_options(optmanager)
+
+        if self.off_by_default:
+            optmanager.extend_default_ignore([self.name])
 
 
 class PluginManager(object):  # pylint: disable=too-few-public-methods

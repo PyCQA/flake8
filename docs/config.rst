@@ -46,7 +46,7 @@ file. In general, any settings that pep8 supports we also support and we add
 the ability to set ``max-complexity`` as well.
 
 - ``exclude``: comma-separated filename and glob patterns
-  default: ``.svn,CVS,.bzr,.hg,.git,__pycache``
+  default: ``.svn,CVS,.bzr,.hg,.git,__pycache__``
 
 - ``filename``: comma-separated filename and glob patterns
   default: ``*.py``

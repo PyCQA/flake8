@@ -30,20 +30,20 @@ class FileProcessor(object):
     to checks expecting that state. Any public attribute on this object can
     be requested by a plugin. The known public attributes are:
 
-    - blank_before
-    - blank_lines
-    - indect_char
-    - indent_level
-    - line_number
-    - logical_line
-    - max_line_length
-    - multiline
-    - noqa
-    - previous_indent_level
-    - previous_logical
-    - tokens
-    - total_lines
-    - verbose
+    - :attr:`blank_before`
+    - :attr:`blank_lines`
+    - :attr:`indect_char`
+    - :attr:`indent_level`
+    - :attr:`line_number`
+    - :attr:`logical_line`
+    - :attr:`max_line_length`
+    - :attr:`multiline`
+    - :attr:`noqa`
+    - :attr:`previous_indent_level`
+    - :attr:`previous_logical`
+    - :attr:`tokens`
+    - :attr:`total_lines`
+    - :attr:`verbose`
     """
 
     NOQA_FILE = re.compile(r'\s*# flake8[:=]\s*noqa', re.I)

@@ -27,7 +27,7 @@ also was required to take over parsing and processing files for the checkers
 to use. Since we couldn't reuse pycodestyle's functionality (since it did not
 separate cleanly the processing from check running) we isolated that function
 into the :class:`~flake8.processor.FileProcessor` class. Further, we moved
-several helper functions into the :mod:`flake8.processor` module (see also 
+several helper functions into the :mod:`flake8.processor` module (see also
 :ref:`Processor Utility Functions <processor_utility_functions>`).
 
 

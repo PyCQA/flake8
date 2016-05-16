@@ -1,6 +1,6 @@
-===============
- Check Running
-===============
+====================
+ How Checks are Run
+====================
 
 In Flake8 2.x, Flake8 delegated check running to pep8. In 3.0 we have taken
 that responsibility upon ourselves. This has allowed us to simplify our

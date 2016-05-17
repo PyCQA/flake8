@@ -19,6 +19,7 @@ Plugin Developer Guide
     :maxdepth: 2
 
     dev/formatters
+    dev/plugin_parameters
     dev/registering_plugins
 
 Developer Guide

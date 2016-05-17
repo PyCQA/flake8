@@ -15,6 +15,7 @@ can accept either an AST or a range of arguments. Further, any plugin that has
 certain callable attributes can also register options and receive parsed
 options.
 
+
 Indicating Desired Data
 =======================
 
@@ -44,5 +45,26 @@ Alternatively, a plugin can accept ``tree`` and ``filename``.
 ``tree`` will be a parsed abstract syntax tree that will be used by plugins
 like PyFlakes and McCabe.
 
-Finally, any plugin that has callable attributes ``provide_options`` and
+
+Registering and Parsing Options
+===============================
+
+Any plugin that has callable attributes ``provide_options`` and
 ``register_options`` can parse option information and register new options.
+
+Your ``register_options`` function should expect to receive an instance of
+|OptionManager|. An |OptionManager| instance behaves very similarly to
+:class:`optparse.OptionParser`. It, however, uses the layer that Flake8 has
+developed on top of :mod:`optparse` to also handle configuration file parsing.
+:meth:`~flake8.options.manager.OptionManager.add_option` creates an |Option|
+which accepts the same parameters as :mod:`optparse` as well as three extra
+boolean parameters:
+
+- ``parse_from_config``
+- ``comma_separated_list``
+- ``normalize_paths``
+
+
+.. substitutions
+.. |OptionManager| replace:: :class:`~flake8.options.manager.OptionManager`
+.. |Option| replace:: :class:`~flake8.options.manager.Option`

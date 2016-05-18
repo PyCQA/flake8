@@ -137,6 +137,25 @@ For information about other parameters to
 :meth:`~flake8.options.manager.OptionManager.add_option` refer to the
 documentation of :mod:`optparse`.
 
+
+Accessing Parsed Options
+========================
+
+When a plugin has a callable ``provide_options`` attribute, Flake8 will call
+it and attempt to provide the |OptionManager| instance, the parsed options
+which will be an instance of :class:`optparse.Values`, and the extra arguments
+that were not parsed by the |OptionManager|. If that fails, we will just pass
+the :class:`optparse.Values`. In other words, your ``provide_options``
+callable will have one of the following signatures:
+
+.. code-block:: python
+
+    def provide_options(option_manager, options, args):
+        pass
+    # or
+    def provide_options(options):
+        pass
+
 .. substitutions
 .. |OptionManager| replace:: :class:`~flake8.options.manager.OptionManager`
 .. |Option| replace:: :class:`~flake8.options.manager.Option`

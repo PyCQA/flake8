@@ -69,6 +69,8 @@ User Guide
 .. toctree::
     :maxdepth: 2
 
+    user/index
+
 Plugin Developer Guide
 ----------------------
 

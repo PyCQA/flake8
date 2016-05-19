@@ -26,12 +26,7 @@ Developer Guide
 .. toctree::
     :maxdepth: 2
 
-    internal/checker
-    internal/cli
-    internal/formatters
-    internal/option_handling
-    internal/plugin_handling
-    internal/utils
+    internal/index
 
 Indices and tables
 ==================

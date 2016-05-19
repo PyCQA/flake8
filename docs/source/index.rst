@@ -18,9 +18,7 @@ Plugin Developer Guide
 .. toctree::
     :maxdepth: 2
 
-    dev/formatters
-    dev/plugin_parameters
-    dev/registering_plugins
+    dev/index
 
 Developer Guide
 ---------------

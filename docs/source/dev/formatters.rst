@@ -1,3 +1,5 @@
+.. _formatting-plugins:
+
 ===========================================
  Developing a Formatting Plugin for Flake8
 ===========================================

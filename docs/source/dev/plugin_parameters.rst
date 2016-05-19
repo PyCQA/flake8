@@ -1,6 +1,8 @@
-====================================
- Receiving Information For A Plugin
-====================================
+.. _plugin-parameters:
+
+==========================================
+ Receiving Information For A Check Plugin
+==========================================
 
 Plugins to Flake8 have a great deal of information that they can request from
 a :class:`~flake8.processor.FileProcessor` instance. Historically, Flake8 has

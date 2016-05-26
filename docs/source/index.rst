@@ -3,11 +3,14 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Flake8: Your Tool For Style Guide Enforcement
-=============================================
+===============================================
+ Flake8: Your Tool For Style Guide Enforcement
+===============================================
+
+.. _installation-guide:
 
 Installation
-------------
+============
 
 To install Flake8, open an interactive shell and run:
 
@@ -31,7 +34,7 @@ can instead use:
     the version of Python on which it runs.
 
 Quickstart
-----------
+==========
 
 To start using Flake8, open an interactive shell and run:
 
@@ -64,7 +67,7 @@ Please read our user guide for more information about how to use and configure
 Flake8.
 
 User Guide
-----------
+==========
 
 .. toctree::
     :maxdepth: 2
@@ -72,7 +75,7 @@ User Guide
     user/index
 
 Plugin Developer Guide
-----------------------
+======================
 
 .. toctree::
     :maxdepth: 2
@@ -80,7 +83,7 @@ Plugin Developer Guide
     dev/index
 
 Developer Guide
----------------
+===============
 
 .. toctree::
     :maxdepth: 2

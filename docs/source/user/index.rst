@@ -22,6 +22,7 @@ This guide will cover all of these and the nuances for using Flake8.
 
     invocation
     configuration
+    options
 
 .. config files
 .. command-line tutorial

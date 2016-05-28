@@ -45,6 +45,9 @@ The user configuration file is expected to be stored somewhere in the user's
 Note that Flake8 looks for ``~\.flake8`` on Windows and ``~/.config/flake8``
 on Linux and other Unix systems.
 
+User configuration files use the same syntax as Project Configuration files.
+Keep reading to see that syntax.
+
 
 Project Configuration
 ---------------------
@@ -93,7 +96,13 @@ be named in either of two ways:
 
 #. Simply using hyphens (without the leading hyphens)
 
-So let's actually look at Flake8's own configuration section:
+.. note::
+
+    Not every Flake8 command-line option can be specified in the configuration
+    file. See :ref:`our list of options <options-list>` to determine which
+    options will be parsed from the configuration files.
+
+Let's actually look at Flake8's own configuration section:
 
 .. code-block:: ini
 
@@ -145,6 +154,10 @@ This would allow us to add comments for why we're excluding items, e.g.,
         # This contains builds of flake8 that we don't want to check
         dist
     max-complexity = 10
+
+.. note::
+
+    You can also specify ``--max-complexity`` as ``max_complexity = 10``.
 
 This is also useful if you have a long list of error codes to ignore. Let's
 look at a portion of OpenStack's Swift project configuration:

@@ -189,6 +189,21 @@ class OptionManager(object):
             self.config_options_dict[option.config_name] = option
         LOG.debug('Registered option "%s".', option)
 
+    def remove_from_default_ignore(self, error_codes):
+        """Remove specified error codes from the default ignore list.
+
+        :param list error_codes:
+            List of strings that are the error/warning codes to attempt to
+            remove from the extended default ignore list.
+        """
+        LOG.debug('Removing %r from the default ignore list', error_codes)
+        for error_code in error_codes:
+            try:
+                self.extend_default_ignore.remove(error_code)
+            except ValueError:
+                LOG.debug('Attempted to remove %s from default ignore'
+                          ' but it was not a member of the list.', error_code)
+
     def extend_default_ignore(self, error_codes):
         """Extend the default ignore list with the error codes provided.
 

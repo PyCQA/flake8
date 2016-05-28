@@ -34,7 +34,7 @@ def register_default_options(option_manager):
     - ``--disable-noqa``
     - ``--show-source``
     - ``--statistics``
-    - ``--enabled-extensions``
+    - ``--enable-extensions``
     - ``--exit-zero``
     - ``-j``/``--jobs``
     - ``--output-file``
@@ -141,7 +141,7 @@ def register_default_options(option_manager):
 
     # Flake8 options
     add_option(
-        '--enabled-extensions', default='', parse_from_config=True,
+        '--enable-extensions', default='', parse_from_config=True,
         comma_separated_list=True, type='string',
         help='Enable plugins and extensions that are otherwise disabled '
              'by default',

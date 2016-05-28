@@ -158,6 +158,14 @@ class Plugin(object):
                 LOG.critical(str(failed_to_load))
                 raise failed_to_load
 
+    def enable(self, optmanager):
+        """Remove plugin name from the default ignore list."""
+        optmanager.remove_from_default_ignore([self.name])
+
+    def disable(self, optmanager):
+        """Add the plugin name to the default ignore list."""
+        optmanager.extend_default_ignore([self.name])
+
     def provide_options(self, optmanager, options, extra_args):
         """Pass the parsed options and extra arguments to the plugin."""
         parse_options = getattr(self.plugin, 'parse_options', None)
@@ -167,6 +175,9 @@ class Plugin(object):
                 parse_options(optmanager, options, extra_args)
             except TypeError:
                 parse_options(options)
+
+        if self.name in options.enable_extensions:
+            self.enable(optmanager)
 
     def register_options(self, optmanager):
         """Register the plugin's command-line options on the OptionManager.
@@ -187,7 +198,7 @@ class Plugin(object):
             add_options(optmanager)
 
         if self.off_by_default:
-            optmanager.extend_default_ignore([self.name])
+            self.disable(optmanager)
 
 
 class PluginManager(object):  # pylint: disable=too-few-public-methods

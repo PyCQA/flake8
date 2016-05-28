@@ -1,4 +1,6 @@
 """Tests for flake8.plugins.manager.Plugin."""
+import optparse
+
 from flake8 import exceptions
 from flake8.plugins import manager
 
@@ -138,14 +140,15 @@ def test_provide_options():
     entry_point = mock.Mock(spec=['require', 'resolve', 'load'])
     plugin_obj = mock.Mock(spec_set=['name', 'version', 'add_options',
                                      'parse_options'])
+    option_values = optparse.Values({'enable_extensions': []})
     option_manager = mock.Mock()
     plugin = manager.Plugin('T000', entry_point)
     plugin._plugin = plugin_obj
 
     # Call the method we're testing.
-    plugin.provide_options(option_manager, 'options', None)
+    plugin.provide_options(option_manager, option_values, None)
 
     # Assert that we call add_options
     plugin_obj.parse_options.assert_called_once_with(
-        option_manager, 'options', None
+        option_manager, option_values, None
     )

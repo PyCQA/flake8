@@ -172,3 +172,36 @@ def test_parse_uses_cli_config(ConfigFileManager, optmanager):
 
     parser.parse(cli_config='foo.ini')
     parser.config_finder.cli_config.assert_called_once_with('foo.ini')
+
+
+@pytest.mark.parametrize('config_fixture_path', [
+    'tests/fixtures/config_files/cli-specified.ini',
+    'tests/fixtures/config_files/cli-specified-with-inline-comments.ini',
+    'tests/fixtures/config_files/cli-specified-without-inline-comments.ini',
+])
+def test_parsed_configs_are_equivalent(optmanager, config_fixture_path):
+    """Verify the each file matches the expected parsed output.
+
+    This is used to ensure our documented behaviour does not regress.
+    """
+    optmanager.add_option('--exclude', parse_from_config=True,
+                          comma_separated_list=True,
+                          normalize_paths=True)
+    optmanager.add_option('--ignore', parse_from_config=True,
+                          comma_separated_list=True)
+    parser = config.MergedConfigParser(optmanager)
+    config_finder = parser.config_finder
+
+    with mock.patch.object(config_finder, 'local_config_files') as localcfs:
+        localcfs.return_value = [config_fixture_path]
+        with mock.patch.object(config_finder,
+                               'user_config_file') as usercf:
+            usercf.return_value = []
+            parsed_config = parser.merge_user_and_local_config()
+
+    assert parsed_config['ignore'] == ['E123', 'W234', 'E111']
+    assert parsed_config['exclude'] == [
+        os.path.abspath('foo/'),
+        os.path.abspath('bar/'),
+        os.path.abspath('bogus/'),
+    ]

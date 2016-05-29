@@ -75,7 +75,7 @@ def register_default_options(option_manager):
         comma_separated_list=True, parse_from_config=True,
         normalize_paths=True,
         help='Comma-separated list of files or directories to exclude.'
-             '(Default: %default)',
+             ' (Default: %default)',
     )
 
     add_option(

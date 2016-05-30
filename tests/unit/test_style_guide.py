@@ -135,7 +135,9 @@ def test_is_inline_ignored(error_code, physical_line, expected_result):
                                    listener_trie=None,
                                    formatter=None)
     error = style_guide.Error(error_code, 'filename.py', 1, 1, 'error text',
-                              physical_line)
+                              None)
+    # We want `None` to be passed as the physical line so we actually use our
+    # monkey-patched linecache.getline value.
 
     with mock.patch('linecache.getline', return_value=physical_line):
         assert guide.is_inline_ignored(error) is expected_result

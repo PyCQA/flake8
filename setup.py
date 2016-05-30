@@ -37,6 +37,9 @@ requires = [
 if sys.version_info < (3, 4):
     requires.append("enum34")
 
+if sys.version_info < (3, 2):
+    requires.append("configparser")
+
 
 def get_long_description():
     """Generate a long description from the README and CHANGES files."""

@@ -1,9 +1,5 @@
 """Tests for the ConfigFileFinder."""
-try:
-    import ConfigParser as configparser
-except ImportError:
-    import configparser
-
+import configparser
 import os
 import sys
 

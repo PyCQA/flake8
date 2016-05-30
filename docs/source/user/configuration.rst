@@ -157,6 +157,14 @@ This would allow us to add comments for why we're excluding items, e.g.,
 
 .. note::
 
+    If you're using Python 2, you will notice that we download the
+    :mod:`configparser` backport from PyPI. That backport enables us to
+    support this behaviour on all supported versions of Python.
+
+    Please do **not** open issues about this dependency.
+
+.. note::
+
     You can also specify ``--max-complexity`` as ``max_complexity = 10``.
 
 This is also useful if you have a long list of error codes to ignore. Let's

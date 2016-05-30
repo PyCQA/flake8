@@ -1,12 +1,8 @@
 """Config handling logic for Flake8."""
+import configparser
 import logging
 import os.path
 import sys
-
-if sys.version_info < (3, 0):
-    import ConfigParser as configparser
-else:
-    import configparser
 
 LOG = logging.getLogger(__name__)
 

@@ -4,6 +4,27 @@
  Full Listing of Options and Their Descriptions
 ================================================
 
+..
+    NOTE(sigmavirus24): When adding new options here, please follow the
+    following _rough_ template:
+
+    .. option:: --<opt-name>[=<descriptive-name-of-parameter>]
+
+        Active description of option's purpose (note that each description
+        starts with an active verb)
+
+        Command-line usage:
+
+        .. prompt:: bash
+
+            flake8 --<opt-name>[=<example-parameter(s)>] [positional params]
+
+        This **can[ not]** be specified in config files.
+
+        (If it can be, an example using .. code-block:: ini)
+
+    Thank you for your contribution to Flake8's documentation.
+
 .. program:: flake8
 
 .. option:: --version
@@ -17,7 +38,7 @@
 
         flake8 --version
 
-    This **can not** be specified in the config files.
+    This **can not** be specified in config files.
 
 
 .. option:: -h, --help
@@ -31,7 +52,7 @@
         flake8 --help
         flake8 -h
 
-    This **can not** be specified in the config files.
+    This **can not** be specified in config files.
 
 
 .. option::  -v, --verbose
@@ -45,7 +66,7 @@
 
         flake8 -vv
 
-    This **can** be specified in the config file.
+    This **can** be specified in config files.
 
     Example config file usage:
 
@@ -65,7 +86,7 @@
 
         flake8 -q
 
-    This **can** be specified in the config file.
+    This **can** be specified in config files.
 
     Example config file usage:
 
@@ -84,7 +105,7 @@
 
         flake8 --count dir/
 
-    This **can** be specified in the config file.
+    This **can** be specified in config files.
 
     Example config file usage:
 
@@ -104,7 +125,7 @@
 
         git diff -u | flake8 --diff
 
-    This **can not** be specified in the config file.
+    This **can not** be specified in config files.
 
 
 .. option:: --exclude=<patterns>
@@ -128,7 +149,7 @@
 
         flake8 --exclude=*.pyc dir/
 
-    This **can** be specified in the config file.
+    This **can** be specified in config files.
 
     Example config file usage:
 
@@ -160,7 +181,7 @@
 
         flake8 --filename=*.py dir/
 
-    This **can** be specified in the config file.
+    This **can** be specified in config files.
 
     Example config file usage:
 
@@ -192,7 +213,7 @@
 
         flake8 --format=pylint dir/
 
-    This **can** be specified in the config file.
+    This **can** be specified in config files.
 
     Example config file usage:
 
@@ -213,7 +234,7 @@
 
         flake8 --hang-closing dir/
 
-    This **can** be specified in the config file.
+    This **can** be specified in config files.
 
     Example config file usage:
 
@@ -244,7 +265,7 @@
         flake8 --ignore=E121,E123 dir/
         flake8 --ignore=E24,E704 dir/
 
-    This **can** be specified in the config file.
+    This **can** be specified in config files.
 
     Example config file usage:
 
@@ -279,7 +300,7 @@
 
         flake8 --max-line-length 99 dir/
 
-    This **can** be specified in the config file.
+    This **can** be specified in config files.
 
     Example config file usage:
 
@@ -314,7 +335,7 @@
     specifically. This is more flexibly than the Flake8 2.x and 1.x used
     to be.
 
-    This **can** be specified in the config file.
+    This **can** be specified in config files.
 
     Example config file usage:
 
@@ -340,7 +361,7 @@
 
         flake8 --disable-noqa dir/
 
-    This **can** be specified in the config file.
+    This **can** be specified in config files.
 
     Example config file usage:
 
@@ -360,7 +381,7 @@
 
         flake8 --show-source dir/
 
-    This **can** be specified in the config file.
+    This **can** be specified in config files.
 
     Example config file usage:
 
@@ -381,7 +402,7 @@
 
         flake8 --statistics
 
-    This **can** be specified in the config file.
+    This **can** be specified in config files.
 
     Example config file usage:
 
@@ -404,7 +425,7 @@
 
         flake8 --enable-extensions=H111 dir/
 
-    This **can** be specified in the config file.
+    This **can** be specified in config files.
 
     Example config file usage:
 
@@ -430,7 +451,7 @@
 
         flake8 --exit-zero dir/
 
-    This **can not** be specified in the config file.
+    This **can not** be specified in config files.
 
 
 .. option:: --jobs=<n>
@@ -454,7 +475,7 @@
 
         flake8 --jobs=8 dir/
 
-    This **can** be specified in the config file.
+    This **can** be specified in config files.
 
     Example config file usage:
 
@@ -474,7 +495,7 @@
         flake8 --output-file=output.txt dir/
         flake8 -vv --output-file=output.txt dir/
 
-    This **can** be specified in the config file.
+    This **can** be specified in config files.
 
     Example config file usage:
 
@@ -497,7 +518,7 @@
 
         flake8 --append-config=my-extra-config.ini dir/
 
-    This **can not** be specified in the config file.
+    This **can not** be specified in config files.
 
 
 .. option:: --config=<config>
@@ -511,7 +532,7 @@
 
         flake8 --config=my-only-config.ini dir/
 
-    This **can not** be specified in the config file.
+    This **can not** be specified in config files.
 
 
 .. option:: --isolated
@@ -525,7 +546,7 @@
 
         flake8 --isolated dir/
 
-    This **can not** be specified in the config file.
+    This **can not** be specified in config files.
 
 
 .. option:: --builtins=<builtins>
@@ -544,7 +565,7 @@
 
         flake8 --builtins=_,_LE,_LW dir/
 
-    This **can** be specified in the config file.
+    This **can** be specified in config files.
 
     Example config file usage:
 
@@ -568,7 +589,7 @@
 
         flake8 --doctests dir/
 
-    This **can** be specified in the config file.
+    This **can** be specified in config files.
 
     Example config file usage:
 
@@ -589,7 +610,7 @@
 
         flake8 --include-in-doctest=dir/subdir/file.py,dir/other/file.py dir/
 
-    This **can** be specified in the config file.
+    This **can** be specified in config files.
 
     Example config file usage:
 
@@ -615,7 +636,7 @@
 
         flake8 --exclude-in-doctest=dir/subdir/file.py,dir/other/file.py dir/
 
-    This **can** be specified in the config file.
+    This **can** be specified in config files.
 
     Example config file usage:
 

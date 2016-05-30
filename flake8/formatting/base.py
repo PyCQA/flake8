@@ -55,8 +55,9 @@ class BaseFormatter(object):
     def handle(self, error):
         """Handle an error reported by Flake8.
 
-        This defaults to calling :meth:`format` and then :meth:`write`. To
-        extend how errors are handled, override this method.
+        This defaults to calling :meth:`format`, :meth:`format_source`, and
+        then :meth:`write`. To extend how errors are handled, override this
+        method.
 
         :param error:
             This will be an instance of :class:`~flake8.style_guide.Error`.
@@ -64,7 +65,8 @@ class BaseFormatter(object):
             flake8.style_guide.Error
         """
         line = self.format(error)
-        self.write(line)
+        source = self.format_source(error)
+        self.write(line, source)
 
     def format(self, error):
         """Format an error reported by Flake8.
@@ -83,7 +85,26 @@ class BaseFormatter(object):
         raise NotImplementedError('Subclass of BaseFormatter did not implement'
                                   ' format.')
 
-    def write(self, line):
+    def format_source(self, error):
+        """Format the physical line generating the error.
+
+        :param error:
+            This will be an instance of :class:`~flake8.style_guide.Error`.
+        :returns:
+            The formatted error string if the user wants to show the source.
+            If the user does not want to show the source, this will return
+            ``None``.
+        :rtype:
+            str
+        """
+        if not self.options.show_source:
+            return None
+        pointer = (' ' * error.column_number) + '^'
+        # Physical lines have a newline at the end, no need to add an extra
+        # one
+        return error.physical_line + pointer
+
+    def write(self, line, source):
         """Write the line either to the output file or stdout.
 
         This handles deciding whether to write to a file or print to standard
@@ -94,9 +115,14 @@ class BaseFormatter(object):
             The formatted string to print or write.
         """
         if self.output_fd is not None:
-            self.output_fd.write(line + self.newline)
+            write = self.output_fd.write
+            output_func = lambda line: write(line + self.newline)
         else:
-            print(line)
+            output_func = print
+
+        output_func(line)
+        if source:
+            output_func(source)
 
     def stop(self):
         """Clean up after reporting is finished."""

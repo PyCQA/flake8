@@ -36,11 +36,17 @@ class Decision(enum.Enum):
     Selected = 'selected error'
 
 
-Error = collections.namedtuple('Error', ['code',
-                                         'filename',
-                                         'line_number',
-                                         'column_number',
-                                         'text'])
+Error = collections.namedtuple(
+    'Error',
+    [
+        'code',
+        'filename',
+        'line_number',
+        'column_number',
+        'text',
+        'physical_line',
+    ],
+)
 
 
 class StyleGuide(object):
@@ -157,9 +163,10 @@ class StyleGuide(object):
             LOG.debug('"%s" will be "%s"', code, decision)
         return decision
 
-    def is_inline_ignored(self, error, physical_line=None):
+    def is_inline_ignored(self, error):
         # type: (Error) -> bool
         """Determine if an comment has been added to ignore this line."""
+        physical_line = error.physical_line
         # TODO(sigmavirus24): Determine how to handle stdin with linecache
         if self.options.disable_noqa:
             return False
@@ -191,9 +198,10 @@ class StyleGuide(object):
                      physical_line=None):
         # type: (str, str, int, int, str) -> NoneType
         """Handle an error reported by a check."""
-        error = Error(code, filename, line_number, column_number, text)
+        error = Error(code, filename, line_number, column_number, text,
+                      physical_line)
         if (self.should_report_error(error.code) is Decision.Selected and
-                self.is_inline_ignored(error, physical_line) is False):
+                self.is_inline_ignored(error) is False):
             self.formatter.handle(error)
             self.listener.notify(error.code, error)
 

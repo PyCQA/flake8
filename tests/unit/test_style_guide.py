@@ -134,7 +134,8 @@ def test_is_inline_ignored(error_code, physical_line, expected_result):
     guide = style_guide.StyleGuide(create_options(select=['E', 'W', 'F']),
                                    listener_trie=None,
                                    formatter=None)
-    error = style_guide.Error(error_code, 'filename.py', 1, 1, 'error text')
+    error = style_guide.Error(error_code, 'filename.py', 1, 1, 'error text',
+                              physical_line)
 
     with mock.patch('linecache.getline', return_value=physical_line):
         assert guide.is_inline_ignored(error) is expected_result
@@ -145,7 +146,8 @@ def test_disable_is_inline_ignored():
     guide = style_guide.StyleGuide(create_options(disable_noqa=True),
                                    listener_trie=None,
                                    formatter=None)
-    error = style_guide.Error('E121', 'filename.py', 1, 1, 'error text')
+    error = style_guide.Error('E121', 'filename.py', 1, 1, 'error text',
+                              'line')
 
     with mock.patch('linecache.getline') as getline:
         assert guide.is_inline_ignored(error) is False
@@ -171,7 +173,8 @@ def test_handle_error_notifies_listeners(select_list, ignore_list, error_code):
 
     with mock.patch('linecache.getline', return_value=''):
         guide.handle_error(error_code, 'stdin', 1, 1, 'error found')
-    error = style_guide.Error(error_code, 'stdin', 1, 1, 'error found')
+    error = style_guide.Error(error_code, 'stdin', 1, 1, 'error found',
+                              None)
     listener_trie.notify.assert_called_once_with(error_code, error)
     formatter.handle.assert_called_once_with(error)
 

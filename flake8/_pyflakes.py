@@ -8,7 +8,7 @@ else:
     demandimport.disable()
 import os
 
-import pep8
+import pycodestyle as pep8
 import pyflakes
 import pyflakes.checker
 

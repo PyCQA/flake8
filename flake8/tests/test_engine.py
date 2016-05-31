@@ -8,7 +8,7 @@ except ImportError:
     import mock  # < PY33
 
 from flake8 import engine, util, __version__, reporter
-import pep8
+import pycodestyle as pep8
 
 
 class TestEngine(unittest.TestCase):

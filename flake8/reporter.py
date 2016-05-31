@@ -10,7 +10,7 @@ try:
 except ImportError:     # Python 2.5
     multiprocessing = None
 
-import pep8
+import pycodestyle as pep8
 
 __all__ = ['multiprocessing', 'BaseQReport', 'QueueReport']
 

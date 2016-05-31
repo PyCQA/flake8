@@ -4,15 +4,15 @@ Warning / Error codes
 =====================
 
 The convention of Flake8 is to assign a code to each error or warning, like
-the ``pep8`` tool.  These codes are used to configure the list of errors
+the ``pycodestyle`` tool.  These codes are used to configure the list of errors
 which are selected or ignored.
 
 Each code consists of an upper case ASCII letter followed by three digits.
 The recommendation is to use a different prefix for each plugin. A list of the
 known prefixes is published below:
 
-- ``E***``/``W***``: `pep8 errors and warnings
-  <http://pep8.readthedocs.org/en/latest/intro.html#error-codes>`_
+- ``E***``/``W***``: `pycodestyle errors and warnings
+  <https://pycodestyle.readthedocs.io/en/latest/intro.html#error-codes>`_
 - ``F***``: PyFlakes codes (see below)
 - ``C9**``: McCabe complexity plugin `mccabe
   <https://github.com/flintwork/mccabe>`_

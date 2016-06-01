@@ -55,7 +55,7 @@ class BaseFormatter(object):
     def handle(self, error):
         """Handle an error reported by Flake8.
 
-        This defaults to calling :meth:`format`, :meth:`format_source`, and
+        This defaults to calling :meth:`format`, :meth:`show_source`, and
         then :meth:`write`. To extend how errors are handled, override this
         method.
 
@@ -65,7 +65,7 @@ class BaseFormatter(object):
             flake8.style_guide.Error
         """
         line = self.format(error)
-        source = self.format_source(error)
+        source = self.show_source(error)
         self.write(line, source)
 
     def format(self, error):
@@ -85,11 +85,19 @@ class BaseFormatter(object):
         raise NotImplementedError('Subclass of BaseFormatter did not implement'
                                   ' format.')
 
-    def format_source(self, error):
-        """Format the physical line generating the error.
+    def show_benchmarks(self, benchmarks):
+        pass
+
+    def show_source(self, error):
+        """Show the physical line generating the error.
+
+        This also adds an indicator for the particular part of the line that
+        is reported as generating the problem.
 
         :param error:
             This will be an instance of :class:`~flake8.style_guide.Error`.
+        :type error:
+            flake8.style_guide.Error
         :returns:
             The formatted error string if the user wants to show the source.
             If the user does not want to show the source, this will return
@@ -104,6 +112,13 @@ class BaseFormatter(object):
         # one
         return error.physical_line + pointer
 
+    def _write(self, output):
+        """Handle logic of whether to use an output file or print()."""
+        if self.output_fd is not None:
+            self.output_fd.write(output + self.newline)
+        else:
+            print(output)
+
     def write(self, line, source):
         """Write the line either to the output file or stdout.
 
@@ -113,16 +128,13 @@ class BaseFormatter(object):
 
         :param str line:
             The formatted string to print or write.
+        :param str source:
+            The source code that has been formatted and associated with the
+            line of output.
         """
-        if self.output_fd is not None:
-            write = self.output_fd.write
-            output_func = lambda line: write(line + self.newline)
-        else:
-            output_func = print
-
-        output_func(line)
+        self._write(line)
         if source:
-            output_func(source)
+            self._write(source)
 
     def stop(self):
         """Clean up after reporting is finished."""

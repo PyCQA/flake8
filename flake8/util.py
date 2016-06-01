@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import sys
 
 try:
     import ast
@@ -54,7 +55,10 @@ def warn_when_using_jobs(options):
 
 
 def force_disable_jobs(styleguide):
-    return is_windows() or is_using_stdin(styleguide.paths)
+    affected_mp_version = (sys.version_info <= (2, 7, 11) or
+                           (3, 0) <= sys.version_info < (3, 2))
+    return (is_windows() and affected_mp_version or
+            is_using_stdin(styleguide.paths))
 
 
 INT_TYPES = ('int', 'count')

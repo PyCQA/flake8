@@ -48,9 +48,12 @@ def normalize_path(path, parent=os.curdir):
     :rtype:
         str
     """
-    if '/' in path:
+    # NOTE(sigmavirus24): Using os.path.sep allows for Windows paths to
+    # be specified and work appropriately.
+    separator = os.path.sep
+    if separator in path:
         path = os.path.abspath(os.path.join(parent, path))
-    return path.rstrip('/')
+    return path.rstrip(separator)
 
 
 def stdin_get_value():

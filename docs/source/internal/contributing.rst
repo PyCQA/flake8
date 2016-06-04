@@ -129,7 +129,7 @@ documentation generation and refresh the documentation you're working on.
 Contributing Code
 =================
 
-Flake8 development happens on `GitLab`_. Code contributions should be 
+Flake8 development happens on `GitLab`_. Code contributions should be
 submitted there.
 
 Merge requests should:

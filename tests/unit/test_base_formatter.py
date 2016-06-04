@@ -114,5 +114,31 @@ class AfterInitFormatter(base.BaseFormatter):
 
 def test_after_init_is_always_called():
     """Verify after_init is called."""
-    formatter = AfterInitFormatter()
+    formatter = AfterInitFormatter(options())
     assert getattr(formatter, 'post_initialized') is True
+
+
+class FormatFormatter(base.BaseFormatter):
+    """Subclass for testing format."""
+
+    def format(self, error):
+        """Define method to verify operation."""
+        return repr(error)
+
+
+def test_handle_formats_the_error():
+    """Verify that a formatter will call format from handle."""
+    formatter = FormatFormatter(options(show_source=False))
+    filemock = formatter.output_fd = mock.Mock()
+    error = style_guide.Error(
+        code='A001',
+        filename='example.py',
+        line_number=1,
+        column_number=1,
+        text='Fake error',
+        physical_line='a = 1',
+    )
+
+    formatter.handle(error)
+
+    filemock.write.assert_called_once_with(repr(error) + '\n')

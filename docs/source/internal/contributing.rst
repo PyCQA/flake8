@@ -11,7 +11,7 @@ We encourage multiple methods of participation in Flake8:
 - reviewing and triaging bugs and merge requests
 
 Before you go any further, please allow me to reassure you that I do want
-*your* contribution. If you think your contribution might not be valuable, I 
+*your* contribution. If you think your contribution might not be valuable, I
 reassure you that any help you can provide *is* valuable.
 
 
@@ -31,7 +31,7 @@ To contribute to Flake8's development, you simply need:
 - Python (one of the versions we support)
 
 - `tox`_
-  
+
   We suggest installing this like:
 
   .. prompt:: bash

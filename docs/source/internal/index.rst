@@ -15,6 +15,7 @@ pull gently.
 .. toctree::
     :maxdepth: 2
 
+    contributing
     checker
     cli
     formatters

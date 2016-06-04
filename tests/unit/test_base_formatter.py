@@ -101,3 +101,17 @@ def test_write_uses_print(print_function):
         mock.call(line),
         mock.call(source),
     ]
+
+
+class AfterInitFormatter(base.BaseFormatter):
+    """Subclass for testing after_init."""
+
+    def after_init(self):
+        """Define method to verify operation."""
+        self.post_initialized = True
+
+
+def test_after_init_is_always_called():
+    """Verify after_init is called."""
+    formatter = AfterInitFormatter()
+    assert getattr(formatter, 'post_initialized') is True

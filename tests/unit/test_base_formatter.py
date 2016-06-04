@@ -1,11 +1,12 @@
 """Tests for the BaseFormatter object."""
 import optparse
 
-import mock
-import pytest
-
-from flake8.formatting import base
 from flake8 import style_guide
+from flake8.formatting import base
+
+import mock
+
+import pytest
 
 
 def options(**kwargs):

@@ -86,6 +86,7 @@ class BaseFormatter(object):
                                   ' format.')
 
     def show_benchmarks(self, benchmarks):
+        """Format and print the benchmarks."""
         pass
 
     def show_source(self, error):

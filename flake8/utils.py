@@ -1,9 +1,13 @@
 """Utility methods for flake8."""
+import collections
 import fnmatch as _fnmatch
 import inspect
 import io
 import os
+import re
 import sys
+
+DIFF_HUNK_REGEXP = re.compile(r'^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@.*$')
 
 
 def parse_comma_separated_list(value):
@@ -68,6 +72,73 @@ def stdin_get_value():
             cached_type = io.StringIO
         stdin_get_value.cached_stdin = cached_type(stdin_value)
     return cached_value.getvalue()
+
+
+def parse_unified_diff():
+    # type: () -> List[str]
+    """Parse the unified diff passed on stdin.
+
+    :returns: dictionary mapping file names to sets of ranges
+    :rtype: dict
+    """
+    diff = stdin_get_value()
+    number_of_rows = None
+    current_path = None
+    parsed_paths = collections.defaultdict(set)
+    for line in diff.splitlines():
+        if number_of_rows:
+            # NOTE(sigmavirus24): Below we use a slice because stdin may be
+            # bytes instead of text on Python 3.
+            if line[:1] != '-':
+                number_of_rows -= 1
+            # We're in the part of the diff that has lines starting with +, -,
+            # and ' ' to show context and the changes made. We skip these
+            # because the information we care about is the filename and the
+            # range within it.
+            # When number_of_rows reaches 0, we will once again start
+            # searching for filenames and ranges.
+            continue
+
+        # NOTE(sigmavirus24): Diffs that we support look roughly like:
+        #    diff a/file.py b/file.py
+        #    ...
+        #    --- a/file.py
+        #    +++ b/file.py
+        # Below we're looking for that last line. Every diff tool that
+        # gives us this output may have additional information after
+        # ``b/file.py`` which it will separate with a \t, e.g.,
+        #    +++ b/file.py\t100644
+        # Which is an example that has the new file permissions/mode.
+        # In this case we only care about the file name.
+        if line[:3] == '+++':
+            current_path = line[4:].split('\t', 1)[0]
+            # NOTE(sigmavirus24): This check is for diff output from git.
+            if current_path[:2] == 'b/':
+                current_path = current_path[2:]
+            # We don't need to do anything else. We have set up our local
+            # ``current_path`` variable. We can skip the rest of this loop.
+            # The next line we will see will give us the hung information
+            # which is in the next section of logic.
+            continue
+
+        hunk_match = DIFF_HUNK_REGEXP.match(line)
+        # NOTE(sigmavirus24): pep8/pycodestyle check for:
+        #    line[:3] == '@@ '
+        # But the DIFF_HUNK_REGEXP enforces that the line start with that
+        # So we can more simply check for a match instead of slicing and
+        # comparing.
+        if hunk_match:
+            (row, number_of_rows) = [
+                1 if not group else int(group)
+                for group in hunk_match.groups()
+            ]
+            parsed_paths[current_path].update(
+                range(row, row + number_of_rows)
+            )
+
+    # We have now parsed our diff into a dictionary that looks like:
+    #    {'file.py': set(range(10, 16), range(18, 20)), ...}
+    return parsed_paths
 
 
 def is_windows():

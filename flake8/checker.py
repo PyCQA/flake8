@@ -280,10 +280,15 @@ class Manager(object):
             LOG.warning('Running in serial after OS exception, %r', oserr)
             self.run_serial()
 
-    def start(self):
-        """Start checking files."""
+    def start(self, paths=None):
+        """Start checking files.
+
+        :param list paths:
+            Path names to check. This is passed directly to
+            :meth:`~Manager.make_checkers`.
+        """
         LOG.info('Making checkers')
-        self.make_checkers()
+        self.make_checkers(paths)
         if not self.using_multiprocessing:
             return
 

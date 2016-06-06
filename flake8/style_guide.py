@@ -77,6 +77,7 @@ class StyleGuide(object):
         self._selected = tuple(options.select)
         self._ignored = tuple(options.ignore)
         self._decision_cache = {}
+        self._parsed_diff = {}
 
     def is_user_selected(self, code):
         # type: (str) -> Union[Selected, Ignored]
@@ -194,16 +195,67 @@ class StyleGuide(object):
                   error, codes_str)
         return False
 
+    def is_in_diff(self, error):
+        # type: (Error) -> bool
+        """Determine if an error is included in a diff's line ranges.
+
+        This function relies on the parsed data added via
+        :meth:`~StyleGuide.add_diff_ranges`. If that has not been called and
+        we are not evaluating files in a diff, then this will always return
+        True. If there are diff ranges, then this will return True if the
+        line number in the error falls inside one of the ranges for the file
+        (and assuming the file is part of the diff data). If there are diff
+        ranges, this will return False if the file is not part of the diff
+        data or the line number of the error is not in any of the ranges of
+        the diff.
+
+        :returns:
+            True if there is no diff or if the error is in the diff's line
+            number ranges. False if the error's line number falls outside
+            the diff's line number ranges.
+        :rtype:
+            bool
+        """
+        if not self._parsed_diff:
+            return True
+
+        # NOTE(sigmavirus24): The parsed diff will be a defaultdict with
+        # a set as the default value (if we have received it from
+        # flake8.utils.parse_unified_diff). In that case ranges below
+        # could be an empty set (which is False-y) or if someone else
+        # is using this API, it could be None. If we could guarantee one
+        # or the other, we would check for it more explicitly.
+        line_numbers = self._parsed_diff.get(error.filename)
+        if not line_numbers:
+            return False
+
+        return error.line_number in line_numbers
+
     def handle_error(self, code, filename, line_number, column_number, text,
                      physical_line=None):
         # type: (str, str, int, int, str) -> NoneType
         """Handle an error reported by a check."""
         error = Error(code, filename, line_number, column_number, text,
                       physical_line)
-        if (self.should_report_error(error.code) is Decision.Selected and
-                self.is_inline_ignored(error) is False):
+        error_is_selected = (self.should_report_error(error.code) is
+                             Decision.Selected)
+        is_not_inline_ignored = self.is_inline_ignored(error) is False
+        is_included_in_diff = self.is_in_diff(error)
+        if (error_is_selected and is_not_inline_ignored and
+                is_included_in_diff):
             self.formatter.handle(error)
             self.listener.notify(error.code, error)
+
+    def add_diff_ranges(self, diffinfo):
+        """Update the StyleGuide to filter out information not in the diff.
+
+        This provides information to the StyleGuide so that only the errors
+        in the line number ranges are reported.
+
+        :param dict diffinfo:
+            Dictionary mapping filenames to sets of line number ranges.
+        """
+        self._parsed_diff = diffinfo
 
 # Should separate style guide logic from code that runs checks
 # StyleGuide should manage select/ignore logic as well as include/exclude

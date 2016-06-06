@@ -8,6 +8,7 @@ import flake8
 from flake8 import checker
 from flake8 import defaults
 from flake8 import style_guide
+from flake8 import utils
 from flake8.options import aggregator
 from flake8.options import manager
 from flake8.plugins import manager as plugin_manager
@@ -266,6 +267,11 @@ class Application(object):
         #: flake8
         self.result_count = 0
 
+        #: Whether the program is processing a diff or not
+        self.running_against_diff = False
+        #: The parsed diff information
+        self.parsed_diff = {}
+
     def exit(self):
         # type: () -> NoneType
         """Handle finalization and exiting the program.
@@ -318,6 +324,10 @@ class Application(object):
                 self.option_manager, argv
             )
 
+        self.running_against_diff = self.options.diff
+        if self.running_against_diff:
+            self.parsed_diff = utils.parse_unified_diff()
+
         self.check_plugins.provide_options(self.option_manager, self.options,
                                            self.args)
         self.listening_plugins.provide_options(self.option_manager,
@@ -349,6 +359,9 @@ class Application(object):
                 self.options, self.listener_trie, self.formatter
             )
 
+        if self.running_against_diff:
+            self.guide.add_diff_ranges(self.parsed_diff)
+
     def make_file_checker_manager(self):
         # type: () -> NoneType
         """Initialize our FileChecker Manager."""
@@ -367,7 +380,10 @@ class Application(object):
         :class:`~flake8.checker.Manger` instance run the checks it is
         managing.
         """
-        self.file_checker_manager.start()
+        files = None
+        if self.running_against_diff:
+            files = list(sorted(self.parsed_diff.keys()))
+        self.file_checker_manager.start(files)
         self.file_checker_manager.run()
         LOG.info('Finished running')
         self.file_checker_manager.stop()

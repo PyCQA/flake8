@@ -71,6 +71,7 @@ def stdin_get_value():
         else:
             cached_type = io.StringIO
         stdin_get_value.cached_stdin = cached_type(stdin_value)
+        cached_value = stdin_get_value.cached_stdin
     return cached_value.getvalue()
 
 
@@ -78,8 +79,10 @@ def parse_unified_diff():
     # type: () -> List[str]
     """Parse the unified diff passed on stdin.
 
-    :returns: dictionary mapping file names to sets of ranges
-    :rtype: dict
+    :returns:
+        dictionary mapping file names to sets of line numbers
+    :rtype:
+        dict
     """
     diff = stdin_get_value()
     number_of_rows = None

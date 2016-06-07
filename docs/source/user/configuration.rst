@@ -1,3 +1,5 @@
+.. _configuration:
+
 ====================
  Configuring Flake8
 ====================

@@ -192,6 +192,30 @@
             another-example*.py
 
 
+.. option:: --stdin-display-name=<display_name>
+
+    Provide the name to use to report warnings and errors from code on stdin.
+
+    Instead of reporting an error as something like:
+
+    .. code::
+
+        stdin:82:73 E501 line too long
+
+    You can specify this option to have it report whatever value you want
+    instead of stdin.
+
+    This defaults to: ``stdin``
+
+    Command-line example:
+
+    .. prompt:: bash
+
+        cat file.py | flake8 --stdin-display-name=file.py -
+
+    This **can not** be specified in config files.
+
+
 .. option:: --format=<format>
 
     Select the formatter used to display errors to the user.

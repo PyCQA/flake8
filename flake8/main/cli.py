@@ -86,6 +86,13 @@ def register_default_options(option_manager):
              'separated list. (Default: %default)',
     )
 
+    add_option(
+        '--stdin-display-name', default='stdin',
+        help='The name used when reporting errors from code passed via stdin.'
+             ' This is useful for editors piping the file contents to flake8.'
+             ' (Default: %default)',
+    )
+
     # TODO(sigmavirus24): Figure out --first/--repeat
 
     add_option(

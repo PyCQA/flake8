@@ -237,6 +237,8 @@ class StyleGuide(object):
         """Handle an error reported by a check."""
         error = Error(code, filename, line_number, column_number, text,
                       physical_line)
+        if error.filename is None or error.filename == '-':
+            error = error._replace(filename=self.options.stdin_display_name)
         error_is_selected = (self.should_report_error(error.code) is
                              Decision.Selected)
         is_not_inline_ignored = self.is_inline_ignored(error) is False

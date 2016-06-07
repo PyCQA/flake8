@@ -217,7 +217,7 @@ class Manager(object):
             for argument in paths
             for filename in utils.filenames_from(argument,
                                                  self.is_path_excluded)
-            if utils.fnmatch(filename, filename_patterns)
+            if utils.fnmatch(filename, filename_patterns) or filename == '-'
         ]
 
     def report(self):

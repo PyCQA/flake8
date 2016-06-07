@@ -256,14 +256,3 @@ class StyleGuide(object):
             Dictionary mapping filenames to sets of line number ranges.
         """
         self._parsed_diff = diffinfo
-
-# Should separate style guide logic from code that runs checks
-# StyleGuide should manage select/ignore logic as well as include/exclude
-# logic. See also https://github.com/PyCQA/pep8/pull/433
-
-# StyleGuide shoud dispatch check execution in a way that can use
-# multiprocessing but also retry in serial. See also:
-# https://gitlab.com/pycqa/flake8/issues/74
-
-# StyleGuide should interface with Reporter and aggregate errors/notify
-# listeners

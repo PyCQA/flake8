@@ -233,8 +233,29 @@ class StyleGuide(object):
 
     def handle_error(self, code, filename, line_number, column_number, text,
                      physical_line=None):
-        # type: (str, str, int, int, str) -> NoneType
-        """Handle an error reported by a check."""
+        # type: (str, str, int, int, str) -> int
+        """Handle an error reported by a check.
+
+        :param str code:
+            The error code found, e.g., E123.
+        :param str filename:
+            The file in which the error was found.
+        :param int line_number:
+            The line number (where counting starts at 1) at which the error
+            occurs.
+        :param int column_number:
+            The column number (where counting starts at 1) at which the error
+            occurs.
+        :param str text:
+            The text of the error message.
+        :param str physical_line:
+            The actual physical line causing the error.
+        :returns:
+            1 if the error was reported. 0 if it was ignored. This is to allow
+            for counting of the number of errors found that were not ignored.
+        :rtype:
+            int
+        """
         error = Error(code, filename, line_number, column_number, text,
                       physical_line)
         if error.filename is None or error.filename == '-':
@@ -247,6 +268,8 @@ class StyleGuide(object):
                 is_included_in_diff):
             self.formatter.handle(error)
             self.listener.notify(error.code, error)
+            return 1
+        return 0
 
     def add_diff_ranges(self, diffinfo):
         """Update the StyleGuide to filter out information not in the diff.

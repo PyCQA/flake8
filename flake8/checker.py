@@ -163,8 +163,9 @@ class Manager(object):
 
     def _handle_results(self, filename, results):
         style_guide = self.style_guide
+        reported_results_count = 0
         for (error_code, line_number, column, text, physical_line) in results:
-            style_guide.handle_error(
+            reported_results_count += style_guide.handle_error(
                 code=error_code,
                 filename=filename,
                 line_number=line_number,
@@ -172,6 +173,7 @@ class Manager(object):
                 text=text,
                 physical_line=physical_line,
             )
+        return reported_results_count
 
     def _run_checks_from_queue(self):
         LOG.info('Running checks in parallel')
@@ -221,17 +223,24 @@ class Manager(object):
         ]
 
     def report(self):
+        # type: () -> (int, int)
         """Report all of the errors found in the managed file checkers.
 
         This iterates over each of the checkers and reports the errors sorted
         by line number.
+
+        :returns:
+            A tuple of the total results found and the results reported.
+        :rtype:
+            tuple(int, int)
         """
-        results_found = 0
+        results_reported = results_found = 0
         for checker in self.checkers:
             results = sorted(checker.results, key=lambda tup: (tup[2], tup[3]))
-            self._handle_results(checker.filename, results)
+            results_reported += self._handle_results(checker.filename,
+                                                     results)
             results_found += len(results)
-        return results_found
+        return (results_found, results_reported)
 
     def run_parallel(self):
         """Run the checkers in parallel."""

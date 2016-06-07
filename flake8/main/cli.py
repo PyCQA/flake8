@@ -403,7 +403,11 @@ class Application(object):
         number of errors, warnings, and other messages found.
         """
         LOG.info('Reporting errors')
-        self.result_count = self.file_checker_manager.report()
+        results = self.file_checker_manager.report()
+        self.total_result_count, self.result_count = results
+        LOG.info('Found a total of %d results and reported %d',
+                 self.total_result_count,
+                 self.result_count)
 
     def _run(self, argv):
         # type: (Union[NoneType, List[str]]) -> NoneType

@@ -214,12 +214,24 @@ class Manager(object):
         if paths is None:
             paths = self.arguments
         filename_patterns = self.options.filename
+
+        # NOTE(sigmavirus24): Yes this is a little unsightly, but it's our
+        # best solution right now.
+        def should_create_file_checker(filename):
+            """Determine if we should create a file checker."""
+            matches_filename_patterns = utils.fnmatch(
+                filename, filename_patterns
+            )
+            is_stdin = filename == '-'
+            file_exists = os.path.exists(filename)
+            return (file_exists and matches_filename_patterns) or is_stdin
+
         self.checkers = [
             FileChecker(filename, self.checks, self.style_guide)
             for argument in paths
             for filename in utils.filenames_from(argument,
                                                  self.is_path_excluded)
-            if utils.fnmatch(filename, filename_patterns) or filename == '-'
+            if should_create_file_checker(filename)
         ]
 
     def report(self):

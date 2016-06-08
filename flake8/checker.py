@@ -115,8 +115,10 @@ class Manager(object):
 
         if (utils.is_windows() and
                 not utils.can_run_multiprocessing_on_windows()):
-            LOG.warning('The --jobs option is not available on Windows. '
-                        'Ignoring --jobs arguments.')
+            LOG.warning('The --jobs option is only available on Windows on '
+                        'Python 2.7.11+ and 3.3+. We have detected that you '
+                        'are running an unsupported version of Python on '
+                        'Windows. Ignoring --jobs arguments.')
             return 0
 
         if utils.is_using_stdin(self.arguments):

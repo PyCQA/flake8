@@ -113,7 +113,8 @@ class Manager(object):
                         'Ignoring --jobs arguments.')
             return 0
 
-        if utils.is_windows():
+        if (utils.is_windows() and
+                not utils.can_run_multiprocessing_on_windows()):
             LOG.warning('The --jobs option is not available on Windows. '
                         'Ignoring --jobs arguments.')
             return 0

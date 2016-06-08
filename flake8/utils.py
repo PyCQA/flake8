@@ -159,6 +159,20 @@ def is_windows():
     return os.name == 'nt'
 
 
+def can_run_multiprocessing_on_windows():
+    # type: () -> bool
+    """Determine if we can use multiprocessing on Windows.
+
+    :returns:
+        True if the version of Python is modern enough, otherwise False
+    :rtype:
+        bool
+    """
+    is_new_enough_python27 = sys.version_info >= (2, 7, 11)
+    is_new_enough_python3 = sys.version_info > (3, 2)
+    return is_new_enough_python27 or is_new_enough_python3
+
+
 def is_using_stdin(paths):
     # type: (List[str]) -> bool
     """Determine if we're going to read from stdin.

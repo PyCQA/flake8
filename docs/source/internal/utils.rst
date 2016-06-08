@@ -2,7 +2,20 @@
  Utility Functions
 ===================
 
-Flake8 has a few utility functions that it uses and provides to plugins.
+Flake8 has a few utility functions that it uses internally.
+
+.. warning::
+
+    As should be implied by where these are documented, these are all
+    **internal** utility functions. Their signatures and return types
+    may change between releases without notice.
+
+    Bugs reported about these **internal** functions will be closed
+    immediately.
+
+    If functions are needed by plugin developers, they may be requested
+    in the bug tracker and after careful consideration they *may* be added
+    to the *documented* stable API.
 
 .. autofunction:: flake8.utils.parse_comma_separated_list
 
@@ -51,6 +64,12 @@ allows plugins to use this to retrieve ``stdin`` if necessary.
 This provides a convenient and explicitly named function that checks if we are
 currently running on a Windows (or ``nt``) operating system.
 
+.. autofunction:: flake8.utils.can_run_multiprocessing_on_windows
+
+This provides a separate and distinct check from
+:func:`~flake8.utils.is_windows` that allows us to check if the version of
+Python we're using can actually use multiprocessing on Windows.
+
 .. autofunction:: flake8.utils.is_using_stdin
 
 Another helpful function that is named only to be explicit given it is a very
@@ -98,3 +117,11 @@ plugin. This function will return the parameters in a consistent way across
 versions of Python and will handle both classes and functions that are used as
 plugins. Further, if the plugin is a class, it will strip the ``self``
 argument so we can check the parameters of the plugin consistently.
+
+.. autofunction:: flake8.utils.parse_unified_diff
+
+In order to handle usage of :option:`flake8 --diff`, Flake8 needs to be able
+to parse the name of the files in the diff as well as the ranges indicated the
+sections that have been changed. This function either accepts the diff as an
+argument or reads the diff from standard-in. It then returns a dictionary with
+filenames as the keys and sets of line numbers as the value.

@@ -9,7 +9,7 @@ import os
 import shutil
 import stat
 import subprocess
-import tempdir
+import tempfile
 
 from flake8 import defaults
 from flake8 import exceptions
@@ -144,7 +144,7 @@ def get_staged_contents_from(filename):
 
 @contextlib.contextmanager
 def make_temporary_directory():
-    temporary_directory = tempdir.mkdtemp()
+    temporary_directory = tempfile.mkdtemp()
     yield temporary_directory
     shutil.rmtree(temporary_directory, ignore_errors=True)
 

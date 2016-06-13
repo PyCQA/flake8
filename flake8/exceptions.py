@@ -41,3 +41,12 @@ class InvalidSyntax(Flake8Exception):
             # strerror attribute instead of a message attribute
             self.error_message = self.original_exception.strerror
         super(InvalidSyntax, self).__init__(*args, **kwargs)
+
+
+class GitHookAlreadyExists(Flake8Exception):
+    """Exception raised when the git pre-commit hook file already exists."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the path attribute."""
+        self.path = kwargs.pop('path')
+        super(GitHookAlreadyExists, self).__init__(*args, **kwargs)

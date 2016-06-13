@@ -271,8 +271,11 @@ class Application(object):
         #: :attr:`option_manager`
         self.args = None
         #: The number of errors, warnings, and other messages after running
-        #: flake8
+        #: flake8 and taking into account ignored errors and lines.
         self.result_count = 0
+        #: The total number of errors before accounting for ignored errors and
+        #: lines.
+        self.total_result_count = 0
 
         #: Whether the program is processing a diff or not
         self.running_against_diff = False
@@ -406,11 +409,15 @@ class Application(object):
         results = self.file_checker_manager.report()
         self.total_result_count, self.result_count = results
         LOG.info('Found a total of %d results and reported %d',
-                 self.total_result_count,
-                 self.result_count)
+                 self.total_result_count, self.result_count)
 
-    def _run(self, argv):
-        # type: (Union[NoneType, List[str]]) -> NoneType
+    def initialize(self, argv):
+        # type: () -> NoneType
+        """Initialize the application to be run.
+
+        This finds the plugins, registers their options, and parses the
+        command-line arguments.
+        """
         self.find_plugins()
         self.register_plugin_options()
         self.parse_configuration_and_cli(argv)
@@ -418,6 +425,10 @@ class Application(object):
         self.make_notifier()
         self.make_guide()
         self.make_file_checker_manager()
+
+    def _run(self, argv):
+        # type: (Union[NoneType, List[str]]) -> NoneType
+        self.initialize(argv)
         self.run_checks()
         self.report_errors()
 

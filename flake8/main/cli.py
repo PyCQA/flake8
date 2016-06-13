@@ -9,6 +9,7 @@ from flake8 import checker
 from flake8 import defaults
 from flake8 import style_guide
 from flake8 import utils
+from flake8.main import vcs
 from flake8.options import aggregator
 from flake8.options import manager
 from flake8.plugins import manager as plugin_manager
@@ -16,7 +17,7 @@ from flake8.plugins import manager as plugin_manager
 LOG = logging.getLogger(__name__)
 
 
-def register_default_options(option_manager):
+def register_default_options(option_manager, formatters=None):
     """Register the default options on our OptionManager.
 
     The default options include:
@@ -97,7 +98,7 @@ def register_default_options(option_manager):
 
     add_option(
         '--format', metavar='format', default='default',
-        parse_from_config=True,
+        parse_from_config=True, choices=(formatters or []),
         help='Format errors according to the chosen formatter.',
     )
 
@@ -161,6 +162,13 @@ def register_default_options(option_manager):
     )
 
     add_option(
+        '--install-hook', action='callback', type='string',
+        choices=vcs.choices(), callback=vcs.install,
+        help='Install a hook that is run prior to a commit for the supported '
+             'version control systema.'
+    )
+
+    add_option(
         '-j', '--jobs', type='string', default='auto', parse_from_config=True,
         help='Number of subprocesses to use to run checks in parallel. '
              'This is ignored on Windows. The default, "auto", will '
@@ -215,10 +223,11 @@ class Application(object):
         self.version = version
         #: The instance of :class:`flake8.options.manager.OptionManager` used
         #: to parse and handle the options and arguments passed by the user
-        self.option_manager = manager.OptionManager(
+        self.option_manager = None
+        temp_option_manager = manager.OptionManager(
             prog='flake8', version=flake8.__version__
         )
-        register_default_options(self.option_manager)
+        register_default_options(temp_option_manager)
 
         # We haven't found or registered our plugins yet, so let's defer
         # printing the version until we aggregate options from config files
@@ -242,7 +251,7 @@ class Application(object):
         except ValueError:
             pass
 
-        preliminary_opts, _ = self.option_manager.parse_args(args)
+        preliminary_opts, _ = temp_option_manager.parse_args(args)
         # Set the verbosity of the program
         flake8.configure_logging(preliminary_opts.verbose,
                                  preliminary_opts.output_file)
@@ -418,7 +427,12 @@ class Application(object):
         This finds the plugins, registers their options, and parses the
         command-line arguments.
         """
+        self.option_manager = manager.OptionManager(
+            prog='flake8', version=flake8.__version__
+        )
         self.find_plugins()
+        register_default_options(self.option_manager,
+                                 self.formatting_plugins.names)
         self.register_plugin_options()
         self.parse_configuration_and_cli(argv)
         self.make_formatter()

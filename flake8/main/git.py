@@ -1,6 +1,7 @@
 """Module containing the main git hook interface and helpers.
 
 .. autofunction:: hook
+.. autofunction:: install
 
 """
 import contextlib
@@ -180,7 +181,7 @@ _HOOK_TEMPLATE = """#!/usr/bin/env python
 import os
 import sys
 
-from flake8.api import git
+from flake8.main import git
 
 if __name__ == '__main__':
     sys.exit(

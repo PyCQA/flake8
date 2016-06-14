@@ -1,3 +1,4 @@
+"""Contains the logic for all of the default options for Flake8."""
 from flake8 import defaults
 from flake8.main import vcs
 

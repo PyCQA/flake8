@@ -45,6 +45,7 @@ class InvalidSyntax(Flake8Exception):
 
 class HookInstallationError(Flake8Exception):
     """Parent exception for all hooks errors."""
+
     pass
 
 
@@ -76,6 +77,7 @@ class MercurialHookAlreadyExists(HookInstallationError):
         super(MercurialHookAlreadyExists, self).__init__(*args, **kwargs)
 
     def __str__(self):
+        """Return a nicely formatted string for these errors."""
         msg = ('The Mercurial {0} hook already exists with "{1}" in {2}. '
                'To convince Flake8 to install the hook, please remove the '
                '{0} configuration from the [hooks] section of your hgrc.')

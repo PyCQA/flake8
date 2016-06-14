@@ -1,0 +1,4 @@
+1.3 - 2012-03-12
+----------------
+
+- fixed false W402 warning on exception blocks.

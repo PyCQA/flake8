@@ -1,0 +1,8 @@
+1.1 - 2012-02-14
+----------------
+
+- fixed the value returned by --version
+- allow the flake8: header to be more generic
+- fixed the "hg hook raises 'physical lines'" bug
+- allow three argument form of raise
+- now uses setuptools if available, for 'develop' command

@@ -1,0 +1,20 @@
+2.2.4 - 2014-10-09
+------------------
+
+- Fix bugs triggered by turning multiprocessing on by default (again)
+
+  Multiprocessing is forcibly disabled in the following cases:
+
+  - Passing something in via stdin
+
+  - Analyzing a diff
+
+  - Using windows
+
+- Fix --install-hook when there are no config files present for pep8 or
+  flake8.
+
+- Fix how the setuptools command parses excludes in config files
+
+- Fix how the git hook determines which files to analyze (Thanks Chris
+  Buccella!)

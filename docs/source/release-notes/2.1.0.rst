@@ -1,0 +1,12 @@
+2.1.0 - 2013-10-26
+------------------
+
+- Add FLAKE8_LAZY and FLAKE8_IGNORE environment variable support to git and
+  mercurial hooks
+- Force git and mercurial hooks to repsect configuration in setup.cfg
+- Only check staged files if that is specified
+- Fix hook file permissions
+- Fix the git hook on python 3
+- Ignore non-python files when running the git hook
+- Ignore .tox directories by default
+- Flake8 now reports the column number for PyFlakes messages

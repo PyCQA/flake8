@@ -1,0 +1,14 @@
+1.6 - 2012-11-16
+----------------
+
+- changed the signatures of the ``check_file`` function in flake8/run.py,
+  ``skip_warning`` in flake8/util.py and the ``check``, ``checkPath``
+  functions in flake8/pyflakes.py.
+- fix ``--exclude`` and ``--ignore`` command flags (#14, #19)
+- fix the git hook that wasn't catching files not already added to the index
+  (#29)
+- pre-emptively includes the addition to pep8 to ignore certain lines.
+  Add ``# nopep8`` to the end of a line to ignore it. (#37)
+- ``check_file`` can now be used without any special prior setup (#21)
+- unpacking exceptions will no longer cause an exception (#20)
+- fixed crash on non-existent file (#38)

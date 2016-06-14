@@ -1,0 +1,4 @@
+2.2.3 - 2014-08-25
+------------------
+
+- Actually turn multiprocessing on by default

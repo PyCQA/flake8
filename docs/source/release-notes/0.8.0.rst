@@ -1,0 +1,5 @@
+0.8 - 2011-02-27
+----------------
+
+- fixed hg hook
+- discard unexisting files on hook check

@@ -1,0 +1,6 @@
+0.7 - 2010-02-18
+----------------
+
+- Fix pep8 initialization when run through Hg
+- Make pep8 short options work when run through the command line
+- Skip duplicates when controlling files via Hg

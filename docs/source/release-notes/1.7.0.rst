@@ -1,0 +1,9 @@
+1.7.0 - 2012-12-21
+------------------
+
+- Fixes part of #35: Exception for no WITHITEM being an attribute of Checker
+  for Python 3.3
+- Support stdin
+- Incorporate @phd's builtins pull request
+- Fix the git hook
+- Update pep8.py to the latest version

@@ -1,0 +1,12 @@
+2.4.1 - 2015-05-18
+------------------
+
+- **Bug** Do not raise a ``SystemError`` unless there were errors in the
+  setuptools command. (`GitLab#39`_, `GitLab!23`_)
+
+- **Bug** Do not verify dependencies of extensions loaded via entry-points.
+
+- **Improvement** Blacklist versions of pep8 we know are broken
+
+.. _GitLab#39: https://gitlab.com/pycqa/flake8/issues/39
+.. _GitLab!23: https://gitlab.com/pycqa/flake8/merge_requests/23

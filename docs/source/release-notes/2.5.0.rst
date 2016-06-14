@@ -1,0 +1,25 @@
+2.5.0 - 2015-10-26
+------------------
+
+- **Improvement** Raise cap on PyFlakes for Python 3.5 support
+
+- **Improvement** Avoid deprecation warnings when loading extensions
+  (`GitLab#59`_, `GitLab#90`_)
+
+- **Improvement** Separate logic to enable "off-by-default" extensions
+  (`GitLab#67`_)
+
+- **Bug** Properly parse options to setuptools Flake8 command (`GitLab!41`_)
+
+- **Bug** Fix exceptions when output on stdout is truncated before Flake8
+  finishes writing the output (`GitLab#69`_)
+
+- **Bug** Fix error on OS X where Flake8 can no longer acquire or create new
+  semaphores (`GitLab#74`_)
+
+.. _GitLab!41: https://gitlab.com/pycqa/flake8/merge_requests/41
+.. _GitLab#59: https://gitlab.com/pycqa/flake8/issues/59
+.. _GitLab#67: https://gitlab.com/pycqa/flake8/issues/67
+.. _GitLab#69: https://gitlab.com/pycqa/flake8/issues/69
+.. _GitLab#74: https://gitlab.com/pycqa/flake8/issues/74
+.. _GitLab#90: https://gitlab.com/pycqa/flake8/issues/90

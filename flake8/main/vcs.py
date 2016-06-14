@@ -1,4 +1,5 @@
 """Module containing some of the logic for our VCS installation logic."""
+from flake8 import exceptions as exc
 from flake8.main import git
 from flake8.main import mercurial
 
@@ -20,8 +21,15 @@ def install(option, option_string, value, parser):
     https://docs.python.org/2/library/optparse.html#optparse-option-callbacks
     """
     installer = _INSTALLERS.get(value)
-    installer()
+    errored = False
+    try:
+        installer()
+    except exc.HookInstallationError as hook_error:
+        print(str(hook_error))
+        errored = True
+    raise SystemExit(errored)
 
 
 def choices():
-    return _INSTALLERS.keys()
+    """Return the list of VCS choices."""
+    return list(_INSTALLERS.keys())

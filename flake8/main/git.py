@@ -71,7 +71,9 @@ def install():
     if not os.path.exists(hooks_directory):
         os.mkdir(hooks_directory)
 
-    pre_commit_file = os.path.join(hooks_directory, 'hooks', 'pre-commit')
+    pre_commit_file = os.path.abspath(
+        os.path.join(hooks_directory, 'pre-commit')
+    )
     if os.path.exists(pre_commit_file):
         raise exceptions.GitHookAlreadyExists(
             'File already exists',

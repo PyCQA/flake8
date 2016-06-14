@@ -44,8 +44,7 @@ def install():
     """Ensure that the mercurial hooks are installed."""
     hgrc = find_hgrc(create_if_missing=True)
     if hgrc is None:
-        print('Could not locate your root mercurial repository.')
-        raise SystemExit(True)
+        return False
 
     hgconfig = configparser_for(hgrc)
 
@@ -75,6 +74,8 @@ def install():
 
     with open(hgrc, 'w') as fd:
         hgconfig.write(fd)
+
+    return True
 
 
 def find_hgrc(create_if_missing=False):

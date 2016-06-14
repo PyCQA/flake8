@@ -22,12 +22,16 @@ def install(option, option_string, value, parser):
     """
     installer = _INSTALLERS.get(value)
     errored = False
+    successful = False
     try:
-        installer()
+        successful = installer()
     except exc.HookInstallationError as hook_error:
         print(str(hook_error))
         errored = True
-    raise SystemExit(errored)
+
+    if not successful:
+        print('Could not find the {0} directory'.format(value))
+    raise SystemExit(not successful and errored)
 
 
 def choices():

@@ -1,6 +1,14 @@
 CHANGES
 =======
 
+2.5.5 - 2016-06-14
+------------------
+
+- **Bug** Fix setuptools integration when parsing config files
+
+- **Bug** Don't pass the user's config path as the config_file when creating a
+  StyleGuide
+
 2.5.4 - 2016-02-11
 ------------------
 

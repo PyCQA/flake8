@@ -20,7 +20,7 @@ API Documentation
 
 .. autofunction:: flake8.main.cli.main
 
-.. autoclass:: flake8.main.cli.Application
+.. autoclass:: flake8.main.application.Application
     :members:
 
-.. autofunction:: flake8.main.cli.register_default_options
+.. autofunction:: flake8.main.options.register_default_options

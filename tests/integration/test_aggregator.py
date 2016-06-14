@@ -1,7 +1,7 @@
 """Test aggregation of config files and command-line options."""
 import os
 
-from flake8.main import cli
+from flake8.main import options
 from flake8.options import aggregator
 from flake8.options import manager
 
@@ -17,7 +17,7 @@ def optmanager():
         prog='flake8',
         version='3.0.0',
     )
-    cli.register_default_options(option_manager)
+    options.register_default_options(option_manager)
     return option_manager
 
 

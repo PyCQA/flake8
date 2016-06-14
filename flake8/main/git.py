@@ -13,7 +13,6 @@ import tempfile
 
 from flake8 import defaults
 from flake8 import exceptions
-from flake8.main import cli
 
 __all__ = ('hook', 'install')
 
@@ -36,7 +35,9 @@ def hook(lazy=False, strict=False):
     :rtype:
         int
     """
-    app = cli.Application()
+    # NOTE(sigmavirus24): Delay import of application until we need it.
+    from flake8.main import application
+    app = application.Application()
     with make_temporary_directory() as tempdir:
         filepaths = list(copy_indexed_files_to(tempdir, lazy))
         app.initialize(filepaths)

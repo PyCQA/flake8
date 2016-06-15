@@ -1,6 +1,22 @@
 CHANGES
 =======
 
+2.6.0 - 2016-06-xx
+------------------
+
+- **Requirements Change** Switch to pycodestyle as all future pep8 releases
+  will use that package name
+
+- **Improvement** Allow for Windows users on *select* versions of Python to
+  use ``--jobs`` and multiprocessing
+
+- **Improvement** Update bounds on McCabe (todo)
+
+- **Improvement** Update bounds on PyFlakes and blacklist known broken
+  versions
+
+- **Improvement** Handle new PyFlakes warning with a new error code: F405
+
 2.5.5 - 2016-06-14
 ------------------
 

@@ -1,4 +1,4 @@
-pep8
+pycodestyle
 pyflakes
 mccabe
 mock

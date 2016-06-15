@@ -42,8 +42,8 @@ Settings
 --------
 
 This is a (likely incomplete) list of settings that can be used in your config
-file. In general, any settings that pep8 supports we also support and we add
-the ability to set ``max-complexity`` as well.
+file. In general, any settings that ``pycodestyle`` supports we also support and
+we add the ability to set ``max-complexity`` as well.
 
 - ``exclude``: comma-separated filename and glob patterns
   default: ``.svn,CVS,.bzr,.hg,.git,__pycache__``

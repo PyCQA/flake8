@@ -492,6 +492,28 @@
     This **can not** be specified in config files.
 
 
+.. option:: --install-hook=VERSION_CONTROL_SYSTEM
+
+    Install a hook for your version control system that is executed before
+    or during commit.
+
+    The available options are:
+
+    - git
+    - mercurial
+
+    Command-line usage:
+
+    .. prompt:: bash
+
+        flake8 --install-hook=git
+        flake8 --install-hook=mercurial
+
+    This **can not** be specified in config files.
+
+Thank you for your contribution to Flake8's documentation.
+
+
 .. option:: --jobs=<n>
 
     Specify the number of subprocesses that Flake8 will use to run checks in

@@ -511,8 +511,6 @@
 
     This **can not** be specified in config files.
 
-Thank you for your contribution to Flake8's documentation.
-
 
 .. option:: --jobs=<n>
 

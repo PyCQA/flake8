@@ -21,6 +21,8 @@
 - Add entry-point for formatters as well as a base class that new formatters
   can inherit from. See the documentation for more details.
 
+- Add detailed verbose output using the standard library logging module.
+
 - Enhance our usage of optparse for plugin developers by adding new parameters
   to the ``add_option`` that plugins use to register new options.
 

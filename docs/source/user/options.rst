@@ -225,17 +225,30 @@
     By default, there are two formatters available:
 
     - default
-
     - pylint
 
     Other formatters can be installed. Refer to their documentation for the
-    name to use to select them.
+    name to use to select them. Further, users can specify they're own format
+    string. The variables available are:
+
+    - code
+    - col
+    - path
+    - row
+    - text
+
+    The default formatter has a format string of:
+
+    .. code-block:: python
+
+        '%(path)s:%(row)d:%(col)d: %(code)s %(text)s'
 
     Command-line example:
 
     .. prompt:: bash
 
         flake8 --format=pylint dir/
+        flake8 --format='%(path)s::%(row)d,%(col)d::%(code)s::%(text)s' dir/
 
     This **can** be specified in config files.
 
@@ -244,6 +257,7 @@
     .. code-block:: ini
 
         format=pylint
+        format=%(path)s::%(row)d,%(col)d::%(code)s::%(text)s
 
 
 .. option:: --hang-closing

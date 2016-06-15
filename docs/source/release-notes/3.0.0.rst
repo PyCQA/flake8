@@ -1,0 +1,23 @@
+3.0.0 -- Unreleased
+-------------------
+
+- Rewrite our documentation from scratch! (http://flake8.pycqa.org)
+
+- ``--select`` and ``--ignore`` can now both be specified and try to find the
+  most specific rule from each. For example, if you do ``--select E --ignore 
+  E123`` then we will report everything that starts with ``E`` except for 
+  ``E123``. Previously, you would have had to do ``--ignore E123,F,W`` which
+  will also still work, but the former should be far more intuitive.
+
+- Remove dependence on pep8/pycodestyle for file processing, plugin
+  dispatching, and more. We now control all of this while keeping backwards
+  compatibility.
+
+- Add entry-point for formatters as well as a base class that new formatters
+  can inherit from. See the documentation for more details.
+
+- Enhance our usage of optparse for plugin developers by adding new parameters
+  to the ``add_option`` that plugins use to register new options.
+
+- Update ``--install-hook`` to require the name of version control system hook
+  you wish to install a Flake8.

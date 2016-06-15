@@ -6,7 +6,7 @@ import re
 import sys
 import warnings
 
-import pep8
+import pycodestyle as pep8
 
 from flake8 import __version__
 from flake8 import callbacks
@@ -44,7 +44,7 @@ def _load_entry_point(entry_point, verify_requirements):
 def _register_extensions():
     """Register all the extensions."""
     extensions = util.OrderedSet()
-    extensions.add(('pep8', pep8.__version__))
+    extensions.add(('pycodestyle', pep8.__version__))
     parser_hooks = []
     options_hooks = []
     ignored_hooks = []

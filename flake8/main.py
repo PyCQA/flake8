@@ -3,7 +3,7 @@ import os
 import re
 import sys
 
-import pep8
+import pycodestyle as pep8
 import setuptools
 
 from flake8.engine import get_parser, get_style_guide

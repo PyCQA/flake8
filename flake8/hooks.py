@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import with_statement
 import os
-import pep8
+import pycodestyle as pep8
 import sys
 import stat
 from subprocess import Popen, PIPE

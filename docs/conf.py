@@ -232,7 +232,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     ('index', 'flake8', u'flake8 Documentation', u'Tarek Ziade',
-     'flake8', 'Code checking using pep8, pyflakes and mccabe',
+     'flake8', 'Code checking using pycodestyle, pyflakes and mccabe',
      'Miscellaneous'),
 ]
 

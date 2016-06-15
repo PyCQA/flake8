@@ -20,6 +20,7 @@ def patch_pyflakes():
         'F402 ImportShadowedByLoopVar',
         'F403 ImportStarUsed',
         'F404 LateFutureImport',
+        'F405 ImportStarUsage',
         'F810 Redefined',               # XXX Obsolete?
         'F811 RedefinedWhileUnused',
         'F812 RedefinedInListComp',

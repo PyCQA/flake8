@@ -79,19 +79,19 @@ class TestOptionSerializerParsesLists(unittest.TestCase):
     def setUp(self):
         self.option = optparse.Option('--select')
         self.option_name = 'select'
-        self.answer = ['F401', 'F402', 'F403', 'F404']
+        self.answer = ['F401', 'F402', 'F403', 'F404', 'F405']
 
     def test_parses_simple_comma_separated_lists(self):
-        value = option_normalizer('F401,F402,F403,F404', self.option,
+        value = option_normalizer('F401,F402,F403,F404,F405', self.option,
                                   self.option_name)
         self.assertEqual(value, self.answer)
 
     def test_parses_less_simple_comma_separated_lists(self):
-        value = option_normalizer('F401 ,F402 ,F403 ,F404', self.option,
+        value = option_normalizer('F401 ,F402 ,F403 ,F404, F405', self.option,
                                   self.option_name)
         self.assertEqual(value, self.answer)
 
-        value = option_normalizer('F401, F402, F403, F404', self.option,
+        value = option_normalizer('F401, F402, F403, F404, F405', self.option,
                                   self.option_name)
         self.assertEqual(value, self.answer)
 
@@ -101,6 +101,7 @@ class TestOptionSerializerParsesLists(unittest.TestCase):
             F402,
             F403,
             F404,
+            F405,
         ''', self.option, self.option_name)
         self.assertEqual(value, self.answer)
 

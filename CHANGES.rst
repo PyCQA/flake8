@@ -129,7 +129,7 @@ CHANGES
 .. _GitLab#35: https://gitlab.com/pycqa/flake8/issues/35
 .. _GitLab!18: https://gitlab.com/pycqa/flake8/merge_requests/18
 .. _GitLab!20: https://gitlab.com/pycqa/flake8/merge_requests/20
-.. _VCS hooks docs: https://flake8.readthedocs.org/en/latest/vcs.html
+.. _VCS hooks docs: https://flake8.readthedocs.io/en/latest/vcs.html
 
 2.3.0 - 2015-01-04
 ------------------
@@ -222,7 +222,7 @@ CHANGES
 - McCabe complexity warnings are prefixed by a ``C`` instead of a ``W``
 - Flake8 supports extensions through entry points
 - Due to the above support, we **require** setuptools
-- We publish the `documentation <https://flake8.readthedocs.org/>`_
+- We publish the `documentation <https://flake8.readthedocs.io/>`_
 - Fixes #13: pep8, pyflakes and mccabe become external dependencies
 - Split run.py into main.py, engine.py and hooks.py for better logic
 - Expose our parser for our users

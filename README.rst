@@ -92,6 +92,6 @@ suggest, the mailing list would be the best place for it.
 Links
 =====
 
-* `flake8 documentation <http://flake8.readthedocs.org/en/latest/>`_
+* `flake8 documentation <https://flake8.readthedocs.io/en/latest/>`_
 
-* `pep8 documentation <http://pep8.readthedocs.org/en/latest/>`_
+* `pep8 documentation <https://pep8.readthedocs.io/en/latest/>`_

@@ -11,8 +11,8 @@ passed by the user as early as possible so as much logging can be produced as
 possible.
 
 The default flake8 options are registered by
-:func:`~flake8.main.cli.register_default_options`. Trying to register these
-options in plugins will result in errors.
+:func:`~flake8.main.options.register_default_options`. Trying to register
+these options in plugins will result in errors.
 
 
 API Documentation

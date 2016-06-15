@@ -3,7 +3,7 @@ from flake8 import defaults
 from flake8.main import vcs
 
 
-def register_default_options(option_manager, formatters=None):
+def register_default_options(option_manager):
     """Register the default options on our OptionManager.
 
     The default options include:
@@ -82,9 +82,12 @@ def register_default_options(option_manager, formatters=None):
 
     # TODO(sigmavirus24): Figure out --first/--repeat
 
+    # NOTE(sigmavirus24): We can't use choices for this option since users can
+    # freely provide a format string and that will break if we restrict their
+    # choices.
     add_option(
         '--format', metavar='format', default='default',
-        parse_from_config=True, choices=(formatters or ['default']),
+        parse_from_config=True,
         help='Format errors according to the chosen formatter.',
     )
 

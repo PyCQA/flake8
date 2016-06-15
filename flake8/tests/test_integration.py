@@ -64,7 +64,7 @@ class IntegrationTestCase(unittest.TestCase):
             with open(self.this_file(), "r") as f:
                 return f.read()
 
-        with mock.patch("pep8.stdin_get_value", fake_stdin):
+        with mock.patch("pycodestyle.stdin_get_value", fake_stdin):
             guide, report = self.check_files(arglist=['--jobs=4'],
                                              explicit_stdin=True)
         self.assertEqual(self.count, 1)
@@ -72,7 +72,7 @@ class IntegrationTestCase(unittest.TestCase):
     def test_stdin_fail(self):
         def fake_stdin():
             return "notathing\n"
-        with mock.patch("pep8.stdin_get_value", fake_stdin):
+        with mock.patch("pycodestyle.stdin_get_value", fake_stdin):
             # only assert needed is in check_files
             guide, report = self.check_files(arglist=['--jobs=4'],
                                              explicit_stdin=True,

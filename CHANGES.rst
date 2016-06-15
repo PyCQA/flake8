@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-2.6.0 - 2016-06-xx
+2.6.0 - 2016-06-15
 ------------------
 
 - **Requirements Change** Switch to pycodestyle as all future pep8 releases
@@ -10,7 +10,7 @@ CHANGES
 - **Improvement** Allow for Windows users on *select* versions of Python to
   use ``--jobs`` and multiprocessing
 
-- **Improvement** Update bounds on McCabe (todo)
+- **Improvement** Update bounds on McCabe
 
 - **Improvement** Update bounds on PyFlakes and blacklist known broken
   versions

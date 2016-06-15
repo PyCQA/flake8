@@ -45,7 +45,7 @@ if sys.version_info < (3, 2):
 def get_long_description():
     """Generate a long description from the README and CHANGES files."""
     descr = []
-    for fname in ('README.rst', 'CHANGES.rst'):
+    for fname in ('README.rst',):
         with open(fname) as f:
             descr.append(f.read())
     return '\n\n'.join(descr)

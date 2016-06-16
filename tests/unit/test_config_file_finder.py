@@ -10,6 +10,7 @@ import mock
 import pytest
 
 CLI_SPECIFIED_FILEPATH = 'tests/fixtures/config_files/cli-specified.ini'
+BROKEN_CONFIG_PATH = 'tests/fixtures/config_files/broken.ini'
 
 
 def test_uses_default_args():
@@ -115,3 +116,12 @@ def test_local_configs():
     finder = config.ConfigFileFinder('flake8', None, [])
 
     assert isinstance(finder.local_configs(), configparser.RawConfigParser)
+
+
+@pytest.mark.parametrize('files', [
+    [BROKEN_CONFIG_PATH],
+    [CLI_SPECIFIED_FILEPATH, BROKEN_CONFIG_PATH],
+])
+def test_read_config_catches_broken_config_files(files):
+    """Verify that we do not allow the exception to bubble up."""
+    assert config.ConfigFileFinder._read_config(files)[1] == []

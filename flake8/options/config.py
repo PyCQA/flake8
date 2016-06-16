@@ -52,7 +52,13 @@ class ConfigFileFinder(object):
     @staticmethod
     def _read_config(files):
         config = configparser.RawConfigParser()
-        found_files = config.read(files)
+        try:
+            found_files = config.read(files)
+        except configparser.ParsingError:
+            LOG.exception("There was an error trying to parse a config "
+                          "file. The files we were attempting to parse "
+                          "were: %r", files)
+            found_files = []
         return (config, found_files)
 
     def cli_config(self, files):

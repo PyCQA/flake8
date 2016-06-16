@@ -32,8 +32,10 @@ def hook(ui, repo, **kwargs):
     hgconfig = configparser_for(hgrc)
     strict = hgconfig.get('flake8', 'strict', fallback=True)
 
+    filenames = list(get_filenames_from(repo, kwargs))
+
     app = application.Application()
-    app.run()
+    app.run(filenames)
 
     if strict:
         return app.result_count
@@ -76,6 +78,22 @@ def install():
         hgconfig.write(fd)
 
     return True
+
+
+def get_filenames_from(repository, kwargs):
+    seen_filenames = set()
+    node = kwargs['node']
+    for revision in range(repository[node], len(repository)):
+        for filename in repository[revision].files():
+            full_filename = os.path.join(repository.root, filename)
+            have_seen_filename = full_filename in seen_filenames
+            filename_does_not_exist = not os.path.exists(full_filename)
+            if have_seen_filename or filename_does_not_exist:
+                continue
+
+            seen_filenames.add(full_filename)
+            if full_filename.endswith('.py'):
+                yield full_filename
 
 
 def find_hgrc(create_if_missing=False):

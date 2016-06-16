@@ -40,8 +40,9 @@ Default
 -------
 
 If the ``ignore`` option is not in the configuration and not in the arguments,
-only the error codes ``E123/E133``, ``E226`` and ``E241/E242`` are ignored
-(see the :ref:`warning and error codes <error-codes>`).
+the error codes ``E121/E123/E126``, ``E226``, ``E241/E242``, ``E704`` and
+``W503`` are ignored (see :ref:`warning and error codes <error-codes>` for their
+their meaning).
 
 Settings
 --------

@@ -89,7 +89,7 @@ def install():
     # - read permissions for other people
     # The owner needs the file to be readable, writable, and executable
     # so that git can actually execute it as a hook.
-    pre_commit_permissions = stat.S_IRWXU | stat.S_IRGRP | stat.IROTH
+    pre_commit_permissions = stat.S_IRWXU | stat.S_IRGRP | stat.S_IROTH
     os.chmod(pre_commit_file, pre_commit_permissions)
     return True
 

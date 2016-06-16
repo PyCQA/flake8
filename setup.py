@@ -76,8 +76,12 @@ setuptools.setup(
     ],
     install_requires=requires,
     entry_points={
-        'distutils.commands': ['flake8 = flake8.main:Flake8Command'],
-        'console_scripts': ['flake8 = flake8.main.cli:main'],
+        'distutils.commands': [
+            'flake8 = flake8.main.setuptools_command:Flake8'
+        ],
+        'console_scripts': [
+            'flake8 = flake8.main.cli:main'
+        ],
         'flake8.extension': [
             'F = flake8.plugins.pyflakes:FlakesChecker',
             # PEP-0008 checks provied by PyCQA/pycodestyle

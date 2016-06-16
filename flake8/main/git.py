@@ -169,7 +169,7 @@ def piped_process(command):
 
 def git_config_for(parameter):
     config = piped_process(['git', 'config', '--get', '--bool', parameter])
-    (stdout, ) = config.communicate()
+    (stdout, _) = config.communicate()
     return to_text(stdout)
 
 

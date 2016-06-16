@@ -354,7 +354,7 @@
     that start with that string. For example, you can use ``E``, ``E4``,
     ``E43``, and ``E431``.
 
-    This has no default value.
+    This defaults to: E,F,W,C
 
     Command-line example:
 

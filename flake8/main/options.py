@@ -112,7 +112,7 @@ def register_default_options(option_manager):
     )
 
     add_option(
-        '--select', metavar='errors', default='',
+        '--select', metavar='errors', default=defaults.SELECT,
         parse_from_config=True, comma_separated_list=True,
         help='Comma-separated list of errors and warnings to enable.'
              ' For example, ``--select=E4,E51,W234``. (Default: %default)',

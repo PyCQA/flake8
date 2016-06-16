@@ -116,6 +116,8 @@ def copy_file_to(destination_directory, filepath, contents):
     directory, filename = os.path.split(os.path.abspath(filepath))
     temporary_directory = make_temporary_directory_from(destination_directory,
                                                         directory)
+    if not os.path.exists(temporary_directory):
+        os.makedirs(temporary_directory)
     temporary_filepath = os.path.join(temporary_directory, filename)
     with open(temporary_filepath, 'wb') as fd:
         fd.write(contents)

@@ -9,6 +9,7 @@ import os
 import shutil
 import stat
 import subprocess
+import sys
 import tempfile
 
 from flake8 import defaults
@@ -80,8 +81,10 @@ def install():
             path=pre_commit_file,
         )
 
+    executable = get_executable()
+
     with open(pre_commit_file, 'w') as fd:
-        fd.write(_HOOK_TEMPLATE)
+        fd.write(_HOOK_TEMPLATE.format(executable=executable))
 
     # NOTE(sigmavirus24): The following sets:
     # - read, write, and execute permissions for the owner
@@ -92,6 +95,12 @@ def install():
     pre_commit_permissions = stat.S_IRWXU | stat.S_IRGRP | stat.S_IROTH
     os.chmod(pre_commit_file, pre_commit_permissions)
     return True
+
+
+def get_executable():
+    if sys.executable is not None:
+        return sys.executable
+    return '/usr/bin/env python'
 
 
 def find_git_directory():
@@ -182,7 +191,7 @@ def config_for(parameter):
     return value.lower() in defaults.TRUTHY_VALUES
 
 
-_HOOK_TEMPLATE = """#!/usr/bin/env python
+_HOOK_TEMPLATE = """#!{executable}
 import os
 import sys
 

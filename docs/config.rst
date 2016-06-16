@@ -31,6 +31,11 @@ files are read if present.  Only the first file is considered.  If this file
 does not have a ``[flake8]`` section, no project specific configuration is
 loaded.
 
+Per Code Line
+-------
+
+To ignore one line of code add ``# NOQA`` as a line comment.
+
 Default
 -------
 

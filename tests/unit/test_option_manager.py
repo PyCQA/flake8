@@ -2,9 +2,9 @@
 import optparse
 import os
 
-from flake8.options import manager
-
 import pytest
+
+from flake8.options import manager
 
 TEST_VERSION = '3.0.0b1'
 

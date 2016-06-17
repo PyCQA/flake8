@@ -1,7 +1,7 @@
 """Tests for flake8.plugins.manager.PluginManager."""
-from flake8.plugins import manager
-
 import mock
+
+from flake8.plugins import manager
 
 
 def create_entry_point_mock(name):

@@ -1,11 +1,10 @@
 """Tests for the Manager object for FileCheckers."""
 import errno
 
-from flake8 import checker
-
 import mock
-
 import pytest
+
+from flake8 import checker
 
 
 def style_guide_mock(**kwargs):

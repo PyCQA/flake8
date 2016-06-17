@@ -1,13 +1,12 @@
 """Tests for the flake8.style_guide.StyleGuide class."""
 import optparse
 
+import mock
+import pytest
+
 from flake8 import style_guide
 from flake8.formatting import base
 from flake8.plugins import notifier
-
-import mock
-
-import pytest
 
 
 def create_options(**kwargs):

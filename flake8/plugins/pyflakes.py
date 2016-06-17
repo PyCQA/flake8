@@ -11,10 +11,10 @@ else:
     demandimport.disable()
 import os
 
-from flake8 import utils
-
 import pyflakes
 import pyflakes.checker
+
+from flake8 import utils
 
 
 def patch_pyflakes():

@@ -3,6 +3,7 @@ from __future__ import print_function
 
 import logging
 import sys
+import time
 
 import flake8
 from flake8 import checker
@@ -28,6 +29,10 @@ class Application(object):
         :param str version:
             The version of the program/application we're executing.
         """
+        #: The timestamp when the Application instance was instantiated.
+        self.start_time = time.time()
+        #: The timestamp when the Application finished reported errors.
+        self.end_time = None
         #: The name of the program being run
         self.program = program
         #: The version of the program being run
@@ -254,6 +259,7 @@ class Application(object):
         self.initialize(argv)
         self.run_checks()
         self.report_errors()
+        self.end_time = time.time()
 
     def run(self, argv=None):
         # type: (Union[NoneType, List[str]]) -> NoneType

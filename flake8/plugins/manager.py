@@ -2,11 +2,11 @@
 import collections
 import logging
 
+import pkg_resources
+
 from flake8 import exceptions
 from flake8 import utils
 from flake8.plugins import notifier
-
-import pkg_resources
 
 LOG = logging.getLogger(__name__)
 

@@ -2,13 +2,13 @@
  Using Flake8
 ==============
 
-Flake8 can be used in many ways:
+Flake8 can be used in many ways. A few:
 
-- invoking it on the command-line
+- invoked on the command-line
 
-- invoking it via Python
+- invoked via Python
 
-- having it called by Git or Mercurial on or around committing
+- called by Git or Mercurial on or around committing
 
 This guide will cover all of these and the nuances for using Flake8.
 

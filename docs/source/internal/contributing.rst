@@ -2,7 +2,7 @@
  Contributing to Flake8
 ========================
 
-We encourage multiple methods of participation in Flake8:
+There are many ways to contriubte to Flake8, and we encourage them all:
 
 - contributing bug reports and feature requests
 
@@ -44,7 +44,7 @@ To contribute to Flake8's development, you simply need:
 
         python<version> -m pip install --user tox
 
-- and your favorite editor
+- your favorite editor
 
 
 Filing a Bug
@@ -166,7 +166,7 @@ Reviewing and Triaging Issues and Merge Requests
 ================================================
 
 When reviewing other people's merge requests and issues, please be
-**especially** mindful of how the words you choose can be ready by someone
+**especially** mindful of how the words you choose can be read by someone
 else. We strive for professional code reviews that do not insult the
 contributor's intelligence or impugn their character. The code review
 should be focused on the code, it's effectiveness, and whether it is
@@ -175,8 +175,8 @@ appropriate for Flake8.
 If you have the ability to edit an issue or merge request's labels, please do
 so to make search and prioritization easier.
 
-Flake8 uses milestones with both issues and merge requests to provide
-other contributors direction about when an issue or merge request will be
+Flake8 uses milestones with both issues and merge requests. This provides
+direction for other contributors about when an issue or merge request will be
 delivered.
 
 

@@ -228,7 +228,7 @@
     - pylint
 
     Other formatters can be installed. Refer to their documentation for the
-    name to use to select them. Further, users can specify they're own format
+    name to use to select them. Further, users can specify their own format
     string. The variables available are:
 
     - code

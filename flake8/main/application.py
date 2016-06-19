@@ -7,6 +7,7 @@ import time
 
 import flake8
 from flake8 import checker
+from flake8 import defaults
 from flake8 import style_guide
 from flake8 import utils
 from flake8.main import options
@@ -225,6 +226,22 @@ class Application(object):
         self.file_checker_manager.run()
         LOG.info('Finished running')
         self.file_checker_manager.stop()
+        self.end_time = time.time()
+
+    def report_benchmarks(self):
+        if not self.options.benchmark:
+            return
+        time_elapsed = self.end_time - self.start_time
+        statistics = [('seconds elapsed', time_elapsed)]
+        add_statistic = statistics.append
+        for statistic in (defaults.STATISTIC_NAMES + ('files',)):
+            value = self.file_checker_manager.statistics[statistic]
+            total_description = 'total ' + statistic + ' processed'
+            add_statistic((total_description, value))
+            per_second_description = statistic + ' processed per second'
+            add_statistic((per_second_description, int(value / time_elapsed)))
+
+        self.formatter.show_benchmarks(statistics)
 
     def report_errors(self):
         # type: () -> NoneType
@@ -259,7 +276,7 @@ class Application(object):
         self.initialize(argv)
         self.run_checks()
         self.report_errors()
-        self.end_time = time.time()
+        self.report_benchmarks()
 
     def run(self, argv=None):
         # type: (Union[NoneType, List[str]]) -> NoneType

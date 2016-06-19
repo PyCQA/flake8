@@ -7,5 +7,11 @@ MAX_LINE_LENGTH = 79
 
 TRUTHY_VALUES = set(['true', '1', 't'])
 
-# Other consants
+# Other constants
 WHITESPACE = frozenset(' \t')
+
+STATISTIC_NAMES = (
+    'logical lines',
+    'physical lines',
+    'tokens',
+)

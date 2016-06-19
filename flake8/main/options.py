@@ -192,3 +192,10 @@ def register_default_options(option_manager):
         '--isolated', default=False, action='store_true',
         help='Ignore all found configuration files.',
     )
+
+    # Benchmarking
+
+    add_option(
+        '--benchmark', default=False, action='store_true',
+        help='Print benchmark information about this run of Flake8',
+    )

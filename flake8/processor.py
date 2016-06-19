@@ -97,6 +97,10 @@ class FileProcessor(object):
         self.total_lines = len(self.lines)
         #: Verbosity level of Flake8
         self.verbose = options.verbose
+        #: Statistics dictionary
+        self.statistics = {
+            'logical lines': 0,
+        }
 
     @contextlib.contextmanager
     def inside_multiline(self, line_number):
@@ -186,6 +190,7 @@ class FileProcessor(object):
         """Build a logical line from the current tokens list."""
         comments, logical, mapping_list = self.build_logical_line_tokens()
         self.logical_line = ''.join(logical)
+        self.statistics['logical lines'] += 1
         return ''.join(comments), self.logical_line, mapping_list
 
     def split_line(self, token):

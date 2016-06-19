@@ -87,7 +87,24 @@ class BaseFormatter(object):
 
     def show_benchmarks(self, benchmarks):
         """Format and print the benchmarks."""
-        pass
+        # NOTE(sigmavirus24): The format strings are a little confusing, even
+        # to me, so here's a quick explanation:
+        # We specify the named value first followed by a ':' to indicate we're
+        # formatting the value.
+        # Next we use '<' to indicate we want the value left aligned.
+        # Then '10' is the width of the area.
+        # For floats, finally, we only want only want at most 3 digits after
+        # the decimal point to be displayed. This is the precision and it
+        # can not be specified for integers which is why we need two separate
+        # format strings.
+        float_format = '{value:<10.3} {statistic}'.format
+        int_format = '{value:<10} {statistic}'.format
+        for statistic, value in benchmarks:
+            if isinstance(value, int):
+                benchmark = int_format(statistic=statistic, value=value)
+            else:
+                benchmark = float_format(statistic=statistic, value=value)
+            self._write(benchmark)
 
     def show_source(self, error):
         """Show the physical line generating the error.

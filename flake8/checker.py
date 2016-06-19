@@ -10,6 +10,12 @@ try:
 except ImportError:
     multiprocessing = None
 
+try:
+    import Queue as queue
+except ImportError:
+    import queue
+
+from flake8 import defaults
 from flake8 import exceptions
 from flake8 import processor
 from flake8 import utils
@@ -72,14 +78,22 @@ class Manager(object):
         self.jobs = self._job_count()
         self.process_queue = None
         self.results_queue = None
+        self.statistics_queue = None
         self.using_multiprocessing = self.jobs > 1
         self.processes = []
         self.checkers = []
+        self.statistics = {
+            'files': 0,
+            'logical lines': 0,
+            'physical lines': 0,
+            'tokens': 0,
+        }
 
         if self.using_multiprocessing:
             try:
                 self.process_queue = multiprocessing.Queue()
                 self.results_queue = multiprocessing.Queue()
+                self.statistics_queue = multiprocessing.Queue()
             except OSError as oserr:
                 if oserr.errno not in SERIAL_RETRY_ERRNOS:
                     raise
@@ -96,6 +110,29 @@ class Manager(object):
                 proc.join(0.2)
             self._cleanup_queue(self.process_queue)
             self._cleanup_queue(self.results_queue)
+            self._cleanup_queue(self.statistics_queue)
+
+    def _process_statistics(self):
+        all_statistics = self.statistics
+        if self.using_multiprocessing:
+            total_number_of_checkers = len(self.checkers)
+            statistics_gathered = 0
+            while statistics_gathered < total_number_of_checkers:
+                try:
+                    statistics = self.statistics_queue.get(block=False)
+                    statistics_gathered += 1
+                except queue.Empty:
+                    break
+
+                for statistic in defaults.STATISTIC_NAMES:
+                    all_statistics[statistic] += statistics[statistic]
+        else:
+            statistics_generator = (checker.statistics
+                                    for checker in self.checkers)
+            for statistics in statistics_generator:
+                for statistic in defaults.STATISTIC_NAMES:
+                    all_statistics[statistic] += statistics[statistic]
+        all_statistics['files'] += len(self.checkers)
 
     def _job_count(self):
         # type: () -> Union[int, NoneType]
@@ -182,7 +219,7 @@ class Manager(object):
         LOG.info('Running checks in parallel')
         for checker in iter(self.process_queue.get, 'DONE'):
             LOG.debug('Running checker for file "%s"', checker.filename)
-            checker.run_checks(self.results_queue)
+            checker.run_checks(self.results_queue, self.statistics_queue)
         self.results_queue.put('DONE')
 
     def is_path_excluded(self, path):
@@ -280,7 +317,7 @@ class Manager(object):
     def run_serial(self):
         """Run the checkers in serial."""
         for checker in self.checkers:
-            checker.run_checks(self.results_queue)
+            checker.run_checks(self.results_queue, self.statistics_queue)
 
     def run(self):
         """Run all the checkers.
@@ -325,6 +362,7 @@ class Manager(object):
 
     def stop(self):
         """Stop checking files."""
+        self._process_statistics()
         for proc in self.processes:
             LOG.info('Joining %s to the main process', proc.name)
             proc.join()
@@ -342,12 +380,21 @@ class FileChecker(object):
             The plugins registered to check the file.
         :type checks:
             flake8.plugins.manager.Checkers
+        :param style_guide:
+            The initialized StyleGuide for this particular run.
+        :type style_guide:
+            flake8.style_guide.StyleGuide
         """
         self.filename = filename
         self.checks = checks
         self.style_guide = style_guide
         self.results = []
         self.processor = self._make_processor()
+        self.statistics = {
+            'tokens': 0,
+            'logical lines': 0,
+            'physical lines': len(self.processor.lines),
+        }
 
     def _make_processor(self):
         try:
@@ -466,8 +513,10 @@ class FileChecker(object):
         :meth:`flake8.checker.FileChecker.run_checks`.
         """
         parens = 0
+        statistics = self.statistics
         file_processor = self.processor
         for token in file_processor.generate_tokens():
+            statistics['tokens'] += 1
             self.check_physical_eol(token)
             token_type, text = token[0:2]
             processor.log_token(LOG, token)
@@ -485,7 +534,7 @@ class FileChecker(object):
             self.run_physical_checks(file_processor.lines[-1])
             self.run_logical_checks()
 
-    def run_checks(self, results_queue):
+    def run_checks(self, results_queue, statistics_queue):
         """Run checks against the file."""
         if self.processor.should_ignore_file():
             return
@@ -500,6 +549,11 @@ class FileChecker(object):
 
         if results_queue is not None:
             results_queue.put((self.filename, self.results))
+
+        logical_lines = self.processor.statistics['logical lines']
+        self.statistics['logical lines'] = logical_lines
+        if statistics_queue is not None:
+            statistics_queue.put(self.statistics)
 
     def handle_comment(self, token, token_text):
         """Handle the logic when encountering a comment token."""

@@ -6,8 +6,8 @@ Option Management
 
 Command-line options are often also set in configuration files for Flake8.
 While not all options are meant to be parsed from configuration files, many
-default options are also parsed from configuration files as are most plugin
-options.
+default options are also parsed from configuration files as well as
+most plugin options.
 
 In Flake8 2, plugins received a :class:`optparse.OptionParser` instance and
 called :meth:`optparse.OptionParser.add_option` to register options. If the
@@ -19,7 +19,7 @@ also had to do something like:
     parser.config_options.append('my_config_option')
     parser.config_options.extend(['config_opt1', 'config_opt2'])
 
-This was previously undocumented and led to a lot of confusion as to why
+This was previously undocumented and led to a lot of confusion about why
 registered options were not automatically parsed from configuration files.
 
 Since Flake8 3 was rewritten from scratch, we decided to take a different
@@ -40,8 +40,8 @@ three new parameters:
 - ``normalize_paths``
 
 The last two are not specifically for configuration file handling, but they
-do improve that dramatically. We found that there were options that when
-specified in a configuration file, lended themselves to being split across
+do improve that dramatically. We found that there were options that, when
+specified in a configuration file, often necessitated being spit
 multiple lines and those options were almost always comma-separated. For
 example, let's consider a user's list of ignored error codes for a project:
 
@@ -82,7 +82,7 @@ Presently OpenStack's Nova project has this line in their `tox.ini`_:
 
     exclude = .venv,.git,.tox,dist,doc,*openstack/common/*,*lib/python*,*egg,build,tools/xenserver*,releasenotes
 
-I think we can all agree that this would be easier to read like this:
+We think we can all agree that this would be easier to read like this:
 
 .. code-block:: ini
 
@@ -104,7 +104,7 @@ both ``comma_separated_list=True`` and ``normalize_paths=True`` because we
 want the paths to be provided to us with some consistency (either all absolute
 paths or not).
 
-Now let's look at how this would actually be utilized. Most plugin developers
+Now let's look at how this will actually be used. Most plugin developers
 will receive an instance of :class:`~flake8.options.manager.OptionManager` so
 to ease the transition we kept the same API as the
 :class:`optparse.OptionParser` object. The only difference is that

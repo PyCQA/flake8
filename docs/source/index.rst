@@ -30,7 +30,7 @@ can instead use:
     It is **very** important to install Flake8 on the *correct* version of
     Python for your needs. If you want Flake8 to properly parse new language
     features in Python 3.5 (for example), you need it to be installed on 3.5
-    for those features to be understandable. In many ways, Flake8 is tied to
+    for flake8 to understand those features. In many ways, Flake8 is tied to
     the version of Python on which it runs.
 
 Quickstart

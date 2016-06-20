@@ -13,8 +13,8 @@ checks. It now supports:
 
 - listeners to auto-correct violations of checks
 
-To facilitate this, Flake8 needed a more mature way of managing plugins. As
-such, we developed the |PluginManager| which accepts a namespace and will load
+To facilitate this, Flake8 needed a more mature way of managing plugins.
+Thus, we developed the |PluginManager| which accepts a namespace and will load
 the plugins for that namespace. A |PluginManager| creates and manages many
 |Plugin| instances.
 
@@ -24,7 +24,7 @@ The entry-point will be loaded either by calling
 attribute. We also use this abstraction to retrieve options that the plugin
 wishes to register and parse.
 
-The only public method that the |PluginManager| provides is
+The only public method the |PluginManager| provides is
 :meth:`~flake8.plugins.manager.PluginManager.map`. This will accept a function
 (or other callable) and call it with each plugin as the first parameter.
 
@@ -59,7 +59,7 @@ Notifying Listener Plugins
 One of the interesting challenges with allowing plugins to be notified each
 time an error or warning is emitted by a checker is finding listeners quickly
 and efficiently. It makes sense to allow a listener to listen for a certain
-class of warnings or just a specific warning. As such, we need to allow all
+class of warnings or just a specific warning. Hence, we need to allow all
 plugins that listen to a specific warning or class to be notified. For
 example, someone might register a listener for ``E1`` and another for ``E111``
 if ``E111`` is triggered by the code, both listeners should be notified.

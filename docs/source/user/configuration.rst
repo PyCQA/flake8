@@ -24,7 +24,7 @@ Remember that you want to specify certain options without writing
 Configuration Locations
 =======================
 
-Presently, Flake8 supports storing its configuration in the following places:
+Flake8 supports storing its configuration in the following places:
 
 - Your top-level user directory
 
@@ -163,7 +163,7 @@ This would allow us to add comments for why we're excluding items, e.g.,
     :mod:`configparser` backport from PyPI. That backport enables us to
     support this behaviour on all supported versions of Python.
 
-    Please do **not** open issues about this dependency.
+    Please do **not** open issues about this dependency to Flake8.
 
 .. note::
 

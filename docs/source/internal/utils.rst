@@ -120,7 +120,7 @@ argument so we can check the parameters of the plugin consistently.
 
 .. autofunction:: flake8.utils.parse_unified_diff
 
-In order to handle usage of :option:`flake8 --diff`, Flake8 needs to be able
+To handle usage of :option:`flake8 --diff`, Flake8 needs to be able
 to parse the name of the files in the diff as well as the ranges indicated the
 sections that have been changed. This function either accepts the diff as an
 argument or reads the diff from standard-in. It then returns a dictionary with

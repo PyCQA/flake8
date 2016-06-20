@@ -4,7 +4,7 @@
 
 By default, |Flake8| has a list of error codes that it ignores. The list used
 by a version of |Flake8| may be different than the list used by a different
-version. To determine the default list, using :option:`flake8 --help` will
+version. To see the default list, :option:`flake8 --help` will
 show the output with the current default list.
 
 
@@ -42,7 +42,7 @@ specific error code on a specific line. Let's take for example a line like
     example = lambda: 'example'
 
 Sometimes we genuinely need something this simple. We could instead define
-a function like we normally would but in some contexts that distracts from
+a function like we normally would. Note, in some contexts this distracts from
 what is actually happening. In those cases, we can also do:
 
 .. code-block:: python

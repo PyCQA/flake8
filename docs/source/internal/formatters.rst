@@ -20,7 +20,7 @@ Default Formatter
 The |DefaultFormatter| continues to use the same default format string as
 pep8: ``'%(path)s:%(row)d:%(col)d: %(code)s %(text)s'``.
 
-In order to provide the default functionality it overrides two methods:
+To provide the default functionality it overrides two methods:
 
 #. ``after_init``
 

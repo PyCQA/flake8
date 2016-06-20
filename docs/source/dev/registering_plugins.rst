@@ -4,9 +4,9 @@
  Registering a Plugin with Flake8
 ==================================
 
-To register any kind of plugin with Flake8, you need a few things:
+To register any kind of plugin with Flake8, you need:
 
-#. You need a way to install the plugin (whether it is packaged on its own or
+#. A way to install the plugin (whether it is packaged on its own or
    as part of something else). In this section, we will use a ``setup.py``
    written for an example plugin.
 
@@ -15,7 +15,7 @@ To register any kind of plugin with Flake8, you need a few things:
 #. A somewhat recent version of setuptools (newer than 0.7.0 but preferably as
    recent as you can attain).
 
-Flake8 presently relies on a functionality provided by setuptools called
+Flake8 relies on functionality provided by setuptools called
 `Entry Points`_. These allow any package to register a plugin with Flake8 via
 that package's ``setup.py`` file.
 

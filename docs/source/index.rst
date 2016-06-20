@@ -7,18 +7,21 @@
  Flake8: Your Tool For Style Guide Enforcement
 ===============================================
 
+Quickstart
+==========
+
 .. _installation-guide:
 
 Installation
-============
+------------
 
-To install Flake8, open an interactive shell and run:
+To install |Flake8|, open an interactive shell and run:
 
 .. code::
 
     python<version> -m pip install flake8
 
-If you want Flake8 to be installed for your default Python installation, you
+If you want |Flake8| to be installed for your default Python installation, you
 can instead use:
 
 .. code::
@@ -27,16 +30,16 @@ can instead use:
 
 .. note::
 
-    It is **very** important to install Flake8 on the *correct* version of
-    Python for your needs. If you want Flake8 to properly parse new language
+    It is **very** important to install |Flake8| on the *correct* version of
+    Python for your needs. If you want |Flake8| to properly parse new language
     features in Python 3.5 (for example), you need it to be installed on 3.5
-    for flake8 to understand those features. In many ways, Flake8 is tied to
+    for |Flake8| to understand those features. In many ways, Flake8 is tied to
     the version of Python on which it runs.
 
-Quickstart
-==========
+Using Flake8
+------------
 
-To start using Flake8, open an interactive shell and run:
+To start using |Flake8|, open an interactive shell and run:
 
 .. code::
 
@@ -46,7 +49,7 @@ To start using Flake8, open an interactive shell and run:
 
 .. note::
 
-    If you have installed Flake8 on a particular version of Python (or on
+    If you have installed |Flake8| on a particular version of Python (or on
     several versions), it may be best to instead run ``python<version> -m
     flake8``.
 
@@ -55,19 +58,23 @@ If you only want to see the instances of a specific warning or error, you can
 
 .. code::
 
-    flake8 --select <Error> path/to/code/
+    flake8 --select E123,W503 path/to/code/
 
 Alternatively, if you want to *ignore* only one specific warning or error:
 
 .. code::
 
-    flake8 --ignore <Error> path/to/code/
+    flake8 --ignore E24,W504 path/to/code/
 
 Please read our user guide for more information about how to use and configure
-Flake8.
+|Flake8|.
 
 User Guide
 ==========
+
+All users of |Flake8| should read this portion of the documentation. This
+provides examples and documentation around |Flake8|'s assortment of options
+and how to specify them on the command-line or in configuration files.
 
 .. toctree::
     :maxdepth: 2
@@ -77,13 +84,22 @@ User Guide
 Plugin Developer Guide
 ======================
 
+If you're maintaining a plugin for |Flake8| or creating a new one, you should
+read this section of the documentation. It explains how you can write your
+plugins and distribute them to others.
+
 .. toctree::
     :maxdepth: 2
 
     dev/index
 
-Developer Guide
-===============
+Contributor Guide
+=================
+
+If you are reading |Flake8|'s source code for fun or looking to contribute,
+you should read this portion of the documentation. This is a mix of documenting
+the internal-only interfaces |Flake8| and documenting reasoning for Flake8's
+design.
 
 .. toctree::
     :maxdepth: 2
@@ -98,9 +114,8 @@ Release Notes and History
 
     release-notes/index
 
-Indices and tables
-==================
+General Indices
+===============
 
 * :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+* :ref:`Index of Documented Public Modules <modindex>`

@@ -55,7 +55,7 @@ then those will be reported.
 
 .. note::
 
-    If we ever want to disable Flake8 respecting ``# noqa`` comments, we can
+    If we ever want to disable |Flake8| respecting ``# noqa`` comments, we can
     can refer to :option:`flake8 --disable-noqa`.
 
 If we instead had more than one error that we wished to ignore, we could
@@ -84,11 +84,7 @@ file:
 
 The former is the **recommended** way of ignoring entire files. By using our
 exclude list, we can include it in our configuration file and have one central
-place to find what files aren't included in Flake8 checks. The latter has the
+place to find what files aren't included in |Flake8| checks. The latter has the
 benefit that when we run |Flake8| with :option:`flake8 --disable-noqa` all of
 the errors in that file will show up without having to modify our
 configuration. Both exist so we can choose which is better for us.
-
-
-.. replacements
-.. |Flake8| replace:: :program:`Flake8`

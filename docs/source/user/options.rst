@@ -29,7 +29,7 @@
 
 .. option:: --version
 
-    Show :program:`Flake8`\ 's version as well as the versions of all plugins
+    Show |Flake8|'s version as well as the versions of all plugins
     installed.
 
     Command-line usage:
@@ -43,7 +43,7 @@
 
 .. option:: -h, --help
 
-    Show a description of how to use :program:`Flake8` and its options.
+    Show a description of how to use |Flake8| and its options.
 
     Command-line usage:
 
@@ -57,7 +57,7 @@
 
 .. option::  -v, --verbose
 
-    Increase the verbosity of Flake8's output. Each time you specify
+    Increase the verbosity of |Flake8|'s output. Each time you specify
     it, it will print more and more information.
 
     Command-line example:
@@ -77,7 +77,7 @@
 
 .. option:: -q, --quiet
 
-    Decrease the verbosity of Flake8's output. Each time you specify it,
+    Decrease the verbosity of |Flake8|'s output. Each time you specify it,
     it will print less and less information.
 
     Command-line example:
@@ -286,7 +286,7 @@
 
     Specify a list of codes to ignore. The list is expected to be
     comma-separated, and does not need to specify an error code exactly.
-    Since Flake8 3.0, this **can** be combined with :option:`--select`. See
+    Since |Flake8| 3.0, this **can** be combined with :option:`--select`. See
     :option:`--select` for more information.
 
     For example, if you wish to only ignore ``W234``, then you can specify
@@ -349,7 +349,7 @@
 
 .. option:: --select=<errors>
 
-    Specify the list of error codes you wish Flake8 to report. Similarly to
+    Specify the list of error codes you wish |Flake8| to report. Similarly to
     :option:`--ignore`. You can specify a portion of an error code to get all
     that start with that string. For example, you can use ``E``, ``E4``,
     ``E43``, and ``E431``.
@@ -370,7 +370,7 @@
         flake8 --select=E --ignore=E432 dir/
 
     This will report all codes that start with ``E``, but ignore ``E432``
-    specifically. This is more flexibly than the Flake8 2.x and 1.x used
+    specifically. This is more flexibly than the |Flake8| 2.x and 1.x used
     to be.
 
     This **can** be specified in config files.
@@ -453,7 +453,7 @@
 
     Enable off-by-default extensions.
 
-    Plugins to Flake8 have the option of registering themselves as
+    Plugins to |Flake8| have the option of registering themselves as
     off-by-default. These plugins effectively add themselves to the
     default ignore list.
 
@@ -479,9 +479,9 @@
 
 .. option:: --exit-zero
 
-    Force Flake8 to use the exit status code 0 even if there are errors.
+    Force |Flake8| to use the exit status code 0 even if there are errors.
 
-    By default Flake8 will exit with a non-zero integer if there are errors.
+    By default |Flake8| will exit with a non-zero integer if there are errors.
 
     Command-line example:
 
@@ -514,7 +514,7 @@
 
 .. option:: --jobs=<n>
 
-    Specify the number of subprocesses that Flake8 will use to run checks in
+    Specify the number of subprocesses that |Flake8| will use to run checks in
     parallel.
 
     .. note::
@@ -566,7 +566,7 @@
 .. option:: --append-config=<config>
 
     Provide extra config files to parse in after and in addition to the files
-    that Flake8 found on its own. Since these files are the last ones read
+    that |Flake8| found on its own. Since these files are the last ones read
     into the Configuration Parser, so it has the highest precedence if it
     provides an option specified in another config file.
 
@@ -582,7 +582,8 @@
 .. option:: --config=<config>
 
     Provide a path to a config file that will be the only config file read and
-    used. This will cause Flake8 to ignore all other config files that exist.
+    used. This will cause |Flake8| to ignore all other config files that
+    exist.
 
     Command-line example:
 
@@ -595,7 +596,7 @@
 
 .. option:: --isolated
 
-    Ignore any config files and use Flake8 as if there were no config files
+    Ignore any config files and use |Flake8| as if there were no config files
     found.
 
     Command-line example:
@@ -710,7 +711,7 @@
 
 .. option:: --benchmark
 
-    Collect and print benchmarks for this run of Flake8. This aggregates the
+    Collect and print benchmarks for this run of |Flake8|. This aggregates the
     total number of:
 
     - tokens

@@ -4,15 +4,15 @@
  Receiving Information For A Check Plugin
 ==========================================
 
-Plugins to Flake8 have a great deal of information that they can request from
-a :class:`~flake8.processor.FileProcessor` instance. Historically, Flake8 has
-supported two types of plugins:
+Plugins to |Flake8| have a great deal of information that they can request
+from a :class:`~flake8.processor.FileProcessor` instance. Historically,
+|Flake8| has supported two types of plugins:
 
 #. classes that accept parsed abstract syntax trees (ASTs)
 
 #. functions that accept a range of arguments
 
-Flake8 now does not distinguish between the two types of plugins. Any plugin
+|Flake8| now does not distinguish between the two types of plugins. Any plugin
 can accept either an AST or a range of arguments. Further, any plugin that has
 certain callable attributes can also register options and receive parsed
 options.
@@ -21,8 +21,8 @@ options.
 Indicating Desired Data
 =======================
 
-Flake8 inspects the plugin's signature to determine what parameters it expects
-using :func:`flake8.utils.parameters_for`.
+|Flake8| inspects the plugin's signature to determine what parameters it
+expects using :func:`flake8.utils.parameters_for`.
 :attr:`flake8.plugins.manager.Plugin.parameters` caches the values so that
 each plugin makes that fairly expensive call once per plugin. When processing
 a file, a plugin can ask for any of the following:
@@ -56,7 +56,7 @@ Any plugin that has callable attributes ``provide_options`` and
 
 Your ``register_options`` function should expect to receive an instance of
 |OptionManager|. An |OptionManager| instance behaves very similarly to
-:class:`optparse.OptionParser`. It, however, uses the layer that Flake8 has
+:class:`optparse.OptionParser`. It, however, uses the layer that |Flake8| has
 developed on top of :mod:`optparse` to also handle configuration file parsing.
 :meth:`~flake8.options.manager.OptionManager.add_option` creates an |Option|
 which accepts the same parameters as :mod:`optparse` as well as three extra
@@ -65,7 +65,7 @@ boolean parameters:
 - ``parse_from_config``
 
   The command-line option should also be parsed from config files discovered
-  by Flake8.
+  by |Flake8|.
 
   .. note::
 
@@ -91,8 +91,8 @@ boolean parameters:
   allow a comma-separated list of paths.
 
 Each of these options works individually or can be combined. Let's look at a
-couple examples from Flake8. In each example, we will have ``option_manager``
-which is an instance of |OptionManager|.
+couple examples from |Flake8|. In each example, we will have
+``option_manager`` which is an instance of |OptionManager|.
 
 .. code-block:: python
 
@@ -143,7 +143,7 @@ documentation of :mod:`optparse`.
 Accessing Parsed Options
 ========================
 
-When a plugin has a callable ``provide_options`` attribute, Flake8 will call
+When a plugin has a callable ``provide_options`` attribute, |Flake8| will call
 it and attempt to provide the |OptionManager| instance, the parsed options
 which will be an instance of :class:`optparse.Values`, and the extra arguments
 that were not parsed by the |OptionManager|. If that fails, we will just pass

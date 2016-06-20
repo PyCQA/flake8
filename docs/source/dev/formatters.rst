@@ -4,7 +4,7 @@
  Developing a Formatting Plugin for Flake8
 ===========================================
 
-Flake8 allowed for custom formatting plugins in version
+|Flake8| allowed for custom formatting plugins in version
 3.0.0. Let's write a plugin together:
 
 .. code-block:: python
@@ -17,11 +17,12 @@ Flake8 allowed for custom formatting plugins in version
 
         pass
 
-We notice, as soon as we start, that we inherit from Flake8's
+We notice, as soon as we start, that we inherit from |Flake8|'s
 :class:`~flake8.formatting.base.BaseFormatter` class. If we follow the
 :ref:`instructions to register a plugin <register-a-plugin>` and try to use
-our example formatter, e.g., ``flake8 --format=example`` then Flake8 will fail
-because we did not implement the ``format`` method. Let's do that next.
+our example formatter, e.g., ``flake8 --format=example`` then
+|Flake8| will fail because we did not implement the ``format`` method.
+Let's do that next.
 
 .. code-block:: python
 
@@ -34,7 +35,7 @@ because we did not implement the ``format`` method. Let's do that next.
 With that we're done. Obviously this isn't a very useful formatter, but it
 should highlight the simplicitly of creating a formatter with Flake8. If we
 wanted to instead create a formatter that aggregated the results and returned
-XML, JSON, or subunit we could also do that. Flake8 interacts with the
+XML, JSON, or subunit we could also do that. |Flake8| interacts with the
 formatter in two ways:
 
 #. It creates the formatter and provides it the options parsed from the

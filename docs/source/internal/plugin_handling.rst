@@ -4,8 +4,8 @@ Plugin Handling
 Plugin Management
 -----------------
 
-Flake8 3.0 added support for two other plugins besides those which define new
-checks. It now supports:
+|Flake8| 3.0 added support for two other plugins besides those which define
+new checks. It now supports:
 
 - extra checks
 
@@ -13,7 +13,7 @@ checks. It now supports:
 
 - listeners to auto-correct violations of checks
 
-To facilitate this, Flake8 needed a more mature way of managing plugins.
+To facilitate this, |Flake8| needed a more mature way of managing plugins.
 Thus, we developed the |PluginManager| which accepts a namespace and will load
 the plugins for that namespace. A |PluginManager| creates and manages many
 |Plugin| instances.
@@ -72,21 +72,21 @@ existing packages on PyPI allowed for storing data on each node of the trie,
 it was left up to write our own as :class:`~flake8.plugins._trie.Trie`. On
 top of that we layer our :class:`~flake8.plugins.notifier.Notifier` class.
 
-Now when Flake8 receives an error or warning, we can easily call the
+Now when |Flake8| receives an error or warning, we can easily call the
 :meth:`~flake8.plugins.notifier.Notifier.notify` method and let plugins act on
 that knowledge.
 
 Default Plugins
 ---------------
 
-Finally, Flake8 has always provided its own plugin shim for Pyflakes. As part
-of that we carry our own shim in-tree and now store that in
+Finally, |Flake8| has always provided its own plugin shim for Pyflakes. As
+part of that we carry our own shim in-tree and now store that in
 :mod:`flake8.plugins.pyflakes`.
 
-Flake8 also registers plugins for pep8. Each check in pep8 requires different
-parameters and it cannot easily be shimmed together like Pyflakes was. As
-such, plugins have a concept of a "group". If you look at our :file:`setup.py`
-you will see that we register pep8 checks roughly like so:
+|Flake8| also registers plugins for pep8. Each check in pep8 requires
+different parameters and it cannot easily be shimmed together like Pyflakes
+was. As such, plugins have a concept of a "group". If you look at our
+:file:`setup.py` you will see that we register pep8 checks roughly like so:
 
 .. code::
 

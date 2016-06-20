@@ -2,7 +2,7 @@
  Utility Functions
 ===================
 
-Flake8 has a few utility functions that it uses internally.
+|Flake8| has a few utility functions that it uses internally.
 
 .. warning::
 
@@ -39,8 +39,8 @@ And converts it to a list that looks as follows
 
     ["E121", "W123", "F904"]
 
-This function helps normalize any kind of comma-separated input you or Flake8
-might receive. This is most helpful when taking advantage of Flake8's
+This function helps normalize any kind of comma-separated input you or |Flake8|
+might receive. This is most helpful when taking advantage of |Flake8|'s
 additional parameters to :class:`~flake8.options.manager.Option`.
 
 .. autofunction:: flake8.utils.normalize_path
@@ -74,11 +74,11 @@ Python we're using can actually use multiprocessing on Windows.
 
 Another helpful function that is named only to be explicit given it is a very
 trivial check, this checks if the user specified ``-`` in their arguments to
-Flake8 to indicate we should read from stdin.
+|Flake8| to indicate we should read from stdin.
 
 .. autofunction:: flake8.utils.filenames_from
 
-When provided an argument to Flake8, we need to be able to traverse
+When provided an argument to |Flake8|, we need to be able to traverse
 directories in a convenient manner. For example, if someone runs
 
 .. code::
@@ -103,7 +103,7 @@ function abstracts that logic away with a little extra logic.
 
 .. autofunction:: flake8.utils.parameters_for
 
-Flake8 analyzes the parameters to plugins to determine what input they are
+|Flake8| analyzes the parameters to plugins to determine what input they are
 expecting. Plugins may expect one of the following:
 
 - ``physical_line`` to receive the line as it appears in the file
@@ -120,7 +120,7 @@ argument so we can check the parameters of the plugin consistently.
 
 .. autofunction:: flake8.utils.parse_unified_diff
 
-To handle usage of :option:`flake8 --diff`, Flake8 needs to be able
+To handle usage of :option:`flake8 --diff`, |Flake8| needs to be able
 to parse the name of the files in the diff as well as the ranges indicated the
 sections that have been changed. This function either accepts the diff as an
 argument or reads the diff from standard-in. It then returns a dictionary with

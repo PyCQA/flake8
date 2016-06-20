@@ -2,7 +2,7 @@
  Using Flake8
 ==============
 
-Flake8 can be used in many ways. A few:
+|Flake8| can be used in many ways. A few:
 
 - invoked on the command-line
 
@@ -10,12 +10,12 @@ Flake8 can be used in many ways. A few:
 
 - called by Git or Mercurial on or around committing
 
-This guide will cover all of these and the nuances for using Flake8.
+This guide will cover all of these and the nuances for using |Flake8|.
 
 .. note::
 
-    This portion of Flake8's documentation does not cover installation. See
-    the :ref:`installation-guide` section for how to install Flake8.
+    This portion of |Flake8|'s documentation does not cover installation. See
+    the :ref:`installation-guide` section for how to install |Flake8|.
 
 .. toctree::
     :maxdepth: 2

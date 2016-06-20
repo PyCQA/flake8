@@ -4,7 +4,7 @@
  Configuring Flake8
 ====================
 
-Once you have learned how to :ref:`invoke <invocation>` Flake8, you will soon
+Once you have learned how to :ref:`invoke <invocation>` |Flake8|, you will soon
 want to learn how to configure it so you do not have to specify the same
 options every time you use it.
 
@@ -24,7 +24,7 @@ Remember that you want to specify certain options without writing
 Configuration Locations
 =======================
 
-Flake8 supports storing its configuration in the following places:
+|Flake8| supports storing its configuration in the following places:
 
 - Your top-level user directory
 
@@ -34,7 +34,7 @@ Flake8 supports storing its configuration in the following places:
 "User" Configuration
 --------------------
 
-Flake8 allows a user to use "global" configuration file to store preferences.
+|Flake8| allows a user to use "global" configuration file to store preferences.
 The user configuration file is expected to be stored somewhere in the user's
 "home" directory.
 
@@ -44,7 +44,7 @@ The user configuration file is expected to be stored somewhere in the user's
 - On Linux and other Unix like systems (including OS X) we will look in
   ``~/``.
 
-Note that Flake8 looks for ``~\.flake8`` on Windows and ``~/.config/flake8``
+Note that |Flake8| looks for ``~\.flake8`` on Windows and ``~/.config/flake8``
 on Linux and other Unix systems.
 
 User configuration files use the same syntax as Project Configuration files.
@@ -54,8 +54,8 @@ Keep reading to see that syntax.
 Project Configuration
 ---------------------
 
-Flake8 is written with the understanding that people organize projects into
-sub-directories. Let's take for example Flake8's own project structure
+|Flake8| is written with the understanding that people organize projects into
+sub-directories. Let's take for example |Flake8|'s own project structure
 
 .. code::
 
@@ -81,10 +81,10 @@ sub-directories. Let's take for example Flake8's own project structure
 
 In the top-level ``flake8`` directory (which contains ``docs``, ``flake8``,
 and ``tests``) there's also ``tox.ini`` and ``setup.cfg`` files. In our case,
-we keep our Flake8 configuration in ``tox.ini``. Regardless of whether you
+we keep our |Flake8| configuration in ``tox.ini``. Regardless of whether you
 keep your config in ``.flake8``, ``setup.cfg``, or ``tox.ini`` we expect you
-to use INI to configure Flake8 (since each of these files already uses INI
-as a format). This means that any Flake8 configuration you wish to set needs
+to use INI to configure |Flake8| (since each of these files already uses INI
+as a format). This means that any |Flake8| configuration you wish to set needs
 to be in the ``flake8`` section, which means it needs to start like so:
 
 .. code-block:: ini
@@ -100,11 +100,11 @@ be named in either of two ways:
 
 .. note::
 
-    Not every Flake8 command-line option can be specified in the configuration
-    file. See :ref:`our list of options <options-list>` to determine which
-    options will be parsed from the configuration files.
+    Not every |Flake8| command-line option can be specified in the
+    configuration file. See :ref:`our list of options <options-list>` to
+    determine which options will be parsed from the configuration files.
 
-Let's actually look at Flake8's own configuration section:
+Let's actually look at |Flake8|'s own configuration section:
 
 .. code-block:: ini
 
@@ -163,14 +163,14 @@ This would allow us to add comments for why we're excluding items, e.g.,
     :mod:`configparser` backport from PyPI. That backport enables us to
     support this behaviour on all supported versions of Python.
 
-    Please do **not** open issues about this dependency to Flake8.
+    Please do **not** open issues about this dependency to |Flake8|.
 
 .. note::
 
     You can also specify ``--max-complexity`` as ``max_complexity = 10``.
 
 This is also useful if you have a long list of error codes to ignore. Let's
-look at a portion of OpenStack's Swift project configuration:
+look at a portion of OpenStack's Swift `project configuration`_:
 
 .. code-block:: ini
 
@@ -220,5 +220,8 @@ They use the comments to describe the check but they could also write this as:
         H501
 
 Or they could use each comment to describe **why** they've ignored the check.
-:program:`Flake8` knows how to parse these lists and will appropriatey handle
+|Flake8| knows how to parse these lists and will appropriatey handle
 these situations.
+
+.. _project configuration:
+    https://github.com/openstack/swift/blob/3944d820387f08372c1a29444f4af7d8e6090ae9/tox.ini#L66..L81

@@ -2,7 +2,7 @@
  Contributing to Flake8
 ========================
 
-There are many ways to contriubte to Flake8, and we encourage them all:
+There are many ways to contriubte to |Flake8|, and we encourage them all:
 
 - contributing bug reports and feature requests
 
@@ -18,7 +18,7 @@ reassure you that any help you can provide *is* valuable.
 Code of Conduct
 ===============
 
-Flake8 adheres to the `Python Code Quality Authority's Code of Conduct`_.
+|Flake8| adheres to the `Python Code Quality Authority's Code of Conduct`_.
 Any violations of the Code of Conduct should be reported to Ian Cordasco
 (graffatcolmingov [at] gmail [dot] com).
 
@@ -26,7 +26,7 @@ Any violations of the Code of Conduct should be reported to Ian Cordasco
 Setting Up A Development Environment
 ====================================
 
-To contribute to Flake8's development, you simply need:
+To contribute to |Flake8|'s development, you simply need:
 
 - Python (one of the versions we support)
 
@@ -50,29 +50,29 @@ To contribute to Flake8's development, you simply need:
 Filing a Bug
 ============
 
-When filing a bug against Flake8, please fill out the issue template as it is
-provided to you by `GitLab`_. If your bug is in reference to one of the
-checks that Flake8 reports by default, please do not report them to Flake8
-unless Flake8 is doing something to prevent the check from running or you
-have some reason to believe Flake8 is inhibiting the effectiveness of the
+When filing a bug against |Flake8|, please fill out the issue template as it
+is provided to you by `GitLab`_. If your bug is in reference to one of the
+checks that |Flake8| reports by default, please do not report them to |Flake8|
+unless |Flake8| is doing something to prevent the check from running or you
+have some reason to believe |Flake8| is inhibiting the effectiveness of the
 check.
 
 **Please search for closed and open bug reports before opening new ones.**
 
 All bug reports about checks should go to their respective projects:
 
-- Check codes starting with ``E`` and ``W`` should be reported to
+- Error codes starting with ``E`` and ``W`` should be reported to
   `pycodestyle`_.
 
-- Check codes starting with ``F`` should be reported to `pyflakes`_
+- Error codes starting with ``F`` should be reported to `pyflakes`_
 
-- Check codes starting with ``C`` should be reported to `mccabe`_
+- Error codes starting with ``C`` should be reported to `mccabe`_
 
 
 Requesting a New Feature
 ========================
 
-When requesting a new feature in Flake8, please fill out the issue template.
+When requesting a new feature in |Flake8|, please fill out the issue template.
 Please also note if there are any existing alternatives to your new feature
 either via plugins, or combining command-line options. Please provide example
 use cases. For example, do not ask for a feature like this:
@@ -81,8 +81,8 @@ use cases. For example, do not ask for a feature like this:
 
 Instead ask:
 
-    I need Flake8 to frobulate these files because my team expects them to
-    frobulated but Flake8 currently does not frobulate them. We tried using
+    I need |Flake8| to frobulate these files because my team expects them to
+    frobulated but |Flake8| currently does not frobulate them. We tried using
     ``--filename`` but we could not create a pattern that worked.
 
 The more you explain about *why* you need a feature, the more likely we are to
@@ -92,11 +92,11 @@ understand your needs and help you to the best of our ability.
 Contributing Documentation
 ==========================
 
-To contribute to Flake8's documentation, you should first familiarize yourself
-with reStructuredText and Sphinx. For the most part, you should be fine
-following the structure and style of the rest of Flake8's documentation.
+To contribute to |Flake8|'s documentation, you might want to first read a
+little about reStructuredText or Sphinx. For the most part, you should be fine
+following the structure and style of the rest of |Flake8|'s documentation.
 
-All of Flake8's documentation is written in reStructuredText and rendered by
+All of |Flake8|'s documentation is written in reStructuredText and rendered by
 Sphinx. The source (reStructuredText) lives in ``docs/source/``. To build
 the documentation the way our Continuous Integration does, run:
 
@@ -129,7 +129,7 @@ documentation generation and refresh the documentation you're working on.
 Contributing Code
 =================
 
-Flake8 development happens on `GitLab`_. Code contributions should be
+|Flake8| development happens on `GitLab`_. Code contributions should be
 submitted there.
 
 Merge requests should:
@@ -170,12 +170,12 @@ When reviewing other people's merge requests and issues, please be
 else. We strive for professional code reviews that do not insult the
 contributor's intelligence or impugn their character. The code review
 should be focused on the code, it's effectiveness, and whether it is
-appropriate for Flake8.
+appropriate for |Flake8|.
 
 If you have the ability to edit an issue or merge request's labels, please do
 so to make search and prioritization easier.
 
-Flake8 uses milestones with both issues and merge requests. This provides
+|Flake8| uses milestones with both issues and merge requests. This provides
 direction for other contributors about when an issue or merge request will be
 delivered.
 

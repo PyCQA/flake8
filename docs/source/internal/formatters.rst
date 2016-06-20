@@ -2,12 +2,12 @@
  Built-in Formatters
 =====================
 
-By default Flake8 has two formatters built-in, ``default`` and ``pylint``.
+By default |Flake8| has two formatters built-in, ``default`` and ``pylint``.
 These correspond to two classes |DefaultFormatter| and |PylintFormatter|.
 
-In Flake8 2.0, pep8 handled formatting of errors and also allowed users to
+In |Flake8| 2.0, pep8 handled formatting of errors and also allowed users to
 specify an arbitrary format string as a parameter to ``--format``. In order
-to allow for this backwards compatibility, Flake8 3.0 made two choices:
+to allow for this backwards compatibility, |Flake8| 3.0 made two choices:
 
 #. To not limit a user's choices for ``--format`` to the format class names
 

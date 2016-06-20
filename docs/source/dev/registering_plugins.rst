@@ -4,7 +4,7 @@
  Registering a Plugin with Flake8
 ==================================
 
-To register any kind of plugin with Flake8, you need:
+To register any kind of plugin with |Flake8|, you need:
 
 #. A way to install the plugin (whether it is packaged on its own or
    as part of something else). In this section, we will use a ``setup.py``
@@ -15,9 +15,9 @@ To register any kind of plugin with Flake8, you need:
 #. A somewhat recent version of setuptools (newer than 0.7.0 but preferably as
    recent as you can attain).
 
-Flake8 relies on functionality provided by setuptools called
-`Entry Points`_. These allow any package to register a plugin with Flake8 via
-that package's ``setup.py`` file.
+|Flake8| relies on functionality provided by setuptools called
+`Entry Points`_. These allow any package to register a plugin with |Flake8|
+via that package's ``setup.py`` file.
 
 Let's presume that we already have our plugin written and it's in a module
 called ``flake8_example``. We might have a ``setup.py`` that looks something
@@ -82,7 +82,7 @@ Note specifically these lines:
 We tell setuptools to register our entry point "X" inside the specific
 grouping of entry-points that flake8 should look in.
 
-Flake8 presently looks at three groups:
+|Flake8| presently looks at three groups:
 
 - ``flake8.extension``
 
@@ -90,7 +90,7 @@ Flake8 presently looks at three groups:
 
 - ``flake8.report``
 
-If your plugin is one that adds checks to Flake8, you will use
+If your plugin is one that adds checks to |Flake8|, you will use
 ``flake8.extension``. If your plugin automatically fixes errors in code, you
 will use ``flake8.listen``.  Finally, if your plugin performs extra report
 handling (formatting, filtering, etc.) it will use ``flake8.report``.

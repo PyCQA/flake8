@@ -16,6 +16,7 @@ pull gently.
     :maxdepth: 2
 
     contributing
+    writing-documentation
     checker
     cli
     formatters

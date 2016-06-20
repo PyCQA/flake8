@@ -93,8 +93,10 @@ Contributing Documentation
 ==========================
 
 To contribute to |Flake8|'s documentation, you might want to first read a
-little about reStructuredText or Sphinx. For the most part, you should be fine
-following the structure and style of the rest of |Flake8|'s documentation.
+little about reStructuredText or Sphinx. |Flake8| has a :ref:`guide of best
+practices <docs-style>` when contributing to our documentation. For the most
+part, you should be fine following the structure and style of the rest of
+|Flake8|'s documentation.
 
 All of |Flake8|'s documentation is written in reStructuredText and rendered by
 Sphinx. The source (reStructuredText) lives in ``docs/source/``. To build

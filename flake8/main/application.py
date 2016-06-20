@@ -229,8 +229,10 @@ class Application(object):
         self.end_time = time.time()
 
     def report_benchmarks(self):
+        """Aggregate, calculate, and report benchmarks for this run."""
         if not self.options.benchmark:
             return
+
         time_elapsed = self.end_time - self.start_time
         statistics = [('seconds elapsed', time_elapsed)]
         add_statistic = statistics.append

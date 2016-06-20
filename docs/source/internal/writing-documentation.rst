@@ -44,7 +44,7 @@ We believe that by capitalizing |Flake8| in prose, we can help reduce
 confusion between the command-line usage of ``flake8`` and the project.
 
 We also have defined a global replacement ``|Flake8|`` that should be used
-and will replace each instance with ``:program:`Flake8```. 
+and will replace each instance with ``:program:`Flake8```.
 
 
 Use the prompt directive for command-line examples
@@ -178,6 +178,6 @@ they will have to interact with that. Keep discussions of internal to the
 mininmum required.
 
 Finally, Flake8 Developers and Contributors need to know how everything fits
-together. We don't need detail about every line of code, but cogent 
+together. We don't need detail about every line of code, but cogent
 explanations and design specifications will help future developers understand
 the Hows and Whys of |Flake8|'s internal design.

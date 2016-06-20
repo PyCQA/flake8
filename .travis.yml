@@ -30,8 +30,6 @@ matrix:
     - python: 3.4
       env: TOXENV=doc8
     - python: 3.4
-      env: TOXENV=mypy
-    - python: 3.4
       env: TOXENV=bandit
     - python: 3.4
       env: TOXENV=docs

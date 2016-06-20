@@ -706,3 +706,24 @@
         exclude_in_doctest =
             dir/subdir/file.py,
             dir/other/file.py
+
+
+.. option:: --benchmark
+
+    Collect and print benchmarks for this run of Flake8. This aggregates the
+    total number of:
+
+    - tokens
+    - physical lines
+    - logical lines
+    - files
+
+    and the number of elapsed seconds.
+
+    Command-line usage:
+
+    .. prompt:: bash
+
+        flake8 --benchmark dir/
+
+    This **can not** be specified in config files.

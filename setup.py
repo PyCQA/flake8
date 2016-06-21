@@ -30,9 +30,9 @@ if mock is None:
 
 
 requires = [
-    "pyflakes >= 0.8.1, != 1.2.0, != 1.2.1, != 1.2.2",
-    "pep8 >= 1.5.7, != 1.6.0, != 1.6.1, != 1.6.2",
-    "mccabe >= 0.5.0",
+    "pyflakes >= 0.8.1, != 1.2.0, != 1.2.1, != 1.2.2, < 1.3.0",
+    "pycodestyle >= 2.0.0, < 2.1.0",
+    "mccabe >= 0.5.0, < 0.6.0",
 ]
 
 if sys.version_info < (3, 4):
@@ -50,7 +50,7 @@ def get_long_description():
             descr.append(f.read())
     return '\n\n'.join(descr)
 
-PEP8 = 'pep8'
+PEP8 = 'pycodestyle'
 _FORMAT = '{0}.{1} = {0}:{1}'
 PEP8_PLUGIN = functools.partial(_FORMAT.format, PEP8)
 
@@ -93,6 +93,7 @@ setuptools.setup(
             PEP8_PLUGIN('blank_lines'),
             PEP8_PLUGIN('extraneous_whitespace'),
             PEP8_PLUGIN('whitespace_around_keywords'),
+            PEP8_PLUGIN('missing_whitespace_after_import_keyword'),
             PEP8_PLUGIN('missing_whitespace'),
             PEP8_PLUGIN('indentation'),
             PEP8_PLUGIN('continued_indentation'),
@@ -110,6 +111,7 @@ setuptools.setup(
             PEP8_PLUGIN('comparison_to_singleton'),
             PEP8_PLUGIN('comparison_negative'),
             PEP8_PLUGIN('comparison_type'),
+            PEP8_PLUGIN('ambiguous_identifier'),
             PEP8_PLUGIN('python_3000_has_key'),
             PEP8_PLUGIN('python_3000_raise_comma'),
             PEP8_PLUGIN('python_3000_not_equal'),

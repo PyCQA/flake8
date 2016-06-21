@@ -17,6 +17,7 @@ pull gently.
 
     contributing
     writing-documentation
+    releases
     checker
     cli
     formatters

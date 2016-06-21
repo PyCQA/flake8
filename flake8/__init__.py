@@ -27,7 +27,8 @@ LOG.addHandler(NullHandler())
 # Clean up after LOG config
 del NullHandler
 
-__version__ = '3.0.0a1'
+__version__ = '3.0.0b1'
+__version_info__ = tuple(int(i) for i in __version__.split('.') if i.isdigit())
 
 
 # There is nothing lower than logging.DEBUG (10) in the logging library,

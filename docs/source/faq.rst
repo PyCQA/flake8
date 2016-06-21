@@ -31,14 +31,26 @@ Why does Flake8 use ranges for its dependencies?
 ================================================
 
 |Flake8| uses ranges for mccabe, pyflakes, and pycodestyle because each of
-those projects tend to add *new* checks between minor releases. |Flake8|
-does not restrict you from using patch versions, but |Flake8| likes to
-ensure that if you install |Flake8| 2.6.x repeatedly you will not be
-surprised at a later time by a new error code suddenly breaking your
-linting. Instead, we use minor versions of |Flake8| to add new checks from
-dependencies intentionally.
+those projects tend to add *new* checks in minor releases. It has been an
+implicit design goal of |Flake8|'s to make the list of error codes stable in
+its own minor releases. That way if you install something from the 2.5
+series today, you will not find new checks in the same series in a month
+from now when you install it again.
 
-**Please do not file issues to tell the Flake8 team that a new version is
-available on PyPI.** The current Flake8 core team (of one person) is also
+|Flake8|'s dependencies tend to avoid new checks in patch versions which is
+why |Flake8| expresses its dependencies roughly as::
+
+    pycodestyle >= 2.0.0, < 2.1.0
+    pyflakes >= 0.8.0, != 1.2.0, != 1.2.1, != 1.2.2, < 1.3.0
+    mccabe >= 0.5.0, < 0.6.0
+
+This allows those projects to release patch versions that fix bugs and for
+|Flake8| users to consume those fixes.
+
+
+Should I file an issue when a new version of a dependency is available?
+=======================================================================
+
+**No.** The current Flake8 core team (of one person) is also
 a core developer of pycodestyle, pyflakes, and mccabe. They are aware of
 these releases.

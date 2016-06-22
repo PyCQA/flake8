@@ -69,13 +69,14 @@ Alternatively, if you want to *ignore* only one specific warning or error:
 Please read our user guide for more information about how to use and configure
 |Flake8|.
 
-FAQ
-===
+FAQ and Glossary
+================
 
 .. toctree::
     :maxdepth: 2
 
     faq
+    glossary
 
 User Guide
 ==========
@@ -127,3 +128,4 @@ General Indices
 
 * :ref:`genindex`
 * :ref:`Index of Documented Public Modules <modindex>`
+* :ref:`Glossary of terms <glossary>`

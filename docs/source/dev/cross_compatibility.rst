@@ -12,7 +12,7 @@ versions.
 
     If your plugin does not register options, it *should* Just Work.
 
-The **only** breaking change in |Flake8| 3.0 is the fact that we no longer 
+The **only** breaking change in |Flake8| 3.0 is the fact that we no longer
 check the option parser for a list of strings to parse from a config file. On
 |Flake8| 2.x, to have an option parsed from the configuration files that
 |Flake8| finds and parses you would have to do something like:
@@ -121,7 +121,7 @@ options with |Flake8| and have it work on |Flake8| 2.x and 3.x.
         parser.add_option(*option_args, **option_kwargs)
         if parse_from_config:
             parser.config_options.append(option_args[-1].lstrip('-'))
-        
+
 
 Or, you can write a tiny helper function:
 

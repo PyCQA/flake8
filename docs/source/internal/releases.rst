@@ -38,6 +38,6 @@ Before releasing, the following tox test environments must pass:
 We tag the most recent commit that passes those items and contains our release
 notes.
 
-Finally, we run ``tox -e release`` to build source distributions (e.g., 
+Finally, we run ``tox -e release`` to build source distributions (e.g.,
 ``flake8-3.0.0.tar.gz``), universal wheels, and upload them to PyPI with
 Twine.

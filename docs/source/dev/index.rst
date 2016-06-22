@@ -12,6 +12,7 @@ the authoritative documentation for those pieces.
 .. toctree::
     :maxdepth: 2
 
+    cross_compatibility
     plugin_parameters
     registering_plugins
     formatters

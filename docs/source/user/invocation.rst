@@ -55,7 +55,7 @@ Or
 
 It's also possible to narrow what |Flake8| will try to check by specifying
 exactly the paths and directories you want it to check. Let's assume that
-we have a directory with python files and subdirectories which have python
+we have a directory with python files and sub-directories which have python
 files (and may have more sub-directories) called ``my_project``. Then if
 we only want errors from files found inside ``my_project`` we can do:
 

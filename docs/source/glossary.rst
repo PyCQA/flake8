@@ -22,8 +22,25 @@
         the user configured maximum) or a lint check (e.g., checking for
         unused imports) or some other check as defined by a plugin.
 
+    error
     error code
         The symbol associated with a specific :term:`check`. For example,
         pycodestyle implements :term:`check`\ s that look for whitespace
         around binary operators and will either return an error code of
-        W503 or W504.
+        ``W503`` or ``W504``.
+
+    warning
+        Typically the ``W`` class of :term:`error code`\ s from pycodestyle.
+
+    class
+    error class
+        A larger grouping of related :term:`error code`\ s. For example,
+        ``W503`` and ``W504`` are two codes related to whitespace. ``W50``
+        would be the most specific class of codes relating to whitespace.
+        ``W`` would be the warning class that subsumes all whitespace
+        errors.
+
+    pyflakes
+        The project |Flake8| depends upon to lint files (check for unused
+        imports, variables, etc.). This uses the ``F`` :term:`class` of
+        :term:`error code`\ s reported by |Flake8|.

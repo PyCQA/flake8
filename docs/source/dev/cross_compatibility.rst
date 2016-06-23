@@ -140,7 +140,8 @@ Or, you can write a tiny helper function:
 
 .. code-block:: python
 
-    def register_options(self, parser):
+    @classmethod
+    def register_options(cls, parser):
         register_opt(parser, '-X', '--example-flag', type='string',
                      parse_from_config=True, help='...')
 

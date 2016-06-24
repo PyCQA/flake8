@@ -41,6 +41,16 @@
         errors.
 
     pyflakes
-        The project |Flake8| depends upon to lint files (check for unused
+        The project |Flake8| depends on to lint files (check for unused
         imports, variables, etc.). This uses the ``F`` :term:`class` of
         :term:`error code`\ s reported by |Flake8|.
+
+    pycodestyle
+        The project |Flake8| depends on to provide style enforcement.
+        pycodestyle implements :term:`check`\ s for :pep:`8`. This uses the
+        ``E`` and ``W`` :term:`class`\ es of :term:`error code`\ s.
+
+    mccabe
+        The project |Flake8| depends on to calculate the McCabe complexity
+        of a unit of code (e.g., a function). This uses the ``C``
+        :term:`class` of :term`error code`\ s.

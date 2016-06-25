@@ -24,6 +24,7 @@ This guide will cover all of these and the nuances for using |Flake8|.
     configuration
     options
     ignoring-errors
+    using-plugins
     python-api
 
 .. config files

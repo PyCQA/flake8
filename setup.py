@@ -63,7 +63,7 @@ setuptools.setup(
     license="MIT",
     version=flake8.__version__,
     description="the modular source code checker: pep8, pyflakes and co",
-    # long_description=get_long_description(),
+    long_description=get_long_description(),
     author="Tarek Ziade",
     author_email="tarek@ziade.org",
     maintainer="Ian Cordasco",

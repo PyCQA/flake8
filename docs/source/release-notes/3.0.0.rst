@@ -1,0 +1,42 @@
+3.0.0b1 -- 2016-06-25
+---------------------
+
+- Rewrite our documentation from scratch! (http://flake8.pycqa.org)
+
+- Drop explicit support for Pythons 2.6, 3.2, and 3.3.
+
+- Remove dependence on pep8/pycodestyle for file processing, plugin
+  dispatching, and more. We now control all of this while keeping backwards
+  compatibility.
+
+- ``--select`` and ``--ignore`` can now both be specified and try to find the
+  most specific rule from each. For example, if you do ``--select E --ignore
+  E123`` then we will report everything that starts with ``E`` except for
+  ``E123``. Previously, you would have had to do ``--ignore E123,F,W`` which
+  will also still work, but the former should be far more intuitive.
+
+- Add support for in-line ``# noqa`` comments to specify **only** the error
+  codes to be ignored, e.g., ``# noqa: E123,W503``
+
+- Add entry-point for formatters as well as a base class that new formatters
+  can inherit from. See the documentation for more details.
+
+- Add detailed verbose output using the standard library logging module.
+
+- Enhance our usage of optparse for plugin developers by adding new parameters
+  to the ``add_option`` that plugins use to register new options.
+
+- Update ``--install-hook`` to require the name of version control system hook
+  you wish to install a Flake8.
+
+- Stop checking sub-directories more than once via the setuptools command
+
+- When passing a file on standard-in, allow the caller to specify
+  ``--stdin-display-name`` so the output is properly formatted
+
+- The Git hook now uses ``sys.executable`` to format the shebang line.
+  This allows Flake8 to install a hook script from a virtualenv that points to
+  that virtualenv's Flake8 as opposed to a global one (without the virtualenv
+  being sourced).
+
+- When using ``--count``, the output is no longer written to stderr.

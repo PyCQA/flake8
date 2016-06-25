@@ -1,0 +1,7 @@
+1.6.1 - 2012-11-24
+------------------
+
+- fixed the mercurial hook, a change from a previous patch was not properly
+  applied
+- fixed an assumption about warnings/error messages that caused an exception
+  to be thrown when McCabe is used

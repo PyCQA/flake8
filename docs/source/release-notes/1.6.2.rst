@@ -1,0 +1,4 @@
+1.6.2 - 2012-11-25
+------------------
+
+- fixed the NameError: global name 'message' is not defined (#46)

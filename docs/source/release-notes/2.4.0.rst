@@ -1,0 +1,33 @@
+2.4.0 - 2015-03-07
+------------------
+
+- **Bug** Print filenames when using multiprocessing and ``-q`` option.
+  (`GitLab#31`_)
+
+- **Bug** Put upper cap on dependencies. The caps for 2.4.0 are:
+
+  - ``pep8 < 1.6`` (Related to `GitLab#35`_)
+
+  - ``mccabe < 0.4``
+
+  - ``pyflakes < 0.9``
+
+  See also `GitLab#32`_
+
+- **Bug** Files excluded in a config file were not being excluded when flake8
+  was run from a git hook. (`GitHub#2`_)
+
+- **Improvement** Print warnings for users who are providing mutually
+  exclusive options to flake8. (`GitLab#8`_, `GitLab!18`_)
+
+- **Feature** Allow git hook configuration to live in ``.git/config``.
+  See the updated `VCS hooks docs`_ for more details. (`GitLab!20`_)
+
+.. _GitHub#2: https://github.com/pycqa/flake8/pull/2
+.. _GitLab#8: https://gitlab.com/pycqa/flake8/issues/8
+.. _GitLab#31: https://gitlab.com/pycqa/flake8/issues/31
+.. _GitLab#32: https://gitlab.com/pycqa/flake8/issues/32
+.. _GitLab#35: https://gitlab.com/pycqa/flake8/issues/35
+.. _GitLab!18: https://gitlab.com/pycqa/flake8/merge_requests/18
+.. _GitLab!20: https://gitlab.com/pycqa/flake8/merge_requests/20
+.. _VCS hooks docs: https://flake8.readthedocs.org/en/latest/vcs.html

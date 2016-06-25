@@ -1,0 +1,5 @@
+1.4 - 2012-07-12
+----------------
+
+- git_hook: Only check staged changes for compliance
+- use pep8 1.2

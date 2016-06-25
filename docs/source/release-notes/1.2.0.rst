@@ -1,0 +1,6 @@
+1.2 - 2012-02-12
+----------------
+
+- added a git hook
+- now Python 3 compatible
+- mccabe and pyflakes have warning codes like pep8 now

@@ -1,0 +1,5 @@
+1.0 - 2011-11-29
+----------------
+
+- Deactivates by default the complexity checker
+- Introduces the complexity option in the HG hook and the command line.

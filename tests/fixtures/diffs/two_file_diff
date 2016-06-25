@@ -1,0 +1,45 @@
+diff --git a/flake8/utils.py b/flake8/utils.py
+index f6ce384..7cd12b0 100644
+--- a/flake8/utils.py
++++ b/flake8/utils.py
+@@ -75,8 +75,8 @@ def stdin_get_value():
+     return cached_value.getvalue()
+ 
+ 
+-def parse_unified_diff():
+-    # type: () -> List[str]
++def parse_unified_diff(diff=None):
++    # type: (str) -> List[str]
+     """Parse the unified diff passed on stdin.
+ 
+     :returns:
+@@ -84,7 +84,10 @@ def parse_unified_diff():
+     :rtype:
+         dict
+     """
+-    diff = stdin_get_value()
++    # Allow us to not have to patch out stdin_get_value
++    if diff is None:
++        diff = stdin_get_value()
++
+     number_of_rows = None
+     current_path = None
+     parsed_paths = collections.defaultdict(set)
+diff --git a/tests/unit/test_utils.py b/tests/unit/test_utils.py
+index d69d939..21482ce 100644
+--- a/tests/unit/test_utils.py
++++ b/tests/unit/test_utils.py
+@@ -115,3 +115,13 @@ def test_parameters_for_function_plugin():
+     plugin = plugin_manager.Plugin('plugin-name', object())
+     plugin._plugin = fake_plugin
+     assert utils.parameters_for(plugin) == ['physical_line', 'self', 'tree']
++
++
++def read_diff_file(filename):
++    """Read the diff file in its entirety."""
++    with open(filename, 'r') as fd:
++        content = fd.read()
++    return content
++
++
++SINGLE_FILE_DIFF = read_diff_file('tests/fixtures/diffs/single_file_diff')

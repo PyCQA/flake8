@@ -1,5 +1,1 @@
-pycodestyle
-pyflakes
-mccabe
-mock
-nose
+tox

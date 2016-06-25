@@ -11,8 +11,6 @@ notifications:
 
 matrix:
   include:
-    - python: 2.6
-      env: TOXENV=py26
     - python: 2.7
       env: TOXENV=py27
     - python: 3.3
@@ -24,6 +22,14 @@ matrix:
     - python: pypy
       env: TOXENV=pypy
     - python: 2.7
-      env: TOXENV=py27-flake8
+      env: TOXENV=readme
     - python: 3.4
-      env: TOXENV=py34-flake8
+      env: TOXENV=flake8
+    - python: 3.4
+      env: TOXENV=pylint
+    - python: 3.4
+      env: TOXENV=doc8
+    - python: 3.4
+      env: TOXENV=bandit
+    - python: 3.4
+      env: TOXENV=docs

@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+2.6.2 - 2016-06-25
+------------------
+
+- **Bug** Fix packaging error during release process.
+
 2.6.1 - 2016-06-25
 ------------------
 

@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+2.6.1 - 2016-06-25
+------------------
+
+- **Bug** Update the config files to search for to include ``setup.cfg`` and
+  ``tox.ini``. This was broken in 2.5.5 when we stopped passing
+  ``config_file`` to our Style Guide
+
 2.6.0 - 2016-06-15
 ------------------
 

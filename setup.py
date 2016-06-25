@@ -115,7 +115,8 @@ setuptools.setup(
             PEP8_PLUGIN('comparison_to_singleton'),
             PEP8_PLUGIN('comparison_negative'),
             PEP8_PLUGIN('comparison_type'),
-            PEP8_PLUGIN('ambiguous_identifier'),
+            # NOTE(sigmavirus24): Add this back once PyCodestyle 2.1.0 is out
+            # PEP8_PLUGIN('ambiguous_identifier'),
             PEP8_PLUGIN('python_3000_has_key'),
             PEP8_PLUGIN('python_3000_raise_comma'),
             PEP8_PLUGIN('python_3000_not_equal'),

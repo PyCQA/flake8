@@ -41,7 +41,9 @@ class ConfigFileFinder(object):
         self.program_name = program_name
 
         # List of filenames to find in the local/project directory
-        self.project_filenames = ('setup.cfg', 'tox.ini', self.program_config)
+        self.project_filenames = (
+            self.program_config,
+        ) + self.PROJECT_FILENAMES
 
         self.local_directory = os.path.abspath(os.curdir)
 

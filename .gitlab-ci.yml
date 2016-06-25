@@ -1,6 +1,6 @@
 before_script:
   - apt-get update -qq
-  - apt-get install -y python python3
+  - apt-get install -y python python3 python-dev python3-dev
   - curl -O https://bootstrap.pypa.io/get-pip.py
   - python get-pip.py
   - pip install -r dev-requirements.txt

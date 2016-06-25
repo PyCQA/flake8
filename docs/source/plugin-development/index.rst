@@ -46,10 +46,10 @@ section we cover:
     :caption: Plugin Developer Documentation
     :maxdepth: 2
 
-    registering_plugins
-    plugin_parameters
+    registering-plugins
+    plugin-parameters
     formatters
-    cross_compatibility
+    cross-compatibility
 
 
 .. _entry points:

@@ -100,7 +100,7 @@ plugins and distribute them to others.
 .. toctree::
     :maxdepth: 2
 
-    dev/index
+    plugin-development/index
 
 Contributor Guide
 =================

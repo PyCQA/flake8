@@ -1,4 +1,6 @@
 include *.rst
 include CONTRIBUTORS.txt
 include LICENSE
-recursive-include flake8 *
+recursive-include docs *
+recursive-include tests *
+recursive-include src *

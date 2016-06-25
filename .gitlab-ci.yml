@@ -1,0 +1,22 @@
+before_script:
+  - apt-get update -qq
+  - apt-get install -y python python3 python-dev python3-dev
+  - curl -O https://bootstrap.pypa.io/get-pip.py
+  - python get-pip.py
+  - pip install -r dev-requirements.txt
+
+python2:
+  script:
+    - tox -e py27
+
+python3:
+  script:
+    - tox --skip-missing-interpreters -e py34,py35
+
+linters:
+  script:
+    - tox -e linters
+
+docs:
+  script:
+    - tox -e docs

@@ -3,9 +3,12 @@
 from __future__ import with_statement
 
 import functools
+import os
 import sys
 
 import setuptools
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
 import flake8  # noqa
 
@@ -66,6 +69,7 @@ setuptools.setup(
     maintainer="Ian Cordasco",
     maintainer_email="graffatcolmingov@gmail.com",
     url="https://gitlab.com/pycqa/flake8",
+    package_dir={"": "src"},
     packages=[
         "flake8",
         "flake8.api",

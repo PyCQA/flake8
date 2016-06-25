@@ -71,15 +71,15 @@ def test_fnmatch_returns_the_default_with_empty_default():
 
 def test_filenames_from_a_directory():
     """Verify that filenames_from walks a directory."""
-    filenames = list(utils.filenames_from('flake8/'))
+    filenames = list(utils.filenames_from('src/flake8/'))
     assert len(filenames) > 2
-    assert 'flake8/__init__.py' in filenames
+    assert 'src/flake8/__init__.py' in filenames
 
 
 def test_filenames_from_a_directory_with_a_predicate():
     """Verify that predicates filter filenames_from."""
     filenames = list(utils.filenames_from(
-        arg='flake8/',
+        arg='src/flake8/',
         predicate=lambda filename: filename == 'flake8/__init__.py',
     ))
     assert len(filenames) > 2

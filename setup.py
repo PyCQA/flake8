@@ -3,6 +3,7 @@
 from __future__ import with_statement
 
 import functools
+import io
 import os
 import sys
 
@@ -49,7 +50,7 @@ def get_long_description():
     """Generate a long description from the README and CHANGES files."""
     descr = []
     for fname in ('README.rst',):
-        with open(fname) as f:
+        with io.open(fname, encoding='utf-8') as f:
             descr.append(f.read())
     return '\n\n'.join(descr)
 

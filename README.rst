@@ -1,14 +1,14 @@
-======
-Flake8
-======
+========
+ Flake8
+========
 
 Flake8 is a wrapper around these tools:
 
 - PyFlakes
-- pep8
+- pycodestyle
 - Ned Batchelder's McCabe script
 
-Flake8 runs all the tools by launching the single ``flake8`` script.
+Flake8 runs all the tools by launching the single ``flake8`` command.
 It displays the warnings in a per-file, merged output.
 
 It also adds a few features:
@@ -18,80 +18,60 @@ It also adds a few features:
     # flake8: noqa
 
 - lines that contain a ``# noqa`` comment at the end will not issue warnings.
-- a Git and a Mercurial hook.
-- a McCabe complexity checker.
-- extendable through ``flake8.extension`` entry points.
+- you can ignore specific errors on a line with ``# noqa: <error>``, e.g.,
+  ``# noqa: E234``
+- Git and Mercurial hooks
+- extendable through ``flake8.extension`` and ``flake8.formatting`` entry
+  points
 
 
-QuickStart
+Quickstart
 ==========
 
-::
-
-    pip install flake8
-
-To run flake8 just invoke it against any directory or Python module::
-
-    $ flake8 coolproject
-    coolproject/mod.py:97:1: F401 'shutil' imported but unused
-    coolproject/mod.py:625:17: E225 missing whitespace around operato
-    coolproject/mod.py:729:1: F811 redefinition of function 'readlines' from line 723
-    coolproject/mod.py:1028:1: F841 local variable 'errors' is assigned to but never used
-
-The outputs of PyFlakes *and* pep8 (and the optional plugins) are merged
-and returned.
-
-flake8 offers an extra option: --max-complexity, which will emit a warning if
-the McCabe complexity of a function is higher than the value.  By default it's
-deactivated::
-
-    $ flake8 --max-complexity 12 coolproject
-    coolproject/mod.py:97:1: F401 'shutil' imported but unused
-    coolproject/mod.py:625:17: E225 missing whitespace around operator
-    coolproject/mod.py:729:1: F811 redefinition of unused 'readlines' from line 723
-    coolproject/mod.py:939:1: C901 'Checker.check_all' is too complex (12)
-    coolproject/mod.py:1028:1: F841 local variable 'errors' is assigned to but never used
-    coolproject/mod.py:1204:1: C901 'selftest' is too complex (14)
-
-This feature is quite useful to detect over-complex code.  According to McCabe,
-anything that goes beyond 10 is too complex.
-See https://en.wikipedia.org/wiki/Cyclomatic_complexity.
+See our `quickstart documentation
+<http://flake8.pycqa.org/en/latest/index.html#quickstart>`_ for how to install
+and get started with Flake8.
 
 
 Frequently Asked Questions
 ==========================
 
-Why does flake8 pin the version of pep8?
-----------------------------------------
-
-Version 1.6 of pep8 doesn't work properly with flake8.  Until pep8 releases a
-version that works, flake8 pins the version of pep8 so that flake8 will work as
-a whole.
-
-Is flake8 broken?
------------------
-
-Flake8 combines two other projects that are significant on their own: pep8 and
-PyFlakes. If flake8 is doing something you don't like, it is quite likely that
-the problem lies in one of those other projects.  You can run them separately
-to see if they are the cause of your difficulties.  We greatly appreciate your
-efforts to diagnose the source of the problem before reporting bugs against
-flake8.
+Flake8 maintains an `FAQ <http://flake8.pycqa.org/en/latest/faq.html>`_ in its
+documentation.
 
 
 Questions or Feedback
 =====================
 
 If you have questions you'd like to ask the developers, or feedback you'd like
-to provide, feel free to use the mailing list: code-quality@python.org We
-would love to hear from you. Additionally, if you have a feature you'd like to
-suggest, the mailing list would be the best place for it.
+to provide, feel free to use the mailing list: code-quality@python.org
 
-.. _links:
+We would love to hear from you. Additionally, if you have a feature you'd like
+to suggest, the mailing list would be the best place for it.
+
 
 Links
 =====
 
-* `flake8 documentation <https://flake8.readthedocs.io/en/latest/>`_
+* `Flake8 Documentation <https://flake8.pycqa.org/en/latest/>`_
 
-* `pep8 documentation <https://pep8.readthedocs.io/en/latest/>`_
+* `GitLab Project <https://gitlab.com/pycqa/flake8>`_
+
+* `All (Open and Closed) Issues
+  <https://gitlab.com/pycqa/flake8/issues?scope=all&sort=updated_desc&state=all>`_
+
+* `Code-Quality Archives
+  <https://mail.python.org/mailman/listinfo/code-quality>`-
+
+* `Code of Conduct
+  <http://flake8.pycqa.org/en/latest/internal/contributing.html#code-of-conduct>`_
+
+* `Getting Started Contributing
+  <http://flake8.pycqa.org/en/latest/internal/contributing.html>`_
+
+
+Maintenance
+===========
+
+Flake8 was created by Tarek Ziadé and is currently maintained by `Ian Cordasco
+<https://coglib.com/~icordasc/>`_

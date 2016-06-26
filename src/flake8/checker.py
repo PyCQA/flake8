@@ -253,6 +253,10 @@ class Manager(object):
         """Create checkers for each file."""
         if paths is None:
             paths = self.arguments
+
+        if not paths:
+            paths = ['.']
+
         filename_patterns = self.options.filename
 
         # NOTE(sigmavirus24): Yes this is a little unsightly, but it's our
@@ -273,6 +277,7 @@ class Manager(object):
                                                  self.is_path_excluded)
             if should_create_file_checker(filename)
         ]
+        LOG.info('Checking %d files', len(self.checkers))
 
     def report(self):
         # type: () -> (int, int)
@@ -340,6 +345,9 @@ class Manager(object):
                 raise
             LOG.warning('Running in serial after OS exception, %r', oserr)
             self.run_serial()
+        except KeyboardInterrupt:
+            LOG.warning('Flake8 was interrupted by the user')
+            raise exceptions.EarlyQuit('Early quit while running checks')
 
     def start(self, paths=None):
         """Start checking files.

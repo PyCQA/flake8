@@ -209,16 +209,22 @@ def filenames_from(arg, predicate=None):
         predicate = _default_predicate
     if os.path.isdir(arg):
         for root, sub_directories, files in os.walk(arg):
-            for filename in files:
-                joined = os.path.join(root, filename)
-                if predicate(joined):
-                    continue
-                yield joined
+            if predicate(root):
+                sub_directories[:] = []
+                continue
+
             # NOTE(sigmavirus24): os.walk() will skip a directory if you
             # remove it from the list of sub-directories.
             for directory in sub_directories:
-                if predicate(directory):
+                joined = os.path.join(root, directory)
+                if predicate(directory) or predicate(joined):
                     sub_directories.remove(directory)
+
+            for filename in files:
+                joined = os.path.join(root, filename)
+                if predicate(joined) or predicate(filename):
+                    continue
+                yield joined
     else:
         yield arg
 

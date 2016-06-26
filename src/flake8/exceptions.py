@@ -7,6 +7,12 @@ class Flake8Exception(Exception):
     pass
 
 
+class EarlyQuit(Flake8Exception):
+    """Except raised when encountering a KeyboardInterrupt."""
+
+    pass
+
+
 class FailedToLoadPlugin(Flake8Exception):
     """Exception raised when a plugin fails to load."""
 

@@ -106,6 +106,8 @@ options with |Flake8| and have it work on |Flake8| 2.x and 3.x.
 
 .. code-block:: python
 
+    import optparse
+
     option_args = ('-X', '--example-flag')
     option_kwargs = {
         'type': 'string',
@@ -115,7 +117,7 @@ options with |Flake8| and have it work on |Flake8| 2.x and 3.x.
     try:
         # Flake8 3.x registration
         parser.add_option(*option_args, **option_kwargs)
-    except TypeError:
+    except (optparse.OptionError, TypeError):
         # Flake8 2.x registration
         parse_from_config = option_kwargs.pop('parse_from_config', False)
         parser.add_option(*option_args, **option_kwargs)
@@ -127,13 +129,17 @@ Or, you can write a tiny helper function:
 
 .. code-block:: python
 
+    import optparse
+
     def register_opt(parser, *args, **kwargs):
         try:
             # Flake8 3.x registration
             parser.add_option(*args, **kwargs)
-        except TypeError:
+        except (optparse.OptionError, TypeError):
             # Flake8 2.x registration
             parse_from_config = kwargs.pop('parse_from_config', False)
+            kwargs.pop('comma_separated_list', False)
+            kwargs.pop('normalize_paths', False)
             parser.add_option(*args, **kwargs)
             if parse_from_config:
                 parser.config_options.append(args[-1].lstrip('-'))

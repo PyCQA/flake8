@@ -39,4 +39,7 @@
   that virtualenv's Flake8 as opposed to a global one (without the virtualenv
   being sourced).
 
+- Print results in a deterministic and consistent ordering when used with
+  multiprocessing
+
 - When using ``--count``, the output is no longer written to stderr.

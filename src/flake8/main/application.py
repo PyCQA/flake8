@@ -8,6 +8,7 @@ import time
 import flake8
 from flake8 import checker
 from flake8 import defaults
+from flake8 import exceptions
 from flake8 import style_guide
 from flake8 import utils
 from flake8.main import options
@@ -291,6 +292,9 @@ class Application(object):
         try:
             self._run(argv)
         except KeyboardInterrupt as exc:
+            print('... stopped')
             LOG.critical('Caught keyboard interrupt from user')
             LOG.exception(exc)
             self.file_checker_manager._force_cleanup()
+        except exceptions.EarlyQuit:
+            print('... stopped while processing files')

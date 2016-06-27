@@ -24,6 +24,7 @@
 
     error
     error code
+    violation
         The symbol associated with a specific :term:`check`. For example,
         pycodestyle implements :term:`check`\ s that look for whitespace
         around binary operators and will either return an error code of

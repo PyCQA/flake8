@@ -236,8 +236,10 @@ class OptionManager(object):
 
     def update_version_string(self):
         """Update the flake8 version string."""
-        self.parser.version = (self.version + ' (' +
-                               self.generate_versions() + ')')
+        self.parser.version = (
+            self.version + ' (' + self.generate_versions() + ') ' +
+            utils.get_python_version()
+        )
 
     def generate_epilog(self):
         """Create an epilog with the version and name of each of plugin."""

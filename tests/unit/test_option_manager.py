@@ -4,6 +4,7 @@ import os
 
 import pytest
 
+from flake8 import utils
 from flake8.options import manager
 
 TEST_VERSION = '3.0.0b1'
@@ -162,7 +163,8 @@ def test_update_version_string(optmanager):
 
     assert optmanager.version == TEST_VERSION
     assert (optmanager.parser.version == TEST_VERSION + ' ('
-            'Testing 100: 0.0.0, Testing 101: 0.0.0, Testing 300: 0.0.0)')
+            'Testing 100: 0.0.0, Testing 101: 0.0.0, Testing 300: 0.0.0) ' +
+            utils.get_python_version())
 
 
 def test_generate_epilog(optmanager):

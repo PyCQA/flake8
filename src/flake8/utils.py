@@ -4,6 +4,7 @@ import fnmatch as _fnmatch
 import inspect
 import io
 import os
+import platform
 import re
 import sys
 
@@ -290,3 +291,19 @@ def parameters_for(plugin):
         parameters.pop('self', None)
 
     return parameters
+
+
+def get_python_version():
+    """Find and format the python implementation and version.
+
+    :returns:
+        Implementation name, version, and platform as a string.
+    :rtype:
+        str
+    """
+    # The implementation isn't all that important.
+    try:
+        impl = platform.python_implementation() + " "
+    except AttributeError:  # Python 2.5
+        impl = ''
+    return '%s%s on %s' % (impl, platform.python_version(), platform.system())

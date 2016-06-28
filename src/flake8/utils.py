@@ -249,7 +249,7 @@ def fnmatch(filename, patterns, default=True):
 
 
 def parameters_for(plugin):
-    # type: (flake8.plugins.manager.Plugin) -> List[str]
+    # type: (flake8.plugins.manager.Plugin) -> Dict[str, bool]
     """Return the parameters for the plugin.
 
     This will inspect the plugin and return either the function parameters
@@ -261,9 +261,10 @@ def parameters_for(plugin):
     :type plugin:
         flake8.plugins.manager.Plugin
     :returns:
-        Parameters to the plugin.
+        A dictionary mapping the parameter name to whether or not it is
+        required (a.k.a., is positional only/does not have a default).
     :rtype:
-        list(str)
+        dict([(str, bool)])
     """
     func = plugin.plugin
     is_class = not inspect.isfunction(func)
@@ -271,15 +272,21 @@ def parameters_for(plugin):
         func = plugin.plugin.__init__
 
     if sys.version_info < (3, 3):
-        parameters = inspect.getargspec(func)[0]
+        argspec = inspect.getargspec(func)
+        start_of_optional_args = len(argspec[0]) - len(argspec[-1] or [])
+        parameter_names = argspec[0]
+        parameters = collections.OrderedDict([
+            (name, position < start_of_optional_args)
+            for position, name in enumerate(parameter_names)
+        ])
     else:
-        parameters = [
-            parameter.name
+        parameters = collections.OrderedDict([
+            (parameter.name, parameter.default is parameter.empty)
             for parameter in inspect.signature(func).parameters.values()
             if parameter.kind == parameter.POSITIONAL_OR_KEYWORD
-        ]
+        ])
 
     if is_class:
-        parameters.remove('self')
+        parameters.pop('self', None)
 
     return parameters

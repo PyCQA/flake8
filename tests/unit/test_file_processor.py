@@ -114,13 +114,17 @@ def test_check_physical_error(error_code, line, expected_indent_char):
 
 
 @pytest.mark.parametrize('params, args, expected_kwargs', [
-    (['blank_before', 'blank_lines'], None, {'blank_before': 0,
-                                             'blank_lines': 0}),
-    (['noqa', 'fake'], {'fake': 'foo'}, {'noqa': False, 'fake': 'foo'}),
-    (['blank_before', 'blank_lines', 'noqa'],
+    ({'blank_before': True, 'blank_lines': True},
+        None,
+        {'blank_before': 0, 'blank_lines': 0}),
+    ({'noqa': True, 'fake': True},
+        {'fake': 'foo'},
+        {'noqa': False, 'fake': 'foo'}),
+    ({'blank_before': True, 'blank_lines': True, 'noqa': True},
         {'blank_before': 10, 'blank_lines': 5, 'noqa': True},
         {'blank_before': 10, 'blank_lines': 5, 'noqa': True}),
-    ([], {'fake': 'foo'}, {'fake': 'foo'}),
+    ({}, {'fake': 'foo'}, {'fake': 'foo'}),
+    ({'non-existent': False}, {'fake': 'foo'}, {'fake': 'foo'}),
 ])
 def test_keyword_arguments_for(params, args, expected_kwargs):
     """Verify the keyword args are generated properly."""

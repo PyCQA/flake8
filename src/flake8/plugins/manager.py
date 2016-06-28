@@ -38,6 +38,7 @@ class Plugin(object):
         self.entry_point = entry_point
         self._plugin = None
         self._parameters = None
+        self._parameter_names = None
         self._group = None
         self._plugin_name = None
         self._version = None
@@ -76,6 +77,13 @@ class Plugin(object):
         if self._parameters is None:
             self._parameters = utils.parameters_for(self)
         return self._parameters
+
+    @property
+    def parameter_names(self):
+        """List of argument names that need to be passed to the plugin."""
+        if self._parameter_names is None:
+            self._parameter_names = list(self.parameters)
+        return self._parameter_names
 
     @property
     def plugin(self):
@@ -416,7 +424,7 @@ class Checkers(PluginTypeManager):
         Find all checker plugins that are expecting a specific argument.
         """
         for plugin in self.plugins.values():
-            if argument_name == plugin.parameters[0]:
+            if argument_name == plugin.parameter_names[0]:
                 yield plugin
 
     def register_options(self, optmanager):

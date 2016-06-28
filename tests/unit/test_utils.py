@@ -102,17 +102,22 @@ def test_parameters_for_class_plugin():
 
     plugin = plugin_manager.Plugin('plugin-name', object())
     plugin._plugin = FakeCheck
-    assert utils.parameters_for(plugin) == ['tree']
+    assert utils.parameters_for(plugin) == {'tree': True}
 
 
 def test_parameters_for_function_plugin():
     """Verify that we retrieve the parameters for a function plugin."""
-    def fake_plugin(physical_line, self, tree):
+    def fake_plugin(physical_line, self, tree, optional=None):
         pass
 
     plugin = plugin_manager.Plugin('plugin-name', object())
     plugin._plugin = fake_plugin
-    assert utils.parameters_for(plugin) == ['physical_line', 'self', 'tree']
+    assert utils.parameters_for(plugin) == {
+        'physical_line': True,
+        'self': True,
+        'tree': True,
+        'optional': False,
+    }
 
 
 def read_diff_file(filename):

@@ -206,14 +206,19 @@ class FileProcessor(object):
         """Generate the keyword arguments for a list of parameters."""
         if arguments is None:
             arguments = {}
-        for param in parameters:
+        for param, required in parameters.items():
             if param in arguments:
                 continue
             try:
                 arguments[param] = getattr(self, param)
             except AttributeError as exc:
-                LOG.exception(exc)
-                raise
+                if required:
+                    LOG.exception(exc)
+                    raise
+                else:
+                    LOG.warning('Plugin requested optional parameter "%s" '
+                                'but this is not an available parameter.',
+                                param)
         return arguments
 
     def check_physical_error(self, error_code, line):

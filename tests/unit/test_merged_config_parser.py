@@ -204,3 +204,31 @@ def test_parsed_configs_are_equivalent(optmanager, config_fixture_path):
         os.path.abspath('bar/'),
         os.path.abspath('bogus/'),
     ]
+
+
+@pytest.mark.parametrize('config_file', [
+    'tests/fixtures/config_files/config-with-hyphenated-options.ini'
+])
+def test_parsed_hyphenated_and_underscored_names(optmanager, config_file):
+    """Verify we find hyphenated option names as well as underscored.
+
+    This tests for options like --max-line-length and --enable-extensions
+    which are able to be specified either as max-line-length or
+    max_line_length in our config files.
+    """
+    optmanager.add_option('--max-line-length', parse_from_config=True,
+                          type='int')
+    optmanager.add_option('--enable-extensions', parse_from_config=True,
+                          comma_separated_list=True)
+    parser = config.MergedConfigParser(optmanager)
+    config_finder = parser.config_finder
+
+    with mock.patch.object(config_finder, 'local_config_files') as localcfs:
+        localcfs.return_value = [config_file]
+        with mock.patch.object(config_finder,
+                               'user_config_file') as usercf:
+            usercf.return_value = []
+            parsed_config = parser.merge_user_and_local_config()
+
+    assert parsed_config['max_line_length'] == 110
+    assert parsed_config['enable_extensions'] == ['H101', 'H235']

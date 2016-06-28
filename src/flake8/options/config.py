@@ -192,7 +192,7 @@ class MergedConfigParser(object):
             LOG.debug('Option "%s" returned value: %r', option_name, value)
 
             final_value = self._normalize_value(option, value)
-            config_dict[option_name] = final_value
+            config_dict[option.config_name] = final_value
 
         return config_dict
 

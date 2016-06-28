@@ -186,7 +186,9 @@ class OptionManager(object):
         self.parser.add_option(option.to_optparse())
         self.options.append(option)
         if option.parse_from_config:
-            self.config_options_dict[option.config_name] = option
+            name = option.config_name
+            self.config_options_dict[name] = option
+            self.config_options_dict[name.replace('_', '-')] = option
         LOG.debug('Registered option "%s".', option)
 
     def remove_from_default_ignore(self, error_codes):

@@ -163,6 +163,7 @@ class OptionManager(object):
         self.version = version
         self.registered_plugins = set()
         self.extended_default_ignore = set()
+        self.extended_default_select = set()
 
     @staticmethod
     def format_plugin(plugin_tuple):
@@ -201,8 +202,8 @@ class OptionManager(object):
         LOG.debug('Removing %r from the default ignore list', error_codes)
         for error_code in error_codes:
             try:
-                self.extend_default_ignore.remove(error_code)
-            except ValueError:
+                self.extended_default_ignore.remove(error_code)
+            except (ValueError, KeyError):
                 LOG.debug('Attempted to remove %s from default ignore'
                           ' but it was not a member of the list.', error_code)
 
@@ -215,6 +216,16 @@ class OptionManager(object):
         """
         LOG.debug('Extending default ignore list with %r', error_codes)
         self.extended_default_ignore.update(error_codes)
+
+    def extend_default_select(self, error_codes):
+        """Extend the default select list with the error codes provided.
+
+        :param list error_codes:
+            List of strings that are the error/warning codes with which
+            to extend the default select list.
+        """
+        LOG.debug('Extending default select list with %r', error_codes)
+        self.extended_default_select.update(error_codes)
 
     def generate_versions(self, format_str='%(name)s: %(version)s'):
         """Generate a comma-separated list of versions of plugins."""

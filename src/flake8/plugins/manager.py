@@ -161,6 +161,7 @@ class Plugin(object):
     def enable(self, optmanager):
         """Remove plugin name from the default ignore list."""
         optmanager.remove_from_default_ignore([self.name])
+        optmanager.extend_default_select([self.name])
 
     def disable(self, optmanager):
         """Add the plugin name to the default ignore list."""
@@ -417,6 +418,16 @@ class Checkers(PluginTypeManager):
         for plugin in self.plugins.values():
             if argument_name == plugin.parameters[0]:
                 yield plugin
+
+    def register_options(self, optmanager):
+        """Register all of the checkers' options to the OptionManager."""
+        super(Checkers, self).register_options(optmanager)
+
+        def conditionally_enable(plugin):
+            if plugin.group() is None and not plugin.off_by_default:
+                plugin.enable(optmanager)
+
+        list(self.manager.map(conditionally_enable))
 
     @property
     def ast_plugins(self):

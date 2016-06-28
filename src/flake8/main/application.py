@@ -256,7 +256,7 @@ class Application(object):
         LOG.info('Reporting errors')
         results = self.file_checker_manager.report()
         self.total_result_count, self.result_count = results
-        LOG.info('Found a total of %d results and reported %d',
+        LOG.info('Found a total of %d violations and reported %d',
                  self.total_result_count, self.result_count)
 
     def initialize(self, argv):

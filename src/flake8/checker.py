@@ -218,7 +218,7 @@ class Manager(object):
     def _run_checks_from_queue(self):
         LOG.info('Running checks in parallel')
         for checker in iter(self.process_queue.get, 'DONE'):
-            LOG.debug('Running checker for file "%s"', checker.filename)
+            LOG.info('Checking "%s"', checker.filename)
             checker.run_checks(self.results_queue, self.statistics_queue)
         self.results_queue.put('DONE')
 
@@ -239,13 +239,13 @@ class Manager(object):
             return False
         basename = os.path.basename(path)
         if utils.fnmatch(basename, exclude):
-            LOG.info('"%s" has been excluded', basename)
+            LOG.debug('"%s" has been excluded', basename)
             return True
 
         absolute_path = os.path.abspath(path)
         match = utils.fnmatch(absolute_path, exclude)
-        LOG.info('"%s" has %sbeen excluded', absolute_path,
-                 '' if match else 'not ')
+        LOG.debug('"%s" has %sbeen excluded', absolute_path,
+                  '' if match else 'not ')
         return match
 
     def make_checkers(self, paths=None):

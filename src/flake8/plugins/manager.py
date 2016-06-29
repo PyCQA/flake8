@@ -428,14 +428,27 @@ class Checkers(PluginTypeManager):
                 yield plugin
 
     def register_options(self, optmanager):
-        """Register all of the checkers' options to the OptionManager."""
-        super(Checkers, self).register_options(optmanager)
+        """Register all of the checkers' options to the OptionManager.
 
-        def conditionally_enable(plugin):
+        This also ensures that plugins that are not part of a group and are
+        enabled by default are enabled on the option manager.
+        """
+        # NOTE(sigmavirus24) We reproduce a little of
+        # PluginTypeManager.register_options to reduce the number of times
+        # that we loop over the list of plugins. Instead of looping twice,
+        # option registration and enabling the plugin, we loop once with one
+        # function to map over the plugins.
+        self.load_plugins()
+        call_register_options = self._generate_call_function(
+            'register_options', optmanager,
+        )
+
+        def register_and_enable(plugin):
+            call_register_options(plugin)
             if plugin.group() is None and not plugin.off_by_default:
                 plugin.enable(optmanager)
 
-        list(self.manager.map(conditionally_enable))
+        list(self.manager.map(register_and_enable))
 
     @property
     def ast_plugins(self):

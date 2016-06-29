@@ -158,7 +158,7 @@ class Plugin(object):
             try:
                 self._load(verify_requirements)
             except Exception as load_exception:
-                LOG.exception(load_exception, exc_info=True)
+                LOG.exception(load_exception)
                 failed_to_load = exceptions.FailedToLoadPlugin(
                     plugin=self,
                     exception=load_exception,

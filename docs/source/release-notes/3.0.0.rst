@@ -1,3 +1,19 @@
+3.0.0b2 -- 2016-06-28
+---------------------
+
+.. note:: These are only changes since 3.0.0b1.
+
+- Adjust some logging levels for ``--verbose`` and messages.
+
+- Running just ``flake8`` will search the current directory like 2.x used to.
+
+- Some plugins that claim to accept a ``builtins`` parameter will no longer
+  cause an unhandled exception in |Flake8|.
+
+- Add python version and platform information back to ``--version``
+
+- Parse hyphenated config names from config files (like 2.x used to).
+
 3.0.0b1 -- 2016-06-25
 ---------------------
 

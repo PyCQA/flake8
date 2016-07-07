@@ -177,13 +177,15 @@ class Application(object):
                                                 self.options,
                                                 self.args)
 
-    def make_formatter(self):
+    def make_formatter(self, formatter_class=None):
         # type: () -> NoneType
         """Initialize a formatter based on the parsed options."""
         if self.formatter is None:
-            self.formatter = self.formatting_plugins.get(
-                self.options.format, self.formatting_plugins['default']
-            ).execute(self.options)
+            if formatter_class is None:
+                formatter_class = self.formatting_plugins.get(
+                    self.options.format, self.formatting_plugins['default']
+                ).execute
+            self.formatter = formatter_class(self.options)
 
     def make_notifier(self):
         # type: () -> NoneType
@@ -212,15 +214,17 @@ class Application(object):
                 checker_plugins=self.check_plugins,
             )
 
-    def run_checks(self):
-        # type: () -> NoneType
+    def run_checks(self, files=None):
+        # type: (Union[List[str], NoneType]) -> NoneType
         """Run the actual checks with the FileChecker Manager.
 
         This method encapsulates the logic to make a
         :class:`~flake8.checker.Manger` instance run the checks it is
         managing.
+
+        :param list files:
+            List of filenames to process
         """
-        files = None
         if self.running_against_diff:
             files = list(sorted(self.parsed_diff.keys()))
         self.file_checker_manager.start(files)

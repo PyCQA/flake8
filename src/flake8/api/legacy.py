@@ -1,14 +1,24 @@
 """Module containing shims around Flake8 2.0 behaviour."""
+import logging
 import os.path
 
 from flake8.formatting import base as formatter
 from flake8.main import application as app
+
+LOG = logging.getLogger(__name__)
 
 
 def get_style_guide(**kwargs):
     """Stub out the only function I'm aware of people using."""
     application = app.Application()
     application.initialize([])
+    options = application.options
+    for key, value in kwargs.items():
+        try:
+            getattr(options, key)
+            setattr(options, key, value)
+        except AttributeError:
+            LOG.error('Could not update option "%s"', key)
     return StyleGuide(application)
 
 

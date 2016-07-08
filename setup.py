@@ -1,7 +1,5 @@
-"""Packaging logic for Flake8."""
 # -*- coding: utf-8 -*-
-from __future__ import with_statement
-
+"""Packaging logic for Flake8."""
 import functools
 import io
 import os
@@ -13,25 +11,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
 import flake8  # noqa
 
-try:
-    # Work around a traceback with Nose on Python 2.6
-    # http://bugs.python.org/issue15881#msg170215
-    __import__('multiprocessing')
-except ImportError:
-    pass
 
-try:
-    # Use https://docs.python.org/3/library/unittest.mock.html
-    from unittest import mock
-except ImportError:
-    # < Python 3.3
-    mock = None
-
-
-tests_require = ['pytest']
-if mock is None:
-    tests_require.append('mock')
-
+tests_require = ['mock', 'pytest']
 
 requires = [
     "pyflakes >= 0.8.1, != 1.2.0, != 1.2.1, != 1.2.2, < 1.3.0",
@@ -47,7 +28,7 @@ if sys.version_info < (3, 2):
 
 
 def get_long_description():
-    """Generate a long description from the README and CHANGES files."""
+    """Generate a long description from the README file."""
     descr = []
     for fname in ('README.rst',):
         with io.open(fname, encoding='utf-8') as f:
@@ -130,6 +111,7 @@ setuptools.setup(
     },
     classifiers=[
         "Environment :: Console",
+        "Framework :: Flake8",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python",

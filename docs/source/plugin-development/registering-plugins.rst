@@ -52,6 +52,7 @@ like:
             ],
         },
         classifiers=[
+            "Framework :: Flake8",
             "Environment :: Console",
             "Intended Audience :: Developers",
             "License :: OSI Approved :: MIT License",

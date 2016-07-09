@@ -120,9 +120,9 @@ options with |Flake8| and have it work on |Flake8| 2.x and 3.x.
     except (optparse.OptionError, TypeError):
         # Flake8 2.x registration
         parse_from_config = option_kwargs.pop('parse_from_config', False)
-        parser.add_option(*option_args, **option_kwargs)
+        option = parser.add_option(*option_args, **option_kwargs)
         if parse_from_config:
-            parser.config_options.append(option_args[-1].lstrip('-'))
+            parser.config_options.append(option.get_opt_string().lstrip('-'))
 
 
 Or, you can write a tiny helper function:
@@ -140,9 +140,9 @@ Or, you can write a tiny helper function:
             parse_from_config = kwargs.pop('parse_from_config', False)
             kwargs.pop('comma_separated_list', False)
             kwargs.pop('normalize_paths', False)
-            parser.add_option(*args, **kwargs)
+            option = parser.add_option(*args, **kwargs)
             if parse_from_config:
-                parser.config_options.append(args[-1].lstrip('-'))
+                parser.config_options.append(option.get_opt_string().lstrip('-'))
 
 .. code-block:: python
 

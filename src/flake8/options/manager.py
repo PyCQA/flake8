@@ -133,6 +133,19 @@ class Option(object):
             return utils.parse_comma_separated_list(value)
         return value
 
+    def normalize_from_setuptools(self, value):
+        """Normalize the value received from setuptools."""
+        value = self.normalize(value)
+        if self.type == 'int' or self.action == 'count':
+            return int(value)
+        if self.action in ('store_true', 'store_false'):
+            value = str(value).upper()
+            if value in ('1', 'T', 'TRUE', 'ON'):
+                return True
+            if value in ('0', 'F', 'FALSE', 'OFF'):
+                return False
+        return value
+
     def to_optparse(self):
         """Convert a Flake8 Option to an optparse Option."""
         if self._opt is None:

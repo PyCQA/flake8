@@ -5,6 +5,8 @@ import setuptools
 
 from flake8.main import application as app
 
+UNSET = object()
+
 
 class Flake8(setuptools.Command):
     """Run Flake8 via setuptools/distutils for registered modules."""
@@ -21,11 +23,25 @@ class Flake8(setuptools.Command):
 
     def initialize_options(self):
         """Override this method to initialize our application."""
-        pass
+        self.flake8 = app.Application()
+        self.flake8.initialize([])
+        options = self.flake8.option_manager.options
+        for option in options:
+            if option.parse_from_config:
+                setattr(self, option.config_name, UNSET)
 
     def finalize_options(self):
         """Override this to parse the parameters."""
-        pass
+        options = self.flake8.option_manager.options
+        for option in options:
+            if option.parse_from_config:
+                name = option.config_name
+                value = getattr(self, name, UNSET)
+                if value is UNSET:
+                    continue
+                setattr(self.flake8.options,
+                        name,
+                        option.normalize_from_setuptools(value))
 
     def package_files(self):
         """Collect the files/dirs included in the registered modules."""
@@ -72,6 +88,5 @@ class Flake8(setuptools.Command):
 
     def run(self):
         """Run the Flake8 application."""
-        flake8 = app.Application()
-        flake8.run(list(self.distribution_files()))
-        flake8.exit()
+        self.flake8.run_checks(list(self.distribution_files()))
+        self.flake8.exit()

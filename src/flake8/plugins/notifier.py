@@ -1,5 +1,5 @@
 """Implementation of the class that registers and notifies listeners."""
-from flake8.plugins import _trie
+from flake8 import _trie
 
 
 class Notifier(object):

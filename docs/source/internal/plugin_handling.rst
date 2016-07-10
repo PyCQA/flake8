@@ -69,7 +69,7 @@ notified.
 To implement this goal, we needed an object to store listeners in that would
 allow for efficient look up - a Trie (or Prefix Tree). Given that none of the
 existing packages on PyPI allowed for storing data on each node of the trie,
-it was left up to write our own as :class:`~flake8.plugins._trie.Trie`. On
+it was left up to write our own as :class:`~flake8._trie.Trie`. On
 top of that we layer our :class:`~flake8.plugins.notifier.Notifier` class.
 
 Now when |Flake8| receives an error or warning, we can easily call the
@@ -122,7 +122,7 @@ API Documentation
 
 .. autoclass:: flake8.plugins.notifier.Notifier
 
-.. autoclass:: flake8.plugins._trie.Trie
+.. autoclass:: flake8._trie.Trie
 
 .. |PluginManager| replace:: :class:`~flake8.plugins.manager.PluginManager`
 .. |Plugin| replace:: :class:`~flake8.plugins.manager.Plugin`

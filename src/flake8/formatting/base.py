@@ -123,8 +123,9 @@ class BaseFormatter(object):
         :rtype:
             str
         """
-        if not self.options.show_source:
-            return None
+        if not self.options.show_source or error.physical_line is None:
+            return ''
+
         pointer = (' ' * error.column_number) + '^'
         # Physical lines have a newline at the end, no need to add an extra
         # one

@@ -18,11 +18,9 @@ class Statistics(object):
             flake8.style_guide.Error
         """
         key = Key.create_from(error)
-        if key in self._store:
-            statistic = self._store[key]
-        else:
-            statistic = Statistic.create_from(error)
-        self._store[key] = statistic.increment()
+        if key not in self._store:
+            self._store[key] = Statistic.create_from(error)
+        self._store[key].increment()
 
     def statistics_for(self, prefix, filename=None):
         """Generate statistics for the prefix and filename.
@@ -54,48 +52,67 @@ class Statistics(object):
 
 
 class Key(collections.namedtuple('Key', ['filename', 'code'])):
+    """Simple key structure for the Statistics dictionary.
+
+    To make things clearer, easier to read, and more understandable, we use a
+    namedtuple here for all Keys in the underlying dictionary for the
+    Statistics object.
+    """
+
     __slots__ = ()
 
     @classmethod
     def create_from(cls, error):
+        """Create a Key from :class:`flake8.style_guide.Error`."""
         return cls(
             filename=error.filename,
             code=error.code,
         )
 
     def matches(self, prefix, filename):
+        """Determine if this key matches some constraints.
+
+        :param str prefix:
+            The error code prefix that this key's error code should start with.
+        :param str filename:
+            The filename that we potentially want to match on. This can be
+            None to only match on error prefix.
+        :returns:
+            True if the Key's code starts with the prefix and either filename
+            is None, or the Key's filename matches the value passed in.
+        :rtype:
+            bool
+        """
         return (self.code.startswith(prefix) and
                 (filename is None or
                     self.filename == filename))
 
 
-_Statistic = collections.namedtuple('Statistic', [
-    'error_code',
-    'filename',
-    'message',
-    'count',
-])
+class Statistic(object):
+    """Simple wrapper around the logic of each statistic.
 
+    Instead of maintaining a simple but potentially hard to reason about
+    tuple, we create a namedtuple which has attributes and a couple
+    convenience methods on it.
+    """
 
-class Statistic(_Statistic):
-    __slots__ = ()
+    def __init__(self, error_code, filename, message, count):
+        """Initialize our Statistic."""
+        self.error_code = error_code
+        self.filename = filename
+        self.message = message
+        self.count = count
 
     @classmethod
     def create_from(cls, error):
+        """Create a Statistic from a :class:`flake8.style_guide.Error`."""
         return cls(
             error_code=error.code,
             filename=error.filename,
-            message=error.message,
+            message=error.text,
             count=0,
         )
 
     def increment(self):
-        return Statistic(
-            error_code=self.error_code,
-            filename=self.filename,
-            message=self.message,
-            count=self.count + 1,
-        )
-
-
-del _Statistic
+        """Increment the number of times we've seen this error in this file."""
+        self.count += 1

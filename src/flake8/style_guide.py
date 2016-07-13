@@ -5,6 +5,7 @@ import linecache
 import logging
 import re
 
+from flake8 import statistics
 from flake8 import utils
 
 __all__ = (
@@ -74,6 +75,7 @@ class StyleGuide(object):
         self.options = options
         self.listener = listener_trie
         self.formatter = formatter
+        self.stats = statistics.Statistics()
         self._selected = tuple(options.select)
         self._ignored = tuple(options.ignore)
         self._decision_cache = {}
@@ -267,6 +269,7 @@ class StyleGuide(object):
         if (error_is_selected and is_not_inline_ignored and
                 is_included_in_diff):
             self.formatter.handle(error)
+            self.stats.record(error)
             self.listener.notify(error.code, error)
             return 1
         return 0

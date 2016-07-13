@@ -141,6 +141,8 @@ class Report(object):
         .. warning:: This should not be instantiated by users.
         """
         self._application = application
+        self._style_guide = application.guide
+        self._stats = self._style_guide.stats
 
     @property
     def total_errors(self):
@@ -149,4 +151,7 @@ class Report(object):
 
     def get_statistics(self, violation):
         """Get the number of occurences of a violation."""
-        raise NotImplementedError('Statistics capturing needs to happen first')
+        return [
+            '{} {} {}'.format(s.count, s.error_code, s.message)
+            for s in self._stats.statistics_for(violation)
+        ]

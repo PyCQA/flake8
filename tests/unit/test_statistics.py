@@ -70,3 +70,52 @@ def test_statistic_increment():
     assert stat.count == 0
     stat.increment()
     assert stat.count == 1
+
+
+def test_recording_statistics():
+    """Verify that we appropriately create a new Statistic and store it."""
+    aggregator = stats.Statistics()
+    assert list(aggregator.statistics_for('E')) == []
+    aggregator.record(make_error())
+    storage = aggregator._store
+    for key, value in storage.items():
+        assert isinstance(key, stats.Key)
+        assert isinstance(value, stats.Statistic)
+
+    assert storage[(DEFAULT_FILENAME, DEFAULT_ERROR_CODE)].count == 1
+
+
+def test_statistics_for_single_record():
+    """Show we can retrieve the only statistic recorded."""
+    aggregator = stats.Statistics()
+    assert list(aggregator.statistics_for('E')) == []
+    aggregator.record(make_error())
+    statistics = list(aggregator.statistics_for('E'))
+    assert len(statistics) == 1
+    assert isinstance(statistics[0], stats.Statistic)
+
+
+def test_statistics_for_filters_by_filename():
+    """Show we can retrieve the only statistic recorded."""
+    aggregator = stats.Statistics()
+    assert list(aggregator.statistics_for('E')) == []
+    aggregator.record(make_error())
+    aggregator.record(make_error(filename='example.py'))
+
+    statistics = list(aggregator.statistics_for('E', DEFAULT_FILENAME))
+    assert len(statistics) == 1
+    assert isinstance(statistics[0], stats.Statistic)
+
+
+def test_statistic_for_retrieves_more_than_one_value():
+    """Show this works for more than a couple statistic values."""
+    aggregator = stats.Statistics()
+    for i in range(50):
+        aggregator.record(make_error(code='E1{:02d}'.format(i)))
+        aggregator.record(make_error(code='W2{:02d}'.format(i)))
+
+    statistics = list(aggregator.statistics_for('E'))
+    assert len(statistics) == 50
+
+    statistics = list(aggregator.statistics_for('W22'))
+    assert len(statistics) == 10

@@ -156,6 +156,10 @@ class Report(object):
         There are important changes in how this object behaves compared to
         the object provided in Flake8 2.x.
 
+    .. warning::
+
+        This should not be instantiated by users.
+
     .. versionchanged:: 3.0.0
     """
 
@@ -174,7 +178,15 @@ class Report(object):
         return self._application.result_count
 
     def get_statistics(self, violation):
-        """Get the number of occurences of a violation."""
+        """Get the list of occurences of a violation.
+
+        :returns:
+            List of occurrences of a violation formatted as:
+            {Count} {Error Code} {Message}, e.g.,
+            ``8 E531 Some error message about the error``
+        :rtype:
+            list
+        """
         return [
             '{} {} {}'.format(s.count, s.error_code, s.message)
             for s in self._stats.statistics_for(violation)

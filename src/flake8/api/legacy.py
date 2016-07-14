@@ -1,4 +1,8 @@
-"""Module containing shims around Flake8 2.0 behaviour."""
+"""Module containing shims around Flake8 2.x behaviour.
+
+Previously, users would import :func:`get_style_guide` from ``flake8.engine``.
+In 3.0 we no longer have an "engine" module but we maintain the API from it.
+"""
 import logging
 import os.path
 
@@ -8,8 +12,19 @@ from flake8.main import application as app
 LOG = logging.getLogger(__name__)
 
 
+__all__ = ('get_style_guide',)
+
+
 def get_style_guide(**kwargs):
-    """Stub out the only function I'm aware of people using."""
+    """Provision a StyleGuide for use.
+
+    :param \*\*kwargs:
+        Keyword arguments that provide some options for the StyleGuide.
+    :returns:
+        An initialized StyleGuide
+    :rtype:
+        :class:`StyleGuide`
+    """
     application = app.Application()
     application.find_plugins()
     application.register_plugin_options()

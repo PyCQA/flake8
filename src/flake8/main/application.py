@@ -270,6 +270,8 @@ class Application(object):
         This finds the plugins, registers their options, and parses the
         command-line arguments.
         """
+        # NOTE(sigmavirus24): When updating this, make sure you also update
+        # our legacy API calls to these same methods.
         self.find_plugins()
         self.register_plugin_options()
         self.parse_configuration_and_cli(argv)

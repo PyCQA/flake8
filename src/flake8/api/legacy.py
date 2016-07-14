@@ -11,7 +11,12 @@ LOG = logging.getLogger(__name__)
 def get_style_guide(**kwargs):
     """Stub out the only function I'm aware of people using."""
     application = app.Application()
-    application.initialize([])
+    application.find_plugins()
+    application.register_plugin_options()
+    application.parse_configuration_and_cli([])
+    # We basically want application.initialize to be called but with these
+    # options set instead before we make our formatter, notifier, internal
+    # style guide and file checker manager.
     options = application.options
     for key, value in kwargs.items():
         try:
@@ -19,6 +24,10 @@ def get_style_guide(**kwargs):
             setattr(options, key, value)
         except AttributeError:
             LOG.error('Could not update option "%s"', key)
+    application.make_formatter()
+    application.make_notifier()
+    application.make_guide()
+    application.make_file_checker_manager()
     return StyleGuide(application)
 
 

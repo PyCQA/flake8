@@ -16,7 +16,7 @@ __all__ = ('get_style_guide',)
 
 
 def get_style_guide(**kwargs):
-    """Provision a StyleGuide for use.
+    r"""Provision a StyleGuide for use.
 
     :param \*\*kwargs:
         Keyword arguments that provide some options for the StyleGuide.

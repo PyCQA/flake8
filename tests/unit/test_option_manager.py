@@ -2,6 +2,7 @@
 import optparse
 import os
 
+import mock
 import pytest
 
 from flake8 import utils
@@ -194,3 +195,11 @@ def test_extend_default_ignore(optmanager):
     assert optmanager.extended_default_ignore == set(['T100',
                                                       'T101',
                                                       'T102'])
+
+
+def test_parse_known_args(optmanager):
+    """Verify we ignore unknown options."""
+    with mock.patch('sys.exit') as sysexit:
+        optmanager.parse_known_args(['--max-complexity', '5'])
+
+    assert sysexit.called is False

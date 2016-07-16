@@ -261,15 +261,49 @@ class OptionManager(object):
             plugin_version_format
         )
 
+    def _normalize(self, options):
+        for option in self.options:
+            old_value = getattr(options, option.dest)
+            setattr(options, option.dest, option.normalize(old_value))
+
     def parse_args(self, args=None, values=None):
         """Simple proxy to calling the OptionParser's parse_args method."""
         self.generate_epilog()
         self.update_version_string()
         options, xargs = self.parser.parse_args(args, values)
-        for option in self.options:
-            old_value = getattr(options, option.dest)
-            setattr(options, option.dest, option.normalize(old_value))
+        self._normalize(options)
+        return options, xargs
 
+    def parse_known_args(self, args=None, values=None):
+        """Parse only the known arguments from the argument values.
+
+        Replicate a little argparse behaviour while we're still on
+        optparse.
+        """
+        self.generate_epilog()
+        self.update_version_string()
+        # Taken from optparse.OptionParser.parse_args
+        rargs = self.parser._get_args(args)
+        if values is None:
+            values = self.parser.get_default_values()
+
+        self.parser.rargs = rargs
+        self.parser.largs = largs = []
+        self.parser.values = values
+
+        while rargs:
+            # NOTE(sigmavirus24): If we only care about *known* options, then
+            # we should just shift the bad option over to the largs list and
+            # carry on.
+            # Unfortunately, we need to rely on a private method here.
+            try:
+                self.parser._process_args(largs, rargs, values)
+            except (optparse.BadOptionError, optparse.OptionValueError) as err:
+                self.parser.largs.append(err.opt_str)
+
+        args = largs + rargs
+        options, xargs = self.parser.check_values(values, args)
+        self._normalize(options)
         return options, xargs
 
     def register_plugin(self, name, version):

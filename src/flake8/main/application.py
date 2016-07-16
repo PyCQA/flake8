@@ -68,7 +68,7 @@ class Application(object):
         except ValueError:
             pass
 
-        preliminary_opts, _ = self.option_manager.parse_args(args)
+        preliminary_opts, _ = self.option_manager.parse_known_args(args)
         # Set the verbosity of the program
         flake8.configure_logging(preliminary_opts.verbose,
                                  preliminary_opts.output_file)

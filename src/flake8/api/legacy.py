@@ -115,8 +115,9 @@ class StyleGuide(object):
 
     def init_report(self, reporter=None):
         """Set up a formatter for this run of Flake8."""
-        if (reporter is not None and
-                not issubclass(reporter, formatter.BaseFormatter)):
+        if reporter is None:
+            return
+        if not issubclass(reporter, formatter.BaseFormatter):
             raise ValueError("Report should be subclass of "
                              "flake8.formatter.BaseFormatter.")
         self._application.make_formatter(reporter)

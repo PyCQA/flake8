@@ -237,6 +237,12 @@ class Manager(object):
         exclude = self.options.exclude
         if not exclude:
             return False
+        if path == '-':
+            # stdin, use display name to check exclusion, if present
+            path = self.options.stdin_display_name
+            if path is None:
+                LOG.debug("unnamed stdin has not been excluded")
+                return False
         basename = os.path.basename(path)
         if utils.fnmatch(basename, exclude):
             LOG.debug('"%s" has been excluded', basename)
@@ -263,12 +269,11 @@ class Manager(object):
         # best solution right now.
         def should_create_file_checker(filename):
             """Determine if we should create a file checker."""
-            matches_filename_patterns = utils.fnmatch(
-                filename, filename_patterns
+            return (
+                filename == '-' or  # stdin
+                utils.fnmatch(filename, filename_patterns) and
+                os.path.exists(filename)
             )
-            is_stdin = filename == '-'
-            file_exists = os.path.exists(filename)
-            return (file_exists and matches_filename_patterns) or is_stdin
 
         self.checkers = [
             FileChecker(filename, self.checks, self.style_guide)

@@ -12,10 +12,11 @@ versions.
 
     If your plugin does not register options, it *should* Just Work.
 
-The **only** breaking change in |Flake8| 3.0 is the fact that we no longer
-check the option parser for a list of strings to parse from a config file. On
-|Flake8| 2.x, to have an option parsed from the configuration files that
-|Flake8| finds and parses you would have to do something like:
+The **only two** breaking changes in |Flake8| 3.0 is the fact that we no 
+longer check the option parser for a list of strings to parse from a config
+file and we no longer patch pep8 or pycodestyle's ``stdin_get_value``
+functions. On |Flake8| 2.x, to have an option parsed from the configuration
+files that |Flake8| finds and parses you would have to do something like:
 
 .. code-block:: python
 
@@ -101,56 +102,86 @@ as a single path.
 Option Handling on Flake8 2 and 3
 =================================
 
-So, in conclusion, we can now write our plugin that relies on registering
-options with |Flake8| and have it work on |Flake8| 2.x and 3.x.
+To ease the transition, the |Flake8| maintainers have released
+`flake8-polyfill`_. |polyfill| provides a convenience function to help users
+transition between Flake8 2 and 3 without issue. For example, if your plugin
+has to work on Flake8 2.x and 3.x but you want to take advantage of some of
+the new options to ``add_option``, you can do
 
 .. code-block:: python
 
-    import optparse
-
-    option_args = ('-X', '--example-flag')
-    option_kwargs = {
-        'type': 'string',
-        'parse_from_config': True,
-        'help': '...',
-    }
-    try:
-        # Flake8 3.x registration
-        parser.add_option(*option_args, **option_kwargs)
-    except (optparse.OptionError, TypeError):
-        # Flake8 2.x registration
-        parse_from_config = option_kwargs.pop('parse_from_config', False)
-        option = parser.add_option(*option_args, **option_kwargs)
-        if parse_from_config:
-            parser.config_options.append(option.get_opt_string().lstrip('-'))
+    from flake8_polyfill import options
 
 
-Or, you can write a tiny helper function:
+    class MyPlugin(object):
+        @classmethod
+        def add_options(cls, parser):
+            options.register(
+                parser,
+                '--application-names', default='', type='string',
+                help='Names of the applications to be checked.',
+                parse_from_config=True,
+                comma_separated_list=True,
+            )
+            options.register(
+                parser,
+                '--style-name', default='', type='string',
+                help='The name of the style convention you want to use',
+                parse_from_config=True,
+            )
+            options.register(
+                parser,
+                '--application-paths', default='', type='string',
+                help='Locations of the application code',
+                parse_from_config=True,
+                comma_separated_list=True,
+                normalize_paths=True,
+            )
+
+        @classmethod
+        def parse_options(cls, parsed_options):
+            cls.application_names = parsed_options.application_names
+            cls.style_name = parsed_options.style_name
+            cls.application_paths = parsed_options.application_paths
+
+|polyfill| will handle these extra options using *callbacks* to the option
+parser. The project has direct replications of the functions that |Flake8|
+uses to provide the same functionality. This means that the values you receive
+should be identically parsed whether you're using Flake8 2.x or 3.x.
+
+.. autofunction:: flake8_polyfill.options.register
+
+
+Standard In Handling on Flake8 2.5, 2.6, and 3
+==============================================
+
+After releasing |Flake8| 2.6, handling standard-in became a bit trickier for
+some plugins. |Flake8| 2.5 and earlier had started monkey-patching pep8's
+``stdin_get_value`` function. 2.6 switched to pycodestyle and only
+monkey-patched that. 3.0 has its own internal implementation and uses that but
+does not directly provide anything for plugins using pep8 and pycodestyle's
+``stdin_get_value`` function. |polyfill| provides this functionality for
+plugin developers via it's :mod:`flake8_polyfill.stdin` module.
+
+If a plugin needs to read the content from stdin, it can do the following:
 
 .. code-block:: python
 
-    import optparse
+    from flake8_polyfill import stdin
 
-    def register_opt(parser, *args, **kwargs):
-        try:
-            # Flake8 3.x registration
-            parser.add_option(*args, **kwargs)
-        except (optparse.OptionError, TypeError):
-            # Flake8 2.x registration
-            parse_from_config = kwargs.pop('parse_from_config', False)
-            kwargs.pop('comma_separated_list', False)
-            kwargs.pop('normalize_paths', False)
-            option = parser.add_option(*args, **kwargs)
-            if parse_from_config:
-                parser.config_options.append(option.get_opt_string().lstrip('-'))
+    stdin.monkey_patch('pep8')  # To monkey-patch only pep8
+    stdin.monkey_patch('pycodestyle')  # To monkey-patch only pycodestyle
+    stdin.monkey_patch('all')  # To monkey-patch both pep8 and pycodestyle
 
-.. code-block:: python
 
-    @classmethod
-    def register_options(cls, parser):
-        register_opt(parser, '-X', '--example-flag', type='string',
-                     parse_from_config=True, help='...')
+Further, when using ``all``, |polyfill| does not require both packages to be
+installed but will attempt to monkey-patch both and will silently ignore the
+fact that pep8 or pycodestyle is not installed.
 
-The transition period is admittedly not fantastic, but we believe that this
-is a worthwhile change for plugin developers going forward. We also hope to
-help with the transition phase for as many plugins as we can manage.
+.. autofunction:: flake8_polyfill.stdin.monkey_patch
+
+
+.. links
+.. _flake8-polyfill: https://pypi.io/project/flake8-polyfill/
+
+.. |polyfill| replace:: ``flake8-polyfill``

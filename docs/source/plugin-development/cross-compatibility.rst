@@ -12,7 +12,7 @@ versions.
 
     If your plugin does not register options, it *should* Just Work.
 
-The **only two** breaking changes in |Flake8| 3.0 is the fact that we no 
+The **only two** breaking changes in |Flake8| 3.0 is the fact that we no
 longer check the option parser for a list of strings to parse from a config
 file and we no longer patch pep8 or pycodestyle's ``stdin_get_value``
 functions. On |Flake8| 2.x, to have an option parsed from the configuration

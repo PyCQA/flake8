@@ -14,6 +14,7 @@ def options_from(**kwargs):
     kwargs.setdefault('hang_closing', True)
     kwargs.setdefault('max_line_length', 79)
     kwargs.setdefault('verbose', False)
+    kwargs.setdefault('stdin_display_name', None)
     return optparse.Values(kwargs)
 
 
@@ -63,13 +64,17 @@ def test_read_lines_from_stdin(stdin_get_value):
 
 
 @mock.patch('flake8.utils.stdin_get_value')
-def test_read_lines_sets_filename_attribute(stdin_get_value):
+def test_stdin_filename_attribute(stdin_get_value):
     """Verify that we update the filename attribute."""
     stdin_value = mock.Mock()
     stdin_value.splitlines.return_value = []
     stdin_get_value.return_value = stdin_value
     file_processor = processor.FileProcessor('-', options_from())
     assert file_processor.filename == 'stdin'
+    file_processor = processor.FileProcessor('-', options_from(
+        stdin_display_name="foo.py"
+    ))
+    assert file_processor.filename == 'foo.py'
 
 
 def test_line_for():

@@ -398,20 +398,20 @@ class FileChecker(object):
         :type style_guide:
             flake8.style_guide.StyleGuide
         """
-        self.filename = filename
         self.checks = checks
         self.style_guide = style_guide
         self.results = []
-        self.processor = self._make_processor()
+        self.processor = self._make_processor(filename)
+        self.filename = self.processor.filename
         self.statistics = {
             'tokens': 0,
             'logical lines': 0,
             'physical lines': len(self.processor.lines),
         }
 
-    def _make_processor(self):
+    def _make_processor(self, filename):
         try:
-            return processor.FileProcessor(self.filename,
+            return processor.FileProcessor(filename,
                                            self.style_guide.options)
         except IOError:
             # If we can not read the file due to an IOError (e.g., the file

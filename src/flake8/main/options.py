@@ -74,7 +74,7 @@ def register_default_options(option_manager):
     )
 
     add_option(
-        '--stdin-display-name',
+        '--stdin-display-name', default='stdin',
         help='The name used when reporting errors from code passed via stdin.'
              ' This is useful for editors piping the file contents to flake8.'
              ' (Default: %default)',

@@ -59,8 +59,7 @@ class FileProcessor(object):
         self.filename = filename
         self.lines = lines
         if lines is None:
-            # allow for stdin filename substitution
-            self.filename, self.lines = self.read_lines(filename)
+            self.lines = self.read_lines()
         self.strip_utf_bom()
 
         # Defaults for public attributes
@@ -269,15 +268,15 @@ class FileProcessor(object):
             self.indent_char = line[0]
         return line
 
-    def read_lines(self, filename):
+    def read_lines(self):
         # type: () -> List[str]
         """Read the lines for this file checker."""
-        if filename is None or filename == '-':
-            filename = self.options.stdin_display_name or 'stdin'
+        if self.filename is None or self.filename == '-':
+            self.filename = self.options.stdin_display_name
             lines = self.read_lines_from_stdin()
         else:
             lines = self.read_lines_from_filename()
-        return (filename, lines)
+        return lines
 
     def _readlines_py2(self):
         # type: () -> List[str]

@@ -30,7 +30,7 @@ a file, a plugin can ask for any of the following:
 - :attr:`~flake8.processor.FileProcessor.blank_before`
 - :attr:`~flake8.processor.FileProcessor.blank_lines`
 - :attr:`~flake8.processor.FileProcessor.checker_state`
-- :attr:`~flake8.processor.FileProcessor.indect_char`
+- :attr:`~flake8.processor.FileProcessor.indent_char`
 - :attr:`~flake8.processor.FileProcessor.indent_level`
 - :attr:`~flake8.processor.FileProcessor.line_number`
 - :attr:`~flake8.processor.FileProcessor.logical_line`

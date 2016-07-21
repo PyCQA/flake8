@@ -55,12 +55,12 @@ class FileProcessor(object):
         :param str filename:
             Name of the file to process
         """
+        self.options = options
         self.filename = filename
         self.lines = lines
         if lines is None:
             self.lines = self.read_lines()
         self.strip_utf_bom()
-        self.options = options
 
         # Defaults for public attributes
         #: Number of preceding blank lines
@@ -272,9 +272,11 @@ class FileProcessor(object):
         # type: () -> List[str]
         """Read the lines for this file checker."""
         if self.filename is None or self.filename == '-':
-            self.filename = 'stdin'
-            return self.read_lines_from_stdin()
-        return self.read_lines_from_filename()
+            self.filename = self.options.stdin_display_name
+            lines = self.read_lines_from_stdin()
+        else:
+            lines = self.read_lines_from_filename()
+        return lines
 
     def _readlines_py2(self):
         # type: () -> List[str]

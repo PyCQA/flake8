@@ -208,6 +208,10 @@ def filenames_from(arg, predicate=None):
     """
     if predicate is None:
         predicate = _default_predicate
+
+    if predicate(arg):
+        return
+
     if os.path.isdir(arg):
         for root, sub_directories, files in os.walk(arg):
             if predicate(root):

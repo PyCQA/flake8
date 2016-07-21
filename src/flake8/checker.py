@@ -234,6 +234,11 @@ class Manager(object):
         :rtype:
             bool
         """
+        if path == '-':
+            if self.options.stdin_display_name == 'stdin':
+                return False
+            path = self.options.stdin_display_name
+
         exclude = self.options.exclude
         if not exclude:
             return False
@@ -271,7 +276,7 @@ class Manager(object):
             return (file_exists and matches_filename_patterns) or is_stdin
 
         self.checkers = [
-            FileChecker(filename, self.checks, self.style_guide)
+            FileChecker(filename, self.checks, self.options)
             for argument in paths
             for filename in utils.filenames_from(argument,
                                                  self.is_path_excluded)
@@ -294,7 +299,7 @@ class Manager(object):
         results_reported = results_found = 0
         for checker in self.checkers:
             results = sorted(checker.results, key=lambda tup: (tup[2], tup[3]))
-            results_reported += self._handle_results(checker.filename,
+            results_reported += self._handle_results(checker.display_name,
                                                      results)
             results_found += len(results)
         return (results_found, results_reported)
@@ -315,9 +320,9 @@ class Manager(object):
             final_results[filename] = results
 
         for checker in self.checkers:
-            filename = checker.filename
+            filename = checker.display_name
             checker.results = sorted(final_results.get(filename, []),
-                                     key=lambda tup: (tup[1], tup[2]))
+                                     key=lambda tup: (tup[2], tup[2]))
 
     def run_serial(self):
         """Run the checkers in serial."""
@@ -379,7 +384,7 @@ class Manager(object):
 class FileChecker(object):
     """Manage running checks for a file and aggregate the results."""
 
-    def __init__(self, filename, checks, style_guide):
+    def __init__(self, filename, checks, options):
         """Initialize our file checker.
 
         :param str filename:
@@ -388,16 +393,17 @@ class FileChecker(object):
             The plugins registered to check the file.
         :type checks:
             flake8.plugins.manager.Checkers
-        :param style_guide:
-            The initialized StyleGuide for this particular run.
-        :type style_guide:
-            flake8.style_guide.StyleGuide
+        :param options:
+            Parsed option values from config and command-line.
+        :type options:
+            optparse.Values
         """
+        self.options = options
         self.filename = filename
         self.checks = checks
-        self.style_guide = style_guide
         self.results = []
         self.processor = self._make_processor()
+        self.display_name = self.processor.filename
         self.statistics = {
             'tokens': 0,
             'logical lines': 0,
@@ -406,8 +412,7 @@ class FileChecker(object):
 
     def _make_processor(self):
         try:
-            return processor.FileProcessor(self.filename,
-                                           self.style_guide.options)
+            return processor.FileProcessor(self.filename, self.options)
         except IOError:
             # If we can not read the file due to an IOError (e.g., the file
             # does not exist or we do not have the permissions to open it)

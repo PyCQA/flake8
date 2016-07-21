@@ -33,7 +33,7 @@ class FileProcessor(object):
     - :attr:`blank_before`
     - :attr:`blank_lines`
     - :attr:`checker_state`
-    - :attr:`indect_char`
+    - :attr:`indent_char`
     - :attr:`indent_level`
     - :attr:`line_number`
     - :attr:`logical_line`

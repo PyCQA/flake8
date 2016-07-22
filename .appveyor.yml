@@ -1,0 +1,8 @@
+# To activate, change the Appveyor settings to use `.appveyor.yml`.
+install:
+  - python -m pip install tox
+
+build: off
+
+test_script:
+  - python -m tox

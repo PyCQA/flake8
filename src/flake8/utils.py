@@ -53,12 +53,16 @@ def normalize_path(path, parent=os.curdir):
     :rtype:
         str
     """
-    # NOTE(sigmavirus24): Using os.path.sep allows for Windows paths to
-    # be specified and work appropriately.
+    # NOTE(sigmavirus24): Using os.path.sep and os.path.altsep allow for
+    # Windows compatibility with both Windows-style paths (c:\\foo\bar) and
+    # Unix style paths (/foo/bar).
     separator = os.path.sep
-    if separator in path:
+    # NOTE(sigmavirus24): os.path.altsep may be None
+    alternate_separator = os.path.altsep or ''
+    if separator in path or (alternate_separator and
+                             alternate_separator in path):
         path = os.path.abspath(os.path.join(parent, path))
-    return path.rstrip(separator)
+    return path.rstrip(separator + alternate_separator)
 
 
 def stdin_get_value():

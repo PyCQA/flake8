@@ -466,11 +466,13 @@ class FileChecker(object):
 
         for plugin in self.checks.ast_plugins:
             checker = self.run_check(plugin, tree=ast)
-            # NOTE(sigmavirus24): If we want to allow for AST plugins that are
-            # not classes exclusively, we can do the following:
-            # retrieve_results = getattr(checker, 'run', lambda: checker)
-            # Otherwise, we just call run on the checker
-            for (line_number, offset, text, check) in checker.run():
+            # If the plugin uses a class, call the run method of it, otherwise
+            # the call should return something iterable itself
+            try:
+                runner = checker.run()
+            except AttributeError:
+                runner = checker
+            for (line_number, offset, text, check) in runner:
                 self.report(
                     error_code=None,
                     line_number=line_number,

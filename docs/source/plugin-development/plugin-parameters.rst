@@ -34,18 +34,25 @@ a file, a plugin can ask for any of the following:
 - :attr:`~flake8.processor.FileProcessor.indent_level`
 - :attr:`~flake8.processor.FileProcessor.line_number`
 - :attr:`~flake8.processor.FileProcessor.logical_line`
-- :attr:`~flake8.processor.FileProcessor.max_line_length`
 - :attr:`~flake8.processor.FileProcessor.multiline`
 - :attr:`~flake8.processor.FileProcessor.noqa`
 - :attr:`~flake8.processor.FileProcessor.previous_indent_level`
 - :attr:`~flake8.processor.FileProcessor.previous_logical`
 - :attr:`~flake8.processor.FileProcessor.tokens`
+
+Some properties are set once per file being processed:
+
+- :attr:`~flake8.processor.FileProcessor.filename`
+- :attr:`~flake8.processor.FileProcessor.lines`
+- :attr:`~flake8.processor.FileProcessor.max_line_length`
 - :attr:`~flake8.processor.FileProcessor.total_lines`
 - :attr:`~flake8.processor.FileProcessor.verbose`
 
-Alternatively, a plugin can accept ``tree`` and ``filename``.
-``tree`` will be a parsed abstract syntax tree that will be used by plugins
-like PyFlakes and McCabe.
+These parameters can also be supplied to plugins working on each line
+separately. Additionally, plugins called once per file can also accept ``tree``
+which is not supplied as a parameter of
+:class:`~flake8.processor.FileProcessor`, which will be a parsed abstract
+syntax tree. It is used by plugins like PyFlakes and McCabe.
 
 
 Registering Options

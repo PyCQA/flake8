@@ -1,0 +1,10 @@
+3.0.1 -- 2016-07-25
+-------------------
+
+- Fix regression in handling of ``# noqa`` for multiline strings.
+  (See also `GitLab#177`_)
+
+
+.. links
+.. _GitLab#177:
+    https://gitlab.com/pycqa/flake8/issues/177

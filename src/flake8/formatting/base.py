@@ -85,6 +85,19 @@ class BaseFormatter(object):
         raise NotImplementedError('Subclass of BaseFormatter did not implement'
                                   ' format.')
 
+    def show_statistics(self, statistics):
+        """Format and print the statistics."""
+        for error_code in statistics.error_codes():
+            stats_for_error_code = statistics.statistics_for(error_code)
+            statistic = next(stats_for_error_code)
+            count = statistic.count
+            count += sum(stat.count for stat in stats_for_error_code)
+            self._write('{count:<5} {error_code} {message}'.format(
+                count=count,
+                error_code=error_code,
+                message=statistic.message,
+            ))
+
     def show_benchmarks(self, benchmarks):
         """Format and print the benchmarks."""
         # NOTE(sigmavirus24): The format strings are a little confusing, even

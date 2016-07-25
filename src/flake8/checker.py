@@ -425,16 +425,16 @@ class FileChecker(object):
             self.report('E902', 0, 0, message)
             return None
 
-    def report(self, error_code, line_number, column, text):
+    def report(self, error_code, line_number, column, text, line=None):
         # type: (str, int, int, str) -> str
         """Report an error by storing it in the results list."""
         if error_code is None:
             error_code, text = text.split(' ', 1)
 
-        physical_line = ''
+        physical_line = line
         # If we're recovering from a problem in _make_processor, we will not
         # have this attribute.
-        if getattr(self, 'processor', None):
+        if not physical_line and getattr(self, 'processor', None):
             physical_line = self.processor.line_for(line_number)
 
         error = (error_code, line_number, column, text, physical_line)
@@ -504,7 +504,7 @@ class FileChecker(object):
 
         self.processor.next_logical_line()
 
-    def run_physical_checks(self, physical_line):
+    def run_physical_checks(self, physical_line, override_error_line=None):
         """Run all checks for a given physical line."""
         for plugin in self.checks.physical_line_plugins:
             self.processor.update_checker_state_for(plugin)
@@ -516,6 +516,7 @@ class FileChecker(object):
                     line_number=self.processor.line_number,
                     column=column_offset,
                     text=text,
+                    line=(override_error_line or physical_line),
                 )
 
                 self.processor.check_physical_error(error_code, physical_line)
@@ -611,7 +612,8 @@ class FileChecker(object):
             line_no = token[2][0]
             with self.processor.inside_multiline(line_number=line_no):
                 for line in self.processor.split_line(token):
-                    self.run_physical_checks(line + '\n')
+                    self.run_physical_checks(line + '\n',
+                                             override_error_line=token[4])
 
 
 def find_offset(offset, mapping):

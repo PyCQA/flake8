@@ -263,6 +263,13 @@ class Application(object):
         LOG.info('Found a total of %d violations and reported %d',
                  self.total_result_count, self.result_count)
 
+    def report_statistics(self):
+        """Aggregate and report statistics from this run."""
+        if not self.options.statistics:
+            return
+
+        self.formatter.show_statistics(self.guide.stats)
+
     def initialize(self, argv):
         # type: () -> NoneType
         """Initialize the application to be run.
@@ -285,6 +292,7 @@ class Application(object):
         self.initialize(argv)
         self.run_checks()
         self.report_errors()
+        self.report_statistics()
         self.report_benchmarks()
 
     def run(self, argv=None):

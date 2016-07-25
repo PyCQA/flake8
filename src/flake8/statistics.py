@@ -9,6 +9,16 @@ class Statistics(object):
         """Initialize the underlying dictionary for our statistics."""
         self._store = {}
 
+    def error_codes(self):
+        """Return all unique error codes stored.
+
+        :returns:
+            Sorted list of error codes.
+        :rtype:
+            list(str)
+        """
+        return list(sorted(set(key.code for key in self._store.keys())))
+
     def record(self, error):
         """Add the fact that the error was seen in the file.
 

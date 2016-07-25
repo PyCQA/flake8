@@ -284,8 +284,10 @@ class Application(object):
         # type: (Union[NoneType, List[str]]) -> NoneType
         self.initialize(argv)
         self.run_checks()
+        self.formatter.start()
         self.report_errors()
         self.report_benchmarks()
+        self.formatter.stop()
 
     def run(self, argv=None):
         # type: (Union[NoneType, List[str]]) -> NoneType

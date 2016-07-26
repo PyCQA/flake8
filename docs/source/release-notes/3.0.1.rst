@@ -4,7 +4,16 @@
 - Fix regression in handling of ``# noqa`` for multiline strings.
   (See also `GitLab#177`_)
 
+- Fix regression in handling of ``--output-file`` when not also using
+  ``--verbose``. (See also `GitLab#180`_)
+
+- Fix regression in handling of ``--quiet``. (See also `GitLab#180`_)
+
+- Fix regression in handling of ``--statistics``. (See also `GitLab#180`_)
+
 
 .. links
 .. _GitLab#177:
     https://gitlab.com/pycqa/flake8/issues/177
+.. _GitLab#180:
+    https://gitlab.com/pycqa/flake8/issues/180

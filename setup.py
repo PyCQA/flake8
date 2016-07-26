@@ -107,6 +107,8 @@ setuptools.setup(
         'flake8.report': [
             'default = flake8.formatting.default:Default',
             'pylint = flake8.formatting.default:Pylint',
+            'quiet-filename = flake8.formatting.default:FilenameOnly',
+            'quiet-nothing = flake8.formatting.default:Nothing',
         ],
     },
     classifiers=[

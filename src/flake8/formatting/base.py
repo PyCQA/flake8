@@ -164,7 +164,8 @@ class BaseFormatter(object):
             The source code that has been formatted and associated with the
             line of output.
         """
-        self._write(line)
+        if line:
+            self._write(line)
         if source:
             self._write(source)
 

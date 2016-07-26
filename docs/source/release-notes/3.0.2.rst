@@ -1,0 +1,9 @@
+3.0.2 -- 2016-07-26
+-------------------
+
+- Fix local config file discovery.  (See also `GitLab#181`_)
+
+
+.. links
+.. _GitLab#181:
+    https://gitlab.com/pycqa/flake8/issues/181

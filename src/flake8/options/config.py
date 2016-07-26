@@ -43,8 +43,6 @@ class ConfigFileFinder(object):
         # List of filenames to find in the local/project directory
         self.project_filenames = ('setup.cfg', 'tox.ini', self.program_config)
 
-        self.local_directory = os.path.abspath(os.curdir)
-
         if not args:
             args = ['.']
         self.parent = self.tail = os.path.abspath(os.path.commonprefix(args))
@@ -72,14 +70,14 @@ class ConfigFileFinder(object):
         """Find and generate all local config files."""
         tail = self.tail
         parent = self.parent
-        local_dir = self.local_directory
-        while tail:
+        found_config_files = False
+        while tail and not found_config_files:
             for project_filename in self.project_filenames:
                 filename = os.path.abspath(os.path.join(parent,
                                                         project_filename))
-                yield filename
-            if parent == local_dir:
-                break
+                if os.path.exists(filename):
+                    yield filename
+                    found_config_files = True
             (parent, tail) = os.path.split(parent)
 
     def local_config_files(self):
@@ -99,7 +97,6 @@ class ConfigFileFinder(object):
         return [
             filename
             for filename in self.generate_possible_local_files()
-            if os.path.exists(filename)
         ] + [f for f in self.extra_config_files if exists(f)]
 
     def local_configs(self):

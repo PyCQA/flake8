@@ -80,7 +80,7 @@ Note specifically these lines:
         # snip ...
     )
 
-We tell setuptools to register our entry point "X" inside the specific
+We tell setuptools to register our entry point ``X`` inside the specific
 grouping of entry-points that flake8 should look in.
 
 |Flake8| presently looks at three groups:
@@ -110,6 +110,10 @@ like:
         },
         # snip ...
     )
+
+The ``X`` in checking plugins define what error codes it is going to report.
+So if the plugin reports just the error code ``A101`` it would be that. If it
+reports also ``A102`` it must be set to ``A10``.
 
 
 .. _Entry Points:

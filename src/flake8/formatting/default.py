@@ -54,3 +54,27 @@ class Pylint(SimpleFormatter):
     """Pylint formatter for Flake8."""
 
     error_format = '%(path)s:%(row)d: [%(code)s] %(text)s'
+
+
+class FilenameOnly(SimpleFormatter):
+    """Only print filenames, e.g., flake8 -q."""
+
+    error_format = '%(path)s'
+
+    def after_init(self):
+        """Initialize our set of filenames."""
+        self.filenames_already_printed = set()
+
+    def format(self, error):
+        """Ensure we only print each error once."""
+        if error.filename not in self.filenames_already_printed:
+            self.filenames_already_printed.add(error.filename)
+            return super(FilenameOnly, self).format(error)
+
+
+class Nothing(base.BaseFormatter):
+    """Print absolutely nothing."""
+
+    def format(self, error):
+        """Do nothing."""
+        pass

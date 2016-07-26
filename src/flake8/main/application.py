@@ -181,10 +181,17 @@ class Application(object):
         # type: () -> NoneType
         """Initialize a formatter based on the parsed options."""
         if self.formatter is None:
+            format_plugin = self.options.format
+            if 1 <= self.options.quiet < 2:
+                format_plugin = 'quiet-filename'
+            elif 2 <= self.options.quiet:
+                format_plugin = 'quiet-nothing'
+
             if formatter_class is None:
                 formatter_class = self.formatting_plugins.get(
-                    self.options.format, self.formatting_plugins['default']
+                    format_plugin, self.formatting_plugins['default']
                 ).execute
+
             self.formatter = formatter_class(self.options)
 
     def make_notifier(self):

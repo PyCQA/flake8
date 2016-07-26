@@ -1,5 +1,4 @@
 """Tests for the BaseFormatter object."""
-import io
 import optparse
 
 import mock
@@ -81,19 +80,23 @@ def test_show_source_updates_physical_line_appropriately(line, column):
 @pytest.mark.parametrize('tee', [False, True])
 def test_write_uses_an_output_file(tee):
     """Verify that we use the output file when it's present."""
-    line = u'Something to write'
-    source = u'source'
+    line = 'Something to write'
+    source = 'source'
     filemock = mock.Mock()
 
-    with mock.patch('sys.stdout', new_callable=io.StringIO) as stdout:
-        formatter = base.BaseFormatter(options(tee=tee))
-        formatter.output_fd = filemock
+    formatter = base.BaseFormatter(options(tee=tee))
+    formatter.output_fd = filemock
+
+    with mock.patch('flake8.formatting.base.print') as print_func:
         formatter.write(line, source)
         if tee:
-            output = line + formatter.newline + source + formatter.newline
+            assert print_func.called
+            assert print_func.mock_calls == [
+                mock.call(line),
+                mock.call(source),
+            ]
         else:
-            output = ''
-        assert stdout.getvalue() == output
+            assert not print_func.called
 
     assert filemock.write.called is True
     assert filemock.write.call_count == 2

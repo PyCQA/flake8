@@ -1,5 +1,5 @@
-3.0.1 -- 2016-07-25 (unreleased)
---------------------------------
+3.0.1 -- 2016-07-25
+-------------------
 
 - Fix regression in handling of ``# noqa`` for multiline strings.
   (See also `GitLab#177`_)

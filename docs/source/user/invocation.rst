@@ -125,6 +125,7 @@ And you should see something like:
                             available to use. (Default: auto)
       --output-file=OUTPUT_FILE
                             Redirect report to a file.
+      --tee                 Write to stdout and output-file.
       --append-config=APPEND_CONFIG
                             Provide extra config files to parse in addition to the
                             files found by Flake8 by default. These files are the

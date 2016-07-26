@@ -1,4 +1,5 @@
 """Tests for the BaseFormatter object."""
+import io
 import optparse
 
 import mock
@@ -11,6 +12,7 @@ from flake8.formatting import base
 def options(**kwargs):
     """Create an optparse.Values instance."""
     kwargs.setdefault('output_file', None)
+    kwargs.setdefault('tee', False)
     return optparse.Values(kwargs)
 
 
@@ -76,15 +78,22 @@ def test_show_source_updates_physical_line_appropriately(line, column):
     assert pointer.count(' ') == column
 
 
-def test_write_uses_an_output_file():
+@pytest.mark.parametrize('tee', [False, True])
+def test_write_uses_an_output_file(tee):
     """Verify that we use the output file when it's present."""
-    line = 'Something to write'
-    source = 'source'
+    line = u'Something to write'
+    source = u'source'
     filemock = mock.Mock()
 
-    formatter = base.BaseFormatter(options())
-    formatter.output_fd = filemock
-    formatter.write(line, source)
+    with mock.patch('sys.stdout', new_callable=io.StringIO) as stdout:
+        formatter = base.BaseFormatter(options(tee=tee))
+        formatter.output_fd = filemock
+        formatter.write(line, source)
+        if tee:
+            output = line + formatter.newline + source + formatter.newline
+        else:
+            output = ''
+        assert stdout.getvalue() == output
 
     assert filemock.write.called is True
     assert filemock.write.call_count == 2

@@ -563,6 +563,26 @@
         output_file = output.txt
 
 
+.. option:: --tee
+
+    Also print output to stdout if output-file has ben configured.
+
+    Command-line example:
+
+    .. prompt:: bash
+
+        flake8 --tee --output-file=output.txt dir/
+
+    This **can** be specified in config files.
+
+    Example config file usage:
+
+    .. code-block:: ini
+
+        output-file = output.txt
+        tee = True
+
+
 .. option:: --append-config=<config>
 
     Provide extra config files to parse in after and in addition to the files

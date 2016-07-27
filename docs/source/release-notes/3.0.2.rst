@@ -6,7 +6,12 @@
 - Fix indexing of column numbers. We accidentally were starting column indices
   at 0 instead of 1.
 
+- Fix regression in handling of errors like E402 that rely on a combination of
+  attributes. (See also `GitLab#186`_)
+
 
 .. links
 .. _GitLab#181:
     https://gitlab.com/pycqa/flake8/issues/181
+.. _GitLab#186:
+    https://gitlab.com/pycqa/flake8/issues/186

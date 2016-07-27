@@ -7,9 +7,9 @@ import sys
 
 import setuptools
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))  # noqa
 
-import flake8  # noqa
+import flake8
 
 
 tests_require = ['mock', 'pytest']

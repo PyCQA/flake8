@@ -2,7 +2,6 @@
 import contextlib
 import io
 import logging
-import re
 import sys
 import tokenize
 
@@ -46,8 +45,6 @@ class FileProcessor(object):
     - :attr:`total_lines`
     - :attr:`verbose`
     """
-
-    NOQA_FILE = re.compile(r'\s*# flake8[:=]\s*noqa', re.I)
 
     def __init__(self, filename, options, lines=None):
         """Initialice our file processor.
@@ -147,6 +144,7 @@ class FileProcessor(object):
             self.previous_logical = self.logical_line
         self.blank_lines = 0
         self.tokens = []
+        self.noqa = False
 
     def build_logical_line_tokens(self):
         """Build the mapping, comments, and logical line lists."""
@@ -189,9 +187,12 @@ class FileProcessor(object):
     def build_logical_line(self):
         """Build a logical line from the current tokens list."""
         comments, logical, mapping_list = self.build_logical_line_tokens()
+        joined_comments = ''.join(comments)
         self.logical_line = ''.join(logical)
+        if defaults.NOQA_INLINE_REGEXP.search(joined_comments):
+            self.noqa = True
         self.statistics['logical lines'] += 1
-        return ''.join(comments), self.logical_line, mapping_list
+        return joined_comments, self.logical_line, mapping_list
 
     def split_line(self, token):
         """Split a physical line's line based on new-lines.
@@ -316,12 +317,12 @@ class FileProcessor(object):
         """Check if ``# flake8: noqa`` is in the file to be ignored.
 
         :returns:
-            True if a line matches :attr:`FileProcessor.NOQA_FILE`,
+            True if a line matches :attr:`defaults.NOQA_FILE`,
             otherwise False
         :rtype:
             bool
         """
-        ignore_file = self.NOQA_FILE.search
+        ignore_file = defaults.NOQA_FILE.search
         return any(ignore_file(line) for line in self.lines)
 
     def strip_utf_bom(self):

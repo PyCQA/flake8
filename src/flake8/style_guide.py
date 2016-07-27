@@ -3,8 +3,8 @@ import collections
 import enum
 import linecache
 import logging
-import re
 
+from flake8 import defaults
 from flake8 import statistics
 from flake8 import utils
 
@@ -52,20 +52,6 @@ Error = collections.namedtuple(
 
 class StyleGuide(object):
     """Manage a Flake8 user's style guide."""
-
-    NOQA_INLINE_REGEXP = re.compile(
-        # We're looking for items that look like this:
-        # ``# noqa``
-        # ``# noqa: E123``
-        # ``# noqa: E123,W451,F921``
-        # ``# NoQA: E123,W451,F921``
-        # ``# NOQA: E123,W451,F921``
-        # We do not care about the ``: `` that follows ``noqa``
-        # We do not care about the casing of ``noqa``
-        # We want a comma-separated list of errors
-        '# noqa(?:: (?P<codes>[A-Z0-9,]+))?',
-        re.IGNORECASE
-    )
 
     def __init__(self, options, listener_trie, formatter):
         """Initialize our StyleGuide.
@@ -177,7 +163,7 @@ class StyleGuide(object):
         if physical_line is None:
             physical_line = linecache.getline(error.filename,
                                               error.line_number)
-        noqa_match = self.NOQA_INLINE_REGEXP.search(physical_line)
+        noqa_match = defaults.NOQA_INLINE_REGEXP.search(physical_line)
         if noqa_match is None:
             LOG.debug('%r is not inline ignored', error)
             return False

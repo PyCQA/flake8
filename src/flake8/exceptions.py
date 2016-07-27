@@ -49,6 +49,26 @@ class InvalidSyntax(Flake8Exception):
         super(InvalidSyntax, self).__init__(*args, **kwargs)
 
 
+class PluginRequestedUnknownParameters(Flake8Exception):
+    """The plugin requested unknown parameters."""
+
+    FORMAT = '"%(name)s" requested unknown parameters causing %(exc)s'
+
+    def __init__(self, *args, **kwargs):
+        """Pop certain keyword arguments for initialization."""
+        self.original_exception = kwargs.pop('exception')
+        self.plugin = kwargs.pop('plugin')
+        super(PluginRequestedUnknownParameters, self).__init__(
+            *args,
+            **kwargs
+        )
+
+    def __str__(self):
+        """Format our exception message."""
+        return self.FORMAT % {'name': self.plugin.plugin_name,
+                              'exc': self.original_exception}
+
+
 class HookInstallationError(Flake8Exception):
     """Parent exception for all hooks errors."""
 

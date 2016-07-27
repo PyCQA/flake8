@@ -40,10 +40,17 @@ SERIAL_RETRY_ERRNOS = set([
 
 def _run_checks_from_queue(process_queue, results_queue, statistics_queue):
     LOG.info('Running checks in parallel')
-    for checker in iter(process_queue.get, 'DONE'):
-        LOG.info('Checking "%s"', checker.filename)
-        checker.run_checks(results_queue, statistics_queue)
-    results_queue.put('DONE')
+    try:
+        for checker in iter(process_queue.get, 'DONE'):
+            LOG.info('Checking "%s"', checker.filename)
+            checker.run_checks(results_queue, statistics_queue)
+    except exceptions.PluginRequestedUnknownParameters as exc:
+        print(str(exc))
+    except Exception as exc:
+        LOG.error('Unhandled exception occurred')
+        raise
+    finally:
+        results_queue.put('DONE')
 
 
 class Manager(object):
@@ -356,6 +363,8 @@ class Manager(object):
         except KeyboardInterrupt:
             LOG.warning('Flake8 was interrupted by the user')
             raise exceptions.EarlyQuit('Early quit while running checks')
+        finally:
+            self._force_cleanup()
 
     def start(self, paths=None):
         """Start checking files.
@@ -447,7 +456,14 @@ class FileChecker(object):
     def run_check(self, plugin, **arguments):
         """Run the check in a single plugin."""
         LOG.debug('Running %r with %r', plugin, arguments)
-        self.processor.keyword_arguments_for(plugin.parameters, arguments)
+        try:
+            self.processor.keyword_arguments_for(plugin.parameters, arguments)
+        except AttributeError as ae:
+            LOG.error('Plugin requested unknown parameters.')
+            raise exceptions.PluginRequestedUnknownParameters(
+                plugin=plugin,
+                exception=ae,
+            )
         return plugin.execute(**arguments)
 
     def run_ast_checks(self):

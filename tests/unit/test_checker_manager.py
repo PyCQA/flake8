@@ -47,8 +47,14 @@ def test_make_checkers():
     """Verify that we create a list of FileChecker instances."""
     style_guide = style_guide_mock()
     files = ['file1', 'file2']
+    checkplugins = mock.Mock()
+    checkplugins.to_dictionary.return_value = {
+        'ast_plugins': [],
+        'logical_line_plugins': [],
+        'physical_line_plugins': [],
+    }
     with mock.patch('flake8.checker.multiprocessing', None):
-        manager = checker.Manager(style_guide, files, [])
+        manager = checker.Manager(style_guide, files, checkplugins)
 
     with mock.patch('flake8.utils.filenames_from') as filenames_from:
         filenames_from.side_effect = [['file1'], ['file2']]

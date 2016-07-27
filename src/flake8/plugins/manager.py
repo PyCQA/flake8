@@ -49,6 +49,16 @@ class Plugin(object):
             self.name, self.entry_point
         )
 
+    def to_dictionary(self):
+        """Convert this plugin to a dictionary."""
+        return {
+            'name': self.name,
+            'parameters': self.parameters,
+            'parameter_names': self.parameter_names,
+            'plugin': self.plugin,
+            'plugin_name': self.plugin_name,
+        }
+
     def is_in_a_group(self):
         """Determine if this plugin is in a group.
 
@@ -432,6 +442,20 @@ class Checkers(PluginTypeManager):
         for plugin in self.plugins.values():
             if argument_name == plugin.parameter_names[0]:
                 yield plugin
+
+    def to_dictionary(self):
+        """Return a dictionary of AST and line-based plugins."""
+        return {
+            'ast_plugins': [
+                plugin.to_dictionary() for plugin in self.ast_plugins
+            ],
+            'logical_line_plugins': [
+                plugin.to_dictionary() for plugin in self.logical_line_plugins
+            ],
+            'physical_line_plugins': [
+                plugin.to_dictionary() for plugin in self.physical_line_plugins
+            ],
+        }
 
     def register_options(self, optmanager):
         """Register all of the checkers' options to the OptionManager.

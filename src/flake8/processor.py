@@ -129,9 +129,9 @@ class FileProcessor(object):
 
     def update_checker_state_for(self, plugin):
         """Update the checker_state attribute for the plugin."""
-        if 'checker_state' in plugin.parameters:
+        if 'checker_state' in plugin['parameters']:
             self.checker_state = self._checker_states.setdefault(
-                plugin.name, {}
+                plugin['name'], {}
             )
 
     def next_logical_line(self):

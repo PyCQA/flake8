@@ -38,6 +38,14 @@ SERIAL_RETRY_ERRNOS = set([
 ])
 
 
+def _run_checks_from_queue(process_queue, results_queue, statistics_queue):
+    LOG.info('Running checks in parallel')
+    for checker in iter(process_queue.get, 'DONE'):
+        LOG.info('Checking "%s"', checker.filename)
+        checker.run_checks(results_queue, statistics_queue)
+    results_queue.put('DONE')
+
+
 class Manager(object):
     """Manage the parallelism and checker instances for each plugin and file.
 
@@ -215,13 +223,6 @@ class Manager(object):
             )
         return reported_results_count
 
-    def _run_checks_from_queue(self):
-        LOG.info('Running checks in parallel')
-        for checker in iter(self.process_queue.get, 'DONE'):
-            LOG.info('Checking "%s"', checker.filename)
-            checker.run_checks(self.results_queue, self.statistics_queue)
-        self.results_queue.put('DONE')
-
     def is_path_excluded(self, path):
         # type: (str) -> bool
         """Check if a path is excluded.
@@ -309,7 +310,9 @@ class Manager(object):
         LOG.info('Starting %d process workers', self.jobs)
         for i in range(self.jobs):
             proc = multiprocessing.Process(
-                target=self._run_checks_from_queue
+                target=_run_checks_from_queue,
+                args=(self.process_queue, self.results_queue,
+                      self.statistics_queue)
             )
             proc.daemon = True
             proc.start()

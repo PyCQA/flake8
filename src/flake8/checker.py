@@ -135,7 +135,7 @@ class Manager(object):
         all_statistics['files'] += len(self.checkers)
 
     def _job_count(self):
-        # type: () -> Union[int, NoneType]
+        # type: () -> int
         # First we walk through all of our error cases:
         # - multiprocessing library is not present
         # - we're running on windows in which case we know we have significant

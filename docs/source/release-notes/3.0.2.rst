@@ -1,5 +1,5 @@
-3.0.2 -- 2016-07-26 (unreleased)
---------------------------------
+3.0.2 -- 2016-07-26
+-------------------
 
 - Fix local config file discovery.  (See also `GitLab#181`_)
 

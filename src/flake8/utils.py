@@ -173,7 +173,7 @@ def can_run_multiprocessing_on_windows():
     :rtype:
         bool
     """
-    is_new_enough_python27 = sys.version_info >= (2, 7, 11)
+    is_new_enough_python27 = (2, 7, 11) <= sys.version_info < (3, 0)
     is_new_enough_python3 = sys.version_info > (3, 2)
     return is_new_enough_python27 or is_new_enough_python3
 

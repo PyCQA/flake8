@@ -23,7 +23,8 @@ def test_read_lines_splits_lines():
     file_processor = processor.FileProcessor(__file__, options_from())
     lines = file_processor.lines
     assert len(lines) > 5
-    assert '"""Tests for the FileProcessor class."""\n' in lines
+    assert any('"""Tests for the FileProcessor class."""' in line.rstrip()
+               for line in lines)
 
 
 @pytest.mark.parametrize('first_line', [

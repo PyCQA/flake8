@@ -73,7 +73,7 @@ def test_show_source_updates_physical_line_appropriately(line, column):
     error = style_guide.Error('A000', 'file.py', 1, column, 'error', line)
     output = formatter.show_source(error)
     _, pointer = output.rsplit('\n', 1)
-    assert pointer.count(' ') == column
+    assert pointer.count(' ') == (column - 1)
 
 
 def test_write_uses_an_output_file():

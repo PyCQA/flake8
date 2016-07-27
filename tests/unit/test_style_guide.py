@@ -176,7 +176,7 @@ def test_handle_error_notifies_listeners(select_list, ignore_list, error_code):
                                    formatter=formatter)
 
     with mock.patch('linecache.getline', return_value=''):
-        guide.handle_error(error_code, 'stdin', 1, 1, 'error found')
+        guide.handle_error(error_code, 'stdin', 1, 0, 'error found')
     error = style_guide.Error(error_code, 'stdin', 1, 1, 'error found',
                               None)
     listener_trie.notify.assert_called_once_with(error_code, error)

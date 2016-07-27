@@ -3,6 +3,9 @@
 
 - Fix local config file discovery.  (See also `GitLab#181`_)
 
+- Fix indexing of column numbers. We accidentally were starting column indices
+  at 0 instead of 1.
+
 
 .. links
 .. _GitLab#181:

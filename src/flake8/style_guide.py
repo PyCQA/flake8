@@ -258,7 +258,9 @@ class StyleGuide(object):
         :rtype:
             int
         """
-        error = Error(code, filename, line_number, column_number, text,
+        # NOTE(sigmavirus24): Apparently we're provided with 0-indexed column
+        # numbers so we have to offset that here.
+        error = Error(code, filename, line_number, column_number + 1, text,
                       physical_line)
         error_is_selected = (self.should_report_error(error.code) is
                              Decision.Selected)

@@ -139,7 +139,9 @@ class BaseFormatter(object):
         if not self.options.show_source or error.physical_line is None:
             return ''
 
-        pointer = (' ' * error.column_number) + '^'
+        # Because column numbers are 1-indexed, we need to remove one to get
+        # the proper number of space characters.
+        pointer = (' ' * (error.column_number - 1)) + '^'
         # Physical lines have a newline at the end, no need to add an extra
         # one
         return error.physical_line + pointer

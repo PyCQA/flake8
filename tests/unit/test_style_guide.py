@@ -130,6 +130,7 @@ def test_should_report_error(select_list, ignore_list, error_code, expected):
     ('E111', 'a = 1  # noqa, analysis:ignore', True),
     ('E111', 'a = 1  # noqa analysis:ignore', True),
     ('E111', 'a = 1  # noqa - We do not care', True),
+    ('E111', 'a = 1  # noqa: We do not care', True),
 ])
 def test_is_inline_ignored(error_code, physical_line, expected_result):
     """Verify that we detect inline usage of ``# noqa``."""

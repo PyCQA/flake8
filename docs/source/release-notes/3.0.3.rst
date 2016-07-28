@@ -10,11 +10,18 @@
 - Fix issue where users were unable to ignore plugin errors that were on
   by default. (See also `GitLab#195`_)
 
+- Raise exception when entry_point in plugin not callable.
+  This raises an informative error when a plugin fails to load because its
+  entry_point is not callable, which can happen with a plugin which is buggy or
+  not updated for the current version of flake8. This is nicer than raising a
+  `PicklingError` about failing to pickle a module (See also `GitLab#164`_)
+
 .. links
 .. _GitLab#178:
     https://gitlab.com/pycqa/flake8/issues/178
 .. _GitLab#195:
     https://gitlab.com/pycqa/flake8/issues/195
-
 .. _this Python bug report:
     https://bugs.python.org/issue27649
+.. _GitLab#164:
+    https://gitlab.com/pycqa/flake8/issues/164

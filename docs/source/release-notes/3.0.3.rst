@@ -1,0 +1,10 @@
+3.0.3 -- 2016-07-28 (unreleased)
+--------------------------------
+
+- Fix ``# noqa`` comments followed by a ``:`` and explanation broken by
+  3.0.0 (See also `GitLab#178`_)
+
+
+.. links
+.. _GitLab#178:
+    https://gitlab.com/pycqa/flake8/issues/178

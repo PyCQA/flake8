@@ -61,7 +61,7 @@ Links
   <https://gitlab.com/pycqa/flake8/issues?scope=all&sort=updated_desc&state=all>`_
 
 * `Code-Quality Archives
-  <https://mail.python.org/mailman/listinfo/code-quality>`-
+  <https://mail.python.org/mailman/listinfo/code-quality>`_
 
 * `Code of Conduct
   <http://flake8.pycqa.org/en/latest/internal/contributing.html#code-of-conduct>`_

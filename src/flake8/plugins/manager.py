@@ -139,6 +139,12 @@ class Plugin(object):
             self._plugin = self.entry_point.load(
                 require=verify_requirements
             )
+        if not callable(self._plugin):
+            msg = ('Plugin %r is not a callable. It might be written for an'
+                   ' older version of flake8 and might not work with this'
+                   ' version' % self._plugin)
+            LOG.critical(msg)
+            raise TypeError(msg)
 
     def load_plugin(self, verify_requirements=False):
         """Retrieve the plugin for this entry-point.

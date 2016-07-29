@@ -62,6 +62,17 @@ def test_load_plugin_catches_and_reraises_exceptions():
         plugin.load_plugin()
 
 
+def test_load_noncallable_plugin():
+    """Verify that we do not load a non-callable plugin."""
+    entry_point = mock.Mock(spec=['require', 'resolve', 'load'])
+    entry_point.resolve.return_value = mock.NonCallableMock()
+    plugin = manager.Plugin('T000', entry_point)
+
+    with pytest.raises(exceptions.FailedToLoadPlugin):
+        plugin.load_plugin()
+    entry_point.resolve.assert_called_once_with()
+
+
 def test_plugin_property_loads_plugin_on_first_use():
     """Verify that we load our plugin when we first try to use it."""
     entry_point = mock.Mock(spec=['require', 'resolve', 'load'])

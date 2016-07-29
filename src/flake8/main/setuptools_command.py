@@ -89,4 +89,9 @@ class Flake8(setuptools.Command):
     def run(self):
         """Run the Flake8 application."""
         self.flake8.run_checks(list(self.distribution_files()))
+        self.flake8.formatter.start()
+        self.flake8.report_errors()
+        self.flake8.report_statistics()
+        self.flake8.report_benchmarks()
+        self.flake8.formatter.stop()
         self.flake8.exit()

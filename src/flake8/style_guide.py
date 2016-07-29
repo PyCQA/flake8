@@ -63,6 +63,7 @@ class StyleGuide(object):
         self.formatter = formatter
         self.stats = statistics.Statistics()
         self._selected = tuple(options.select)
+        self._extended_selected = tuple(options.extended_default_select)
         self._ignored = tuple(options.ignore)
         self._decision_cache = {}
         self._parsed_diff = {}
@@ -85,6 +86,13 @@ class StyleGuide(object):
 
         if code.startswith(self._selected):
             return Selected.Explicitly
+
+        # If it was not explicitly selected, it may have been implicitly
+        # selected because the check comes from a plugin that is enabled by
+        # default
+        if (self._extended_selected and
+                code.startswith(self._extended_selected)):
+            return Selected.Implicitly
 
         return Ignored.Implicitly
 

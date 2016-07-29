@@ -25,7 +25,7 @@ def test_start(filename):
     if filename is None:
         assert mock_open.called is False
     else:
-        mock_open.assert_called_once_with(filename, 'w')
+        mock_open.assert_called_once_with(filename, 'a')
 
 
 def test_stop():

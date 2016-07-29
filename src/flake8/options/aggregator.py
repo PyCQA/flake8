@@ -53,14 +53,12 @@ def aggregate_options(manager, arglist=None, values=None):
               list(extended_default_ignore))
     extended_default_ignore.update(default_values.ignore)
     default_values.ignore = list(extended_default_ignore)
+    LOG.debug('Merged default ignore list: %s', default_values.ignore)
 
     extended_default_select = manager.extended_default_select.copy()
     LOG.debug('Extended default select list: %s',
               list(extended_default_select))
-    extended_default_select.update(default_values.select)
-    default_values.select = list(extended_default_select)
-    LOG.debug('Merged default ignore list: %s', default_values.ignore)
-    LOG.debug('Merged default select list: %s', default_values.select)
+    default_values.extended_default_select = extended_default_select
 
     # Merge values parsed from config onto the default values returned
     for config_name, value in parsed_config.items():

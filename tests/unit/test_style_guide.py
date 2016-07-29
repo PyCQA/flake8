@@ -12,6 +12,7 @@ from flake8.plugins import notifier
 def create_options(**kwargs):
     """Create and return an instance of optparse.Values."""
     kwargs.setdefault('select', [])
+    kwargs.setdefault('extended_default_select', [])
     kwargs.setdefault('ignore', [])
     kwargs.setdefault('disable_noqa', False)
     return optparse.Values(kwargs)

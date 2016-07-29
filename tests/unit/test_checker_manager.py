@@ -25,7 +25,8 @@ def test_oserrors_cause_serial_fall_back():
     assert manager.using_multiprocessing is False
 
 
-def test_oserrors_are_reraised():
+@mock.patch('flake8.utils.is_windows', return_value=False)
+def test_oserrors_are_reraised(is_windows):
     """Verify that OSErrors will cause the Manager to fallback to serial."""
     err = OSError(errno.EAGAIN, 'Ominous message')
     style_guide = style_guide_mock()

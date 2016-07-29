@@ -164,9 +164,19 @@ def is_windows():
     return os.name == 'nt'
 
 
+# NOTE(sigmavirus24): If and when https://bugs.python.org/issue27649 is fixed,
+# re-enable multiprocessing support on Windows.
 def can_run_multiprocessing_on_windows():
     # type: () -> bool
     """Determine if we can use multiprocessing on Windows.
+
+    This presently will **always** return False due to a `bug`_ in the
+    :mod:`multiprocessing` module on Windows. Once fixed, we will check
+    to ensure that the version of Python contains that fix (via version
+    inspection) and *conditionally* re-enable support on Windows.
+
+    .. _bug:
+        https://bugs.python.org/issue27649
 
     :returns:
         True if the version of Python is modern enough, otherwise False
@@ -175,7 +185,7 @@ def can_run_multiprocessing_on_windows():
     """
     is_new_enough_python27 = (2, 7, 11) <= sys.version_info < (3, 0)
     is_new_enough_python3 = sys.version_info > (3, 2)
-    return is_new_enough_python27 or is_new_enough_python3
+    return False and (is_new_enough_python27 or is_new_enough_python3)
 
 
 def is_using_stdin(paths):

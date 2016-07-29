@@ -1,6 +1,9 @@
 3.0.3 -- 2016-07-28 (unreleased)
 --------------------------------
 
+- Disable ``--jobs`` for any version of Python on Windows.
+  (See also `this Python bug report`_)
+
 - Fix ``# noqa`` comments followed by a ``:`` and explanation broken by
   3.0.0 (See also `GitLab#178`_)
 
@@ -12,3 +15,6 @@
     https://gitlab.com/pycqa/flake8/issues/178
 .. _GitLab#195:
     https://gitlab.com/pycqa/flake8/issues/195
+
+.. _this Python bug report:
+    https://bugs.python.org/issue27649

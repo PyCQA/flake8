@@ -16,12 +16,18 @@
   not updated for the current version of flake8. This is nicer than raising a
   `PicklingError` about failing to pickle a module (See also `GitLab#164`_)
 
+- Always open our output file in append mode so we do not overwrite log
+  messages. (See also `GitLab#193`_)
+
+
 .. links
+.. _GitLab#164:
+    https://gitlab.com/pycqa/flake8/issues/164
 .. _GitLab#178:
     https://gitlab.com/pycqa/flake8/issues/178
+.. _GitLab#193:
+    https://gitlab.com/pycqa/flake8/issues/193
 .. _GitLab#195:
     https://gitlab.com/pycqa/flake8/issues/195
 .. _this Python bug report:
     https://bugs.python.org/issue27649
-.. _GitLab#164:
-    https://gitlab.com/pycqa/flake8/issues/164

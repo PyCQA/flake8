@@ -50,7 +50,7 @@ class BaseFormatter(object):
         This defaults to initializing :attr:`output_fd` if :attr:`filename`
         """
         if self.filename:
-            self.output_fd = open(self.filename, 'w')
+            self.output_fd = open(self.filename, 'a')
 
     def handle(self, error):
         """Handle an error reported by Flake8.

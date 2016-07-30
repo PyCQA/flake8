@@ -23,6 +23,9 @@
 - Fix issue where users were unable to ignore plugin errors that were on
   by default. (See also `GitLab#195`_)
 
+- Fix our legacy API StyleGuide's ``init_report`` method to actually override
+  the previous formatter. (See also `GitLab#200`_)
+
 
 .. links
 .. _GitLab#164:
@@ -35,5 +38,7 @@
     https://gitlab.com/pycqa/flake8/issues/193
 .. _GitLab#195:
     https://gitlab.com/pycqa/flake8/issues/195
+.. _GitLab#200:
+    https://gitlab.com/pycqa/flake8/issues/200
 .. _this Python bug report:
     https://bugs.python.org/issue27649

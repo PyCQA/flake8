@@ -120,6 +120,7 @@ class StyleGuide(object):
         if not issubclass(reporter, formatter.BaseFormatter):
             raise ValueError("Report should be subclass of "
                              "flake8.formatter.BaseFormatter.")
+        self._application.formatter = None
         self._application.make_formatter(reporter)
         self._application.guide = None
         # NOTE(sigmavirus24): This isn't the intended use of

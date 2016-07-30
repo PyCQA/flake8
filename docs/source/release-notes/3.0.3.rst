@@ -1,5 +1,5 @@
-3.0.3 -- 2016-07-28 (unreleased)
---------------------------------
+3.0.3 -- 2016-07-30
+-------------------
 
 - Disable ``--jobs`` for any version of Python on Windows.
   (See also `this Python bug report`_)

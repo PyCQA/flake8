@@ -43,6 +43,8 @@ class ConfigFileFinder(object):
         # List of filenames to find in the local/project directory
         self.project_filenames = ('setup.cfg', 'tox.ini', self.program_config)
 
+        self.local_directory = os.path.abspath(os.curdir)
+
         if not args:
             args = ['.']
         self.parent = self.tail = os.path.abspath(os.path.commonprefix(args))
@@ -78,6 +80,7 @@ class ConfigFileFinder(object):
                 if os.path.exists(filename):
                     yield filename
                     found_config_files = True
+                    self.local_directory = parent
             (parent, tail) = os.path.split(parent)
 
     def local_config_files(self):
@@ -160,9 +163,11 @@ class MergedConfigParser(object):
         self.config_finder = ConfigFileFinder(self.program_name, self.args,
                                               self.extra_config_files)
 
-    @staticmethod
-    def _normalize_value(option, value):
-        final_value = option.normalize(value)
+    def _normalize_value(self, option, value):
+        final_value = option.normalize(
+            value,
+            self.config_finder.local_directory,
+        )
         LOG.debug('%r has been normalized to %r for option "%s"',
                   value, final_value, option.config_name)
         return final_value

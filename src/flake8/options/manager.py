@@ -121,14 +121,14 @@ class Option(object):
             return self.long_option_name[2:].replace('-', '_')
         return self.short_option_name[1]
 
-    def normalize(self, value):
+    def normalize(self, value, *normalize_args):
         """Normalize the value based on the option configuration."""
         if self.normalize_paths:
             # Decide whether to parse a list of paths or a single path
             normalize = utils.normalize_path
             if self.comma_separated_list:
                 normalize = utils.normalize_paths
-            return normalize(value)
+            return normalize(value, *normalize_args)
         elif self.comma_separated_list:
             return utils.parse_comma_separated_list(value)
         return value

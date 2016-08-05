@@ -54,6 +54,12 @@ which is not supplied as a parameter of
 :class:`~flake8.processor.FileProcessor`, which will be a parsed abstract
 syntax tree. It is used by plugins like PyFlakes and McCabe.
 
+When the plugin is run depends on the first parameter, not counting ``self``.
+It can be either ``physical_line``, ``logical_line`` or ``tree``. If the
+parameter is ``tree``, it is run once per file, otherwise once per physical
+line or logical line respectively. If the plugin is using neither of them it
+won't be run at all.
+
 
 Registering Options
 ===================

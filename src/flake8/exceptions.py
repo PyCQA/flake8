@@ -36,12 +36,17 @@ class InvalidSyntax(Flake8Exception):
 
     def __init__(self, *args, **kwargs):
         """Initialize our InvalidSyntax exception."""
-        self.original_exception = exc = kwargs.pop('exception')
-        self.error_message = str(exc) if exc is not None else ''
+        exception = kwargs.pop('exception', None)
+        self.original_exception = exception
+        self.error_message = str(exception)
         self.error_code = 'E902'
         self.line_number = 1
         self.column_number = 0
-        super(InvalidSyntax, self).__init__(*args, **kwargs)
+        super(InvalidSyntax, self).__init__(
+            self.error_message,
+            *args,
+            **kwargs
+        )
 
 
 class PluginRequestedUnknownParameters(Flake8Exception):

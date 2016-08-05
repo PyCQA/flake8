@@ -63,7 +63,11 @@ def test_handle_file_plugins(plugin_target):
     # Prevent it from reading lines from stdin or somewhere else
     with mock.patch('flake8.processor.FileProcessor.read_lines',
                     return_value=['Line 1']):
-        file_checker = checker.FileChecker('-', checks, mock.MagicMock())
+        file_checker = checker.FileChecker(
+            '-',
+            checks.to_dictionary(),
+            mock.MagicMock()
+        )
 
     # Do not actually build an AST
     file_checker.processor.build_ast = lambda: True

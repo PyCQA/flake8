@@ -46,6 +46,9 @@ class FlakesChecker(pyflakes.checker.Checker):
 
     name = 'pyflakes'
     version = pyflakes.__version__
+    with_doctest = False
+    include_in_doctest = []
+    exclude_from_doctest = []
 
     def __init__(self, tree, filename):
         """Initialize the PyFlakes plugin with an AST tree and filename."""

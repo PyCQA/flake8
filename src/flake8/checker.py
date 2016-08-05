@@ -38,21 +38,6 @@ SERIAL_RETRY_ERRNOS = set([
 ])
 
 
-def _run_checks_from_queue(process_queue, results_queue, statistics_queue):
-    LOG.info('Running checks in parallel')
-    try:
-        for checker in iter(process_queue.get, 'DONE'):
-            LOG.info('Checking "%s"', checker.filename)
-            checker.run_checks(results_queue, statistics_queue)
-    except exceptions.PluginRequestedUnknownParameters as exc:
-        print(str(exc))
-    except Exception as exc:
-        LOG.error('Unhandled exception occurred')
-        raise
-    finally:
-        results_queue.put('DONE')
-
-
 class Manager(object):
     """Manage the parallelism and checker instances for each plugin and file.
 
@@ -284,8 +269,9 @@ class Manager(object):
             file_exists = os.path.exists(filename)
             return (file_exists and matches_filename_patterns) or is_stdin
 
+        checks = self.checks.to_dictionary()
         self.checkers = [
-            FileChecker(filename, self.checks, self.options)
+            FileChecker(filename, checks, self.options)
             for argument in paths
             for filename in utils.filenames_from(argument,
                                                  self.is_path_excluded)
@@ -405,7 +391,7 @@ class FileChecker(object):
         :param checks:
             The plugins registered to check the file.
         :type checks:
-            flake8.plugins.manager.Checkers
+            dict
         :param options:
             Parsed option values from config and command-line.
         :type options:
@@ -458,14 +444,17 @@ class FileChecker(object):
         """Run the check in a single plugin."""
         LOG.debug('Running %r with %r', plugin, arguments)
         try:
-            self.processor.keyword_arguments_for(plugin.parameters, arguments)
+            self.processor.keyword_arguments_for(
+                plugin['parameters'],
+                arguments,
+            )
         except AttributeError as ae:
             LOG.error('Plugin requested unknown parameters.')
             raise exceptions.PluginRequestedUnknownParameters(
                 plugin=plugin,
                 exception=ae,
             )
-        return plugin.execute(**arguments)
+        return plugin['plugin'](**arguments)
 
     def run_ast_checks(self):
         """Run all checks expecting an abstract syntax tree."""
@@ -484,7 +473,7 @@ class FileChecker(object):
                         (exc_type.__name__, exception.args[0]))
             return
 
-        for plugin in self.checks.ast_plugins:
+        for plugin in self.checks['ast_plugins']:
             checker = self.run_check(plugin, tree=ast)
             # If the plugin uses a class, call the run method of it, otherwise
             # the call should return something iterable itself
@@ -509,7 +498,7 @@ class FileChecker(object):
 
         LOG.debug('Logical line: "%s"', logical_line.rstrip())
 
-        for plugin in self.checks.logical_line_plugins:
+        for plugin in self.checks['logical_line_plugins']:
             self.processor.update_checker_state_for(plugin)
             results = self.run_check(plugin, logical_line=logical_line) or ()
             for offset, text in results:
@@ -526,7 +515,7 @@ class FileChecker(object):
 
     def run_physical_checks(self, physical_line, override_error_line=None):
         """Run all checks for a given physical line."""
-        for plugin in self.checks.physical_line_plugins:
+        for plugin in self.checks['physical_line_plugins']:
             self.processor.update_checker_state_for(plugin)
             result = self.run_check(plugin, physical_line=physical_line)
             if result is not None:
@@ -634,6 +623,21 @@ class FileChecker(object):
                 for line in self.processor.split_line(token):
                     self.run_physical_checks(line + '\n',
                                              override_error_line=token[4])
+
+
+def _run_checks_from_queue(process_queue, results_queue, statistics_queue):
+    LOG.info('Running checks in parallel')
+    try:
+        for checker in iter(process_queue.get, 'DONE'):
+            LOG.info('Checking "%s"', checker.filename)
+            checker.run_checks(results_queue, statistics_queue)
+    except exceptions.PluginRequestedUnknownParameters as exc:
+        print(str(exc))
+    except Exception as exc:
+        LOG.error('Unhandled exception occurred')
+        raise
+    finally:
+        results_queue.put('DONE')
 
 
 def find_offset(offset, mapping):

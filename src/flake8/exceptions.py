@@ -65,7 +65,7 @@ class PluginRequestedUnknownParameters(Flake8Exception):
 
     def __str__(self):
         """Format our exception message."""
-        return self.FORMAT % {'name': self.plugin.plugin_name,
+        return self.FORMAT % {'name': self.plugin['plugin_name'],
                               'exc': self.original_exception}
 
 

@@ -36,16 +36,11 @@ class InvalidSyntax(Flake8Exception):
 
     def __init__(self, *args, **kwargs):
         """Initialize our InvalidSyntax exception."""
-        self.original_exception = kwargs.pop('exception')
+        self.original_exception = exc = kwargs.pop('exception')
+        self.error_message = str(exc) if exc is not None else ''
         self.error_code = 'E902'
         self.line_number = 1
         self.column_number = 0
-        try:
-            self.error_message = self.original_exception.message
-        except AttributeError:
-            # On Python 3, the IOError is an OSError which has a
-            # strerror attribute instead of a message attribute
-            self.error_message = self.original_exception.strerror
         super(InvalidSyntax, self).__init__(*args, **kwargs)
 
 

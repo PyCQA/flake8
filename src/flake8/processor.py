@@ -247,7 +247,7 @@ class FileProcessor(object):
         # course, I'm going to be unsurprised to be proven wrong at a later
         # date.
         except tokenize.TokenError as exc:
-            raise exceptions.InvalidSyntax(exc.message, exception=exc)
+            raise exceptions.InvalidSyntax(str(exc), exception=exc)
 
     def line_for(self, line_number):
         """Retrieve the physical line at the specified line number."""

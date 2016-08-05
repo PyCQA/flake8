@@ -1,0 +1,15 @@
+3.0.4 -- 2016-08-08
+-------------------
+
+- Side-step a Pickling Error when using Flake8 with multiprocessing on Unix
+  systems. (See also `GitLab#164`_)
+
+- Fix an Attribute Error raised when dealing with Invalid Syntax. (See also
+  `GitLab#203`_)
+
+
+.. links
+.. _GitLab#164:
+    https://gitlab.com/pycqa/flake8/issues/164
+.. _GitLab#203:
+    https://gitlab.com/pycqa/flake8/issues/203

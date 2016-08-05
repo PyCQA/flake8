@@ -36,17 +36,17 @@ class InvalidSyntax(Flake8Exception):
 
     def __init__(self, *args, **kwargs):
         """Initialize our InvalidSyntax exception."""
-        self.original_exception = kwargs.pop('exception')
+        exception = kwargs.pop('exception', None)
+        self.original_exception = exception
+        self.error_message = str(exception)
         self.error_code = 'E902'
         self.line_number = 1
         self.column_number = 0
-        try:
-            self.error_message = self.original_exception.message
-        except AttributeError:
-            # On Python 3, the IOError is an OSError which has a
-            # strerror attribute instead of a message attribute
-            self.error_message = self.original_exception.strerror
-        super(InvalidSyntax, self).__init__(*args, **kwargs)
+        super(InvalidSyntax, self).__init__(
+            self.error_message,
+            *args,
+            **kwargs
+        )
 
 
 class PluginRequestedUnknownParameters(Flake8Exception):

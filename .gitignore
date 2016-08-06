@@ -10,3 +10,4 @@ dist
 *.sw*
 *.log
 docs/build/html/*
+.coverage

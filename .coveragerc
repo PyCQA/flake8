@@ -1,0 +1,11 @@
+[run]
+branch = True
+source =
+    flake8
+
+
+[paths]
+source =
+    src/flake8
+    .tox/*/lib/python*/site-packages/flake8
+    .tox/pypy/site-packages/flake8

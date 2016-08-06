@@ -7,9 +7,14 @@
 - Fix an Attribute Error raised when dealing with Invalid Syntax. (See also
   `GitLab#203`_)
 
+- Fix an unhandled Syntax Error when tokenizing files. (See also
+  `GitLab#205`_)
+
 
 .. links
 .. _GitLab#164:
     https://gitlab.com/pycqa/flake8/issues/164
 .. _GitLab#203:
     https://gitlab.com/pycqa/flake8/issues/203
+.. _GitLab#205:
+    https://gitlab.com/pycqa/flake8/issues/205

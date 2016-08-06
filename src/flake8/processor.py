@@ -240,13 +240,7 @@ class FileProcessor(object):
                     break
                 self.tokens.append(token)
                 yield token
-        # NOTE(sigmavirus24): pycodestyle was catching both a SyntaxError
-        # and a tokenize.TokenError. In looking a the source on Python 2 and
-        # Python 3, the SyntaxError should never arise from generate_tokens.
-        # If we were using tokenize.tokenize, we would have to catch that. Of
-        # course, I'm going to be unsurprised to be proven wrong at a later
-        # date.
-        except tokenize.TokenError as exc:
+        except (tokenize.TokenError, SyntaxError) as exc:
             raise exceptions.InvalidSyntax(exception=exc)
 
     def line_for(self, line_number):

@@ -728,3 +728,51 @@
         flake8 --benchmark dir/
 
     This **can not** be specified in config files.
+
+
+.. option:: --bug-report
+
+    Generate information necessary to file a complete bug report for Flake8.
+    This will pretty-print a JSON blob that should be copied and pasted into a
+    bug report for Flake8.
+
+    Command-line usage:
+
+    .. prompt:: bash
+
+        flake8 --bug-report
+
+    The output should look vaguely like:
+
+    .. code-block:: js
+
+        {
+          "dependencies": [
+            {
+              "dependency": "setuptools",
+              "version": "25.1.1"
+            }
+          ],
+          "platform": {
+            "python_implementation": "CPython",
+            "python_version": "2.7.12",
+            "system": "Darwin"
+          },
+          "plugins": [
+            {
+              "plugin": "mccabe",
+              "version": "0.5.1"
+            },
+            {
+              "plugin": "pycodestyle",
+              "version": "2.0.0"
+            },
+            {
+              "plugin": "pyflakes",
+              "version": "1.2.3"
+            }
+          ],
+          "version": "3.1.0.dev0"
+        }
+
+    This **can not** be specified in config files.

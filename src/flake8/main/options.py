@@ -1,5 +1,6 @@
 """Contains the logic for all of the default options for Flake8."""
 from flake8 import defaults
+from flake8.main import debug
 from flake8.main import vcs
 
 
@@ -29,6 +30,8 @@ def register_default_options(option_manager):
     - ``--append-config``
     - ``--config``
     - ``--isolated``
+    - ``--benchmark``
+    - ``--bug-report``
     """
     add_option = option_manager.add_option
 
@@ -198,4 +201,12 @@ def register_default_options(option_manager):
     add_option(
         '--benchmark', default=False, action='store_true',
         help='Print benchmark information about this run of Flake8',
+    )
+
+    # Debugging
+
+    add_option(
+        '--bug-report', action='callback', callback=debug.print_information,
+        callback_kwargs={'option_manager': option_manager},
+        help='Print information necessary when preparing a bug report',
     )

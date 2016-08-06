@@ -10,6 +10,10 @@ before_script:
 - python get-pip.py
 - pip install -r dev-requirements.txt
 
+after_script:
+- pip install codecov
+- codecov --token=7d117e6b-aab6-4283-ab19-166dafc38cf5
+
 python2:
   image: python:2.7
   stage: test

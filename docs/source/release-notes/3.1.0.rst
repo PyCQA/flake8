@@ -1,0 +1,4 @@
+3.1.0 -- 2016-yy-xx
+-------------------
+
+- Add ``--bug-report`` flag to make issue reporters' lives easier.

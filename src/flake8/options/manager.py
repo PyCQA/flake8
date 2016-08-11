@@ -240,9 +240,10 @@ class OptionManager(object):
         LOG.debug('Extending default select list with %r', error_codes)
         self.extended_default_select.update(error_codes)
 
-    def generate_versions(self, format_str='%(name)s: %(version)s'):
+    def generate_versions(self, format_str='%(name)s: %(version)s',
+                          join_on=', '):
         """Generate a comma-separated list of versions of plugins."""
-        return ', '.join(
+        return join_on.join(
             format_str % self.format_plugin(plugin)
             for plugin in self.registered_plugins
         )

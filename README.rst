@@ -53,7 +53,7 @@ to suggest, the mailing list would be the best place for it.
 Links
 =====
 
-* `Flake8 Documentation <https://flake8.pycqa.org/en/latest/>`_
+* `Flake8 Documentation <http://flake8.pycqa.org/en/latest/>`_
 
 * `GitLab Project <https://gitlab.com/pycqa/flake8>`_
 

@@ -565,7 +565,7 @@
 
 .. option:: --tee
 
-    Also print output to stdout if output-file has ben configured.
+    Also print output to stdout if output-file has been configured.
 
     Command-line example:
 

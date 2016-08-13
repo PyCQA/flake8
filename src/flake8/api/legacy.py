@@ -180,7 +180,7 @@ class Report(object):
         return self._application.result_count
 
     def get_statistics(self, violation):
-        """Get the list of occurences of a violation.
+        """Get the list of occurrences of a violation.
 
         :returns:
             List of occurrences of a violation formatted as:

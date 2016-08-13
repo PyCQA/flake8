@@ -6,7 +6,7 @@ The command line interface of |Flake8| is modeled as an application via
 command line, :func:`~flake8.main.cli.main` is run which handles
 management of the application.
 
-User input is parsed *twice* to accomodate logging and verbosity options
+User input is parsed *twice* to accommodate logging and verbosity options
 passed by the user as early as possible.
 This is so as much logging can be produced as possible.
 

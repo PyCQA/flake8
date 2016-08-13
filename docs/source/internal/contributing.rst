@@ -6,7 +6,7 @@ There are many ways to contriubte to |Flake8|, and we encourage them all:
 
 - contributing bug reports and feature requests
 
-- contributing documenation (and yes that includes this document)
+- contributing documentation (and yes that includes this document)
 
 - reviewing and triaging bugs and merge requests
 

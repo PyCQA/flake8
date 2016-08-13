@@ -166,7 +166,7 @@ Configuration file discovery is managed by the
 :class:`~flake8.options.config.ConfigFileFinder` object. This object needs to
 know information about the program's name, any extra arguments passed to it,
 and any configuration files that should be appended to the list of discovered
-files. It provides methods for finding the files and similiar methods for
+files. It provides methods for finding the files and similar methods for
 parsing those fles. For example, it provides
 :meth:`~flake8.options.config.ConfigFileFinder.local_config_files` to find
 known local config files (and append the extra configuration files) and it

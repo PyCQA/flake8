@@ -141,7 +141,7 @@ def make_temporary_directory_from(destination, directory):
 
 def find_modified_files(lazy):
     diff_index = piped_process(
-        ['git', 'diff-index', '--cached', '--name-only',
+        ['git', 'diff-index', '' if lazy else '--cached', '--name-only',
          '--diff-filter=ACMRTUXB', 'HEAD'],
     )
 

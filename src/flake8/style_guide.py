@@ -253,7 +253,10 @@ class StyleGuide(object):
             int
         """
         # NOTE(sigmavirus24): Apparently we're provided with 0-indexed column
-        # numbers so we have to offset that here.
+        # numbers so we have to offset that here. Also, if a SyntaxError is
+        # caught, column_number may be None.
+        if not column_number:
+            column_number = 0
         error = Error(code, filename, line_number, column_number + 1, text,
                       physical_line)
         error_is_selected = (self.should_report_error(error.code) is

@@ -185,6 +185,19 @@ def test_handle_error_notifies_listeners(select_list, ignore_list, error_code):
     formatter.handle.assert_called_once_with(error)
 
 
+def test_handle_error_does_not_raise_type_errors():
+    """Verify that we handle our inputs better."""
+    listener_trie = mock.create_autospec(notifier.Notifier, instance=True)
+    formatter = mock.create_autospec(base.BaseFormatter, instance=True)
+    guide = style_guide.StyleGuide(create_options(select=['T111'], ignore=[]),
+                                   listener_trie=listener_trie,
+                                   formatter=formatter)
+
+    assert 1 == guide.handle_error(
+        'T111', 'file.py', 1, None, 'error found', 'a = 1'
+    )
+
+
 @pytest.mark.parametrize('select_list,ignore_list,error_code', [
     (['E111', 'E121'], [], 'E122'),
     (['E11', 'E12'], [], 'E132'),

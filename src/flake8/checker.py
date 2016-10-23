@@ -456,20 +456,47 @@ class FileChecker(object):
             )
         return plugin['plugin'](**arguments)
 
+    @staticmethod
+    def _extract_syntax_information(exception):
+        token = ()
+        if len(exception.args) > 1:
+            token = exception.args[1]
+            if len(token) > 2:
+                row, column = token[1:3]
+        else:
+            row, column = (1, 0)
+
+        if column > 0 and token and isinstance(exception, SyntaxError):
+            # NOTE(sigmavirus24): SyntaxErrors report 1-indexed column
+            # numbers. We need to decrement the column number by 1 at
+            # least.
+            offset = 1
+            physical_line = token[-1]
+            if len(physical_line) == column and physical_line[-1] == '\n':
+                # NOTE(sigmavirus24): By default, we increment the column
+                # value so that it's always 1-indexed. The SyntaxError that
+                # we are trying to handle here will end up being 2 past
+                # the end of the line. This happens because the
+                # SyntaxError is technically the character after the
+                # new-line. For example, if the code is ``foo(\n`` then
+                # ``\n`` will be 4, the empty string will be 5 but most
+                # tools want to report the at column 4, i.e., the opening
+                # parenthesis. Semantically, having a column number of 6 is
+                # correct but not useful for tooling (e.g., editors that
+                # constantly run Flake8 for users).
+                # See also: https://gitlab.com/pycqa/flake8/issues/237
+                offset += 1
+            column -= offset
+        return row, column
+
     def run_ast_checks(self):
         """Run all checks expecting an abstract syntax tree."""
         try:
             ast = self.processor.build_ast()
         except (ValueError, SyntaxError, TypeError):
             (exc_type, exception) = sys.exc_info()[:2]
-            if len(exception.args) > 1:
-                offset = exception.args[1]
-                if len(offset) > 2:
-                    offset = offset[1:3]
-            else:
-                offset = (1, 0)
-
-            self.report('E999', offset[0], offset[1], '%s: %s' %
+            row, column = self._extract_syntax_information(exception)
+            self.report('E999', row, column, '%s: %s' %
                         (exc_type.__name__, exception.args[0]))
             return
 

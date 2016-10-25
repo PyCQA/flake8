@@ -103,15 +103,22 @@ class FileProcessor(object):
 
     @property
     def file_tokens(self):
+        """The complete set of tokens for a file.
+
+        Accessing this attribute *may* raise an InvalidSyntax exception.
+
+        :raises: flake8.exceptions.InvalidSyntax
+        """
         if self._file_tokens is None:
             line_iter = iter(self.lines)
             try:
                 self._file_tokens = list(tokenize.generate_tokens(
-                    lambda: next(line_iter)))
+                    lambda: next(line_iter)
+                ))
             except tokenize.TokenError as exc:
                 raise exceptions.InvalidSyntax(exc.message, exception=exc)
 
-        return self._file_tokens[:]
+        return self._file_tokens
 
     @contextlib.contextmanager
     def inside_multiline(self, line_number):

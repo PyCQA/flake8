@@ -53,11 +53,11 @@ the data instead of being called on each physical or logical line.
 These parameters can also be supplied to plugins working on each line
 separately.
 
-Plugins that depend on ``physical_line`` or ``logical_line`` are run on each 
-physical or logical line once. These parameters should be the first in the 
-list of arguments (with the exception of ``self``). Plugins that need an AST 
-(e.g., PyFlakes and McCabe) should depend on ``tree``. These plugins will run 
-once per file. The parameters listed above can be combined with 
+Plugins that depend on ``physical_line`` or ``logical_line`` are run on each
+physical or logical line once. These parameters should be the first in the
+list of arguments (with the exception of ``self``). Plugins that need an AST
+(e.g., PyFlakes and McCabe) should depend on ``tree``. These plugins will run
+once per file. The parameters listed above can be combined with
 ``physical_line``, ``logical_line``, and ``tree``.
 
 

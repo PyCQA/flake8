@@ -27,6 +27,7 @@ def register_default_options(option_manager):
     - ``--exit-zero``
     - ``-j``/``--jobs``
     - ``--output-file``
+    - ``--tee``
     - ``--append-config``
     - ``--config``
     - ``--isolated``
@@ -172,6 +173,11 @@ def register_default_options(option_manager):
         '--output-file', default=None, type='string', parse_from_config=True,
         # callback=callbacks.redirect_stdout,
         help='Redirect report to a file.',
+    )
+
+    add_option(
+        '--tee', default=False, parse_from_config=True, action='store_true',
+        help='Write to stdout and output-file.',
     )
 
     # Config file options

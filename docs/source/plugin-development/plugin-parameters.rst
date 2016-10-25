@@ -40,25 +40,25 @@ a file, a plugin can ask for any of the following:
 - :attr:`~flake8.processor.FileProcessor.previous_logical`
 - :attr:`~flake8.processor.FileProcessor.tokens`
 
-Some properties are set once per file being processed:
+Some properties are set once per file for plugins which iterate itself over
+the data instead of being called on each physical or logical line.
 
 - :attr:`~flake8.processor.FileProcessor.filename`
+- :attr:`~flake8.processor.FileProcessor.file_tokens`
 - :attr:`~flake8.processor.FileProcessor.lines`
 - :attr:`~flake8.processor.FileProcessor.max_line_length`
 - :attr:`~flake8.processor.FileProcessor.total_lines`
 - :attr:`~flake8.processor.FileProcessor.verbose`
 
 These parameters can also be supplied to plugins working on each line
-separately. Additionally, plugins called once per file can also accept ``tree``
-which is not supplied as a parameter of
-:class:`~flake8.processor.FileProcessor`, which will be a parsed abstract
-syntax tree. It is used by plugins like PyFlakes and McCabe.
+separately.
 
-When the plugin is run depends on the first parameter, not counting ``self``.
-It can be either ``physical_line``, ``logical_line`` or ``tree``. If the
-parameter is ``tree``, it is run once per file, otherwise once per physical
-line or logical line respectively. If the plugin is using neither of them it
-won't be run at all.
+Plugins that depend on ``physical_line`` or ``logical_line`` are run on each
+physical or logical line once. These parameters should be the first in the
+list of arguments (with the exception of ``self``). Plugins that need an AST
+(e.g., PyFlakes and McCabe) should depend on ``tree``. These plugins will run
+once per file. The parameters listed above can be combined with
+``physical_line``, ``logical_line``, and ``tree``.
 
 
 Registering Options

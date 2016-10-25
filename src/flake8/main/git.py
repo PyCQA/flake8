@@ -140,11 +140,14 @@ def make_temporary_directory_from(destination, directory):
 
 
 def find_modified_files(lazy):
-    diff_index = piped_process(
-        ['git', 'diff-index', '--cached', '--name-only',
-         '--diff-filter=ACMRTUXB', 'HEAD'],
-    )
+    diff_index_cmd = [
+        'git', 'diff-index', '--cached', '--name-only',
+        '--diff-filter=ACMRTUXB', 'HEAD'
+    ]
+    if lazy:
+        diff_index_cmd.remove('--cached')
 
+    diff_index = piped_process(diff_index_cmd)
     (stdout, _) = diff_index.communicate()
     stdout = to_text(stdout)
     return stdout.splitlines()

@@ -15,6 +15,7 @@ def create_options(**kwargs):
     kwargs.setdefault('extended_default_select', [])
     kwargs.setdefault('ignore', [])
     kwargs.setdefault('disable_noqa', False)
+    kwargs.setdefault('enable_extensions', [])
     return optparse.Values(kwargs)
 
 
@@ -50,18 +51,24 @@ def test_is_user_ignored_implicitly_selects_errors(ignore_list, error_code):
     assert guide.is_user_ignored(error_code) is style_guide.Selected.Implicitly
 
 
-@pytest.mark.parametrize('select_list,error_code', [
-    (['E111', 'E121'], 'E111'),
-    (['E111', 'E121'], 'E121'),
-    (['E11', 'E12'], 'E121'),
-    (['E2', 'E12'], 'E121'),
-    (['E2', 'E12'], 'E211'),
+@pytest.mark.parametrize('select_list,enable_extensions,error_code', [
+    (['E111', 'E121'], [], 'E111'),
+    (['E111', 'E121'], [], 'E121'),
+    (['E11', 'E12'], [], 'E121'),
+    (['E2', 'E12'], [], 'E121'),
+    (['E2', 'E12'], [], 'E211'),
+    (['E1'], ['E2'], 'E211'),
+    ([], ['E2'], 'E211'),
 ])
-def test_is_user_selected_selects_errors(select_list, error_code):
+def test_is_user_selected_selects_errors(select_list, enable_extensions,
+                                         error_code):
     """Verify we detect users explicitly selecting an error."""
-    guide = style_guide.StyleGuide(create_options(select=select_list),
-                                   listener_trie=None,
-                                   formatter=None)
+    guide = style_guide.StyleGuide(
+        options=create_options(select=select_list,
+                               enable_extensions=enable_extensions),
+        listener_trie=None,
+        formatter=None,
+    )
 
     assert (guide.is_user_selected(error_code) is
             style_guide.Selected.Explicitly)

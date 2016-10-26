@@ -65,6 +65,7 @@ class StyleGuide(object):
         self._selected = tuple(options.select)
         self._extended_selected = tuple(options.extended_default_select)
         self._ignored = tuple(options.ignore)
+        self._enabled_extensions = tuple(options.enable_extensions)
         self._decision_cache = {}
         self._parsed_diff = {}
 
@@ -81,10 +82,10 @@ class StyleGuide(object):
             Ignored.Implicitly if the selected list is not empty but no match
             was found.
         """
-        if not self._selected:
+        if not (self._selected or self._enabled_extensions):
             return Selected.Implicitly
 
-        if code.startswith(self._selected):
+        if code.startswith(self._selected + self._enabled_extensions):
             return Selected.Explicitly
 
         # If it was not explicitly selected, it may have been implicitly

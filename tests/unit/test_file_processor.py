@@ -86,6 +86,18 @@ def test_read_lines_uses_display_name(stdin_get_value):
     assert file_processor.filename == 'display_name.py'
 
 
+@mock.patch('flake8.utils.stdin_get_value')
+def test_read_lines_ignores_empty_display_name(stdin_get_value):
+    """Verify that when processing stdin we use a display name if present."""
+    stdin_value = mock.Mock()
+    stdin_value.splitlines.return_value = []
+    stdin_get_value.return_value = stdin_value
+    file_processor = processor.FileProcessor('-', options_from(
+        stdin_display_name=''
+    ))
+    assert file_processor.filename == 'stdin'
+
+
 def test_line_for():
     """Verify we grab the correct line from the cached lines."""
     file_processor = processor.FileProcessor('-', options_from(), lines=[

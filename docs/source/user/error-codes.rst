@@ -38,6 +38,9 @@ generates its own :term:`error code`\ s for ``pyflakes``:
 | F841 | local variable ``name`` is assigned to but never used               |
 +------+---------------------------------------------------------------------+
 
+We also report one extra error: ``E999``. We report ``E999`` when we fail to
+compile a file into an Abstract Syntax Tree for the plugins that require it.
+
 ``mccabe`` only ever reports one :term:`violation` - ``C901`` based on the
 complexity value provided by the user.
 

@@ -14,6 +14,7 @@ import tempfile
 
 from flake8 import defaults
 from flake8 import exceptions
+from flake8.options.config import ConfigFileFinder
 
 __all__ = ('hook', 'install')
 
@@ -41,6 +42,7 @@ def hook(lazy=False, strict=False):
     app = application.Application()
     with make_temporary_directory() as tempdir:
         filepaths = list(copy_indexed_files_to(tempdir, lazy))
+        copy_configuration_files_to(tempdir)
         app.initialize(filepaths)
         app.run_checks()
 
@@ -121,6 +123,12 @@ def copy_indexed_files_to(temporary_directory, lazy):
         yield copy_file_to(temporary_directory, filename, contents)
 
 
+def copy_configuration_files_to(temporary_directory):
+    configuration_files = find_configuration_files()
+    for filename in configuration_files:
+        shutil.copy(filename, temporary_directory)
+
+
 def copy_file_to(destination_directory, filepath, contents):
     directory, filename = os.path.split(os.path.abspath(filepath))
     temporary_directory = make_temporary_directory_from(destination_directory,
@@ -151,6 +159,12 @@ def find_modified_files(lazy):
     (stdout, _) = diff_index.communicate()
     stdout = to_text(stdout)
     return stdout.splitlines()
+
+
+def find_configuration_files():
+    for f in ConfigFileFinder.PROJECT_FILENAMES:
+        if os.path.isfile(f):
+            yield f
 
 
 def get_staged_contents_from(filename):

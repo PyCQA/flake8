@@ -64,8 +64,9 @@ class StyleGuide(object):
         self.stats = statistics.Statistics()
         self._selected = tuple(options.select)
         self._extended_selected = tuple(options.extended_default_select)
-        self._ignored = tuple(options.ignore)
         self._enabled_extensions = tuple(options.enable_extensions)
+        self._ignored = tuple(
+            set(options.ignore) - set(self._enabled_extensions))
         self._decision_cache = {}
         self._parsed_diff = {}
 
@@ -118,8 +119,14 @@ class StyleGuide(object):
     def _decision_for(self, code):
         # type: (Error) -> Decision
         startswith = code.startswith
-        selected = sorted([s for s in self._selected if startswith(s)])[0]
-        ignored = sorted([i for i in self._ignored if startswith(i)])[0]
+        all_selected = sorted(s for s in self._selected if startswith(s))
+        if len(all_selected) == 0:
+            return Decision.Ignored
+        all_ignored = sorted(i for i in self._ignored if startswith(i))
+        if len(all_ignored) == 0:
+            return Decision.Ignored
+        selected = all_selected[0]
+        ignored = all_ignored[0]
 
         if selected.startswith(ignored):
             return Decision.Selected

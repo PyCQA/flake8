@@ -78,9 +78,14 @@ def test_is_user_selected_implicitly_selects_errors():
     """Verify we detect users implicitly selecting an error."""
     select_list = []
     error_code = 'E121'
-    guide = style_guide.StyleGuide(create_options(select=select_list),
-                                   listener_trie=None,
-                                   formatter=None)
+    guide = style_guide.StyleGuide(
+        create_options(
+            select=select_list,
+            extended_default_select=['E'],
+        ),
+        listener_trie=None,
+        formatter=None,
+    )
 
     assert (guide.is_user_selected(error_code) is
             style_guide.Selected.Implicitly)
@@ -114,9 +119,11 @@ def test_is_user_selected_excludes_errors(select_list, error_code):
     (['E111', 'E121'], ['E2'], 'E122', style_guide.Decision.Ignored),
     (['E11', 'E12'], ['E13'], 'E132', style_guide.Decision.Ignored),
     (['E1', 'E3'], ['E32'], 'E321', style_guide.Decision.Ignored),
-    ([], ['E2', 'E12'], 'E410', style_guide.Decision.Selected),
+    ([], ['E2', 'E12'], 'E410', style_guide.Decision.Ignored),
     (['E4'], ['E2', 'E12', 'E41'], 'E410', style_guide.Decision.Ignored),
     (['E41'], ['E2', 'E12', 'E4'], 'E410', style_guide.Decision.Selected),
+    (['E'], ['F'], 'E410', style_guide.Decision.Selected),
+    (['F'], [], 'E410', style_guide.Decision.Ignored),
 ])
 def test_should_report_error(select_list, ignore_list, error_code, expected):
     """Verify we decide when to report an error."""
@@ -172,7 +179,6 @@ def test_disable_is_inline_ignored():
     (['E111', 'E121'], [], 'E111'),
     (['E111', 'E121'], [], 'E121'),
     (['E11', 'E121'], ['E1'], 'E112'),
-    ([], ['E2', 'E12'], 'E410'),
     (['E41'], ['E2', 'E12', 'E4'], 'E410'),
 ])
 def test_handle_error_notifies_listeners(select_list, ignore_list, error_code):

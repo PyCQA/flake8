@@ -64,8 +64,9 @@ class StyleGuide(object):
         self.stats = statistics.Statistics()
         self._selected = tuple(options.select)
         self._extended_selected = tuple(options.extended_default_select)
-        self._ignored = tuple(options.ignore)
         self._enabled_extensions = tuple(options.enable_extensions)
+        self._all_selected = self._selected + self._enabled_extensions
+        self._ignored = tuple(options.ignore)
         self._decision_cache = {}
         self._parsed_diff = {}
 
@@ -82,17 +83,15 @@ class StyleGuide(object):
             Ignored.Implicitly if the selected list is not empty but no match
             was found.
         """
-        if not (self._selected or self._enabled_extensions):
-            return Selected.Implicitly
-
-        if code.startswith(self._selected + self._enabled_extensions):
+        if self._all_selected and code.startswith(self._all_selected):
             return Selected.Explicitly
 
-        # If it was not explicitly selected, it may have been implicitly
-        # selected because the check comes from a plugin that is enabled by
-        # default
-        if (self._extended_selected and
-                code.startswith(self._extended_selected)):
+        if (not self._all_selected and
+            (self._extended_selected and
+                code.startswith(self._extended_selected))):
+            # If it was not explicitly selected, it may have been implicitly
+            # selected because the check comes from a plugin that is enabled by
+            # default
             return Selected.Implicitly
 
         return Ignored.Implicitly
@@ -118,10 +117,22 @@ class StyleGuide(object):
     def _decision_for(self, code):
         # type: (Error) -> Decision
         startswith = code.startswith
-        selected = sorted([s for s in self._selected if startswith(s)])[0]
-        ignored = sorted([i for i in self._ignored if startswith(i)])[0]
+        try:
+            selected = sorted([s for s in self._selected if startswith(s)])[0]
+        except IndexError:
+            selected = None
+        try:
+            ignored = sorted([i for i in self._ignored if startswith(i)])[0]
+        except IndexError:
+            ignored = None
 
-        if selected.startswith(ignored):
+        if selected is None:
+            return Decision.Ignored
+
+        if ignored is None:
+            return Decision.Selected
+
+        if selected.startswith(ignored) and selected != ignored:
             return Decision.Selected
         return Decision.Ignored
 
@@ -150,8 +161,10 @@ class StyleGuide(object):
                  selected is Selected.Implicitly) and
                     ignored is Selected.Implicitly):
                 decision = Decision.Selected
-            elif (selected is Selected.Explicitly and
-                  ignored is Ignored.Explicitly):
+            elif ((selected is Selected.Explicitly and
+                  ignored is Ignored.Explicitly) or
+                  (selected is Ignored.Implicitly and
+                   ignored is Selected.Implicitly)):
                 decision = self._decision_for(code)
             elif (selected is Ignored.Implicitly or
                   ignored is Ignored.Explicitly):

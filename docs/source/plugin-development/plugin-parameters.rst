@@ -38,6 +38,7 @@ a file, a plugin can ask for any of the following:
 - :attr:`~flake8.processor.FileProcessor.noqa`
 - :attr:`~flake8.processor.FileProcessor.previous_indent_level`
 - :attr:`~flake8.processor.FileProcessor.previous_logical`
+- :attr:`~flake8.processor.FileProcessor.previous_unindented_logical_line`
 - :attr:`~flake8.processor.FileProcessor.tokens`
 
 Some properties are set once per file for plugins which iterate itself over

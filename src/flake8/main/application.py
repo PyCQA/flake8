@@ -167,6 +167,8 @@ class Application(object):
         self.running_against_diff = self.options.diff
         if self.running_against_diff:
             self.parsed_diff = utils.parse_unified_diff()
+            if not self.parsed_diff:
+                self.exit()
 
         self.check_plugins.provide_options(self.option_manager, self.options,
                                            self.args)

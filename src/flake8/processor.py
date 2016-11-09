@@ -41,6 +41,7 @@ class FileProcessor(object):
     - :attr:`noqa`
     - :attr:`previous_indent_level`
     - :attr:`previous_logical`
+    - :attr:`previous_unindented_logical_line`
     - :attr:`tokens`
     - :attr:`file_tokens`
     - :attr:`total_lines`
@@ -89,6 +90,8 @@ class FileProcessor(object):
         self.previous_indent_level = 0
         #: Previous logical line
         self.previous_logical = ''
+        #: Previous unindented (i.e. top-level) logical line
+        self.previous_unindented_logical_line = ''
         #: Current set of tokens
         self.tokens = []
         #: Total number of lines in the file
@@ -163,6 +166,8 @@ class FileProcessor(object):
         if self.logical_line:
             self.previous_indent_level = self.indent_level
             self.previous_logical = self.logical_line
+            if not self.indent_level:
+                self.previous_unindented_logical_line = self.logical_line
         self.blank_lines = 0
         self.tokens = []
         self.noqa = False

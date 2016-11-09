@@ -41,8 +41,8 @@ def hook(lazy=False, strict=False):
     app = application.Application()
     with make_temporary_directory() as tempdir:
         filepaths = list(copy_indexed_files_to(tempdir, lazy))
-        app.initialize(filepaths)
-        app.run_checks()
+        app.initialize(['.'])
+        app.run_checks(filepaths)
 
     app.report_errors()
     if strict:

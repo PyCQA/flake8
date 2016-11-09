@@ -38,6 +38,8 @@ def patch_pyflakes():
     for name, obj in vars(pyflakes.messages).items():
         if name[0].isupper() and obj.message:
             obj.flake8_msg = '%s %s' % (codes.get(name, 'F999'), obj.message)
+
+
 patch_pyflakes()
 
 

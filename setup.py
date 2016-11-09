@@ -35,6 +35,7 @@ def get_long_description():
             descr.append(f.read())
     return '\n\n'.join(descr)
 
+
 PEP8 = 'pycodestyle'
 _FORMAT = '{0}.{1} = {0}:{1}'
 PEP8_PLUGIN = functools.partial(_FORMAT.format, PEP8)

@@ -27,6 +27,7 @@ def register_default_options(option_manager):
     - ``--exit-zero``
     - ``-j``/``--jobs``
     - ``--output-file``
+    - ``--output-xmlfile``
     - ``--tee``
     - ``--append-config``
     - ``--config``
@@ -173,6 +174,12 @@ def register_default_options(option_manager):
         '--output-file', default=None, type='string', parse_from_config=True,
         # callback=callbacks.redirect_stdout,
         help='Redirect report to a file.',
+    )
+
+    add_option(
+        '--output-xmlfile', default=None, type='string', parse_from_config=True,
+        # callback=callbacks.redirect_stdout,
+        help='Create JUnit XML report.',
     )
 
     add_option(

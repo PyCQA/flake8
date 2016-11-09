@@ -108,6 +108,9 @@ class Application(object):
         #: The parsed diff information
         self.parsed_diff = {}
 
+        #: JUnit XML
+        self.junit_xml_report = preliminary_opts.output_xmlfile
+
     def exit(self):
         # type: () -> NoneType
         """Handle finalization and exiting the program.
@@ -221,6 +224,7 @@ class Application(object):
                 style_guide=self.guide,
                 arguments=self.args,
                 checker_plugins=self.check_plugins,
+                junit_xml_report=self.junit_xml_report
             )
 
     def run_checks(self, files=None):

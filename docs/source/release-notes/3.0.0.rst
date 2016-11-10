@@ -47,3 +47,17 @@
 - AST plugins can either be functions or classes and all plugins can now
   register options so long as there are callable attributes named as we
   expect.
+
+- Stop forcibly re-adding ``.tox``, ``.eggs``, and ``*.eggs`` to
+  ``--exclude``. Flake8 2.x started always appending those three patterns
+  to any exclude list (including the default and any user supplied list).
+  Flake8 3 has stopped adding these in, so you may see errors when upgrading
+  due to these patterns no longer being forcibly excluded by default if you
+  have your own exclude patterns specified.
+
+  To fix this, add the appropriate patterns to your exclude patterns list.
+
+  .. note::
+
+      This item was added in November of 2016, as a result of a bug
+      report.

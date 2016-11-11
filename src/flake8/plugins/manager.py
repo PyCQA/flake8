@@ -182,10 +182,17 @@ class Plugin(object):
                 LOG.critical(str(failed_to_load))
                 raise failed_to_load
 
-    def enable(self, optmanager):
+    def enable(self, optmanager, options=None):
         """Remove plugin name from the default ignore list."""
         optmanager.remove_from_default_ignore([self.name])
         optmanager.extend_default_select([self.name])
+        if not options:
+            return
+        try:
+            options.ignore.remove(self.name)
+        except (ValueError, KeyError):
+            LOG.debug('Attempted to remove %s from the ignore list but it was '
+                      'not a member of the list.', self.name)
 
     def disable(self, optmanager):
         """Add the plugin name to the default ignore list."""
@@ -202,7 +209,7 @@ class Plugin(object):
                 parse_options(options)
 
         if self.name in options.enable_extensions:
-            self.enable(optmanager)
+            self.enable(optmanager, options)
 
     def register_options(self, optmanager):
         """Register the plugin's command-line options on the OptionManager.

@@ -162,3 +162,28 @@ def test_provide_options():
     plugin_obj.parse_options.assert_called_once_with(
         option_manager, option_values, None
     )
+
+
+@pytest.mark.parametrize('ignore_list, code, expected_list', [
+    (['E', 'W', 'F', 'C9'], 'W', ['E', 'F', 'C9']),
+    (['E', 'W', 'F'], 'C9', ['E', 'W', 'F']),
+])
+def test_enable(ignore_list, code, expected_list):
+    """Verify that enabling a plugin removes it from the ignore list."""
+    options = mock.Mock(ignore=ignore_list)
+    optmanager = mock.Mock()
+    plugin = manager.Plugin(code, mock.Mock())
+
+    plugin.enable(optmanager, options)
+
+    assert options.ignore == expected_list
+
+
+def test_enable_without_providing_parsed_options():
+    """Verify that enabling a plugin removes it from the ignore list."""
+    optmanager = mock.Mock()
+    plugin = manager.Plugin('U4', mock.Mock())
+
+    plugin.enable(optmanager)
+
+    optmanager.remove_from_default_ignore.assert_called_once_with(['U4'])

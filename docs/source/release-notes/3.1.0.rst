@@ -7,7 +7,7 @@
   hook. (See also `GitLab#210`_, `GitLab#223`_)
 
 - Avoid unhandled exceptions when dealing with SyntaxErrors. (See also
-  `GitLab#214`_)
+  `GitLab#214`_, `GitLab#238`_)
 
 - Exit early if the value for ``--diff`` is empty. (See also `GitLab#226`_)
 
@@ -35,6 +35,9 @@
 - Add new File Processor attribute, ``previous_unindented_logical_line`` to
   accomodate pycodestyle 2.1.0. (See also `GitLab#246`_)
 
+- When something goes wrong, exit non-zero. (See also `GitLab#248`_,
+  `GitLab#209`_)
+
 - Add ``--tee`` as an option to allow use of ``--output-file`` and printing to
   standard out.
 
@@ -43,6 +46,8 @@
 - Allow for pycodestyle 2.1 series and pyflakes 1.3 series.
 
 .. links
+.. _GitLab#209:
+    https://gitlab.com/pycqa/flake8/issues/209
 .. _GitLab#210:
     https://gitlab.com/pycqa/flake8/issues/210
 .. _GitLab#214:
@@ -55,6 +60,8 @@
     https://gitlab.com/pycqa/flake8/issues/235
 .. _GitLab#237:
     https://gitlab.com/pycqa/flake8/issues/237
+.. _GitLab#238:
+    https://gitlab.com/pycqa/flake8/issues/238
 .. _GitLab#239:
     https://gitlab.com/pycqa/flake8/issues/239
 .. _GitLab#242:
@@ -63,3 +70,5 @@
     https://gitlab.com/pycqa/flake8/issues/245
 .. _GitLab#246:
     https://gitlab.com/pycqa/flake8/issues/246
+.. _GitLab#248:
+    https://gitlab.com/pycqa/flake8/issues/248

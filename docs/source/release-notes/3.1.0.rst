@@ -1,10 +1,12 @@
 3.1.0 -- 2016-yy-xx
 -------------------
 
+You can view the `3.1.0 milestone`_ on GitLab for more details.
+
 - Add ``--bug-report`` flag to make issue reporters' lives easier.
 
 - Collect configuration files from the current directory when using our Git
-  hook. (See also `GitLab#210`_, `GitLab#223`_)
+  hook. (See also `GitLab#210`_, `GitLab#218`_, `GitLab#223`_)
 
 - Avoid unhandled exceptions when dealing with SyntaxErrors. (See also
   `GitLab#214`_, `GitLab#238`_)
@@ -46,12 +48,16 @@
 - Allow for pycodestyle 2.1 series and pyflakes 1.3 series.
 
 .. links
+.. _3.1.0 milestone:
+    https://gitlab.com/pycqa/flake8/milestones/12
 .. _GitLab#209:
     https://gitlab.com/pycqa/flake8/issues/209
 .. _GitLab#210:
     https://gitlab.com/pycqa/flake8/issues/210
 .. _GitLab#214:
     https://gitlab.com/pycqa/flake8/issues/214
+.. _GitLab#218:
+    https://gitlab.com/pycqa/flake8/issues/218
 .. _GitLab#223:
     https://gitlab.com/pycqa/flake8/issues/223
 .. _GitLab#226:

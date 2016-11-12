@@ -102,6 +102,9 @@ class Application(object):
         #: The total number of errors before accounting for ignored errors and
         #: lines.
         self.total_result_count = 0
+        #: Whether or not something catastrophic happened and we should exit
+        #: with a non-zero status code
+        self.catastrophic_failure = False
 
         #: Whether the program is processing a diff or not
         self.running_against_diff = False
@@ -119,7 +122,8 @@ class Application(object):
             print(self.result_count)
 
         if not self.options.exit_zero:
-            raise SystemExit(self.result_count > 0)
+            raise SystemExit((self.result_count > 0) or
+                             self.catastrophic_failure)
 
     def find_plugins(self):
         # type: () -> NoneType
@@ -321,5 +325,7 @@ class Application(object):
             LOG.critical('Caught keyboard interrupt from user')
             LOG.exception(exc)
             self.file_checker_manager._force_cleanup()
+            self.catastrophic_failure = True
         except exceptions.EarlyQuit:
+            self.catastrophic_failure = True
             print('... stopped while processing files')

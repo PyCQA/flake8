@@ -2,3 +2,64 @@
 -------------------
 
 - Add ``--bug-report`` flag to make issue reporters' lives easier.
+
+- Collect configuration files from the current directory when using our Git
+  hook. (See also `GitLab#210`_, `GitLab#223`_)
+
+- Avoid unhandled exceptions when dealing with SyntaxErrors. (See also
+  `GitLab#214`_)
+
+- Exit early if the value for ``--diff`` is empty. (See also `GitLab#226`_)
+
+- Handle empty ``--stdin-display-name`` values. (See also `GitLab#235`_)
+
+- Properly report the column number of Syntax Errors. We were assuming that
+  all reports of column numbers were 0-indexed, however, SyntaxErrors report
+  the column number as 1-indexed. This caused us to report a column number
+  that was 1 past the actual position. Further, when combined with
+  SyntaxErrors that occur at a newline, this caused the position to be
+  visually off by two. (See also `GitLab#237`_)
+
+- Fix the behaviour of ``--enable-extenstions``. Previously, items specified
+  here were still ignored due to the fact that the off-by-default extension
+  codes were being left in the ``ignore`` list. (See also `GitLab#239`_)
+
+- Fix problems around ``--select`` and ``--ignore`` behaviour that prevented
+  codes that were neither explicitly selected nor explicitly ignored from
+  being reported. (See also `GitLab#242`_)
+
+- Truly be quiet when the user specifies ``-q`` one or more times. Previously,
+  we were showing the if the user specified ``-q`` and ``--show-source``. We
+  have fixed this bug. (See also `GitLab#245`_)
+
+- Add new File Processor attribute, ``previous_unindented_logical_line`` to
+  accomodate pycodestyle 2.1.0. (See also `GitLab#246`_)
+
+- Add ``--tee`` as an option to allow use of ``--output-file`` and printing to
+  standard out.
+
+- Allow the git plugin to actually be lazy when collecting files.
+
+- Allow for pycodestyle 2.1 series and pyflakes 1.3 series.
+
+.. links
+.. _GitLab#210:
+    https://gitlab.com/pycqa/flake8/issues/210
+.. _GitLab#214:
+    https://gitlab.com/pycqa/flake8/issues/214
+.. _GitLab#223:
+    https://gitlab.com/pycqa/flake8/issues/223
+.. _GitLab#226:
+    https://gitlab.com/pycqa/flake8/issues/226
+.. _GitLab#235:
+    https://gitlab.com/pycqa/flake8/issues/235
+.. _GitLab#237:
+    https://gitlab.com/pycqa/flake8/issues/237
+.. _GitLab#239:
+    https://gitlab.com/pycqa/flake8/issues/239
+.. _GitLab#242:
+    https://gitlab.com/pycqa/flake8/issues/242
+.. _GitLab#245:
+    https://gitlab.com/pycqa/flake8/issues/245
+.. _GitLab#246:
+    https://gitlab.com/pycqa/flake8/issues/246

@@ -65,6 +65,10 @@ class FilenameOnly(SimpleFormatter):
         """Initialize our set of filenames."""
         self.filenames_already_printed = set()
 
+    def show_source(self, error):
+        """Do not include the source code."""
+        pass
+
     def format(self, error):
         """Ensure we only print each error once."""
         if error.filename not in self.filenames_already_printed:
@@ -77,4 +81,8 @@ class Nothing(base.BaseFormatter):
 
     def format(self, error):
         """Do nothing."""
+        pass
+
+    def show_source(self, error):
+        """Do not print the source."""
         pass

@@ -170,7 +170,7 @@ This would allow us to add comments for why we're excluding items, e.g.,
     You can also specify ``--max-complexity`` as ``max_complexity = 10``.
 
 This is also useful if you have a long list of error codes to ignore. Let's
-look at a portion of OpenStack's Swift `project configuration`_:
+look at a portion of a project's Flake8 configuration in their ``tox.ini``:
 
 .. code-block:: ini
 
@@ -220,8 +220,5 @@ They use the comments to describe the check but they could also write this as:
         H501
 
 Or they could use each comment to describe **why** they've ignored the check.
-|Flake8| knows how to parse these lists and will appropriatey handle
+|Flake8| knows how to parse these lists and will appropriately handle
 these situations.
-
-.. _project configuration:
-    https://github.com/openstack/swift/blob/3944d820387f08372c1a29444f4af7d8e6090ae9/tox.ini#L66..L81

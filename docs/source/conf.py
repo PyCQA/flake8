@@ -264,7 +264,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'flake8', u'flake8 Documentation',
+    ('manpage', 'flake8', u'Flake8 Command Line Documentation',
      [author], 1)
 ]
 

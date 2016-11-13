@@ -42,6 +42,7 @@ def hook(lazy=False, strict=False):
     with make_temporary_directory() as tempdir:
         filepaths = list(copy_indexed_files_to(tempdir, lazy))
         app.initialize(['.'])
+        app.options.exclude = update_excludes(app.options.exclude, tempdir)
         app.run_checks(filepaths)
 
     app.report_errors()
@@ -192,6 +193,14 @@ def config_for(parameter):
     git_variable = 'flake8.{0}'.format(parameter)
     value = os.environ.get(environment_variable, git_config_for(git_variable))
     return value.lower() in defaults.TRUTHY_VALUES
+
+
+def update_excludes(exclude_list, temporary_directory_path):
+    return [
+        (temporary_directory_path + pattern)
+        if os.path.isabs(pattern) else pattern
+        for pattern in exclude_list
+    ]
 
 
 _HOOK_TEMPLATE = """#!{executable}

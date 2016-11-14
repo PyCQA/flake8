@@ -1,0 +1,18 @@
+3.1.1 -- 2016-11-14
+-------------------
+
+You can view the `3.1.1 milestone`_ on GitLab for more details.
+
+- Do not attempt to install/distribute a ``man`` file with the Python package;
+  leave this for others to do. (See also `GitLab#254`_)
+
+- Fix packaging bug where wheel version constraints specified in setup.cfg did 
+  not match the constraints in setup.py. (See also `GitLab#255`_)
+
+.. links
+.. _3.1.1 milestone:
+    https://gitlab.com/pycqa/flake8/milestones/13
+.. _GitLab#254:
+    https://gitlab.com/pycqa/flake8/issues/254
+.. _GitLab#255:
+    https://gitlab.com/pycqa/flake8/issues/255

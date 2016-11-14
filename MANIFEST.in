@@ -7,4 +7,3 @@ recursive-include docs *.rst *.py
 recursive-include tests *.py *.ini *.rst *_diff
 recursive-include src *.py
 prune docs/build/
-include docs/build/man/*

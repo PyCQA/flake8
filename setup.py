@@ -112,6 +112,9 @@ setuptools.setup(
             'quiet-nothing = flake8.formatting.default:Nothing',
         ],
     },
+    data_files=[
+        ('/usr/local/share/man/man1', ['docs/build/man/flake8.1']),
+    ],
     classifiers=[
         "Environment :: Console",
         "Framework :: Flake8",

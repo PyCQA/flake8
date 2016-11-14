@@ -16,7 +16,7 @@ tests_require = ['mock', 'pytest']
 
 requires = [
     "pyflakes >= 0.8.1, != 1.2.0, != 1.2.1, != 1.2.2, < 1.4.0",
-    "pycodestyle >= 2.0.0, < 2.2.0",
+    "pycodestyle >= 2.0.0, < 2.3.0",
     "mccabe >= 0.5.0, < 0.6.0",
 ]
 

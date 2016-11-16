@@ -4,6 +4,7 @@ import optparse
 import mock
 import pytest
 
+from flake8 import defaults
 from flake8 import style_guide
 from flake8.formatting import base
 from flake8.plugins import notifier
@@ -133,6 +134,52 @@ def test_should_report_error(select_list, ignore_list, error_code, expected):
                                    formatter=None)
 
     assert guide.should_report_error(error_code) is expected
+
+
+@pytest.mark.parametrize(
+    'select,ignore,extend_select,enabled_extensions,error_code,expected', [
+        (defaults.SELECT, [], ['I1'], [], 'I100',
+            style_guide.Decision.Selected),
+        (defaults.SELECT, [], ['I1'], [], 'I201',
+            style_guide.Decision.Selected),
+        (defaults.SELECT, ['I2'], ['I1'], [], 'I101',
+            style_guide.Decision.Selected),
+        (defaults.SELECT, ['I2'], ['I1'], [], 'I201',
+            style_guide.Decision.Ignored),
+        (defaults.SELECT, ['I1'], ['I10'], [], 'I101',
+            style_guide.Decision.Selected),
+        (defaults.SELECT, ['I10'], ['I1'], [], 'I101',
+            style_guide.Decision.Ignored),
+        (defaults.SELECT, [], [], ['U4'], 'U401',
+            style_guide.Decision.Selected),
+        (defaults.SELECT, ['U401'], [], ['U4'], 'U401',
+            style_guide.Decision.Ignored),
+        (defaults.SELECT, ['U401'], [], ['U4'], 'U402',
+            style_guide.Decision.Selected),
+        (['E2'], ['E21'], [], [], 'E221', style_guide.Decision.Selected),
+        (['E2'], ['E21'], [], [], 'E212', style_guide.Decision.Ignored),
+        (['F', 'W'], ['C90'], ['I1'], [], 'C901',
+            style_guide.Decision.Ignored),
+    ]
+)
+def test_decision_for_logic(select, ignore, extend_select, enabled_extensions,
+                            error_code, expected):
+    """Verify the complicated logic of StyleGuide._decision_for.
+
+    I usually avoid testing private methods, but this one is very important in
+    our conflict resolution work in Flake8.
+    """
+    guide = style_guide.StyleGuide(
+        create_options(
+            select=select, ignore=ignore,
+            extended_default_select=extend_select,
+            enable_extensions=enabled_extensions,
+        ),
+        listener_trie=None,
+        formatter=None,
+    )
+
+    assert guide._decision_for(error_code) is expected
 
 
 @pytest.mark.parametrize('error_code,physical_line,expected_result', [

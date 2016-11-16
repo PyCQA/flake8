@@ -63,10 +63,16 @@ class StyleGuide(object):
         self.formatter = formatter
         self.stats = statistics.Statistics()
         self._selected = tuple(options.select)
-        self._extended_selected = tuple(options.extended_default_select)
+        self._extended_selected = tuple(sorted(
+            options.extended_default_select,
+            reverse=True,
+        ))
         self._enabled_extensions = tuple(options.enable_extensions)
-        self._all_selected = self._selected + self._enabled_extensions
-        self._ignored = tuple(options.ignore)
+        self._all_selected = tuple(sorted(
+            self._selected + self._enabled_extensions,
+            reverse=True,
+        ))
+        self._ignored = tuple(sorted(options.ignore, reverse=True))
         self._decision_cache = {}
         self._parsed_diff = {}
 
@@ -116,25 +122,21 @@ class StyleGuide(object):
 
     def _decision_for(self, code):
         # type: (Error) -> Decision
-        startswith = code.startswith
-        try:
-            selected = sorted([s for s in self._selected if startswith(s)])[0]
-        except IndexError:
-            selected = None
-        try:
-            ignored = sorted([i for i in self._ignored if startswith(i)])[0]
-        except IndexError:
-            ignored = None
+        select = find_first_match(code, self._all_selected)
+        extra_select = find_first_match(code, self._extended_selected)
+        ignore = find_first_match(code, self._ignored)
 
-        if selected is None:
+        if select and ignore:
+            return find_more_specific(select, ignore)
+        if extra_select and ignore:
+            return find_more_specific(extra_select, ignore)
+        if select or (extra_select and self._selected == defaults.SELECT):
+            return Decision.Selected
+        if select is None and extra_select is None and ignore is not None:
             return Decision.Ignored
-
-        if ignored is None:
-            return Decision.Selected
-
-        if selected.startswith(ignored) and selected != ignored:
-            return Decision.Selected
-        return Decision.Ignored
+        if self._selected != defaults.SELECT and select is None:
+            return Decision.Ignored
+        return Decision.Selected
 
     def should_report_error(self, code):
         # type: (str) -> Decision
@@ -295,3 +297,19 @@ class StyleGuide(object):
             Dictionary mapping filenames to sets of line number ranges.
         """
         self._parsed_diff = diffinfo
+
+
+def find_more_specific(selected, ignored):
+    if selected.startswith(ignored) and selected != ignored:
+        return Decision.Selected
+    return Decision.Ignored
+
+
+def find_first_match(error_code, code_list):
+    startswith = error_code.startswith
+    for code in code_list:
+        if startswith(code):
+            break
+    else:
+        return None
+    return code

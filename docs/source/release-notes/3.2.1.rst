@@ -3,6 +3,11 @@
 
 You can view the `3.2.1 milestone`_ on GitLab for more details.
 
+- Fix subtle bug when deciding whether to report an on-by-default's violation
+  (See also `GitLab#257`_)
+
 .. links
 .. _3.2.1 milestone:
     https://gitlab.com/pycqa/flake8/milestones/15
+.. _GitLab#257:
+    https://gitlab.com/pycqa/flake8/issues/257

@@ -63,7 +63,7 @@ def register_default_options(option_manager):
     )
 
     add_option(
-        '--exclude', metavar='patterns', default=defaults.EXCLUDE,
+        '--exclude', metavar='patterns', default=','.join(defaults.EXCLUDE),
         comma_separated_list=True, parse_from_config=True,
         normalize_paths=True,
         help='Comma-separated list of files or directories to exclude.'
@@ -102,7 +102,7 @@ def register_default_options(option_manager):
     )
 
     add_option(
-        '--ignore', metavar='errors', default=defaults.IGNORE,
+        '--ignore', metavar='errors', default=','.join(defaults.IGNORE),
         parse_from_config=True, comma_separated_list=True,
         help='Comma-separated list of errors and warnings to ignore (or skip).'
              ' For example, ``--ignore=E4,E51,W234``. (Default: %default)',
@@ -116,7 +116,7 @@ def register_default_options(option_manager):
     )
 
     add_option(
-        '--select', metavar='errors', default=defaults.SELECT,
+        '--select', metavar='errors', default=','.join(defaults.SELECT),
         parse_from_config=True, comma_separated_list=True,
         help='Comma-separated list of errors and warnings to enable.'
              ' For example, ``--select=E4,E51,W234``. (Default: %default)',

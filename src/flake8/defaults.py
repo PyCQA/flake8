@@ -1,9 +1,28 @@
 """Constants that define defaults."""
 import re
 
-EXCLUDE = '.svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg'
-IGNORE = 'E121,E123,E126,E226,E24,E704,W503,W504'
-SELECT = 'E,F,W,C90'
+EXCLUDE = (
+    '.svn',
+    'CVS',
+    '.bzr',
+    '.hg',
+    '.git',
+    '__pycache__',
+    '.tox',
+    '.eggs',
+    '*.egg',
+)
+IGNORE = (
+    'E121',
+    'E123',
+    'E126',
+    'E226',
+    'E24',
+    'E704',
+    'W503',
+    'W504',
+)
+SELECT = ('E', 'F', 'W', 'C90')
 MAX_LINE_LENGTH = 79
 
 TRUTHY_VALUES = set(['true', '1', 't'])

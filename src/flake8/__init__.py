@@ -27,7 +27,7 @@ LOG.addHandler(NullHandler())
 # Clean up after LOG config
 del NullHandler
 
-__version__ = '3.2.0'
+__version__ = '3.2.1.dev0'
 __version_info__ = tuple(int(i) for i in __version__.split('.') if i.isdigit())
 
 

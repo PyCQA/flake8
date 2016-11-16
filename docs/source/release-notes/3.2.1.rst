@@ -1,0 +1,8 @@
+3.2.1 -- 2016-11-xx
+-------------------
+
+You can view the `3.2.1 milestone`_ on GitLab for more details.
+
+.. links
+.. _3.2.1 milestone:
+    https://gitlab.com/pycqa/flake8/milestones/15

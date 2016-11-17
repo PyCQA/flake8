@@ -171,7 +171,7 @@ When reviewing other people's merge requests and issues, please be
 **especially** mindful of how the words you choose can be read by someone
 else. We strive for professional code reviews that do not insult the
 contributor's intelligence or impugn their character. The code review
-should be focused on the code, it's effectiveness, and whether it is
+should be focused on the code, its effectiveness, and whether it is
 appropriate for |Flake8|.
 
 If you have the ability to edit an issue or merge request's labels, please do

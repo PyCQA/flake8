@@ -470,23 +470,22 @@ class FileChecker(object):
             # NOTE(sigmavirus24): SyntaxErrors report 1-indexed column
             # numbers. We need to decrement the column number by 1 at
             # least.
-            offset = 1
+            column_offset = 1
+            # See also: https://gitlab.com/pycqa/flake8/issues/237
             physical_line = token[-1]
-            if len(physical_line) == column and physical_line[-1] == '\n':
-                # NOTE(sigmavirus24): By default, we increment the column
-                # value so that it's always 1-indexed. The SyntaxError that
-                # we are trying to handle here will end up being 2 past
-                # the end of the line. This happens because the
-                # SyntaxError is technically the character after the
-                # new-line. For example, if the code is ``foo(\n`` then
-                # ``\n`` will be 4, the empty string will be 5 but most
-                # tools want to report the at column 4, i.e., the opening
-                # parenthesis. Semantically, having a column number of 6 is
-                # correct but not useful for tooling (e.g., editors that
-                # constantly run Flake8 for users).
-                # See also: https://gitlab.com/pycqa/flake8/issues/237
-                offset += 1
-            column -= offset
+
+            # NOTE(sigmavirus24): SyntaxErrors also don't exactly have a
+            # "physical" line so much as what was accumulated by the point
+            # tokenizing failed.
+            # See also: https://gitlab.com/pycqa/flake8/issues/237
+            lines = physical_line.rstrip('\n').split('\n')
+            row_offset = len(lines) - 1
+            logical_line = lines[0]
+            logical_line_length = len(logical_line)
+            if column > logical_line_length:
+                column = logical_line_length
+            row -= row_offset
+            column -= column_offset
         return row, column
 
     def run_ast_checks(self):

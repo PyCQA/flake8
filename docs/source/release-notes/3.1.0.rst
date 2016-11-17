@@ -22,7 +22,7 @@ You can view the `3.1.0 milestone`_ on GitLab for more details.
   SyntaxErrors that occur at a newline, this caused the position to be
   visually off by two. (See also `GitLab#237`_)
 
-- Fix the behaviour of ``--enable-extenstions``. Previously, items specified
+- Fix the behaviour of ``--enable-extensions``. Previously, items specified
   here were still ignored due to the fact that the off-by-default extension
   codes were being left in the ``ignore`` list. (See also `GitLab#239`_)
 
@@ -35,7 +35,7 @@ You can view the `3.1.0 milestone`_ on GitLab for more details.
   have fixed this bug. (See also `GitLab#245`_)
 
 - Add new File Processor attribute, ``previous_unindented_logical_line`` to
-  accomodate pycodestyle 2.1.0. (See also `GitLab#246`_)
+  accommodate pycodestyle 2.1.0. (See also `GitLab#246`_)
 
 - When something goes wrong, exit non-zero. (See also `GitLab#248`_,
   `GitLab#209`_)

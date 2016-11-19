@@ -275,7 +275,14 @@ class Manager(object):
             for argument in paths
             for filename in utils.filenames_from(argument,
                                                  self.is_path_excluded)
-            if should_create_file_checker(filename)
+            # NOTE(sigmavirus24): If a user explicitly specifies something,
+            # e.g, ``flake8 bin/script`` then we should run Flake8 against
+            # that. Since should_create_file_checker looks to see if the
+            # filename patterns match the filename, we want to skip that in
+            # the event that the argument and the filename are identical.
+            # If it was specified explicitly, the user intended for it to be
+            # checked.
+            if argument == filename or should_create_file_checker(filename)
         ]
         LOG.info('Checking %d files', len(self.checkers))
 

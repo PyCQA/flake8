@@ -3,6 +3,9 @@
 
 You can view the `3.3.0 milestone`_ on GitLab for more details.
 
+- Add methods to Report class that will be called when Flake8 starts and
+  finishes processing a file. (`GitLab#251`_)
+
 - Dramatically improve the performance of Flake8 (`GitLab!156`_)
 
 - Fix problem where hooks should only check \*.py files. (See also
@@ -14,6 +17,8 @@ You can view the `3.3.0 milestone`_ on GitLab for more details.
 .. links
 .. _3.3.0 milestone:
     https://gitlab.com/pycqa/flake8/milestones/16
+.. _GitLab#251:
+    https://gitlab.com/pycqa/flake8/issues/251
 .. _GitLab#268:
     https://gitlab.com/pycqa/flake8/issues/268
 .. _GitLab!156:

@@ -1,5 +1,6 @@
 """Implementation of the StyleGuide used by Flake8."""
 import collections
+import contextlib
 import enum
 import linecache
 import logging
@@ -119,6 +120,13 @@ class StyleGuide(object):
             return Ignored.Explicitly
 
         return Selected.Implicitly
+
+    @contextlib.contextmanager
+    def processing_file(self, filename):
+        """Record the fact that we're processing the file's results."""
+        self.formatter.beginning(filename)
+        yield self
+        self.formatter.finished(filename)
 
     def _decision_for(self, code):
         # type: (Error) -> Decision

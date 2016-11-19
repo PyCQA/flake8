@@ -44,6 +44,24 @@ class BaseFormatter(object):
         """Initialize the formatter further."""
         pass
 
+    def beginning(self, filename):
+        """Notify the formatter that we're starting to process a file.
+
+        :param str filename:
+            The name of the file that Flake8 is beginning to report results
+            from.
+        """
+        pass
+
+    def finished(self, filename):
+        """Notify the formatter that we've finished processing a file.
+
+        :param str filename:
+            The name of the file that Flake8 has finished reporting results
+            from.
+        """
+        pass
+
     def start(self):
         """Prepare the formatter to receive input.
 

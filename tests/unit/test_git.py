@@ -27,3 +27,20 @@ def test_find_modified_files(lazy):
         git.find_modified_files(lazy)
 
     piped_process.assert_called_once_with(call)
+
+
+@mock.patch("flake8.main.git.copy_indexed_files_to")
+def test_only_py_files(mock_files):
+    """Confirm only run checks on Python source file."""
+    mock_files.return_value = [
+        "/tmp/xxx/test.py",
+        "/tmp/xxx/test.html",
+        "/tmp/xxx/test.txt",
+    ]
+
+    spec = "flake8.main.application.Application.run_checks"
+    with mock.patch(spec) as mock_run:
+        git.hook(lazy=False)
+        mock_run.assert_called_once_with([
+            "/tmp/xxx/test.py"
+        ])

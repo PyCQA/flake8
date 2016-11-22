@@ -20,7 +20,7 @@ def test_oserrors_cause_serial_fall_back():
     """Verify that OSErrors will cause the Manager to fallback to serial."""
     err = OSError(errno.ENOSPC, 'Ominous message about spaceeeeee')
     style_guide = style_guide_mock()
-    with mock.patch('multiprocessing.Queue', side_effect=err):
+    with mock.patch('_multiprocessing.SemLock', side_effect=err):
         manager = checker.Manager(style_guide, [], [])
     assert manager.using_multiprocessing is False
 
@@ -30,7 +30,7 @@ def test_oserrors_are_reraised(is_windows):
     """Verify that OSErrors will cause the Manager to fallback to serial."""
     err = OSError(errno.EAGAIN, 'Ominous message')
     style_guide = style_guide_mock()
-    with mock.patch('multiprocessing.Queue', side_effect=err):
+    with mock.patch('_multiprocessing.SemLock', side_effect=err):
         with pytest.raises(OSError):
             checker.Manager(style_guide, [], [])
 

@@ -59,7 +59,7 @@ def test_read_lines_from_stdin(stdin_get_value):
     stdin_value = mock.Mock()
     stdin_value.splitlines.return_value = []
     stdin_get_value.return_value = stdin_value
-    file_processor = processor.FileProcessor('-', options_from())
+    processor.FileProcessor('-', options_from())
     stdin_get_value.assert_called_once_with()
     stdin_value.splitlines.assert_called_once_with(True)
 

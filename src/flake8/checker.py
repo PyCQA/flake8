@@ -247,8 +247,8 @@ class Manager(object):
                   '' if match else 'not ')
         return match
 
-    def make_checkers(self, paths=None):
-        # type: (List[str]) -> NoneType
+    def make_checkers(self, paths=None, is_cli=True):
+        # type: (List[str], bool) -> NoneType
         """Create checkers for each file."""
         if paths is None:
             paths = self.arguments
@@ -282,7 +282,11 @@ class Manager(object):
             # the event that the argument and the filename are identical.
             # If it was specified explicitly, the user intended for it to be
             # checked.
-            if argument == filename or should_create_file_checker(filename)
+            # EDIT(cold): Add ``is_cli`` to determine if the current process
+            # running in cli by using ``flake8 bin/script``. Otherwise
+            # it should be running by such as git hooks and etc.
+            if ((is_cli and argument == filename) or
+                should_create_file_checker(filename))
         ]
         LOG.info('Checking %d files', len(self.checkers))
 
@@ -360,15 +364,18 @@ class Manager(object):
         finally:
             self._force_cleanup()
 
-    def start(self, paths=None):
+    def start(self, paths=None, is_cli=True):
         """Start checking files.
 
         :param list paths:
             Path names to check. This is passed directly to
             :meth:`~Manager.make_checkers`.
+        :param bool is_cli:
+            If current process running in cli by using `flake8 script.py`
+            command.
         """
         LOG.info('Making checkers')
-        self.make_checkers(paths)
+        self.make_checkers(paths, is_cli)
         if not self.using_multiprocessing:
             return
 

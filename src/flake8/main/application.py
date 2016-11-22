@@ -227,7 +227,7 @@ class Application(object):
                 checker_plugins=self.check_plugins,
             )
 
-    def run_checks(self, files=None):
+    def run_checks(self, files=None, is_cli=True):
         # type: (Union[List[str], NoneType]) -> NoneType
         """Run the actual checks with the FileChecker Manager.
 
@@ -237,10 +237,14 @@ class Application(object):
 
         :param list files:
             List of filenames to process
+
+        :param bool is_cli:
+            If current process running in cli by using `flake8 script.py`
+            command.
         """
         if self.running_against_diff:
             files = list(sorted(self.parsed_diff.keys()))
-        self.file_checker_manager.start(files)
+        self.file_checker_manager.start(files, is_cli=is_cli)
         self.file_checker_manager.run()
         LOG.info('Finished running')
         self.file_checker_manager.stop()

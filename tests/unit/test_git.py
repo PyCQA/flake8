@@ -30,17 +30,29 @@ def test_find_modified_files(lazy):
 
 
 @mock.patch("flake8.main.git.copy_indexed_files_to")
-def test_only_py_files(mock_files):
+@mock.patch("flake8.checker.os.path.exists", autospec=True)
+@mock.patch("flake8.checker.FileChecker._make_processor", autospec=True)
+def test_only_py_files(mock_processor, mock_exists, mock_files):
     """Confirm only run checks on Python source file."""
+    class MockProcessor(object):
+        def __init__(self, filename):
+            self.filename = filename
+            self.lines = []
+
+    mock_processor.side_effect = lambda self: MockProcessor(self.filename)
+    mock_exists.return_value = True
     mock_files.return_value = [
         "/tmp/xxx/test.py",
         "/tmp/xxx/test.html",
         "/tmp/xxx/test.txt",
     ]
 
-    spec = "flake8.main.application.Application.run_checks"
-    with mock.patch(spec) as mock_run:
+    def _run_to_test_checker(self):
+        new_paths = [x.filename for x in self.checkers]
+        assert "/tmp/xxx/test.py" in new_paths
+        assert "/tmp/xxx/test.html" not in new_paths
+        assert "/tmp/xxx/test.txt" not in new_paths
+
+    with mock.patch("flake8.checker.Manager.run", autospec=True) as mock_run:
+        mock_run.side_effect = _run_to_test_checker
         git.hook(lazy=False)
-        mock_run.assert_called_once_with([
-            "/tmp/xxx/test.py"
-        ])

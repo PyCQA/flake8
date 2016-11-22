@@ -5,7 +5,6 @@
 
 """
 import contextlib
-import fnmatch
 import os
 import shutil
 import stat
@@ -41,11 +40,10 @@ def hook(lazy=False, strict=False):
     from flake8.main import application
     app = application.Application()
     with make_temporary_directory() as tempdir:
-        filepaths = [x for x in list(copy_indexed_files_to(tempdir, lazy))
-                     if fnmatch.fnmatch(x, '*.py')]
+        filepaths = list(copy_indexed_files_to(tempdir, lazy))
         app.initialize(['.'])
         app.options.exclude = update_excludes(app.options.exclude, tempdir)
-        app.run_checks(filepaths)
+        app.run_checks(filepaths, is_cli=False)
 
     app.report_errors()
     if strict:

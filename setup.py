@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))  # noqa
 import flake8
 
 
-tests_require = ['mock', 'pytest']
+tests_require = ['mock >= 2.0.0', 'pytest']
 
 requires = [
     "pyflakes >= 0.8.1, != 1.2.0, != 1.2.1, != 1.2.2, < 1.4.0",

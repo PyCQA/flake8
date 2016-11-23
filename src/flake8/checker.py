@@ -257,24 +257,17 @@ class Manager(object):
             paths = ['.']
 
         filename_patterns = self.options.filename
+        running_from_vcs = self.options._running_from_vcs
 
         # NOTE(sigmavirus24): Yes this is a little unsightly, but it's our
         # best solution right now.
-        def should_create_file_checker(filename):
+        def should_create_file_checker(filename, argument):
             """Determine if we should create a file checker."""
             matches_filename_patterns = utils.fnmatch(
                 filename, filename_patterns
             )
             is_stdin = filename == '-'
             file_exists = os.path.exists(filename)
-            return (file_exists and matches_filename_patterns) or is_stdin
-
-        checks = self.checks.to_dictionary()
-        self.checkers = [
-            FileChecker(filename, checks, self.options)
-            for argument in paths
-            for filename in utils.filenames_from(argument,
-                                                 self.is_path_excluded)
             # NOTE(sigmavirus24): If a user explicitly specifies something,
             # e.g, ``flake8 bin/script`` then we should run Flake8 against
             # that. Since should_create_file_checker looks to see if the
@@ -282,7 +275,19 @@ class Manager(object):
             # the event that the argument and the filename are identical.
             # If it was specified explicitly, the user intended for it to be
             # checked.
-            if argument == filename or should_create_file_checker(filename)
+            explicitly_provided = (not running_from_vcs and
+                                   (argument == filename))
+            return ((file_exists and
+                     (explicitly_provided or matches_filename_patterns)) or
+                    is_stdin)
+
+        checks = self.checks.to_dictionary()
+        self.checkers = [
+            FileChecker(filename, checks, self.options)
+            for argument in paths
+            for filename in utils.filenames_from(argument,
+                                                 self.is_path_excluded)
+            if should_create_file_checker(filename, argument)
         ]
         LOG.info('Checking %d files', len(self.checkers))
 

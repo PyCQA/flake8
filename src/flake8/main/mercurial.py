@@ -35,7 +35,10 @@ def hook(ui, repo, **kwargs):
     filenames = list(get_filenames_from(repo, kwargs))
 
     app = application.Application()
-    app.run(filenames)
+    app.initialize(filenames)
+    app.options._running_from_vcs = True
+    app.run_checks()
+    app.report()
 
     if strict:
         return app.result_count

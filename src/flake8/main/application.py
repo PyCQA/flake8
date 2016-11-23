@@ -174,6 +174,8 @@ class Application(object):
             if not self.parsed_diff:
                 self.exit()
 
+        self.options._running_from_vcs = False
+
         self.check_plugins.provide_options(self.option_manager, self.options,
                                            self.args)
         self.listening_plugins.provide_options(self.option_manager,
@@ -300,15 +302,19 @@ class Application(object):
         self.make_guide()
         self.make_file_checker_manager()
 
-    def _run(self, argv):
-        # type: (Union[NoneType, List[str]]) -> NoneType
-        self.initialize(argv)
-        self.run_checks()
+    def report(self):
+        """Report errors, statistics, and benchmarks."""
         self.formatter.start()
         self.report_errors()
         self.report_statistics()
         self.report_benchmarks()
         self.formatter.stop()
+
+    def _run(self, argv):
+        # type: (Union[NoneType, List[str]]) -> NoneType
+        self.initialize(argv)
+        self.run_checks()
+        self.report()
 
     def run(self, argv=None):
         # type: (Union[NoneType, List[str]]) -> NoneType

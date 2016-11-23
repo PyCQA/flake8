@@ -43,6 +43,7 @@ def hook(lazy=False, strict=False):
         filepaths = list(copy_indexed_files_to(tempdir, lazy))
         app.initialize(['.'])
         app.options.exclude = update_excludes(app.options.exclude, tempdir)
+        app.options._running_from_vcs = True
         app.run_checks(filepaths)
 
     app.report_errors()

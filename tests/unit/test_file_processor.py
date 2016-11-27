@@ -5,7 +5,10 @@ import tokenize
 
 from flake8 import processor
 
-import mock
+try:
+    import mock
+except ImportError:
+    from unittest import mock
 import pytest
 
 

@@ -1,5 +1,8 @@
 """Tests around functionality in the git integration."""
-import mock
+try:
+    import mock
+except ImportError:
+    from unittest import mock
 import pytest
 
 from flake8.main import git

@@ -1,5 +1,8 @@
 """Unit tests for the FileChecker class."""
-import mock
+try:
+    import mock
+except ImportError:
+    from unittest import mock
 
 from flake8 import checker
 

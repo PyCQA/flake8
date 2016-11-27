@@ -1,7 +1,10 @@
 """Tests for flake8's utils module."""
 import os
 
-import mock
+try:
+    import mock
+except ImportError:
+    from unittest import mock
 import pytest
 
 from flake8 import utils

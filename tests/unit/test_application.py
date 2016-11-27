@@ -1,7 +1,10 @@
 """Tests for the Application class."""
 import optparse
 
-import mock
+try:
+    import mock
+except ImportError:
+    from unittest import mock
 import pytest
 
 from flake8.main import application as app

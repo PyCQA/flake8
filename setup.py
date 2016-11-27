@@ -12,13 +12,16 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))  # noqa
 import flake8
 
 
-tests_require = ['mock >= 2.0.0', 'pytest']
+tests_require = ['pytest']
 
 requires = [
     "pyflakes >= 0.8.1, != 1.2.0, != 1.2.1, != 1.2.2, < 1.4.0",
     "pycodestyle >= 2.0.0, < 2.3.0",
     "mccabe >= 0.5.0, < 0.6.0",
 ]
+
+if sys.version_info < (3, 5):
+    tests_require.append('mock >= 2.0.0')
 
 if sys.version_info < (3, 4):
     requires.append("enum34")

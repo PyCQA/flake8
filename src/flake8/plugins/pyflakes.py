@@ -17,27 +17,44 @@ import pyflakes.checker
 from flake8 import utils
 
 
+FLAKE8_PYFLAKES_CODES = dict([line.split()[::-1] for line in (
+    'F401 UnusedImport',
+    'F402 ImportShadowedByLoopVar',
+    'F403 ImportStarUsed',
+    'F404 LateFutureImport',
+    'F405 ImportStarUsage',
+    'F406 ImportStarNotPermitted',
+    'F407 FutureFeatureNotDefined',
+    'F601 MultiValueRepeatedKeyLiteral',
+    'F602 MultiValueRepeatedKeyVariable',
+    'F621 TooManyExpressionsInStarredAssignment',
+    'F622 TwoStarredExpressions',
+    'F631 AssertTuple',
+    'F701 BreakOutsideLoop',
+    'F702 ContinueOutsideLoop',
+    'F703 ContinueInFinally',
+    'F704 YieldOutsideFunction',
+    'F705 ReturnWithArgsInsideGenerator',
+    'F706 ReturnOutsideFunction',
+    'F707 DefaultExceptNotLast',
+    'F721 DoctestSyntaxError',
+    'F811 RedefinedWhileUnused',
+    'F812 RedefinedInListComp',
+    'F821 UndefinedName',
+    'F822 UndefinedExport',
+    'F823 UndefinedLocal',
+    'F831 DuplicateArgument',
+    'F841 UnusedVariable',
+)])
+
+
 def patch_pyflakes():
     """Add error codes to Pyflakes messages."""
-    codes = dict([line.split()[::-1] for line in (
-        'F401 UnusedImport',
-        'F402 ImportShadowedByLoopVar',
-        'F403 ImportStarUsed',
-        'F404 LateFutureImport',
-        'F405 ImportStarUsage',
-        'F810 Redefined',
-        'F811 RedefinedWhileUnused',
-        'F812 RedefinedInListComp',
-        'F821 UndefinedName',
-        'F822 UndefinedExport',
-        'F823 UndefinedLocal',
-        'F831 DuplicateArgument',
-        'F841 UnusedVariable',
-    )])
-
     for name, obj in vars(pyflakes.messages).items():
         if name[0].isupper() and obj.message:
-            obj.flake8_msg = '%s %s' % (codes.get(name, 'F999'), obj.message)
+            obj.flake8_msg = '%s %s' % (
+                FLAKE8_PYFLAKES_CODES.get(name, 'F999'), obj.message
+            )
 
 
 patch_pyflakes()

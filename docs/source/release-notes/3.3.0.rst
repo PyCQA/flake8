@@ -6,6 +6,9 @@ You can view the `3.3.0 milestone`_ on GitLab for more details.
 - Fix problem where hooks should only check \*.py files. (See also
   `GitLab#268`_)
 
+- Added unique error codes for all missing PyFlakes messages (14 new
+  codes, see all :ref:`Error / Violation Codes <error_codes>`)
+
 .. links
 .. _3.3.0 milestone:
     https://gitlab.com/pycqa/flake8/milestones/16

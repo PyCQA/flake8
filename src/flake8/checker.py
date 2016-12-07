@@ -57,7 +57,7 @@ class Manager(object):
       together and make our output deterministic.
     """
 
-    def __init__(self, style_guide, arguments, checker_plugins):
+    def __init__(self, style_guide, arguments, checker_plugins, junit_xml_report):
         """Initialize our Manager instance.
 
         :param style_guide:
@@ -70,11 +70,14 @@ class Manager(object):
             The plugins representing checks parsed from entry-points.
         :type checker_plugins:
             flake8.plugins.manager.Checkers
+        :param str junit_xml_report:
+            Filename to write a JUnit XML report to
         """
         self.arguments = arguments
         self.style_guide = style_guide
         self.options = style_guide.options
         self.checks = checker_plugins
+        self.junit_xml_report = junit_xml_report
         self.jobs = self._job_count()
         self.process_queue = None
         self.results_queue = None
@@ -304,12 +307,78 @@ class Manager(object):
             tuple(int, int)
         """
         results_reported = results_found = 0
+        all_results = {}
         for checker in self.checkers:
+            if checker.filename not in all_results:
+                all_results[checker.filename] = {'checker': checker}
             results = sorted(checker.results, key=lambda tup: (tup[1], tup[2]))
+            all_results[checker.filename]['errors'] = results
             results_reported += self._handle_results(checker.display_name,
                                                      results)
             results_found += len(results)
+
+        # Output JUnit XML
+        self.report_junit_xml(all_results)
+
         return (results_found, results_reported)
+
+    def report_junit_xml(self, all_results):
+        """
+        Report all results to a JUnit XML file
+
+        :param dict all_results: A dictionary containing all results
+        """
+        # If no junit_xml_report file was provided, just skip this
+        if not self.junit_xml_report:
+            return
+
+        testcase_success_template = '<testcase classname="{classname}" file="{filename}" line="{line_number}" ' \
+                                    'name="{name}" time="{time_elapsed}"/>'
+        testcase_failure_template = '<testcase classname="{classname}" file="{filename}" line="{line_number}" ' \
+                                    'name="{name}" time="{time_elapsed}"><failure message="{short_message}">' \
+                                    '{long_message}</failure></testcase>'
+        testsuite_template = '<testsuite errors="{num_errors}" failures="{num_failures}" name="flake8" ' \
+                             'skips="{num_skips}" tests="{num_tests}" time="{time_elapsed}">' \
+                             '\n{testcase_nodes}\n</testsuite>'
+
+        testcase_nodes = []
+        num_failures = 0
+        num_files = len(all_results)
+        for filename in sorted(all_results.keys()):
+            errors = all_results[filename]['errors']
+            if errors:
+                num_failures += 1
+                for error_code, line_number, column, text, physical_line in errors:
+                    testcase_nodes.append(testcase_failure_template.format(**{
+                        'classname': '',  # n.a.
+                        'filename': filename,
+                        'line_number': line_number,
+                        'name': '%s: %s' % (filename, error_code),
+                        'time_elapsed': '0.1',  # Not yet measured?
+                        'short_message': text,
+                        'long_message': 'lineno: %d, column: %d, code: %s, error: %s\n>>%s' % (
+                            line_number, column, error_code, text, physical_line)
+                    }))
+            else:
+                testcase_nodes.append(testcase_success_template.format(**{
+                    'classname': '',  # n.a.
+                    'filename': filename,
+                    'line_number': 1,
+                    'name': filename,
+                    'time_elapsed': '0.1',  # Not yet measured?
+                }))
+
+        ouput = testsuite_template.format(**{
+            'num_errors': 0,
+            'num_failures': num_failures,
+            'num_skips': 0,
+            'num_tests': num_files,
+            'time_elapsed': 1,
+            'testcase_nodes': '\n'.join(testcase_nodes)
+        })
+
+        with open(self.junit_xml_report, 'w') as junit_xml_file:
+            junit_xml_file.write(ouput)
 
     def run_parallel(self):
         """Run the checkers in parallel."""

@@ -25,3 +25,4 @@ Contributors (by order of appearance) :
 - Tyrel Souza
 - Corey Farwell
 - Michael Penkov
+- Anthony Sottile

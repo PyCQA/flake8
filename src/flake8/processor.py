@@ -367,6 +367,7 @@ def is_eol_token(token):
     """Check if the token is an end-of-line token."""
     return token[0] in NEWLINE or token[4][token[3][1]:].lstrip() == '\\\n'
 
+
 if COMMENT_WITH_NL:  # If on Python 2.6
     def is_eol_token(token, _is_eol_token=is_eol_token):
         """Check if the token is an end-of-line token."""

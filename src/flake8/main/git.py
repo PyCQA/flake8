@@ -6,6 +6,7 @@
 """
 import contextlib
 import os
+import os.path
 import shutil
 import stat
 import subprocess
@@ -46,6 +47,7 @@ def hook(lazy=False, strict=False):
         app.options._running_from_vcs = True
         app.run_checks(filepaths)
 
+    update_paths(app.file_checker_manager, tempdir)
     app.report_errors()
     if strict:
         return app.result_count
@@ -202,6 +204,16 @@ def update_excludes(exclude_list, temporary_directory_path):
         if os.path.isabs(pattern) else pattern
         for pattern in exclude_list
     ]
+
+
+def update_paths(checker_manager, temp_prefix):
+    temp_prefix_length = len(temp_prefix)
+    for checker in checker_manager.checkers:
+        filename = checker.display_name
+        if filename.startswith(temp_prefix):
+            checker.display_name = os.path.relpath(
+                filename[temp_prefix_length:]
+            )
 
 
 _HOOK_TEMPLATE = """#!{executable}

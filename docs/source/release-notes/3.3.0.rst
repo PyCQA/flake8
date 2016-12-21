@@ -3,6 +3,8 @@
 
 You can view the `3.3.0 milestone`_ on GitLab for more details.
 
+- Dramatically improve the performance of Flake8 (`GitLab!156`_)
+
 - Fix problem where hooks should only check \*.py files. (See also
   `GitLab#268`_)
 
@@ -14,3 +16,5 @@ You can view the `3.3.0 milestone`_ on GitLab for more details.
     https://gitlab.com/pycqa/flake8/milestones/16
 .. _GitLab#268:
     https://gitlab.com/pycqa/flake8/issues/268
+.. _GitLab!156:
+    https://gitlab.com/pycqa/flake8/merge_requests/156

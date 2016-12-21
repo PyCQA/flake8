@@ -92,11 +92,6 @@ class Manager(object):
                     raise
                 self.using_multiprocessing = False
 
-    @staticmethod
-    def _cleanup_queue(q):
-        while not q.empty():
-            q.get_nowait()
-
     def _process_statistics(self):
         for checker in self.checkers:
             for statistic in defaults.STATISTIC_NAMES:
@@ -279,10 +274,15 @@ class Manager(object):
         """Run the checkers in parallel."""
         final_results = collections.defaultdict(list)
         final_statistics = collections.defaultdict(dict)
-        for ret in self.pool.imap_unordered(
-                _run_checks, self.checkers,
-                chunksize=_pool_chunksize(len(self.checkers), self.jobs),
-        ):
+        pool_map = self.pool.imap_unordered(
+            _run_checks,
+            self.checkers,
+            chunksize=calculate_pool_chunksize(
+                len(self.checkers),
+                self.jobs,
+            ),
+        )
+        for ret in pool_map:
             filename, results, statistics = ret
             final_results[filename] = results
             final_statistics[filename] = statistics
@@ -620,7 +620,7 @@ def _pool_init():
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 
-def _pool_chunksize(num_checkers, num_jobs):
+def calculate_pool_chunksize(num_checkers, num_jobs):
     """Determine the chunksize for the multiprocessing Pool.
 
     - For chunksize, see: https://docs.python.org/3/library/multiprocessing.html#multiprocessing.pool.Pool.imap  # noqa

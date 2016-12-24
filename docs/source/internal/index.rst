@@ -17,6 +17,7 @@ pull gently.
 
     contributing
     writing-documentation
+    writing-code
     releases
     start-to-finish
     checker

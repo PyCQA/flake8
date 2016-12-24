@@ -163,6 +163,8 @@ Merge requests should:
 
         The final line of the body references the issue appropriately.
 
+- Follow the guidelines in :ref:`writing-code`
+
 
 Reviewing and Triaging Issues and Merge Requests
 ================================================

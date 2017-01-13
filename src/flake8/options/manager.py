@@ -245,7 +245,7 @@ class OptionManager(object):
         """Generate a comma-separated list of versions of plugins."""
         return join_on.join(
             format_str % self.format_plugin(plugin)
-            for plugin in self.registered_plugins
+            for plugin in sorted(self.registered_plugins)
         )
 
     def update_version_string(self):

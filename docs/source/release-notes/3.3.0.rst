@@ -3,6 +3,8 @@
 
 You can view the `3.3.0 milestone`_ on GitLab for more details.
 
+- Update upper bound on PyFlakes to allow for PyFlakes 1.5.0 (`GitLab#290`_)
+
 - Add methods to Report class that will be called when Flake8 starts and
   finishes processing a file. (`GitLab#251`_)
 
@@ -26,5 +28,7 @@ You can view the `3.3.0 milestone`_ on GitLab for more details.
     https://gitlab.com/pycqa/flake8/issues/251
 .. _GitLab#268:
     https://gitlab.com/pycqa/flake8/issues/268
+.. _GitLab#290:
+    https://gitlab.com/pycqa/flake8/issues/290
 .. _GitLab!156:
     https://gitlab.com/pycqa/flake8/merge_requests/156

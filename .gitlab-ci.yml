@@ -24,6 +24,7 @@ python3:
   script: tox --skip-missing-interpreters -e py34,py35
 
 linters:
+  image: python:3.5
   stage: test
   script: tox -e linters
 

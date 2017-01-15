@@ -15,7 +15,7 @@ import flake8
 tests_require = ['mock >= 2.0.0', 'pytest']
 
 requires = [
-    "pyflakes >= 0.8.1, != 1.2.0, != 1.2.1, != 1.2.2, < 1.4.0",
+    "pyflakes >= 1.5.0, < 1.6.0",
     "pycodestyle >= 2.0.0, < 2.3.0",
     "mccabe >= 0.5.0, < 0.6.0",
 ]
@@ -123,6 +123,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Software Development :: Quality Assurance",
     ],

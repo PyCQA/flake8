@@ -19,6 +19,7 @@ def register_default_options(option_manager):
     - ``--hang-closing``
     - ``--ignore``
     - ``--max-line-length``
+    - ``--indent-size``
     - ``--select``
     - ``--disable-noqa``
     - ``--show-source``
@@ -113,6 +114,12 @@ def register_default_options(option_manager):
         default=defaults.MAX_LINE_LENGTH, parse_from_config=True,
         help='Maximum allowed line length for the entirety of this run. '
              '(Default: %default)',
+    )
+
+    add_option(
+        '--indent-size', type='int', metavar='n',
+        default=defaults.INDENT_SIZE, parse_from_config=True,
+        help='Number of spaces used for indentation (Default: %default)',
     )
 
     add_option(

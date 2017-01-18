@@ -24,6 +24,7 @@ IGNORE = (
 )
 SELECT = ('E', 'F', 'W', 'C90')
 MAX_LINE_LENGTH = 79
+INDENT_SIZE = 4
 
 TRUTHY_VALUES = set(['true', '1', 't'])
 

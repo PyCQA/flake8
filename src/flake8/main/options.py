@@ -158,7 +158,7 @@ def register_default_options(option_manager):
         '--install-hook', action='callback', type='choice',
         choices=vcs.choices(), callback=vcs.install,
         help='Install a hook that is run prior to a commit for the supported '
-             'version control systema.'
+             'version control system.'
     )
 
     add_option(

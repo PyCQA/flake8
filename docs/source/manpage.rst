@@ -72,7 +72,7 @@ All options available as of Flake8 3.1.0::
     --exit-zero           Exit with status code "0" even if there are errors.
     --install-hook=INSTALL_HOOK
                           Install a hook that is run prior to a commit for the
-                          supported version control systema.
+                          supported version control system.
     -j JOBS, --jobs=JOBS  Number of subprocesses to use to run checks in
                           parallel. This is ignored on Windows. The default,
                           "auto", will auto-detect the number of processors

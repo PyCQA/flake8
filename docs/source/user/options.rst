@@ -64,6 +64,8 @@ Index of Options
 
 - :option:`flake8 --max-doc-length`
 
+- :option:`flake8 --indent-size`
+
 - :option:`flake8 --select`
 
 - :option:`flake8 --disable-noqa`
@@ -570,6 +572,27 @@ Options and their Descriptions
 
         max-doc-length = 79
 
+.. option:: --indent-size=<n>
+
+    :ref:`Go back to index <top>`
+
+    Set the number of spaces used for indentation.
+
+    By default, 4.
+
+    Command-line example:
+
+    .. prompt:: bash
+
+        flake8 --indent-size 2 dir/
+
+    This **can** be specified in config files.
+
+    Example config file usage:
+
+    .. code-block:: ini
+
+        indent-size = 2
 
 .. option:: --select=<errors>
 

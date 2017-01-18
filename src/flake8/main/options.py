@@ -105,6 +105,7 @@ def register_default_options(option_manager):
     - ``--per-file-ignores``
     - ``--max-line-length``
     - ``--max-doc-length``
+    - ``--indent-size``
     - ``--select``
     - ``--disable-noqa``
     - ``--show-source``
@@ -253,6 +254,14 @@ def register_default_options(option_manager):
         parse_from_config=True,
         help="Maximum allowed doc line length for the entirety of this run. "
         "(Default: %(default)s)",
+    )
+    add_option(
+        "--indent-size",
+        type=int,
+        metavar="n",
+        default=defaults.INDENT_SIZE,
+        parse_from_config=True,
+        help="Number of spaces used for indentation (Default: %default)",
     )
 
     add_option(

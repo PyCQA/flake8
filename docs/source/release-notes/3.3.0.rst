@@ -19,9 +19,14 @@ You can view the `3.3.0 milestone`_ on GitLab for more details.
 - Added unique error codes for all missing PyFlakes messages (14 new
   codes, see all :ref:`Error / Violation Codes <error_codes>`)
 
-.. links
+- Force ``flake8 --version`` to be repeatable between invocations. (See also
+  `GitLab#297`_)
+
+.. all links
 .. _3.3.0 milestone:
     https://gitlab.com/pycqa/flake8/milestones/16
+
+.. issue links
 .. _GitLab#244:
     https://gitlab.com/pycqa/flake8/issues/244
 .. _GitLab#251:
@@ -30,5 +35,9 @@ You can view the `3.3.0 milestone`_ on GitLab for more details.
     https://gitlab.com/pycqa/flake8/issues/268
 .. _GitLab#290:
     https://gitlab.com/pycqa/flake8/issues/290
+.. _GitLab#297:
+    https://gitlab.com/pycqa/flake8/issues/297
+
+.. merge request links
 .. _GitLab!156:
     https://gitlab.com/pycqa/flake8/merge_requests/156

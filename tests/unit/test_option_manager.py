@@ -137,6 +137,23 @@ def test_generate_versions(optmanager):
             'Testing 100: 0.0.0, Testing 101: 0.0.0, Testing 300: 0.0.0')
 
 
+def test_plugins_are_sorted_in_generate_versions(optmanager):
+    """Verify we sort before joining strings in generate_versions."""
+    optmanager.registered_plugins = [
+        ('pyflakes', '1.5.0'),
+        ('mccabe', '0.7.0'),
+        ('pycodestyle', '2.2.0'),
+        ('flake8-docstrings', '0.6.1'),
+        ('flake8-bugbear', '2016.12.1'),
+    ]
+    assert (optmanager.generate_versions() ==
+            'flake8-bugbear: 2016.12.1, '
+            'flake8-docstrings: 0.6.1, '
+            'mccabe: 0.7.0, '
+            'pycodestyle: 2.2.0, '
+            'pyflakes: 1.5.0')
+
+
 def test_generate_versions_with_format_string(optmanager):
     """Verify a comma-separated string is generated of registered plugins."""
     optmanager.registered_plugins.update([

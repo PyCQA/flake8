@@ -66,7 +66,7 @@ class Flake8(setuptools.Command):
             if package_directory.startswith(seen_package_directories):
                 continue
 
-            seen_package_directories += (package_directory,)
+            seen_package_directories += (package_directory + '.',)
             yield package_directory
 
     def module_files(self):

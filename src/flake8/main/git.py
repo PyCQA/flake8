@@ -45,10 +45,17 @@ def hook(lazy=False, strict=False):
         app.initialize(['.'])
         app.options.exclude = update_excludes(app.options.exclude, tempdir)
         app.options._running_from_vcs = True
-        app.run_checks(filepaths)
+        # Apparently there are times when there are no files to check (e.g.,
+        # when amending a commit). In those cases, let's not try to run checks
+        # against nothing.
+        if filepaths:
+            app.run_checks(filepaths)
 
-    update_paths(app.file_checker_manager, tempdir)
-    app.report_errors()
+    # If there were files to check, update their paths and report the errors
+    if filepaths:
+        update_paths(app.file_checker_manager, tempdir)
+        app.report_errors()
+
     if strict:
         return app.result_count
     return 0

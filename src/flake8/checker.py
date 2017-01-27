@@ -443,19 +443,24 @@ class FileChecker(object):
             # numbers. We need to decrement the column number by 1 at
             # least.
             column_offset = 1
+            row_offset = 0
             # See also: https://gitlab.com/pycqa/flake8/issues/237
             physical_line = token[-1]
 
-            # NOTE(sigmavirus24): SyntaxErrors also don't exactly have a
-            # "physical" line so much as what was accumulated by the point
-            # tokenizing failed.
-            # See also: https://gitlab.com/pycqa/flake8/issues/237
-            lines = physical_line.rstrip('\n').split('\n')
-            row_offset = len(lines) - 1
-            logical_line = lines[0]
-            logical_line_length = len(logical_line)
-            if column > logical_line_length:
-                column = logical_line_length
+            # NOTE(sigmavirus24): Not all "tokens" have a string as the last
+            # argument. In this event, let's skip trying to find the correct
+            # column and row values.
+            if physical_line is not None:
+                # NOTE(sigmavirus24): SyntaxErrors also don't exactly have a
+                # "physical" line so much as what was accumulated by the point
+                # tokenizing failed.
+                # See also: https://gitlab.com/pycqa/flake8/issues/237
+                lines = physical_line.rstrip('\n').split('\n')
+                row_offset = len(lines) - 1
+                logical_line = lines[0]
+                logical_line_length = len(logical_line)
+                if column > logical_line_length:
+                    column = logical_line_length
             row -= row_offset
             column -= column_offset
         return row, column

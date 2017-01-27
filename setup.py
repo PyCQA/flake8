@@ -115,6 +115,7 @@ setuptools.setup(
         ],
     },
     classifiers=[
+        "Development Status :: 5 - Production/Stable",
         "Environment :: Console",
         "Framework :: Flake8",
         "Intended Audience :: Developers",

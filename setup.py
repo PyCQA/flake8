@@ -18,7 +18,7 @@ tests_require = ['mock >= 2.0.0', 'pytest']
 # setup.cfg as well.
 requires = [
     "pyflakes >= 1.5.0, < 1.6.0",
-    "pycodestyle >= 2.0.0, < 2.3.0",
+    "pycodestyle >= 2.0.0, < 2.4.0",
     "mccabe >= 0.6.0, < 0.7.0",
 ]
 

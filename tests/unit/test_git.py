@@ -12,12 +12,12 @@ def test_find_modified_files(lazy):
         # Here --cached is missing
         call = [
             'git', 'diff-index', '--name-only', '--diff-filter=ACMRTUXB',
-            'HEAD'
+            'HEAD', '|', 'grep', '-e', '\.py$'
         ]
     else:
         call = [
             'git', 'diff-index', '--cached', '--name-only',
-            '--diff-filter=ACMRTUXB', 'HEAD'
+            '--diff-filter=ACMRTUXB', 'HEAD', '|', 'grep', '-e', '\.py$'
         ]
     mocked_popen = mock.Mock()
     mocked_popen.communicate.return_value = ('', '')

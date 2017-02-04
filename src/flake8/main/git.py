@@ -153,7 +153,7 @@ def make_temporary_directory_from(destination, directory):
 def find_modified_files(lazy):
     diff_index_cmd = [
         'git', 'diff-index', '--cached', '--name-only',
-        '--diff-filter=ACMRTUXB', 'HEAD'
+        '--diff-filter=ACMRTUXB', 'HEAD', '|', 'grep', '-e', '\.py$'
     ]
     if lazy:
         diff_index_cmd.remove('--cached')
@@ -206,10 +206,10 @@ def config_for(parameter):
 
 
 def update_excludes(exclude_list, temporary_directory_path):
-    return [
+    return exclude_list + [
         (temporary_directory_path + pattern)
-        if os.path.isabs(pattern) else pattern
         for pattern in exclude_list
+        if os.path.isabs(pattern)
     ]
 
 

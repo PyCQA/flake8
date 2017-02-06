@@ -1,23 +1,33 @@
-3.3.0 -- 2016-xx-yy
+3.3.0 -- 2017-02-06
 -------------------
 
 You can view the `3.3.0 milestone`_ on GitLab for more details.
 
-- Update upper bound on PyFlakes to allow for PyFlakes 1.5.0 (`GitLab#290`_)
+- Add support for Python 3.6 (via dependencies). **Note** Flake8 does not
+  guarantee that all plugins will support Python 3.6.
 
-- Add methods to Report class that will be called when Flake8 starts and
-  finishes processing a file. (`GitLab#251`_)
+- Added unique error codes for all missing PyFlakes messages. (14 new
+  codes, see "Error / Violation Codes")
 
-- Dramatically improve the performance of Flake8 (`GitLab!156`_)
+- Dramatically improve the performance of Flake8. (See also `GitLab!156`_)
 
 - Display the local file path instead of the temporary file path when
-  using the git hook (`GitLab#244`_)
+  using the git hook. (See also `GitLab#244`_)
+
+- Add methods to Report class that will be called when Flake8 starts and
+  finishes processing a file. (See also `GitLab#251`_)
 
 - Fix problem where hooks should only check \*.py files. (See also
   `GitLab#268`_)
 
-- Added unique error codes for all missing PyFlakes messages (14 new
-  codes, see all :ref:`Error / Violation Codes <error_codes>`)
+- Fix handling of SyntaxErrors that do not include physical line information.
+  (See also `GitLab#279`_)
+
+- Update upper bound on PyFlakes to allow for PyFlakes 1.5.0.  (See also
+  `GitLab#290`_)
+
+- Update setuptools integration to less eagerly deduplicate packages.
+  (See also `GitLab#295`_)
 
 - Force ``flake8 --version`` to be repeatable between invocations. (See also
   `GitLab#297`_)
@@ -33,8 +43,12 @@ You can view the `3.3.0 milestone`_ on GitLab for more details.
     https://gitlab.com/pycqa/flake8/issues/251
 .. _GitLab#268:
     https://gitlab.com/pycqa/flake8/issues/268
+.. _GitLab#279:
+    https://gitlab.com/pycqa/flake8/issues/279
 .. _GitLab#290:
     https://gitlab.com/pycqa/flake8/issues/290
+.. _GitLab#295:
+    https://gitlab.com/pycqa/flake8/issues/295
 .. _GitLab#297:
     https://gitlab.com/pycqa/flake8/issues/297
 

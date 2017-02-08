@@ -127,6 +127,8 @@ class StyleGuide(object):
         # Application#make_guide but it works pretty well.
         # Stop cringing... I know it's gross.
         self._application.make_guide()
+        self._application.file_checker_manager = None
+        self._application.make_file_checker_manager()
 
     def input_file(self, filename, lines=None, expected=None, line_offset=0):
         """Run collected checks on a single file.

@@ -7,6 +7,7 @@ import os
 import platform
 import re
 import sys
+import tokenize
 
 DIFF_HUNK_REGEXP = re.compile(r'^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@.*$')
 
@@ -65,17 +66,26 @@ def normalize_path(path, parent=os.curdir):
     return path.rstrip(separator + alternate_separator)
 
 
+def _stdin_get_value_py3():
+    stdin_value = sys.stdin.buffer.read()
+    fd = io.BytesIO(stdin_value)
+    try:
+        (coding, lines) = tokenize.detect_encoding(fd.readline)
+        return io.StringIO(stdin_value.decode(coding))
+    except (LookupError, SyntaxError, UnicodeError):
+        return io.StringIO(stdin_value.decode('utf-8'))
+
+
 def stdin_get_value():
     # type: () -> str
     """Get and cache it so plugins can use it."""
     cached_value = getattr(stdin_get_value, 'cached_stdin', None)
     if cached_value is None:
-        stdin_value = sys.stdin.read()
         if sys.version_info < (3, 0):
-            cached_type = io.BytesIO
+            stdin_value = io.BytesIO(sys.stdin.read())
         else:
-            cached_type = io.StringIO
-        stdin_get_value.cached_stdin = cached_type(stdin_value)
+            stdin_value = _stdin_get_value_py3()
+        stdin_get_value.cached_stdin = stdin_value
         cached_value = stdin_get_value.cached_stdin
     return cached_value.getvalue()
 

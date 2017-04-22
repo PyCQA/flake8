@@ -94,6 +94,21 @@ def test_filenames_from_a_single_file():
     assert ['flake8/__init__.py'] == filenames
 
 
+def test_filenames_from_exclude_doesnt_exclude_directory_names(tmpdir):
+    """Verify that we don't greedily exclude subdirs."""
+    tmpdir.join('1').ensure_dir().join('dont_return_me.py').ensure()
+    tmpdir.join('2').join('1').ensure_dir().join('return_me.py').ensure()
+    exclude = [tmpdir.join('1').strpath]
+
+    # This acts similar to src.flake8.checker.is_path_excluded
+    def predicate(pth):
+        return utils.fnmatch(os.path.abspath(pth), exclude)
+
+    with tmpdir.as_cwd():
+        filenames = list(utils.filenames_from('.', predicate))
+    assert filenames == [os.path.join('.', '2', '1', 'return_me.py')]
+
+
 def test_parameters_for_class_plugin():
     """Verify that we can retrieve the parameters for a class plugin."""
     class FakeCheck(object):

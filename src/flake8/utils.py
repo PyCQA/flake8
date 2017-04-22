@@ -246,7 +246,7 @@ def filenames_from(arg, predicate=None):
             # remove it from the list of sub-directories.
             for directory in sub_directories:
                 joined = os.path.join(root, directory)
-                if predicate(directory) or predicate(joined):
+                if predicate(joined):
                     sub_directories.remove(directory)
 
             for filename in files:

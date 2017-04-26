@@ -70,6 +70,9 @@ generates its own :term:`error code`\ s for ``pyflakes``:
 | F841 | local variable ``name`` is assigned to but never used               |
 +------+---------------------------------------------------------------------+
 
+Note that some of these entries behave differently on Python 2 and Python 3,
+for example F812 is specific to Python 2 only.
+
 We also report one extra error: ``E999``. We report ``E999`` when we fail to
 compile a file into an Abstract Syntax Tree for the plugins that require it.
 

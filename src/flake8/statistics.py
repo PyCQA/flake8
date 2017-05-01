@@ -17,7 +17,7 @@ class Statistics(object):
         :rtype:
             list(str)
         """
-        return list(sorted(set(key.code for key in self._store.keys())))
+        return sorted({key.code for key in self._store.keys()})
 
     def record(self, error):
         """Add the fact that the error was seen in the file.

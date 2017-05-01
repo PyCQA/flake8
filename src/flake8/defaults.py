@@ -25,7 +25,7 @@ IGNORE = (
 SELECT = ('E', 'F', 'W', 'C90')
 MAX_LINE_LENGTH = 79
 
-TRUTHY_VALUES = set(['true', '1', 't'])
+TRUTHY_VALUES = {'true', '1', 't'}
 
 # Other constants
 WHITESPACE = frozenset(' \t')

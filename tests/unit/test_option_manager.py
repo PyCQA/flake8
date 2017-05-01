@@ -209,9 +209,9 @@ def test_extend_default_ignore(optmanager):
     assert optmanager.extended_default_ignore == set()
 
     optmanager.extend_default_ignore(['T100', 'T101', 'T102'])
-    assert optmanager.extended_default_ignore == set(['T100',
-                                                      'T101',
-                                                      'T102'])
+    assert optmanager.extended_default_ignore == {'T100',
+                                                  'T101',
+                                                  'T102'}
 
 
 def test_parse_known_args(optmanager):

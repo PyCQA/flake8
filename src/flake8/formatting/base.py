@@ -168,7 +168,7 @@ class BaseFormatter(object):
 
     def _write(self, output):
         """Handle logic of whether to use an output file or print()."""
-        if sys.version_info < (3, 0) and isinstance(output, unicode):
+        if sys.version_info < (3, 0) and not isinstance(output, str):
             output = output.encode('UTF-8')
         if self.output_fd is not None:
             self.output_fd.write(output + self.newline)

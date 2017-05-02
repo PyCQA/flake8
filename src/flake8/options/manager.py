@@ -268,9 +268,7 @@ class OptionManager(object):
             setattr(options, option.dest, option.normalize(old_value))
 
     def parse_args(self, args=None, values=None):
-        """
-        Use simple proxy to calling the OptionParser's parse_args method.
-        """
+        """Use simple proxy to calling the OptionParser's parse_args method."""
         self.generate_epilog()
         self.update_version_string()
         options, xargs = self.parser.parse_args(args, values)

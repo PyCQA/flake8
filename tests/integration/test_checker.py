@@ -33,7 +33,7 @@ def plugin_func(func):
 
 @plugin_func
 def plugin_func_gen(tree):
-    """Yield the expected report with simple file plugin funciton."""
+    """Yield the expected report with simple file plugin function."""
     yield EXPECTED_REPORT + (type(plugin_func_gen), )
 
 

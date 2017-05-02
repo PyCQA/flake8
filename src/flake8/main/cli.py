@@ -4,7 +4,7 @@ from flake8.main import application
 
 def main(argv=None):
     # type: (Union[NoneType, List[str]]) -> NoneType
-    """Main entry-point for the flake8 command-line tool.
+    """Create the main entry-point for the flake8 command-line tool.
 
     This handles the creation of an instance of :class:`Application`, runs it,
     and then exits the application.

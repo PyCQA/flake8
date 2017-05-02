@@ -104,7 +104,7 @@ class Option(object):
         self._opt = None
 
     def __repr__(self):
-        """Simple representation of an Option class."""
+        """Return simple representation of an Option class."""
         return (
             'Option({0}, {1}, action={action}, default={default}, '
             'dest={dest}, type={type}, callback={callback}, help={help},'
@@ -268,7 +268,7 @@ class OptionManager(object):
             setattr(options, option.dest, option.normalize(old_value))
 
     def parse_args(self, args=None, values=None):
-        """Simple proxy to calling the OptionParser's parse_args method."""
+        """Implement simple proxy to calling the OptionParser's parse_args method."""
         self.generate_epilog()
         self.update_version_string()
         options, xargs = self.parser.parse_args(args, values)

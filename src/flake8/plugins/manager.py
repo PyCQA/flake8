@@ -25,7 +25,7 @@ class Plugin(object):
     """Wrap an EntryPoint from setuptools and other logic."""
 
     def __init__(self, name, entry_point):
-        """"Initialize our Plugin.
+        """Initialize our Plugin.
 
         :param str name:
             Name of the entry-point as it was registered with setuptools.
@@ -97,7 +97,7 @@ class Plugin(object):
 
     @property
     def plugin(self):
-        """The loaded (and cached) plugin associated with the entry-point.
+        """Load (and cache) plugin associated with the entry-point.
 
         This property implicitly loads the plugin and then caches it.
         """
@@ -373,7 +373,7 @@ class PluginTypeManager(object):
     @staticmethod
     def _generate_call_function(method_name, optmanager, *args, **kwargs):
         def generated_function(plugin):
-            """Function that attempts to call a specific method on a plugin."""
+            """Attempt to call a specific method on a plugin."""
             method = getattr(plugin, method_name, None)
             if (method is not None and
                     isinstance(method, collections.Callable)):

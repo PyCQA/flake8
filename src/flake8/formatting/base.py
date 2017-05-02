@@ -3,6 +3,7 @@ from __future__ import print_function
 
 import sys
 
+
 class BaseFormatter(object):
     """Class defining the formatter interface.
 

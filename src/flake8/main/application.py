@@ -185,6 +185,28 @@ class Application(object):
                                                 self.options,
                                                 self.args)
 
+    def formatter_for(self, formatter_plugin_name):
+        """Retrieve the formatter class by plugin name."""
+        try:
+            default_formatter = self.formatting_plugins['default']
+        except KeyError:
+            raise exceptions.ExecutionError(
+                "The 'default' Flake8 formatting plugin is unavailable. "
+                "This usually indicates that your setuptools is too old. "
+                "Please upgrade setuptools. If that does not fix the issue"
+                " please file an issue."
+            )
+
+        formatter_plugin = self.formatting_plugins.get(formatter_plugin_name)
+        if formatter_plugin is None:
+            LOG.warning(
+                '"%s" is an unknown formatter. Falling back to default.',
+                formatter_plugin_name,
+            )
+            formatter_plugin = default_formatter
+
+        return formatter_plugin.execute
+
     def make_formatter(self, formatter_class=None):
         # type: () -> NoneType
         """Initialize a formatter based on the parsed options."""
@@ -196,9 +218,7 @@ class Application(object):
                 format_plugin = 'quiet-nothing'
 
             if formatter_class is None:
-                formatter_class = self.formatting_plugins.get(
-                    format_plugin, self.formatting_plugins['default']
-                ).execute
+                formatter_class = self.formatter_for(format_plugin)
 
             self.formatter = formatter_class(self.options)
 
@@ -331,6 +351,11 @@ class Application(object):
             LOG.critical('Caught keyboard interrupt from user')
             LOG.exception(exc)
             self.file_checker_manager._force_cleanup()
+            self.catastrophic_failure = True
+        except exceptions.ExecutionError as exc:
+            print('There was a critical error during execution of Flake8:')
+            print(exc.message)
+            LOG.exception(exc)
             self.catastrophic_failure = True
         except exceptions.EarlyQuit:
             self.catastrophic_failure = True

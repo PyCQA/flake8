@@ -45,8 +45,8 @@ def test_information(system, pyversion, pyimpl):
         },
     }
     option_manager = mock.Mock(
-        registered_plugins=set([('pycodestyle', '2.0.0'),
-                                ('mccabe', '0.5.9')]),
+        registered_plugins={('pycodestyle', '2.0.0'),
+                            ('mccabe', '0.5.9')},
         version='3.1.0',
     )
     assert expected == debug.information(option_manager)

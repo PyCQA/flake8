@@ -133,10 +133,10 @@ class MergedConfigParser(object):
 
     #: Set of types that should use the
     #: :meth:`~configparser.RawConfigParser.getint` method.
-    GETINT_TYPES = set(['int', 'count'])
+    GETINT_TYPES = {'int', 'count'}
     #: Set of actions that should use the
     #: :meth:`~configparser.RawConfigParser.getbool` method.
-    GETBOOL_ACTIONS = set(['store_true', 'store_false'])
+    GETBOOL_ACTIONS = {'store_true', 'store_false'}
 
     def __init__(self, option_manager, extra_config_files=None, args=None):
         """Initialize the MergedConfigParser instance.

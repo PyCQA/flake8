@@ -19,7 +19,7 @@ from flake8 import utils
 
 LOG = logging.getLogger(__name__)
 
-SERIAL_RETRY_ERRNOS = set([
+SERIAL_RETRY_ERRNOS = {
     # ENOSPC: Added by sigmavirus24
     # > On some operating systems (OSX), multiprocessing may cause an
     # > ENOSPC error while trying to trying to create a Semaphore.
@@ -32,7 +32,7 @@ SERIAL_RETRY_ERRNOS = set([
     # on the lines before the error code and always append your error
     # code. Further, please always add a trailing `,` to reduce the visual
     # noise in diffs.
-])
+}
 
 
 class Manager(object):

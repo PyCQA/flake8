@@ -13,6 +13,10 @@ class EarlyQuit(Flake8Exception):
     pass
 
 
+class ExecutionError(Flake8Exception):
+    """Exception raised during execution of Flake8."""
+
+
 class FailedToLoadPlugin(Flake8Exception):
     """Exception raised when a plugin fails to load."""
 

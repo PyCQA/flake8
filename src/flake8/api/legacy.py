@@ -68,7 +68,7 @@ class StyleGuide(object):
 
     @property
     def options(self):
-        """The parsed options.
+        """Return application's options.
 
         An instance of :class:`optparse.Values` containing parsed options.
         """
@@ -76,7 +76,7 @@ class StyleGuide(object):
 
     @property
     def paths(self):
-        """The extra arguments passed as paths."""
+        """Return the extra arguments passed as paths."""
         return self._application.paths
 
     def check_files(self, paths=None):
@@ -178,7 +178,7 @@ class Report(object):
 
     @property
     def total_errors(self):
-        """The total number of errors found by Flake8."""
+        """Return the total number of errors."""
         return self._application.result_count
 
     def get_statistics(self, violation):

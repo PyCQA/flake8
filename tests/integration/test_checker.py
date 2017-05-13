@@ -16,7 +16,7 @@ class PluginClass(object):
     version = '1.0.0'
 
     def __init__(self, tree):
-        """Dummy constructor to provide mandatory parameter."""
+        """Construct a dummy object to provide mandatory parameter."""
         pass
 
     def run(self):
@@ -25,7 +25,7 @@ class PluginClass(object):
 
 
 def plugin_func(func):
-    """Decorator for file plugins which are implemented as functions."""
+    """Decorate file plugins which are implemented as functions."""
     func.name = 'test'
     func.version = '1.0.0'
     return func
@@ -33,13 +33,13 @@ def plugin_func(func):
 
 @plugin_func
 def plugin_func_gen(tree):
-    """Simple file plugin function yielding the expected report."""
+    """Yield the expected report."""
     yield EXPECTED_REPORT + (type(plugin_func_gen), )
 
 
 @plugin_func
 def plugin_func_list(tree):
-    """Simple file plugin function returning a list of reports."""
+    """Return a list of expected reports."""
     return [EXPECTED_REPORT + (type(plugin_func_list), )]
 
 

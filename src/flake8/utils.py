@@ -29,7 +29,8 @@ def parse_comma_separated_list(value):
     if not isinstance(value, (list, tuple)):
         value = value.split(',')
 
-    return [item.strip() for item in value]
+    item_gen = (item.strip() for item in value)
+    return [item for item in item_gen if item]
 
 
 def normalize_paths(paths, parent=os.curdir):

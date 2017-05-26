@@ -10,6 +10,7 @@ import sys
 import tokenize
 
 DIFF_HUNK_REGEXP = re.compile(r'^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@.*$')
+COMMA_SEPARATED_LIST_RE = re.compile(r'[,\s]')
 
 
 def parse_comma_separated_list(value):
@@ -27,7 +28,7 @@ def parse_comma_separated_list(value):
         return []
 
     if not isinstance(value, (list, tuple)):
-        value = value.split(',')
+        value = COMMA_SEPARATED_LIST_RE.split(value)
 
     item_gen = (item.strip() for item in value)
     return [item for item in item_gen if item]

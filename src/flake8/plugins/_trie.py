@@ -90,7 +90,7 @@ class TrieNode(object):
         if not self.children:
             return
 
-        for prefix in sorted(self.children.keys()):
+        for prefix in sorted(self.children):
             child = self.children[prefix]
             yield child
             for child in child.traverse():

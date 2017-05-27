@@ -205,7 +205,7 @@ class FakePluginTypeManager(manager.NotifierBuilderMixin):
 
     def __init__(self, manager):
         """Initialize with our fake manager."""
-        self.names = sorted(manager.keys())
+        self.names = sorted(manager)
         self.manager = manager
 
 

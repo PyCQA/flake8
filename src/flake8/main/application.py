@@ -261,7 +261,7 @@ class Application(object):
             List of filenames to process
         """
         if self.running_against_diff:
-            files = sorted(self.parsed_diff.keys())
+            files = sorted(self.parsed_diff)
         self.file_checker_manager.start(files)
         self.file_checker_manager.run()
         LOG.info('Finished running')

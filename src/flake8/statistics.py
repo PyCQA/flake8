@@ -17,7 +17,7 @@ class Statistics(object):
         :rtype:
             list(str)
         """
-        return sorted({key.code for key in self._store.keys()})
+        return sorted({key.code for key in self._store})
 
     def record(self, error):
         """Add the fact that the error was seen in the file.
@@ -55,7 +55,7 @@ class Statistics(object):
         :returns:
             Generator of instances of :class:`Statistic`
         """
-        matching_errors = sorted(key for key in self._store.keys()
+        matching_errors = sorted(key for key in self._store
                                  if key.matches(prefix, filename))
         for error_code in matching_errors:
             yield self._store[error_code]

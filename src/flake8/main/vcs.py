@@ -36,4 +36,4 @@ def install(option, option_string, value, parser):
 
 def choices():
     """Return the list of VCS choices."""
-    return list(_INSTALLERS.keys())
+    return list(_INSTALLERS)

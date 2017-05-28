@@ -3,6 +3,9 @@
 
 You can view the `3.4.0 milestone`_ on GitLab for more details.
 
+- Refine logic around ``--select`` and ``--ignore`` when combined with the
+  default values for each. (See also `GitLab#318`_)
+
 - Handle spaces as an alternate separate for error codes, e.g.,
   ``--ignore 'E123 E234'``. (See also `GitLab#329`_)
 
@@ -14,6 +17,8 @@ You can view the `3.4.0 milestone`_ on GitLab for more details.
     https://gitlab.com/pycqa/flake8/milestones/18
 
 .. issue links
+.. _GitLab#318:
+    https://gitlab.com/pycqa/flake8/issues/318
 .. _GitLab#329:
     https://gitlab.com/pycqa/flake8/issues/329
 .. _GitLab#330:

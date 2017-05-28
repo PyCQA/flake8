@@ -125,6 +125,9 @@ def test_is_user_selected_excludes_errors(select_list, error_code):
     (['E41'], ['E2', 'E12', 'E4'], 'E410', style_guide.Decision.Selected),
     (['E'], ['F'], 'E410', style_guide.Decision.Selected),
     (['F'], [], 'E410', style_guide.Decision.Ignored),
+    (['E'], defaults.IGNORE, 'E126', style_guide.Decision.Selected),
+    (['W'], defaults.IGNORE, 'E126', style_guide.Decision.Ignored),
+    (['E'], defaults.IGNORE, 'W391', style_guide.Decision.Ignored),
 ])
 def test_should_report_error(select_list, ignore_list, error_code, expected):
     """Verify we decide when to report an error."""
@@ -141,7 +144,7 @@ def test_should_report_error(select_list, ignore_list, error_code, expected):
         (defaults.SELECT, [], ['I1'], [], 'I100',
             style_guide.Decision.Selected),
         (defaults.SELECT, [], ['I1'], [], 'I201',
-            style_guide.Decision.Selected),
+            style_guide.Decision.Ignored),
         (defaults.SELECT, ['I2'], ['I1'], [], 'I101',
             style_guide.Decision.Selected),
         (defaults.SELECT, ['I2'], ['I1'], [], 'I201',

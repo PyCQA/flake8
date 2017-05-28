@@ -74,6 +74,10 @@ class StyleGuide(object):
             reverse=True,
         ))
         self._ignored = tuple(sorted(options.ignore, reverse=True))
+        self._using_default_ignore = set(self._ignored) == set(defaults.IGNORE)
+        self._using_default_select = (
+            set(self._selected) == set(defaults.SELECT)
+        )
         self._decision_cache = {}
         self._parsed_diff = {}
 
@@ -135,14 +139,15 @@ class StyleGuide(object):
         ignore = find_first_match(code, self._ignored)
 
         if select and ignore:
+            if self._using_default_ignore and not self._using_default_select:
+                return Decision.Selected
             return find_more_specific(select, ignore)
         if extra_select and ignore:
             return find_more_specific(extra_select, ignore)
-        if select or (extra_select and self._selected == defaults.SELECT):
+        if select or (extra_select and self._using_default_select):
             return Decision.Selected
-        if select is None and extra_select is None and ignore is not None:
-            return Decision.Ignored
-        if self._selected != defaults.SELECT and select is None:
+        if ((select is None and extra_select is None) or
+                (not self._using_default_ignore and select is None)):
             return Decision.Ignored
         return Decision.Selected
 

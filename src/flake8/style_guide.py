@@ -146,8 +146,8 @@ class StyleGuide(object):
             return find_more_specific(extra_select, ignore)
         if select or (extra_select and self._using_default_select):
             return Decision.Selected
-        if ((select is None and extra_select is None) or
-                (not self._using_default_ignore and select is None)):
+        if (select is None and
+                (extra_select is None or not self._using_default_ignore)):
             return Decision.Ignored
         return Decision.Selected
 

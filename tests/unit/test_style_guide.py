@@ -169,6 +169,8 @@ def test_should_report_error(select_list, ignore_list, error_code, expected):
         (['E2'], ['E21'], [], [], 'E212', style_guide.Decision.Ignored),
         (['F', 'W'], ['C90'], ['I1'], [], 'C901',
             style_guide.Decision.Ignored),
+        (['E', 'W'], ['C'], [], [], 'E131',
+            style_guide.Decision.Selected),
         (defaults.SELECT, defaults.IGNORE, [], ['I'], 'I101',
             style_guide.Decision.Selected),
         (defaults.SELECT, defaults.IGNORE, ['G'], ['I'], 'G101',

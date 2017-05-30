@@ -796,3 +796,24 @@
         }
 
     This **can not** be specified in config files.
+
+
+.. option:: --max-complexity=<n>
+
+    Set the maximum allowed McCabe complexity value for a block of code.
+
+    This option is provided by the ``mccabe`` dependency's |Flake8| plugin.
+
+    Command-line usage:
+
+    .. prompt:: bash
+
+        flake8 --max-complexity 15 dir/
+
+    This **can** be specified in config files.
+
+    Example config file usage:
+
+    .. code-block:: ini
+
+        max-complexity = 15

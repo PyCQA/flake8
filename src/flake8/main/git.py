@@ -161,7 +161,9 @@ def find_modified_files(lazy):
     diff_index = piped_process(diff_index_cmd)
     (stdout, _) = diff_index.communicate()
     stdout = to_text(stdout)
-    return stdout.splitlines()
+    modified_files = stdout.splitlines()
+    py_files = (x for x in modified_files if x.endswith('.py'))
+    return py_files
 
 
 def get_staged_contents_from(filename):

@@ -10,6 +10,8 @@
 
     .. option:: --<opt-name>[=<descriptive-name-of-parameter>]
 
+        :ref:`Go back to index <top>`
+
         Active description of option's purpose (note that each description
         starts with an active verb)
 
@@ -25,9 +27,86 @@
 
     Thank you for your contribution to Flake8's documentation.
 
+.. _top:
+
+Index of Options
+================
+
+- :option:`flake8 --version`
+
+- :option:`flake8 --help`
+
+- :option:`flake8 --verbose`
+
+- :option:`flake8 --quiet`
+
+- :option:`flake8 --count`
+
+- :option:`flake8 --diff`
+
+- :option:`flake8 --exclude`
+
+- :option:`flake8 --filename`
+
+- :option:`flake8 --stdin-display-name`
+
+- :option:`flake8 --format`
+
+- :option:`flake8 --hang-closing`
+
+- :option:`flake8 --ignore`
+
+- :option:`flake8 --max-line-length`
+
+- :option:`flake8 --select`
+
+- :option:`flake8 --disable-noqa`
+
+- :option:`flake8 --show-source`
+
+- :option:`flake8 --statistics`
+
+- :option:`flake8 --enable-extensions`
+
+- :option:`flake8 --exit-zero`
+
+- :option:`flake8 --install-hook`
+
+- :option:`flake8 --jobs`
+
+- :option:`flake8 --output-file`
+
+- :option:`flake8 --tee`
+
+- :option:`flake8 --append-config`
+
+- :option:`flake8 --config`
+
+- :option:`flake8 --isolated`
+
+- :option:`flake8 --builtins`
+
+- :option:`flake8 --doctests`
+
+- :option:`flake8 --include-in-doctest`
+
+- :option:`flake8 --exclude-from-doctest`
+
+- :option:`flake8 --benchmark`
+
+- :option:`flake8 --bug-report`
+
+- :option:`flake8 --max-complexity`
+
+
+Options and their Descriptions
+==============================
+
 .. program:: flake8
 
 .. option:: --version
+
+    :ref:`Go back to index <top>`
 
     Show |Flake8|'s version as well as the versions of all plugins
     installed.
@@ -43,6 +122,8 @@
 
 .. option:: -h, --help
 
+    :ref:`Go back to index <top>`
+
     Show a description of how to use |Flake8| and its options.
 
     Command-line usage:
@@ -56,6 +137,8 @@
 
 
 .. option::  -v, --verbose
+
+    :ref:`Go back to index <top>`
 
     Increase the verbosity of |Flake8|'s output. Each time you specify
     it, it will print more and more information.
@@ -77,6 +160,8 @@
 
 .. option:: -q, --quiet
 
+    :ref:`Go back to index <top>`
+
     Decrease the verbosity of |Flake8|'s output. Each time you specify it,
     it will print less and less information.
 
@@ -97,6 +182,8 @@
 
 .. option:: --count
 
+    :ref:`Go back to index <top>`
+
     Print the total number of errors.
 
     Command-line example:
@@ -116,6 +203,8 @@
 
 .. option:: --diff
 
+    :ref:`Go back to index <top>`
+
     Use the unified diff provided on standard in to only check the modified
     files and report errors included in the diff.
 
@@ -129,6 +218,8 @@
 
 
 .. option:: --exclude=<patterns>
+
+    :ref:`Go back to index <top>`
 
     Provide a comma-separated list of glob patterns to exclude from checks.
 
@@ -162,6 +253,8 @@
 
 .. option:: --filename=<patterns>
 
+    :ref:`Go back to index <top>`
+
     Provide a comma-separate list of glob patterns to include for checks.
 
     This defaults to: ``*.py``
@@ -194,6 +287,8 @@
 
 .. option:: --stdin-display-name=<display_name>
 
+    :ref:`Go back to index <top>`
+
     Provide the name to use to report warnings and errors from code on stdin.
 
     Instead of reporting an error as something like:
@@ -217,6 +312,8 @@
 
 
 .. option:: --format=<format>
+
+    :ref:`Go back to index <top>`
 
     Select the formatter used to display errors to the user.
 
@@ -262,6 +359,8 @@
 
 .. option:: --hang-closing
 
+    :ref:`Go back to index <top>`
+
     Toggle whether pycodestyle should enforce matching the indentation of the
     opening bracket's line. When you specify this, it will prefer that you
     hang the closing bracket rather than match the indentation.
@@ -283,6 +382,8 @@
 
 
 .. option:: --ignore=<errors>
+
+    :ref:`Go back to index <top>`
 
     Specify a list of codes to ignore. The list is expected to be
     comma-separated, and does not need to specify an error code exactly.
@@ -317,6 +418,8 @@
 
 .. option:: --max-line-length=<n>
 
+    :ref:`Go back to index <top>`
+
     Set the maximum length that any line (with some exceptions) may be.
 
     Exceptions include lines that are either strings or comments which are
@@ -348,6 +451,8 @@
 
 
 .. option:: --select=<errors>
+
+    :ref:`Go back to index <top>`
 
     Specify the list of error codes you wish |Flake8| to report. Similarly to
     :option:`--ignore`. You can specify a portion of an error code to get all
@@ -387,6 +492,8 @@
 
 .. option:: --disable-noqa
 
+    :ref:`Go back to index <top>`
+
     Report all errors, even if it is on the same line as a ``# NOQA`` comment.
     ``# NOQA`` can be used to silence messages on specific lines. Sometimes,
     users will want to see what errors are being silenced without editing the
@@ -411,6 +518,8 @@
 
 .. option:: --show-source
 
+    :ref:`Go back to index <top>`
+
     Print the source code generating the error/warning in question.
 
     Command-line example:
@@ -431,6 +540,8 @@
 
 .. option:: --statistics
 
+    :ref:`Go back to index <top>`
+
     Count the number of occurrences of each error/warning code and
     print a report.
 
@@ -450,6 +561,8 @@
 
 
 .. option:: --enable-extensions=<errors>
+
+    :ref:`Go back to index <top>`
 
     Enable off-by-default extensions.
 
@@ -479,6 +592,8 @@
 
 .. option:: --exit-zero
 
+    :ref:`Go back to index <top>`
+
     Force |Flake8| to use the exit status code 0 even if there are errors.
 
     By default |Flake8| will exit with a non-zero integer if there are errors.
@@ -493,6 +608,8 @@
 
 
 .. option:: --install-hook=VERSION_CONTROL_SYSTEM
+
+    :ref:`Go back to index <top>`
 
     Install a hook for your version control system that is executed before
     or during commit.
@@ -513,6 +630,8 @@
 
 
 .. option:: --jobs=<n>
+
+    :ref:`Go back to index <top>`
 
     Specify the number of subprocesses that |Flake8| will use to run checks in
     parallel.
@@ -544,6 +663,8 @@
 
 .. option:: --output-file=<path>
 
+    :ref:`Go back to index <top>`
+
     Redirect all output to the specified file.
 
     Command-line example:
@@ -565,6 +686,8 @@
 
 .. option:: --tee
 
+    :ref:`Go back to index <top>`
+
     Also print output to stdout if output-file has been configured.
 
     Command-line example:
@@ -585,6 +708,8 @@
 
 .. option:: --append-config=<config>
 
+    :ref:`Go back to index <top>`
+
     Provide extra config files to parse in after and in addition to the files
     that |Flake8| found on its own. Since these files are the last ones read
     into the Configuration Parser, so it has the highest precedence if it
@@ -601,6 +726,8 @@
 
 .. option:: --config=<config>
 
+    :ref:`Go back to index <top>`
+
     Provide a path to a config file that will be the only config file read and
     used. This will cause |Flake8| to ignore all other config files that
     exist.
@@ -616,6 +743,8 @@
 
 .. option:: --isolated
 
+    :ref:`Go back to index <top>`
+
     Ignore any config files and use |Flake8| as if there were no config files
     found.
 
@@ -629,6 +758,8 @@
 
 
 .. option:: --builtins=<builtins>
+
+    :ref:`Go back to index <top>`
 
     Provide a custom list of builtin functions, objects, names, etc.
 
@@ -658,6 +789,8 @@
 
 .. option:: --doctests
 
+    :ref:`Go back to index <top>`
+
     Enable PyFlakes syntax checking of doctests in docstrings.
 
     This is registered by the default PyFlakes plugin.
@@ -678,6 +811,8 @@
 
 
 .. option:: --include-in-doctest=<paths>
+
+    :ref:`Go back to index <top>`
 
     Specify which files are checked by PyFlakes for doctest syntax.
 
@@ -705,6 +840,8 @@
 
 .. option:: --exclude-from-doctest=<paths>
 
+    :ref:`Go back to index <top>`
+
     Specify which files are not to be checked by PyFlakes for doctest syntax.
 
     This is registered by the default PyFlakes plugin.
@@ -731,6 +868,8 @@
 
 .. option:: --benchmark
 
+    :ref:`Go back to index <top>`
+
     Collect and print benchmarks for this run of |Flake8|. This aggregates the
     total number of:
 
@@ -751,6 +890,8 @@
 
 
 .. option:: --bug-report
+
+    :ref:`Go back to index <top>`
 
     Generate information necessary to file a complete bug report for Flake8.
     This will pretty-print a JSON blob that should be copied and pasted into a
@@ -799,6 +940,8 @@
 
 
 .. option:: --max-complexity=<n>
+
+    :ref:`Go back to index <top>`
 
     Set the maximum allowed McCabe complexity value for a block of code.
 

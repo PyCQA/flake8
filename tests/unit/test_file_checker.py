@@ -23,3 +23,12 @@ def test_run_ast_checks_handles_SyntaxErrors(FileProcessor):
             'E999', 1, 3,
             'SyntaxError: Failed to build ast',
         )
+
+
+@mock.patch('flake8.checker.FileChecker._make_processor', return_value=None)
+def test_repr(*args):
+    """Verify we generate a correct repr."""
+    file_checker = checker.FileChecker(
+        'example.py', checks={}, options=object(),
+    )
+    assert repr(file_checker) == 'FileChecker for example.py'

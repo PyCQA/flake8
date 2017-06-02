@@ -51,37 +51,40 @@ Error = collections.namedtuple(
 )
 
 
-class StyleGuide(object):
-    """Manage a Flake8 user's style guide."""
+class DecisionEngine(object):
+    """A class for managing the decision process around violations.
 
-    def __init__(self, options, listener_trie, formatter):
-        """Initialize our StyleGuide.
+    This contains the logic for whether a violation should be reported or
+    ignored.
+    """
 
-        .. todo:: Add parameter documentation.
-        """
-        self.options = options
-        self.listener = listener_trie
-        self.formatter = formatter
-        self.stats = statistics.Statistics()
-        self._selected = tuple(options.select)
-        self._extended_selected = tuple(sorted(
+    def __init__(self, options):
+        """Initialize the engine."""
+        self.cache = {}
+        self.selected = tuple(options.select)
+        self.extended_selected = tuple(sorted(
             options.extended_default_select,
             reverse=True,
         ))
-        self._enabled_extensions = tuple(options.enable_extensions)
-        self._all_selected = tuple(sorted(
-            self._selected + self._enabled_extensions,
+        self.enabled_extensions = tuple(options.enable_extensions)
+        self.all_selected = tuple(sorted(
+            self.selected + self.enabled_extensions,
             reverse=True,
         ))
-        self._ignored = tuple(sorted(options.ignore, reverse=True))
-        self._using_default_ignore = set(self._ignored) == set(defaults.IGNORE)
-        self._using_default_select = (
-            set(self._selected) == set(defaults.SELECT)
+        self.ignored = tuple(sorted(options.ignore, reverse=True))
+        self.using_default_ignore = set(self.ignored) == set(defaults.IGNORE)
+        self.using_default_select = (
+            set(self.selected) == set(defaults.SELECT)
         )
-        self._decision_cache = {}
-        self._parsed_diff = {}
 
-    def is_user_selected(self, code):
+    def _in_all_selected(self, code):
+        return self.all_selected and code.startswith(self.all_selected)
+
+    def _in_extended_selected(self, code):
+        return (self.extended_selected and
+                code.startswith(self.extended_selected))
+
+    def was_selected(self, code):
         # type: (str) -> Union[Selected, Ignored]
         """Determine if the code has been selected by the user.
 
@@ -94,12 +97,10 @@ class StyleGuide(object):
             Ignored.Implicitly if the selected list is not empty but no match
             was found.
         """
-        if self._all_selected and code.startswith(self._all_selected):
+        if self._in_all_selected(code):
             return Selected.Explicitly
 
-        if (not self._all_selected and
-            (self._extended_selected and
-                code.startswith(self._extended_selected))):
+        if not self.all_selected and self._in_extended_selected(code):
             # If it was not explicitly selected, it may have been implicitly
             # selected because the check comes from a plugin that is enabled by
             # default
@@ -107,7 +108,7 @@ class StyleGuide(object):
 
         return Ignored.Implicitly
 
-    def is_user_ignored(self, code):
+    def was_ignored(self, code):
         # type: (str) -> Union[Selected, Ignored]
         """Determine if the code has been ignored by the user.
 
@@ -120,34 +121,27 @@ class StyleGuide(object):
             Selected.Implicitly if the ignored list is not empty but no match
             was found.
         """
-        if self._ignored and code.startswith(self._ignored):
+        if self.ignored and code.startswith(self.ignored):
             return Ignored.Explicitly
 
         return Selected.Implicitly
 
-    @contextlib.contextmanager
-    def processing_file(self, filename):
-        """Record the fact that we're processing the file's results."""
-        self.formatter.beginning(filename)
-        yield self
-        self.formatter.finished(filename)
-
-    def _decision_for(self, code):
+    def decision_for(self, code):
         # type: (Error) -> Decision
-        select = find_first_match(code, self._all_selected)
-        extra_select = find_first_match(code, self._extended_selected)
-        ignore = find_first_match(code, self._ignored)
+        select = find_first_match(code, self.all_selected)
+        extra_select = find_first_match(code, self.extended_selected)
+        ignore = find_first_match(code, self.ignored)
 
         if select and ignore:
-            if self._using_default_ignore and not self._using_default_select:
+            if self.using_default_ignore and not self.using_default_select:
                 return Decision.Selected
             return find_more_specific(select, ignore)
         if extra_select and ignore:
             return find_more_specific(extra_select, ignore)
-        if select or (extra_select and self._using_default_select):
+        if select or (extra_select and self.using_default_select):
             return Decision.Selected
         if (select is None and
-                (extra_select is None or not self._using_default_ignore)):
+                (extra_select is None or not self.using_default_ignore)):
             return Decision.Ignored
         return Decision.Selected
 
@@ -164,11 +158,11 @@ class StyleGuide(object):
         :param str code:
             The code for the check that has been run.
         """
-        decision = self._decision_cache.get(code)
+        decision = self.cache.get(code)
         if decision is None:
             LOG.debug('Deciding if "%s" should be reported', code)
-            selected = self.is_user_selected(code)
-            ignored = self.is_user_ignored(code)
+            selected = self.was_selected(code)
+            ignored = self.was_ignored(code)
             LOG.debug('The user configured "%s" to be "%s", "%s"',
                       code, selected, ignored)
 
@@ -180,14 +174,82 @@ class StyleGuide(object):
                   ignored is Ignored.Explicitly) or
                   (selected is Ignored.Implicitly and
                    ignored is Selected.Implicitly)):
-                decision = self._decision_for(code)
+                decision = self.decision_for(code)
             elif (selected is Ignored.Implicitly or
                   ignored is Ignored.Explicitly):
                 decision = Decision.Ignored  # pylint: disable=R0204
 
-            self._decision_cache[code] = decision
+            self.cache[code] = decision
             LOG.debug('"%s" will be "%s"', code, decision)
         return decision
+
+
+class StyleGuide(object):
+    """Manage a Flake8 user's style guide."""
+
+    def __init__(self, options, listener_trie, formatter):
+        """Initialize our StyleGuide.
+
+        .. todo:: Add parameter documentation.
+        """
+        self.options = options
+        self.listener = listener_trie
+        self.formatter = formatter
+        self.stats = statistics.Statistics()
+        self.decider = DecisionEngine(options)
+        self._parsed_diff = {}
+
+    def is_user_selected(self, code):
+        # type: (str) -> Union[Selected, Ignored]
+        """Determine if the code has been selected by the user.
+
+        :param str code:
+            The code for the check that has been run.
+        :returns:
+            Selected.Implicitly if the selected list is empty,
+            Selected.Explicitly if the selected list is not empty and a match
+            was found,
+            Ignored.Implicitly if the selected list is not empty but no match
+            was found.
+        """
+        return self.decider.was_selected(code)
+
+    def is_user_ignored(self, code):
+        # type: (str) -> Union[Selected, Ignored]
+        """Determine if the code has been ignored by the user.
+
+        :param str code:
+            The code for the check that has been run.
+        :returns:
+            Selected.Implicitly if the ignored list is empty,
+            Ignored.Explicitly if the ignored list is not empty and a match was
+            found,
+            Selected.Implicitly if the ignored list is not empty but no match
+            was found.
+        """
+        return self.decider.was_ignored(code)
+
+    @contextlib.contextmanager
+    def processing_file(self, filename):
+        """Record the fact that we're processing the file's results."""
+        self.formatter.beginning(filename)
+        yield self
+        self.formatter.finished(filename)
+
+    def should_report_error(self, code):
+        # type: (str) -> Decision
+        """Determine if the error code should be reported or ignored.
+
+        This method only cares about the select and ignore rules as specified
+        by the user in their configuration files and command-line flags.
+
+        This method does not look at whether the specific line is being
+        ignored in the file itself.
+
+        :param str code:
+            The code for the check that has been run.
+        """
+        return self.decider.should_report_error(code)
 
     def is_inline_ignored(self, error):
         # type: (Error) -> bool

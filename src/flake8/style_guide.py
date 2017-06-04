@@ -240,12 +240,36 @@ class DecisionEngine(object):
             return Decision.Ignored
         return Decision.Selected
 
+    def make_decision(self, code):
+        """Decide if code should be ignored or selected."""
+        LOG.debug('Deciding if "%s" should be reported', code)
+        selected = self.was_selected(code)
+        ignored = self.was_ignored(code)
+        LOG.debug('The user configured "%s" to be "%s", "%s"',
+                  code, selected, ignored)
+
+        if ((selected is Selected.Explicitly or
+             selected is Selected.Implicitly) and
+                ignored is Selected.Implicitly):
+            decision = Decision.Selected
+        elif ((selected is Selected.Explicitly and
+              ignored is Ignored.Explicitly) or
+              (selected is Ignored.Implicitly and
+               ignored is Selected.Implicitly)):
+            decision = self.more_specific_decision_for(code)
+        elif (selected is Ignored.Implicitly or
+              ignored is Ignored.Explicitly):
+            decision = Decision.Ignored  # pylint: disable=R0204
+        return decision
+
     def decision_for(self, code):
         # type: (str) -> Decision
-        """Determine if the error code should be reported or ignored.
+        """Return the decision for a specific code.
 
-        This method only cares about the select and ignore rules as specified
-        by the user in their configuration files and command-line flags.
+        This method caches the decisions for codes to avoid retracing the same
+        logic over and over again. We only care about the select and ignore
+        rules as specified by the user in their configuration files and
+        command-line flags.
 
         This method does not look at whether the specific line is being
         ignored in the file itself.
@@ -255,25 +279,7 @@ class DecisionEngine(object):
         """
         decision = self.cache.get(code)
         if decision is None:
-            LOG.debug('Deciding if "%s" should be reported', code)
-            selected = self.was_selected(code)
-            ignored = self.was_ignored(code)
-            LOG.debug('The user configured "%s" to be "%s", "%s"',
-                      code, selected, ignored)
-
-            if ((selected is Selected.Explicitly or
-                 selected is Selected.Implicitly) and
-                    ignored is Selected.Implicitly):
-                decision = Decision.Selected
-            elif ((selected is Selected.Explicitly and
-                  ignored is Ignored.Explicitly) or
-                  (selected is Ignored.Implicitly and
-                   ignored is Selected.Implicitly)):
-                decision = self.more_specific_decision_for(code)
-            elif (selected is Ignored.Implicitly or
-                  ignored is Ignored.Explicitly):
-                decision = Decision.Ignored  # pylint: disable=R0204
-
+            decision = self.make_decision(code)
             self.cache[code] = decision
             LOG.debug('"%s" will be "%s"', code, decision)
         return decision

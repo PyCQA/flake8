@@ -106,8 +106,9 @@ Reporting Violations
 
 Next, the application takes the violations from the file checker manager, and
 feeds them through the :class:`~flake8.style_guide.StyleGuide`. This
-determines whether the particular :term:`error code` is selected or ignored
-and then appropriately sends it to the formatter (or not).
+relies on a :class:`~flake8.style_guide.DecisionEngine` instance to determine
+whether the particular :term:`error code` is selected or ignored and then
+appropriately sends it to the formatter (or not).
 
 Reporting Benchmarks
 --------------------

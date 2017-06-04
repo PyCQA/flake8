@@ -51,7 +51,7 @@ def test_show_source_returns_nothing_when_not_showing_source():
     """Ensure we return nothing when users want nothing."""
     formatter = base.BaseFormatter(options(show_source=False))
     assert formatter.show_source(
-        style_guide.Error('A000', 'file.py', 1, 1, 'error text', 'line')
+        style_guide.Violation('A000', 'file.py', 1, 1, 'error text', 'line')
     ) is ''
 
 
@@ -59,7 +59,7 @@ def test_show_source_returns_nothing_when_there_is_source():
     """Ensure we return nothing when there is no line."""
     formatter = base.BaseFormatter(options(show_source=True))
     assert formatter.show_source(
-        style_guide.Error('A000', 'file.py', 1, 1, 'error text', None)
+        style_guide.Violation('A000', 'file.py', 1, 1, 'error text', None)
     ) is ''
 
 
@@ -71,7 +71,7 @@ def test_show_source_returns_nothing_when_there_is_source():
 def test_show_source_updates_physical_line_appropriately(line, column):
     """Ensure the error column is appropriately indicated."""
     formatter = base.BaseFormatter(options(show_source=True))
-    error = style_guide.Error('A000', 'file.py', 1, column, 'error', line)
+    error = style_guide.Violation('A000', 'file.py', 1, column, 'error', line)
     output = formatter.show_source(error)
     _, pointer = output.rsplit('\n', 1)
     assert pointer.count(' ') == (column - 1)
@@ -149,7 +149,7 @@ def test_handle_formats_the_error():
     """Verify that a formatter will call format from handle."""
     formatter = FormatFormatter(options(show_source=False))
     filemock = formatter.output_fd = mock.Mock()
-    error = style_guide.Error(
+    error = style_guide.Violation(
         code='A001',
         filename='example.py',
         line_number=1,

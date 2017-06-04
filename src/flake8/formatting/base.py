@@ -78,9 +78,10 @@ class BaseFormatter(object):
         method.
 
         :param error:
-            This will be an instance of :class:`~flake8.style_guide.Error`.
+            This will be an instance of
+            :class:`~flake8.style_guide.Violation`.
         :type error:
-            flake8.style_guide.Error
+            flake8.style_guide.Violation
         """
         line = self.format(error)
         source = self.show_source(error)
@@ -92,9 +93,10 @@ class BaseFormatter(object):
         This method **must** be implemented by subclasses.
 
         :param error:
-            This will be an instance of :class:`~flake8.style_guide.Error`.
+            This will be an instance of
+            :class:`~flake8.style_guide.Violation`.
         :type error:
-            flake8.style_guide.Error
+            flake8.style_guide.Violation
         :returns:
             The formatted error string.
         :rtype:
@@ -144,9 +146,10 @@ class BaseFormatter(object):
         is reported as generating the problem.
 
         :param error:
-            This will be an instance of :class:`~flake8.style_guide.Error`.
+            This will be an instance of
+            :class:`~flake8.style_guide.Violation`.
         :type error:
-            flake8.style_guide.Error
+            flake8.style_guide.Violation
         :returns:
             The formatted error string if the user wants to show the source.
             If the user does not want to show the source, this will return

@@ -126,7 +126,7 @@ class DecisionEngine(object):
 
         return Selected.Implicitly
 
-    def decision_for(self, code):
+    def more_specific_decision_for(self, code):
         # type: (Error) -> Decision
         select = find_first_match(code, self.all_selected)
         extra_select = find_first_match(code, self.extended_selected)
@@ -145,7 +145,7 @@ class DecisionEngine(object):
             return Decision.Ignored
         return Decision.Selected
 
-    def should_report_error(self, code):
+    def decision_for(self, code):
         # type: (str) -> Decision
         """Determine if the error code should be reported or ignored.
 
@@ -174,7 +174,7 @@ class DecisionEngine(object):
                   ignored is Ignored.Explicitly) or
                   (selected is Ignored.Implicitly and
                    ignored is Selected.Implicitly)):
-                decision = self.decision_for(code)
+                decision = self.more_specific_decision_for(code)
             elif (selected is Ignored.Implicitly or
                   ignored is Ignored.Explicitly):
                 decision = Decision.Ignored  # pylint: disable=R0204
@@ -187,7 +187,7 @@ class DecisionEngine(object):
 class StyleGuide(object):
     """Manage a Flake8 user's style guide."""
 
-    def __init__(self, options, listener_trie, formatter):
+    def __init__(self, options, listener_trie, formatter, decider=None):
         """Initialize our StyleGuide.
 
         .. todo:: Add parameter documentation.
@@ -196,38 +196,8 @@ class StyleGuide(object):
         self.listener = listener_trie
         self.formatter = formatter
         self.stats = statistics.Statistics()
-        self.decider = DecisionEngine(options)
+        self.decider = decider or DecisionEngine(options)
         self._parsed_diff = {}
-
-    def is_user_selected(self, code):
-        # type: (str) -> Union[Selected, Ignored]
-        """Determine if the code has been selected by the user.
-
-        :param str code:
-            The code for the check that has been run.
-        :returns:
-            Selected.Implicitly if the selected list is empty,
-            Selected.Explicitly if the selected list is not empty and a match
-            was found,
-            Ignored.Implicitly if the selected list is not empty but no match
-            was found.
-        """
-        return self.decider.was_selected(code)
-
-    def is_user_ignored(self, code):
-        # type: (str) -> Union[Selected, Ignored]
-        """Determine if the code has been ignored by the user.
-
-        :param str code:
-            The code for the check that has been run.
-        :returns:
-            Selected.Implicitly if the ignored list is empty,
-            Ignored.Explicitly if the ignored list is not empty and a match was
-            found,
-            Selected.Implicitly if the ignored list is not empty but no match
-            was found.
-        """
-        return self.decider.was_ignored(code)
 
     @contextlib.contextmanager
     def processing_file(self, filename):
@@ -249,7 +219,7 @@ class StyleGuide(object):
         :param str code:
             The code for the check that has been run.
         """
-        return self.decider.should_report_error(code)
+        return self.decider.decision_for(code)
 
     def is_inline_ignored(self, error):
         # type: (Error) -> bool

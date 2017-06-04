@@ -118,12 +118,12 @@ def test_was_selected_excludes_errors(select_list, error_code):
     (defaults.SELECT, defaults.IGNORE, 'E126', style_guide.Decision.Ignored),
     (defaults.SELECT, defaults.IGNORE, 'W391', style_guide.Decision.Selected),
 ])
-def test_should_report_error(select_list, ignore_list, error_code, expected):
+def test_decision_for(select_list, ignore_list, error_code, expected):
     """Verify we decide when to report an error."""
     decider = style_guide.DecisionEngine(create_options(select=select_list,
                                                         ignore=ignore_list))
 
-    assert decider.should_report_error(error_code) is expected
+    assert decider.decision_for(error_code) is expected
 
 
 @pytest.mark.parametrize(
@@ -164,9 +164,10 @@ def test_should_report_error(select_list, ignore_list, error_code, expected):
             style_guide.Decision.Selected),
     ]
 )
-def test_decision_for_logic(select, ignore, extend_select, enabled_extensions,
-                            error_code, expected):
-    """Verify the complicated logic of DecisionEngine.decision_for."""
+def test_more_specific_decision_for_logic(select, ignore, extend_select,
+                                          enabled_extensions, error_code,
+                                          expected):
+    """Verify the logic of DecisionEngine.more_specific_decision_for."""
     decider = style_guide.DecisionEngine(
         create_options(
             select=select, ignore=ignore,
@@ -175,4 +176,4 @@ def test_decision_for_logic(select, ignore, extend_select, enabled_extensions,
         ),
     )
 
-    assert decider.decision_for(error_code) is expected
+    assert decider.more_specific_decision_for(error_code) is expected

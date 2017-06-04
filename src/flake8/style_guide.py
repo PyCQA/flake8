@@ -228,12 +228,37 @@ class DecisionEngine(object):
         ignore = find_first_match(code, self.ignored)
 
         if select and ignore:
+            # If the violation code appears in both the select and ignore
+            # lists (in some fashion) then if we're using the default ignore
+            # list and a custom select list we should select the code. An
+            # example usage looks like this:
+            #   A user has a code that would generate an E126 violation which
+            #   is in our default ignore list and they specify select=E.
+            # We should be reporting that violation. This logic changes,
+            # however, if they specify select and ignore such that both match.
+            # In that case we fall through to our find_more_specific call.
+            # If, however, the user hasn't specified a custom select, and
+            # we're using the defaults for both select and ignore then the
+            # more specific rule must win. In most cases, that will be to
+            # ignore the violation since our default select list is very
+            # high-level and our ignore list is highly specific.
             if self.using_default_ignore and not self.using_default_select:
                 return Decision.Selected
             return find_more_specific(select, ignore)
         if extra_select and ignore:
+            # At this point, select is false-y. Now we need to check if the
+            # code is in our extended select list and our ignore list. This is
+            # a *rare* case as we see little usage of the extended select list
+            # that plugins can use, so I suspect this section may change to
+            # look a little like the block above in which we check if we're
+            # using our default ignore list.
             return find_more_specific(extra_select, ignore)
         if select or (extra_select and self.using_default_select):
+            # Here, ignore was false-y and the user has either selected
+            # explicitly the violation or the violation is covered by
+            # something in the extended select list and we're using the
+            # default select list. In either case, we want the violation to be
+            # selected.
             return Decision.Selected
         if (select is None and
                 (extra_select is None or not self.using_default_ignore)):

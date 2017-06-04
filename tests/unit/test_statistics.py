@@ -11,7 +11,7 @@ DEFAULT_TEXT = 'Default text'
 
 def make_error(**kwargs):
     """Create errors with a bunch of default values."""
-    return style_guide.Error(
+    return style_guide.Violation(
         code=kwargs.pop('code', DEFAULT_ERROR_CODE),
         filename=kwargs.pop('filename', DEFAULT_FILENAME),
         line_number=kwargs.pop('line_number', 1),

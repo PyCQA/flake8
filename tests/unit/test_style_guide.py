@@ -19,46 +19,6 @@ def create_options(**kwargs):
     return optparse.Values(kwargs)
 
 
-@pytest.mark.parametrize('error_code,physical_line,expected_result', [
-    ('E111', 'a = 1', False),
-    ('E121', 'a = 1  # noqa: E111', False),
-    ('E121', 'a = 1  # noqa: E111,W123,F821', False),
-    ('E111', 'a = 1  # noqa: E111,W123,F821', True),
-    ('W123', 'a = 1  # noqa: E111,W123,F821', True),
-    ('E111', 'a = 1  # noqa: E11,W123,F821', True),
-    ('E111', 'a = 1  # noqa, analysis:ignore', True),
-    ('E111', 'a = 1  # noqa analysis:ignore', True),
-    ('E111', 'a = 1  # noqa - We do not care', True),
-    ('E111', 'a = 1  # noqa: We do not care', True),
-])
-def test_is_inline_ignored(error_code, physical_line, expected_result):
-    """Verify that we detect inline usage of ``# noqa``."""
-    guide = style_guide.StyleGuide(create_options(select=['E', 'W', 'F']),
-                                   listener_trie=None,
-                                   formatter=None)
-    error = style_guide.Error(error_code, 'filename.py', 1, 1, 'error text',
-                              None)
-    # We want `None` to be passed as the physical line so we actually use our
-    # monkey-patched linecache.getline value.
-
-    with mock.patch('linecache.getline', return_value=physical_line):
-        assert guide.is_inline_ignored(error) is expected_result
-
-
-def test_disable_is_inline_ignored():
-    """Verify that is_inline_ignored exits immediately if disabling NoQA."""
-    guide = style_guide.StyleGuide(create_options(disable_noqa=True),
-                                   listener_trie=None,
-                                   formatter=None)
-    error = style_guide.Error('E121', 'filename.py', 1, 1, 'error text',
-                              'line')
-
-    with mock.patch('linecache.getline') as getline:
-        assert guide.is_inline_ignored(error) is False
-
-    assert getline.called is False
-
-
 @pytest.mark.parametrize('select_list,ignore_list,error_code', [
     (['E111', 'E121'], [], 'E111'),
     (['E111', 'E121'], [], 'E121'),
@@ -76,8 +36,8 @@ def test_handle_error_notifies_listeners(select_list, ignore_list, error_code):
 
     with mock.patch('linecache.getline', return_value=''):
         guide.handle_error(error_code, 'stdin', 1, 0, 'error found')
-    error = style_guide.Error(error_code, 'stdin', 1, 1, 'error found',
-                              None)
+    error = style_guide.Violation(
+        error_code, 'stdin', 1, 1, 'error found', None)
     listener_trie.notify.assert_called_once_with(error_code, error)
     formatter.handle.assert_called_once_with(error)
 

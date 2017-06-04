@@ -2,6 +2,7 @@
 import collections
 import contextlib
 import enum
+import functools
 import linecache
 import logging
 
@@ -14,6 +15,17 @@ __all__ = (
 )
 
 LOG = logging.getLogger(__name__)
+
+
+try:
+    lru_cache = functools.lru_cache
+except AttributeError:
+    def lru_cache(maxsize=128, typed=False):
+        """Stub for missing lru_cache."""
+        def fake_decorator(func):
+            return func
+
+        return fake_decorator
 
 
 # TODO(sigmavirus24): Determine if we need to use enum/enum34
@@ -38,8 +50,13 @@ class Decision(enum.Enum):
     Selected = 'selected error'
 
 
-Error = collections.namedtuple(
-    'Error',
+@lru_cache(maxsize=512)
+def find_noqa(physical_line):
+    return defaults.NOQA_INLINE_REGEXP.search(physical_line)
+
+
+_Violation = collections.namedtuple(
+    'Violation',
     [
         'code',
         'filename',
@@ -49,6 +66,84 @@ Error = collections.namedtuple(
         'physical_line',
     ],
 )
+
+
+class Violation(_Violation):
+    """Class representing a violation reported by Flake8."""
+
+    def is_inline_ignored(self, disable_noqa):
+        # type: (Violation) -> bool
+        """Determine if an comment has been added to ignore this line.
+
+        :param bool disable_noqa:
+            Whether or not users have provided ``--disable-noqa``.
+        :returns:
+            True if error is ignored in-line, False otherwise.
+        :rtype:
+            bool
+        """
+        physical_line = self.physical_line
+        # TODO(sigmavirus24): Determine how to handle stdin with linecache
+        if disable_noqa:
+            return False
+
+        if physical_line is None:
+            physical_line = linecache.getline(self.filename,
+                                              self.line_number)
+        noqa_match = find_noqa(physical_line)
+        if noqa_match is None:
+            LOG.debug('%r is not inline ignored', self)
+            return False
+
+        codes_str = noqa_match.groupdict()['codes']
+        if codes_str is None:
+            LOG.debug('%r is ignored by a blanket ``# noqa``', self)
+            return True
+
+        codes = set(utils.parse_comma_separated_list(codes_str))
+        if self.code in codes or self.code.startswith(tuple(codes)):
+            LOG.debug('%r is ignored specifically inline with ``# noqa: %s``',
+                      self, codes_str)
+            return True
+
+        LOG.debug('%r is not ignored inline with ``# noqa: %s``',
+                  self, codes_str)
+        return False
+
+    def is_in(self, diff):
+        """Determine if the violation is included in a diff's line ranges.
+
+        This function relies on the parsed data added via
+        :meth:`~StyleGuide.add_diff_ranges`. If that has not been called and
+        we are not evaluating files in a diff, then this will always return
+        True. If there are diff ranges, then this will return True if the
+        line number in the error falls inside one of the ranges for the file
+        (and assuming the file is part of the diff data). If there are diff
+        ranges, this will return False if the file is not part of the diff
+        data or the line number of the error is not in any of the ranges of
+        the diff.
+
+        :returns:
+            True if there is no diff or if the error is in the diff's line
+            number ranges. False if the error's line number falls outside
+            the diff's line number ranges.
+        :rtype:
+            bool
+        """
+        if not diff:
+            return True
+
+        # NOTE(sigmavirus24): The parsed diff will be a defaultdict with
+        # a set as the default value (if we have received it from
+        # flake8.utils.parse_unified_diff). In that case ranges below
+        # could be an empty set (which is False-y) or if someone else
+        # is using this API, it could be None. If we could guarantee one
+        # or the other, we would check for it more explicitly.
+        line_numbers = diff.get(self.filename)
+        if not line_numbers:
+            return False
+
+        return self.line_number in line_numbers
 
 
 class DecisionEngine(object):
@@ -127,7 +222,7 @@ class DecisionEngine(object):
         return Selected.Implicitly
 
     def more_specific_decision_for(self, code):
-        # type: (Error) -> Decision
+        # type: (Violation) -> Decision
         select = find_first_match(code, self.all_selected)
         extra_select = find_first_match(code, self.extended_selected)
         ignore = find_first_match(code, self.ignored)
@@ -221,73 +316,6 @@ class StyleGuide(object):
         """
         return self.decider.decision_for(code)
 
-    def is_inline_ignored(self, error):
-        # type: (Error) -> bool
-        """Determine if an comment has been added to ignore this line."""
-        physical_line = error.physical_line
-        # TODO(sigmavirus24): Determine how to handle stdin with linecache
-        if self.options.disable_noqa:
-            return False
-
-        if physical_line is None:
-            physical_line = linecache.getline(error.filename,
-                                              error.line_number)
-        noqa_match = defaults.NOQA_INLINE_REGEXP.search(physical_line)
-        if noqa_match is None:
-            LOG.debug('%r is not inline ignored', error)
-            return False
-
-        codes_str = noqa_match.groupdict()['codes']
-        if codes_str is None:
-            LOG.debug('%r is ignored by a blanket ``# noqa``', error)
-            return True
-
-        codes = set(utils.parse_comma_separated_list(codes_str))
-        if error.code in codes or error.code.startswith(tuple(codes)):
-            LOG.debug('%r is ignored specifically inline with ``# noqa: %s``',
-                      error, codes_str)
-            return True
-
-        LOG.debug('%r is not ignored inline with ``# noqa: %s``',
-                  error, codes_str)
-        return False
-
-    def is_in_diff(self, error):
-        # type: (Error) -> bool
-        """Determine if an error is included in a diff's line ranges.
-
-        This function relies on the parsed data added via
-        :meth:`~StyleGuide.add_diff_ranges`. If that has not been called and
-        we are not evaluating files in a diff, then this will always return
-        True. If there are diff ranges, then this will return True if the
-        line number in the error falls inside one of the ranges for the file
-        (and assuming the file is part of the diff data). If there are diff
-        ranges, this will return False if the file is not part of the diff
-        data or the line number of the error is not in any of the ranges of
-        the diff.
-
-        :returns:
-            True if there is no diff or if the error is in the diff's line
-            number ranges. False if the error's line number falls outside
-            the diff's line number ranges.
-        :rtype:
-            bool
-        """
-        if not self._parsed_diff:
-            return True
-
-        # NOTE(sigmavirus24): The parsed diff will be a defaultdict with
-        # a set as the default value (if we have received it from
-        # flake8.utils.parse_unified_diff). In that case ranges below
-        # could be an empty set (which is False-y) or if someone else
-        # is using this API, it could be None. If we could guarantee one
-        # or the other, we would check for it more explicitly.
-        line_numbers = self._parsed_diff.get(error.filename)
-        if not line_numbers:
-            return False
-
-        return error.line_number in line_numbers
-
     def handle_error(self, code, filename, line_number, column_number, text,
                      physical_line=None):
         # type: (str, str, int, int, str) -> int
@@ -313,17 +341,18 @@ class StyleGuide(object):
         :rtype:
             int
         """
+        disable_noqa = self.options.disable_noqa
         # NOTE(sigmavirus24): Apparently we're provided with 0-indexed column
         # numbers so we have to offset that here. Also, if a SyntaxError is
         # caught, column_number may be None.
         if not column_number:
             column_number = 0
-        error = Error(code, filename, line_number, column_number + 1, text,
-                      physical_line)
+        error = Violation(code, filename, line_number, column_number + 1,
+                          text, physical_line)
         error_is_selected = (self.should_report_error(error.code) is
                              Decision.Selected)
-        is_not_inline_ignored = self.is_inline_ignored(error) is False
-        is_included_in_diff = self.is_in_diff(error)
+        is_not_inline_ignored = error.is_inline_ignored(disable_noqa) is False
+        is_included_in_diff = error.is_in(self._parsed_diff)
         if (error_is_selected and is_not_inline_ignored and
                 is_included_in_diff):
             self.formatter.handle(error)

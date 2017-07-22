@@ -133,7 +133,10 @@ class MergedConfigParser(object):
 
     #: Set of types that should use the
     #: :meth:`~configparser.RawConfigParser.getint` method.
-    GETINT_TYPES = {'int', 'count'}
+    GETINT_TYPES = {'int'}
+    #: Set of actions that should use the
+    #: :meth:`~configparser.RawConfigParser.getint` method.
+    GETINT_ACTIONS = {'count'}
     #: Set of actions that should use the
     #: :meth:`~configparser.RawConfigParser.getbool` method.
     GETBOOL_ACTIONS = {'store_true', 'store_false'}
@@ -184,6 +187,8 @@ class MergedConfigParser(object):
             # Use the appropriate method to parse the config value
             method = config_parser.get
             if option.type in self.GETINT_TYPES:
+                method = config_parser.getint
+            elif option.action in self.GETINT_ACTIONS:
                 method = config_parser.getint
             elif option.action in self.GETBOOL_ACTIONS:
                 method = config_parser.getboolean

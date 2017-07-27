@@ -23,11 +23,17 @@ requires = [
     "setuptools >= 30",
 ]
 
-if sys.version_info < (3, 4):
-    requires.append("enum34")
+extras_require = {
+    ":python_version<'3.4'": ['enum34'],
+    ":python_version<'3.2'": ['configparser'],
+}
 
-if sys.version_info < (3, 2):
-    requires.append("configparser")
+if int(setuptools.__version__.split('.')[0]) < 18:
+    extras_require = {}
+    if sys.version_info < (3, 4):
+        requires.append('enum34')
+    if sys.version_info < (3, 2):
+        requires.append('configparser')
 
 
 def get_long_description():
@@ -65,6 +71,7 @@ setuptools.setup(
         "flake8.plugins",
     ],
     install_requires=requires,
+    extras_require=extras_require,
     entry_points={
         'distutils.commands': [
             'flake8 = flake8.main.setuptools_command:Flake8'

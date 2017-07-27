@@ -224,7 +224,6 @@ def update_paths(checker_manager, temp_prefix):
 
 
 _HOOK_TEMPLATE = """#!{executable}
-import os
 import sys
 
 from flake8.main import git

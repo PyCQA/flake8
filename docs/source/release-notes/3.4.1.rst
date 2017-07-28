@@ -1,0 +1,17 @@
+3.4.1 -- 2017-07-28
+-------------------
+
+You can view the `3.4.1 milestone`_ on GitLab for more details.
+
+- Fix minor regression when users specify only a ``--select`` list with items
+  in the enabled/extended select list.  (See also `GitLab#354`_)
+
+.. all links
+.. _3.4.1 milestone:
+    https://gitlab.com/pycqa/flake8/milestones/19
+
+.. issue links
+.. _GitLab#354:
+    https://gitlab.com/pycqa/flake8/issues/354
+
+.. merge request links

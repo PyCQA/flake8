@@ -263,6 +263,9 @@ class DecisionEngine(object):
         if (select is None and
                 (extra_select is None or not self.using_default_ignore)):
             return Decision.Ignored
+        if ((select is None and not self.using_default_select) and
+                (ignore is None and self.using_default_ignore)):
+            return Decision.Ignored
         return Decision.Selected
 
     def make_decision(self, code):

@@ -58,7 +58,7 @@ setuptools.setup(
     long_description=get_long_description(),
     author="Tarek Ziade",
     author_email="tarek@ziade.org",
-    maintainer="Ian Cordasco",
+    maintainer="Ian Stapleton Cordasco",
     maintainer_email="graffatcolmingov@gmail.com",
     url="https://gitlab.com/pycqa/flake8",
     package_dir={"": "src"},

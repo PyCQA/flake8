@@ -47,6 +47,10 @@ def test_parse_cli_config(optmanager):
                           normalize_paths=True)
     optmanager.add_option('--ignore', parse_from_config=True,
                           comma_separated_list=True)
+    optmanager.add_option('--verbose', parse_from_config=True,
+                          action='count')
+    optmanager.add_option('--quiet', parse_from_config=True,
+                          action='count')
     parser = config.MergedConfigParser(optmanager)
 
     parsed_config = parser.parse_cli_config(
@@ -58,7 +62,9 @@ def test_parse_cli_config(optmanager):
             os.path.abspath('foo/'),
             os.path.abspath('bar/'),
             os.path.abspath('bogus/'),
-        ]
+        ],
+        'verbose': 2,
+        'quiet': 1,
     }
 
 
@@ -81,6 +87,10 @@ def test_parse_user_config(optmanager):
                           normalize_paths=True)
     optmanager.add_option('--ignore', parse_from_config=True,
                           comma_separated_list=True)
+    optmanager.add_option('--verbose', parse_from_config=True,
+                          action='count')
+    optmanager.add_option('--quiet', parse_from_config=True,
+                          action='count')
     parser = config.MergedConfigParser(optmanager)
 
     with mock.patch.object(parser.config_finder, 'user_config_file') as usercf:
@@ -93,7 +103,9 @@ def test_parse_user_config(optmanager):
             os.path.abspath('foo/'),
             os.path.abspath('bar/'),
             os.path.abspath('bogus/'),
-        ]
+        ],
+        'verbose': 2,
+        'quiet': 1,
     }
 
 
@@ -104,6 +116,10 @@ def test_parse_local_config(optmanager):
                           normalize_paths=True)
     optmanager.add_option('--ignore', parse_from_config=True,
                           comma_separated_list=True)
+    optmanager.add_option('--verbose', parse_from_config=True,
+                          action='count')
+    optmanager.add_option('--quiet', parse_from_config=True,
+                          action='count')
     parser = config.MergedConfigParser(optmanager)
     config_finder = parser.config_finder
 
@@ -119,7 +135,9 @@ def test_parse_local_config(optmanager):
             os.path.abspath('foo/'),
             os.path.abspath('bar/'),
             os.path.abspath('bogus/'),
-        ]
+        ],
+        'verbose': 2,
+        'quiet': 1,
     }
 
 

@@ -183,7 +183,8 @@ class MergedConfigParser(object):
 
             # Use the appropriate method to parse the config value
             method = config_parser.get
-            if option.type in self.GETINT_TYPES:
+            if (option.type in self.GETINT_TYPES or
+                    option.action in self.GETINT_TYPES):
                 method = config_parser.getint
             elif option.action in self.GETBOOL_ACTIONS:
                 method = config_parser.getboolean

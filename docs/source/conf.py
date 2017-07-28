@@ -54,8 +54,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'flake8'
-copyright = u'2016, Ian Cordasco'
-author = u'Ian Cordasco'
+copyright = u'2016, Ian Stapleton Cordasco'
+author = u'Ian Stapleton Cordasco'
 
 import flake8
 # The version info for the project you're documenting, acts as replacement for
@@ -235,7 +235,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'flake8.tex', u'flake8 Documentation',
-     u'Ian Cordasco', 'manual'),
+     u'Ian Stapleton Cordasco', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

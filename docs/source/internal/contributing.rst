@@ -19,8 +19,8 @@ Code of Conduct
 ===============
 
 |Flake8| adheres to the `Python Code Quality Authority's Code of Conduct`_.
-Any violations of the Code of Conduct should be reported to Ian Cordasco
-(graffatcolmingov [at] gmail [dot] com).
+Any violations of the Code of Conduct should be reported to Ian Stapleton
+Cordasco (graffatcolmingov [at] gmail [dot] com).
 
 
 Setting Up A Development Environment

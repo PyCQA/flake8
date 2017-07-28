@@ -162,11 +162,10 @@ def test_decision_for(select_list, ignore_list, error_code, expected):
             style_guide.Decision.Ignored),
         (defaults.SELECT, ['E126'], [], ['I'], 'I101',
             style_guide.Decision.Selected),
-        # This next one should exercise the catch-all return and yes, this is
-        # a *very* odd combination but users find much odder combinations
-        # anyway.
         (['E', 'W'], defaults.IGNORE, ['I'], [], 'I101',
-            style_guide.Decision.Selected),
+            style_guide.Decision.Ignored),
+        # TODO(sigmavirus24) Figure out how to exercise the final catch-all
+        # return statement
     ]
 )
 def test_more_specific_decision_for_logic(select, ignore, extend_select,

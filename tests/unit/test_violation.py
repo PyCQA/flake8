@@ -11,6 +11,7 @@ from flake8 import style_guide
     ('E121', 'a = 1  # noqa: E111,W123,F821', False),
     ('E111', 'a = 1  # noqa: E111,W123,F821', True),
     ('W123', 'a = 1  # noqa: E111,W123,F821', True),
+    ('W123', 'a = 1  # noqa: E111, W123,F821', True),
     ('E111', 'a = 1  # noqa: E11,W123,F821', True),
     ('E111', 'a = 1  # noqa, analysis:ignore', True),
     ('E111', 'a = 1  # noqa analysis:ignore', True),

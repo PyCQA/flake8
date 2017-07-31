@@ -172,7 +172,7 @@ class BaseFormatter(object):
         if self.output_fd is not None:
             self.output_fd.write(output + self.newline)
         if self.output_fd is None or self.options.tee:
-            print(output)
+            print(output.encode('utf-8'))
 
     def write(self, line, source):
         """Write the line either to the output file or stdout.

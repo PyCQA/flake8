@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import logging
+import sys
 import time
 
 import flake8
@@ -115,7 +116,7 @@ class Application(object):
         # do not need to worry and we can continue. If it is, we successfully
         # defer printing the version until just a little bit later.
         # Similarly we have to defer printing the help text until later.
-        args = argv[:]
+        args = (argv or sys.argv)[:]
         try:
             args.remove('--version')
         except ValueError:

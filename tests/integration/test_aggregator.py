@@ -5,6 +5,7 @@ import pytest
 
 from flake8.main import options
 from flake8.options import aggregator
+from flake8.options import config
 from flake8.options import manager
 
 CLI_SPECIFIED_CONFIG = 'tests/fixtures/config_files/cli-specified.ini'
@@ -25,7 +26,9 @@ def test_aggregate_options_with_config(optmanager):
     """Verify we aggregate options and config values appropriately."""
     arguments = ['flake8', '--config', CLI_SPECIFIED_CONFIG, '--select',
                  'E11,E34,E402,W,F', '--exclude', 'tests/*']
-    options, args = aggregator.aggregate_options(optmanager, arguments)
+    config_finder = config.ConfigFileFinder('flake8', arguments, [])
+    options, args = aggregator.aggregate_options(
+        optmanager, config_finder, arguments)
 
     assert options.config == CLI_SPECIFIED_CONFIG
     assert options.select == ['E11', 'E34', 'E402', 'W', 'F']
@@ -37,8 +40,10 @@ def test_aggregate_options_when_isolated(optmanager):
     """Verify we aggregate options and config values appropriately."""
     arguments = ['flake8', '--isolated', '--select', 'E11,E34,E402,W,F',
                  '--exclude', 'tests/*']
+    config_finder = config.ConfigFileFinder('flake8', arguments, [])
     optmanager.extend_default_ignore(['E8'])
-    options, args = aggregator.aggregate_options(optmanager, arguments)
+    options, args = aggregator.aggregate_options(
+        optmanager, config_finder, arguments)
 
     assert options.isolated is True
     assert options.select == ['E11', 'E34', 'E402', 'W', 'F']

@@ -9,11 +9,15 @@ from flake8.formatting import base as formatter
 def test_get_style_guide():
     """Verify the methods called on our internal Application."""
     mockedapp = mock.Mock()
+    mockedapp.prelim_opts.verbose = 0
+    mockedapp.prelim_opts.output_file = None
     with mock.patch('flake8.main.application.Application') as Application:
         Application.return_value = mockedapp
         style_guide = api.get_style_guide()
 
     Application.assert_called_once_with()
+    mockedapp.parse_preliminary_options_and_args.assert_called_once_with([])
+    mockedapp.make_config_finder.assert_called_once_with()
     mockedapp.find_plugins.assert_called_once_with()
     mockedapp.register_plugin_options.assert_called_once_with()
     mockedapp.parse_configuration_and_cli.assert_called_once_with([])

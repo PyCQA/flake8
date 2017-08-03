@@ -236,11 +236,14 @@ class Plugin(object):
 class PluginManager(object):  # pylint: disable=too-few-public-methods
     """Find and manage plugins consistently."""
 
-    def __init__(self, namespace, verify_requirements=False):
+    def __init__(self, namespace,
+                 local_plugins=None, verify_requirements=False):
         """Initialize the manager.
 
         :param str namespace:
             Namespace of the plugins to manage, e.g., 'flake8.extension'.
+        :param list local_plugins:
+            Plugins from config (as "X = path.to:Plugin" strings).
         :param bool verify_requirements:
             Whether or not to make setuptools verify that the requirements for
             the plugin are satisfied.
@@ -249,15 +252,34 @@ class PluginManager(object):  # pylint: disable=too-few-public-methods
         self.verify_requirements = verify_requirements
         self.plugins = {}
         self.names = []
-        self._load_all_plugins()
+        self._load_local_plugins(local_plugins or [])
+        self._load_entrypoint_plugins()
 
-    def _load_all_plugins(self):
+    def _load_local_plugins(self, local_plugins):
+        """Load local plugins from config.
+
+        :param list local_plugins:
+            Plugins from config (as "X = path.to:Plugin" strings).
+        """
+        for plugin_str in local_plugins:
+            entry_point = pkg_resources.EntryPoint.parse(plugin_str)
+            self._load_plugin_from_entrypoint(entry_point)
+
+    def _load_entrypoint_plugins(self):
         LOG.info('Loading entry-points for "%s".', self.namespace)
         for entry_point in pkg_resources.iter_entry_points(self.namespace):
-            name = entry_point.name
-            self.plugins[name] = Plugin(name, entry_point)
-            self.names.append(name)
-            LOG.debug('Loaded %r for plugin "%s".', self.plugins[name], name)
+            self._load_plugin_from_entrypoint(entry_point)
+
+    def _load_plugin_from_entrypoint(self, entry_point):
+        """Load a plugin from a setuptools EntryPoint.
+
+        :param EntryPoint entry_point:
+            EntryPoint to load plugin from.
+        """
+        name = entry_point.name
+        self.plugins[name] = Plugin(name, entry_point)
+        self.names.append(name)
+        LOG.debug('Loaded %r for plugin "%s".', self.plugins[name], name)
 
     def map(self, func, *args, **kwargs):
         r"""Call ``func`` with the plugin and \*args and \**kwargs after.
@@ -329,9 +351,14 @@ class PluginTypeManager(object):
 
     namespace = None
 
-    def __init__(self):
-        """Initialize the plugin type's manager."""
-        self.manager = PluginManager(self.namespace)
+    def __init__(self, local_plugins=None):
+        """Initialize the plugin type's manager.
+
+        :param list local_plugins:
+            Plugins from config file instead of entry-points
+        """
+        self.manager = PluginManager(
+            self.namespace, local_plugins=local_plugins)
         self.plugins_loaded = False
 
     def __contains__(self, name):
@@ -436,7 +463,7 @@ class NotifierBuilderMixin(object):  # pylint: disable=too-few-public-methods
 
 
 class Checkers(PluginTypeManager):
-    """All of the checkers registered through entry-ponits."""
+    """All of the checkers registered through entry-points or config."""
 
     namespace = 'flake8.extension'
 
@@ -515,12 +542,12 @@ class Checkers(PluginTypeManager):
 
 
 class Listeners(PluginTypeManager, NotifierBuilderMixin):
-    """All of the listeners registered through entry-points."""
+    """All of the listeners registered through entry-points or config."""
 
     namespace = 'flake8.listen'
 
 
 class ReportFormatters(PluginTypeManager):
-    """All of the report formatters registered through entry-points."""
+    """All of the report formatters registered through entry-points/config."""
 
     namespace = 'flake8.report'

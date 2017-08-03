@@ -53,7 +53,7 @@ def test_instantiates_a_manager(PluginManager):
     """Verify we create a PluginManager on instantiation."""
     FakeTestType()
 
-    PluginManager.assert_called_once_with(TEST_NAMESPACE)
+    PluginManager.assert_called_once_with(TEST_NAMESPACE, local_plugins=None)
 
 
 @mock.patch('flake8.plugins.manager.PluginManager')

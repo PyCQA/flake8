@@ -17,7 +17,11 @@ tests_require = ['mock >= 2.0.0', 'pytest']
 # NOTE(sigmavirus24): When updating these requirements, update them in
 # setup.cfg as well.
 requires = [
-    "pyflakes >= 1.5.0, < 1.6.0",
+    # We document the reasoning for using ranges here:
+    # http://flake8.pycqa.org/en/latest/faq.html#why-does-flake8-use-ranges-for-its-dependencies
+    # And in which releases we will update those ranges here:
+    # http://flake8.pycqa.org/en/latest/internal/releases.html#releasing-flake8
+    "pyflakes >= 1.5.0, < 1.7.0",
     "pycodestyle >= 2.0.0, < 2.4.0",
     "mccabe >= 0.6.0, < 0.7.0",
     "setuptools >= 30",

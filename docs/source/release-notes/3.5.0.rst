@@ -1,0 +1,14 @@
+3.5.0 -- 2017-xx-xx
+-------------------
+
+You can view the `3.5.0 milestone`_ on GitLab for more details.
+
+
+
+.. all links
+.. _3.5.0 milestone:
+    https://gitlab.com/pycqa/flake8/milestones/20
+
+.. issue links
+
+.. merge request links

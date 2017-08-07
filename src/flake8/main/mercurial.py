@@ -59,8 +59,8 @@ def install():
         bool
     :raises:
         flake8.exceptions.MercurialCommitHookAlreadyExists
+    :raises:
         flake8.exceptions.MercurialQRefreshHookAlreadyExists
-
     """
     hgrc = find_hgrc(create_if_missing=True)
     if hgrc is None:

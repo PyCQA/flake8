@@ -1,11 +1,11 @@
 About this directory
 ====================
 
-The files in this directory are test fixtures for unit and integration tests.  
-Their purpose is described below. Please note the list of file names that can 
+The files in this directory are test fixtures for unit and integration tests.
+Their purpose is described below. Please note the list of file names that can
 not be created as they are already used by tests.
 
-New fixtures are preferred over updating existing features unless existing 
+New fixtures are preferred over updating existing features unless existing
 tests will fail.
 
 Files that should not be created
@@ -26,6 +26,10 @@ Purposes of existing fixtures
     This should be used when providing config files that would have been found
     by looking for config files in the current working project directory.
 
+``tests/fixtures/config_files/local-plugin.ini``
+
+    This is for testing configuring a plugin via flake8 config file instead of
+    setuptools entry-point.
 
 ``tests/fixtures/config_files/no-flake8-section.ini``
 

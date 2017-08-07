@@ -6,6 +6,7 @@ In 3.0 we no longer have an "engine" module but we maintain the API from it.
 import logging
 import os.path
 
+import flake8
 from flake8.formatting import base as formatter
 from flake8.main import application as app
 
@@ -26,6 +27,10 @@ def get_style_guide(**kwargs):
         :class:`StyleGuide`
     """
     application = app.Application()
+    application.parse_preliminary_options_and_args([])
+    flake8.configure_logging(
+        application.prelim_opts.verbose, application.prelim_opts.output_file)
+    application.make_config_finder()
     application.find_plugins()
     application.register_plugin_options()
     application.parse_configuration_and_cli([])

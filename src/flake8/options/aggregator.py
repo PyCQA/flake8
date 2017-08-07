@@ -5,17 +5,18 @@ applies the user-specified command-line configuration on top of it.
 """
 import logging
 
-from flake8 import utils
 from flake8.options import config
 
 LOG = logging.getLogger(__name__)
 
 
-def aggregate_options(manager, arglist=None, values=None):
+def aggregate_options(manager, config_finder, arglist=None, values=None):
     """Aggregate and merge CLI and config file options.
 
-    :param flake8.option.manager.OptionManager manager:
+    :param flake8.options.manager.OptionManager manager:
         The instance of the OptionManager that we're presently using.
+    :param flake8.options.config.ConfigFileFinder config_finder:
+        The config file finder to use.
     :param list arglist:
         The list of arguments to pass to ``manager.parse_args``. In most cases
         this will be None so ``parse_args`` uses ``sys.argv``. This is mostly
@@ -32,14 +33,12 @@ def aggregate_options(manager, arglist=None, values=None):
     default_values, _ = manager.parse_args([], values=values)
     # Get original CLI values so we can find additional config file paths and
     # see if --config was specified.
-    original_values, original_args = manager.parse_args(arglist)
-    extra_config_files = utils.normalize_paths(original_values.append_config)
+    original_values, _ = manager.parse_args(arglist)
 
     # Make our new configuration file mergerator
     config_parser = config.MergedConfigParser(
         option_manager=manager,
-        extra_config_files=extra_config_files,
-        args=original_args,
+        config_finder=config_finder,
     )
 
     # Get the parsed config

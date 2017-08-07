@@ -48,3 +48,15 @@ def test_handles_mapping_functions_across_plugins(iter_entry_points):
     plugins = [plugin_mgr.plugins[name] for name in plugin_mgr.names]
 
     assert list(plugin_mgr.map(lambda x: x)) == plugins
+
+
+@mock.patch('pkg_resources.iter_entry_points')
+def test_local_plugins(iter_entry_points):
+    """Verify PluginManager can load given local plugins."""
+    iter_entry_points.return_value = []
+    plugin_mgr = manager.PluginManager(
+        namespace='testing.pkg_resources',
+        local_plugins=['X = path.to:Plugin']
+    )
+
+    assert plugin_mgr.plugins['X'].entry_point.module_name == 'path.to'

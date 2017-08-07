@@ -39,6 +39,18 @@ def test_cli_config():
     assert parsed_config.has_section('flake8')
 
 
+def test_cli_config_double_read():
+    """Second request for CLI config is cached."""
+    finder = config.ConfigFileFinder('flake8', None, [])
+
+    parsed_config = finder.cli_config(CLI_SPECIFIED_FILEPATH)
+    boom = Exception("second request for CLI config not cached")
+    with mock.patch.object(finder, '_read_config', side_effect=boom):
+        parsed_config_2 = finder.cli_config(CLI_SPECIFIED_FILEPATH)
+
+    assert parsed_config is parsed_config_2
+
+
 @pytest.mark.parametrize('args,expected', [
     # No arguments, common prefix of abspath('.')
     ([],
@@ -103,6 +115,18 @@ def test_local_configs():
     finder = config.ConfigFileFinder('flake8', None, [])
 
     assert isinstance(finder.local_configs(), configparser.RawConfigParser)
+
+
+def test_local_configs_double_read():
+    """Second request for local configs is cached."""
+    finder = config.ConfigFileFinder('flake8', None, [])
+
+    first_read = finder.local_configs()
+    boom = Exception("second request for local configs not cached")
+    with mock.patch.object(finder, '_read_config', side_effect=boom):
+        second_read = finder.local_configs()
+
+    assert first_read is second_read
 
 
 @pytest.mark.parametrize('files', [

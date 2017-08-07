@@ -237,7 +237,7 @@ class PluginManager(object):  # pylint: disable=too-few-public-methods
     """Find and manage plugins consistently."""
 
     def __init__(self, namespace,
-                 local_plugins=None, verify_requirements=False):
+                 verify_requirements=False, local_plugins=None):
         """Initialize the manager.
 
         :param str namespace:

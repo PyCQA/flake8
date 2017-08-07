@@ -93,7 +93,7 @@ class Application(object):
         #: The parsed diff information
         self.parsed_diff = {}
 
-    def parse_preliminary_options_and_args(self, argv):
+    def parse_preliminary_options_and_args(self, argv=None):
         """Get preliminary options and args from CLI, pre-plugin-loading.
 
         We need to know the values of a few standard options and args now, so

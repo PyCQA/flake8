@@ -313,20 +313,18 @@ def get_local_plugins(config_finder, cli_config=None, isolated=False):
     if cli_config:
         LOG.debug('Reading local plugins only from "%s" specified via '
                   '--config by the user', cli_config)
-        configs = [config_finder.cli_config(cli_config)]
+        config = config_finder.cli_config(cli_config)
     else:
-        configs = [
-            config_finder.user_config(),
-            config_finder.local_configs(),
-        ]
+        config = config_finder.local_configs()
 
     section = '%s:local-plugins' % config_finder.program_name
-    for config in configs:
-        for plugin_type in ['extension', 'report']:
-            if config.has_option(section, plugin_type):
-                getattr(local_plugins, plugin_type).extend(
-                    config.get(section, plugin_type).strip().splitlines()
-                )
+    for plugin_type in ['extension', 'report']:
+        if config.has_option(section, plugin_type):
+            getattr(local_plugins, plugin_type).extend(
+                c.strip() for c in config.get(
+                    section, plugin_type
+                ).strip().splitlines()
+            )
     return local_plugins
 
 

@@ -96,3 +96,13 @@ def test_returns_specified_plugin(application):
         assert execute is application.formatter_for('desired')
 
     assert warning.called is False
+
+
+def test_prelim_opts_args(application):
+    """Verify we get sensible prelim opts and args."""
+    application.parse_preliminary_options_and_args(
+        ['flake8', '--foo', '--verbose', 'src', 'setup.py', '--statistics'])
+
+    assert application.prelim_opts.statistics
+    assert application.prelim_opts.verbose
+    assert application.prelim_args == ['src', 'setup.py']

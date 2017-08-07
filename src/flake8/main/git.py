@@ -68,6 +68,8 @@ def install():
     pre-commit python script in the hooks sub-directory if one does not
     already exist.
 
+    It will also print a message to stdout about how to configure the hook.
+
     :returns:
         True if successful, False if the git directory doesn't exist.
     :rtype:
@@ -105,6 +107,10 @@ def install():
     # so that git can actually execute it as a hook.
     pre_commit_permissions = stat.S_IRWXU | stat.S_IRGRP | stat.S_IROTH
     os.chmod(pre_commit_file, pre_commit_permissions)
+
+    print('git pre-commit hook installed, for configuration options see')
+    print('http://flake8.pycqa.org/en/latest/user/using-hooks.html')
+
     return True
 
 

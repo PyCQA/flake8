@@ -46,7 +46,22 @@ def hook(ui, repo, **kwargs):
 
 
 def install():
-    """Ensure that the mercurial hooks are installed."""
+    """Ensure that the mercurial hooks are installed.
+
+    This searches for the ``.hg/hgrc`` configuration file and will add commit
+    and qrefresh hooks to it, if they do not already exist.
+
+    It will also print a message to stdout about how to configure the hook.
+
+    :returns:
+        True if successful, False if the ``.hg/hgrc`` file doesn't exist.
+    :rtype:
+        bool
+    :raises:
+        flake8.exceptions.MercurialCommitHookAlreadyExists
+    :raises:
+        flake8.exceptions.MercurialQRefreshHookAlreadyExists
+    """
     hgrc = find_hgrc(create_if_missing=True)
     if hgrc is None:
         return False
@@ -79,6 +94,9 @@ def install():
 
     with open(hgrc, 'w') as fd:
         hgconfig.write(fd)
+
+    print('mercurial hooks installed, for configuration options see')
+    print('http://flake8.pycqa.org/en/latest/user/using-hooks.html')
 
     return True
 

@@ -8,12 +8,16 @@ You can view the `3.5.0 milestone`_ on GitLab for more details.
 - Start using new PyCodestyle checks for bare excepts and ambiguous identifier
   (See also `GitLab#361`_)
 
+- Print out information about configuring VCS hooks (See also `GitLab#335`_)
+
 
 .. all links
 .. _3.5.0 milestone:
     https://gitlab.com/pycqa/flake8/milestones/20
 
 .. issue links
+.. _GitLab#335:
+    https://gitlab.com/pycqa/flake8/issues/335
 .. _GitLab#359:
     https://gitlab.com/pycqa/flake8/issues/359
 .. _GitLab#361:

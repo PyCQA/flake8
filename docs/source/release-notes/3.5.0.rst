@@ -3,6 +3,10 @@
 
 You can view the `3.5.0 milestone`_ on GitLab for more details.
 
+- Allow for PyFlakes 1.6.0 (See also `GitLab#359`_)
+
+- Start using new PyCodestyle checks for bare excepts and ambiguous identifier
+  (See also `GitLab#361`_)
 
 
 .. all links
@@ -10,5 +14,9 @@ You can view the `3.5.0 milestone`_ on GitLab for more details.
     https://gitlab.com/pycqa/flake8/milestones/20
 
 .. issue links
+.. _GitLab#359:
+    https://gitlab.com/pycqa/flake8/issues/359
+.. _GitLab#361:
+    https://gitlab.com/pycqa/flake8/issues/361
 
 .. merge request links

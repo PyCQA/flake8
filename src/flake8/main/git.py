@@ -56,7 +56,9 @@ def hook(lazy=False, strict=False):
         update_paths(app.file_checker_manager, tempdir)
         app.report_errors()
 
-    if strict:
+    if strict and app.result_count:
+        print("flake8 checks failed. Please fix, or force with "
+              "'git commit --no-verify'")
         return app.result_count
     return 0
 

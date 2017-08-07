@@ -24,7 +24,7 @@ NO_GROUP_FOUND = object()
 class Plugin(object):
     """Wrap an EntryPoint from setuptools and other logic."""
 
-    def __init__(self, name, entry_point):
+    def __init__(self, name, entry_point, local=False):
         """Initialize our Plugin.
 
         :param str name:
@@ -33,9 +33,12 @@ class Plugin(object):
             EntryPoint returned by setuptools.
         :type entry_point:
             setuptools.EntryPoint
+        :param bool local:
+            Is this a repo-local plugin?
         """
         self.name = name
         self.entry_point = entry_point
+        self.local = local
         self._plugin = None
         self._parameters = None
         self._parameter_names = None
@@ -112,6 +115,8 @@ class Plugin(object):
                 self._version = version_for(self)
             else:
                 self._version = self.plugin.version
+            if self.local:
+                self._version += ' [local]'
 
         return self._version
 
@@ -263,21 +268,23 @@ class PluginManager(object):  # pylint: disable=too-few-public-methods
         """
         for plugin_str in local_plugins:
             entry_point = pkg_resources.EntryPoint.parse(plugin_str)
-            self._load_plugin_from_entrypoint(entry_point)
+            self._load_plugin_from_entrypoint(entry_point, local=True)
 
     def _load_entrypoint_plugins(self):
         LOG.info('Loading entry-points for "%s".', self.namespace)
         for entry_point in pkg_resources.iter_entry_points(self.namespace):
             self._load_plugin_from_entrypoint(entry_point)
 
-    def _load_plugin_from_entrypoint(self, entry_point):
+    def _load_plugin_from_entrypoint(self, entry_point, local=False):
         """Load a plugin from a setuptools EntryPoint.
 
         :param EntryPoint entry_point:
             EntryPoint to load plugin from.
+        :param bool local:
+            Is this a repo-local plugin?
         """
         name = entry_point.name
-        self.plugins[name] = Plugin(name, entry_point)
+        self.plugins[name] = Plugin(name, entry_point, local=local)
         self.names.append(name)
         LOG.debug('Loaded %r for plugin "%s".', self.plugins[name], name)
 

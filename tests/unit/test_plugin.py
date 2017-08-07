@@ -111,6 +111,17 @@ def test_version_proxies_to_the_plugin():
     assert plugin.version == 'a.b.c'
 
 
+def test_local_plugin_version():
+    """Verify that local plugins have [local] appended to version."""
+    entry_point = mock.Mock(spec=['require', 'resolve', 'load'])
+    plugin_obj = mock.Mock(spec_set=['version'])
+    plugin_obj.version = 'a.b.c'
+    plugin = manager.Plugin('T000', entry_point, local=True)
+    plugin._plugin = plugin_obj
+
+    assert plugin.version == 'a.b.c [local]'
+
+
 def test_register_options():
     """Verify we call add_options on the plugin only if it exists."""
     # Set up our mocks and Plugin object

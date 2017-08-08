@@ -53,8 +53,14 @@ def information(option_manager):
 
 def plugins_from(option_manager):
     """Generate the list of plugins installed."""
-    return [{'plugin': plugin, 'version': version}
-            for (plugin, version) in sorted(option_manager.registered_plugins)]
+    return [
+        {
+            'plugin': plugin.name,
+            'version': plugin.version,
+            'is_local': plugin.local,
+        }
+        for plugin in sorted(option_manager.registered_plugins)
+    ]
 
 
 def dependencies():

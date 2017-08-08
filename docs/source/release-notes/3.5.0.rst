@@ -3,12 +3,22 @@
 
 You can view the `3.5.0 milestone`_ on GitLab for more details.
 
+New Dependency Information
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 - Allow for PyFlakes 1.6.0 (See also `GitLab#359`_)
 
 - Start using new PyCodestyle checks for bare excepts and ambiguous identifier
   (See also `GitLab#361`_)
 
+Features
+~~~~~~~~
+
 - Print out information about configuring VCS hooks (See also `GitLab#335`_)
+
+- Allow users to develop plugins "local" to a repository without using
+  setuptools. See our documentation on local plugins for more information.
+  (See also `GitLab#357`_)
 
 
 .. all links
@@ -18,6 +28,8 @@ You can view the `3.5.0 milestone`_ on GitLab for more details.
 .. issue links
 .. _GitLab#335:
     https://gitlab.com/pycqa/flake8/issues/335
+.. _GitLab#357:
+    https://gitlab.com/pycqa/flake8/issues/357
 .. _GitLab#359:
     https://gitlab.com/pycqa/flake8/issues/359
 .. _GitLab#361:

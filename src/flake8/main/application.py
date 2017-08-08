@@ -131,8 +131,8 @@ class Application(object):
             pass
 
         opts, args = self.option_manager.parse_known_args(args)
-        # parse_known_args includes unknown options as args; get rid of them
-        args = [a for a in args if not a.startswith('-')]
+        # parse_known_args includes program name and unknown options as args
+        args = [a for a in args[1:] if not a.startswith('-')]
         self.prelim_opts, self.prelim_args = opts, args
 
     def exit(self):

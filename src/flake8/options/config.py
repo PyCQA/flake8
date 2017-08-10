@@ -5,6 +5,8 @@ import logging
 import os.path
 import sys
 
+from flake8 import utils
+
 LOG = logging.getLogger(__name__)
 
 __all__ = ('ConfigFileFinder', 'MergedConfigParser')
@@ -320,11 +322,12 @@ def get_local_plugins(config_finder, cli_config=None, isolated=False):
     section = '%s:local-plugins' % config_finder.program_name
     for plugin_type in ['extension', 'report']:
         if config.has_option(section, plugin_type):
-            getattr(local_plugins, plugin_type).extend(
-                c.strip() for c in config.get(
-                    section, plugin_type
-                ).strip().splitlines()
-            )
+            local_plugins_string = config.get(section, plugin_type).strip()
+            plugin_type_list = getattr(local_plugins, plugin_type)
+            plugin_type_list.extend(utils.parse_comma_separated_list(
+                local_plugins_string,
+                regexp=utils.LOCAL_PLUGIN_LIST_RE,
+            ))
     return local_plugins
 
 

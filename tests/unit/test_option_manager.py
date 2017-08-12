@@ -121,7 +121,9 @@ def test_parse_args_normalize_paths(optmanager):
 
 def test_format_plugin():
     """Verify that format_plugin turns a tuple into a dictionary."""
-    plugin = manager.OptionManager.format_plugin(('Testing', '0.0.0'))
+    plugin = manager.OptionManager.format_plugin(
+        manager.PluginVersion('Testing', '0.0.0', False)
+    )
     assert plugin['name'] == 'Testing'
     assert plugin['version'] == '0.0.0'
 
@@ -129,9 +131,9 @@ def test_format_plugin():
 def test_generate_versions(optmanager):
     """Verify a comma-separated string is generated of registered plugins."""
     optmanager.registered_plugins = [
-        ('Testing 100', '0.0.0'),
-        ('Testing 101', '0.0.0'),
-        ('Testing 300', '0.0.0'),
+        manager.PluginVersion('Testing 100', '0.0.0', False),
+        manager.PluginVersion('Testing 101', '0.0.0', False),
+        manager.PluginVersion('Testing 300', '0.0.0', True),
     ]
     assert (optmanager.generate_versions() ==
             'Testing 100: 0.0.0, Testing 101: 0.0.0, Testing 300: 0.0.0')
@@ -140,11 +142,11 @@ def test_generate_versions(optmanager):
 def test_plugins_are_sorted_in_generate_versions(optmanager):
     """Verify we sort before joining strings in generate_versions."""
     optmanager.registered_plugins = [
-        ('pyflakes', '1.5.0'),
-        ('mccabe', '0.7.0'),
-        ('pycodestyle', '2.2.0'),
-        ('flake8-docstrings', '0.6.1'),
-        ('flake8-bugbear', '2016.12.1'),
+        manager.PluginVersion('pyflakes', '1.5.0', False),
+        manager.PluginVersion('mccabe', '0.7.0', False),
+        manager.PluginVersion('pycodestyle', '2.2.0', False),
+        manager.PluginVersion('flake8-docstrings', '0.6.1', False),
+        manager.PluginVersion('flake8-bugbear', '2016.12.1', False),
     ]
     assert (optmanager.generate_versions() ==
             'flake8-bugbear: 2016.12.1, '
@@ -157,9 +159,9 @@ def test_plugins_are_sorted_in_generate_versions(optmanager):
 def test_generate_versions_with_format_string(optmanager):
     """Verify a comma-separated string is generated of registered plugins."""
     optmanager.registered_plugins.update([
-        ('Testing', '0.0.0'),
-        ('Testing', '0.0.0'),
-        ('Testing', '0.0.0'),
+        manager.PluginVersion('Testing', '0.0.0', False),
+        manager.PluginVersion('Testing', '0.0.0', False),
+        manager.PluginVersion('Testing', '0.0.0', False),
     ])
     assert (
         optmanager.generate_versions() == 'Testing: 0.0.0'
@@ -172,9 +174,9 @@ def test_update_version_string(optmanager):
     assert optmanager.parser.version == TEST_VERSION
 
     optmanager.registered_plugins = [
-        ('Testing 100', '0.0.0'),
-        ('Testing 101', '0.0.0'),
-        ('Testing 300', '0.0.0'),
+        manager.PluginVersion('Testing 100', '0.0.0', False),
+        manager.PluginVersion('Testing 101', '0.0.0', False),
+        manager.PluginVersion('Testing 300', '0.0.0', False),
     ]
 
     optmanager.update_version_string()
@@ -190,9 +192,9 @@ def test_generate_epilog(optmanager):
     assert optmanager.parser.epilog is None
 
     optmanager.registered_plugins = [
-        ('Testing 100', '0.0.0'),
-        ('Testing 101', '0.0.0'),
-        ('Testing 300', '0.0.0'),
+        manager.PluginVersion('Testing 100', '0.0.0', False),
+        manager.PluginVersion('Testing 101', '0.0.0', False),
+        manager.PluginVersion('Testing 300', '0.0.0', False),
     ]
 
     expected_value = (

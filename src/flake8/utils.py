@@ -11,14 +11,20 @@ import tokenize
 
 DIFF_HUNK_REGEXP = re.compile(r'^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@.*$')
 COMMA_SEPARATED_LIST_RE = re.compile(r'[,\s]')
+LOCAL_PLUGIN_LIST_RE = re.compile(r'[,\t\n\r\f\v]')
 
 
-def parse_comma_separated_list(value):
+def parse_comma_separated_list(value, regexp=COMMA_SEPARATED_LIST_RE):
     # type: (Union[Sequence[str], str]) -> List[str]
     """Parse a comma-separated list.
 
     :param value:
         String or list of strings to be parsed and normalized.
+    :param regexp:
+        Compiled regular expression used to split the value when it is a
+        string.
+    :type regexp:
+        _sre.SRE_Pattern
     :returns:
         List of values with whitespace stripped.
     :rtype:
@@ -28,7 +34,7 @@ def parse_comma_separated_list(value):
         return []
 
     if not isinstance(value, (list, tuple)):
-        value = COMMA_SEPARATED_LIST_RE.split(value)
+        value = regexp.split(value)
 
     item_gen = (item.strip() for item in value)
     return [item for item in item_gen if item]

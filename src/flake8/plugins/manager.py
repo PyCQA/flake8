@@ -115,8 +115,6 @@ class Plugin(object):
                 self._version = version_for(self)
             else:
                 self._version = self.plugin.version
-            if self.local:
-                self._version += ' [local]'
 
         return self._version
 

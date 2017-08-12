@@ -222,3 +222,51 @@ They use the comments to describe the check but they could also write this as:
 Or they could use each comment to describe **why** they've ignored the check.
 |Flake8| knows how to parse these lists and will appropriately handle
 these situations.
+
+
+Using Local Plugins
+-------------------
+
+.. versionadded:: 3.5.0
+
+|Flake8| allows users to write plugins that live locally in a project. These
+plugins do not need to use setuptools or any of the other overhead associated
+with plugins distributed on PyPI. To use these plugins, users must specify
+them in their configuration file (i.e., ``.flake8``, ``setup.cfg``, or
+``tox.ini``). This must be configured in a separate INI section named
+``flake8:local-plugins``.
+
+Users may configure plugins that check source code, i.e., ``extension``
+plugins, and plugins that report errors, i.e., ``report`` plugins.
+
+An example configuration might look like:
+
+.. code-block:: ini
+
+    [flake8:local-plugins]
+    extension =
+        MC1 = project.flake8.checkers:MyChecker1
+        MC2 = project.flake8.checkers:MyChecker2
+    report =
+        MR1 = project.flake8.reporters:MyReporter1
+        MR2 = project.flake8.reporters:MyReporter2
+
+|Flake8| will also, however, allow for commas to separate the plugins for
+example:
+
+.. code-block:: ini
+
+    [flake8:local-plugins]
+    extension =
+        MC1 = project.flake8.checkers:MyChecker1,
+        MC2 = project.flake8.checkers:MyChecker2
+    report =
+        MR1 = project.flake8.reporters:MyReporter1,
+        MR2 = project.flake8.reporters:MyReporter2
+
+These configurations will allow you to select your own custom reporter plugin
+that you've designed or will utilize your new check classes.
+
+.. note::
+
+    These plugins otherwise follow the same guidelines as regular plugins.

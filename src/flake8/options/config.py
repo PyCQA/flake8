@@ -60,13 +60,21 @@ class ConfigFileFinder(object):
     @staticmethod
     def _read_config(files):
         config = configparser.RawConfigParser()
-        try:
-            found_files = config.read(files)
-        except configparser.ParsingError:
-            LOG.exception("There was an error trying to parse a config "
-                          "file. The files we were attempting to parse "
-                          "were: %r", files)
-            found_files = []
+        if isinstance(files, (str, type(u''))):
+            files = [files]
+
+        found_files = []
+        for filename in files:
+            try:
+                found_files.extend(config.read(filename))
+            except UnicodeDecodeError:
+                LOG.exception("There was an error decoding a config file."
+                              "The file with a problem was %s.",
+                              filename)
+            except configparser.ParsingError:
+                LOG.exception("There was an error trying to parse a config "
+                              "file. The file with a problem was %s.",
+                              filename)
         return (config, found_files)
 
     def cli_config(self, files):

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Tests for the ConfigFileFinder."""
 import configparser
 import os
@@ -135,4 +136,14 @@ def test_local_configs_double_read():
 ])
 def test_read_config_catches_broken_config_files(files):
     """Verify that we do not allow the exception to bubble up."""
-    assert config.ConfigFileFinder._read_config(files)[1] == []
+    _, parsed = config.ConfigFileFinder._read_config(files)
+    assert BROKEN_CONFIG_PATH not in parsed
+
+
+def test_read_config_catches_decoding_errors(tmpdir):
+    """Verify that we do not allow the exception to bubble up."""
+    setup_cfg = tmpdir.join('setup.cfg')
+    # pick an encoding that's unlikely to be a default
+    setup_cfg.write_binary(u'[x]\ny = €'.encode('cp1252'))
+    _, parsed = config.ConfigFileFinder._read_config(setup_cfg.strpath)
+    assert parsed == []

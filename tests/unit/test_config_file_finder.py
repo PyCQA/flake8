@@ -143,7 +143,7 @@ def test_read_config_catches_broken_config_files(files):
 def test_read_config_catches_decoding_errors(tmpdir):
     """Verify that we do not allow the exception to bubble up."""
     setup_cfg = tmpdir.join('setup.cfg')
-    # pick an encoding that's unlikely to be a default
-    setup_cfg.write_binary(u'[x]\ny = €'.encode('cp1252'))
+    # pick bytes that are unlikely to decode
+    setup_cfg.write_binary(b'[x]\ny = \x81\x8d\x90\x9d')
     _, parsed = config.ConfigFileFinder._read_config(setup_cfg.strpath)
     assert parsed == []

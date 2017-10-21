@@ -1,4 +1,4 @@
-3.5.0 -- 2017-xx-xx
+3.5.0 -- 2017-10-23
 -------------------
 
 You can view the `3.5.0 milestone`_ on GitLab for more details.
@@ -20,6 +20,12 @@ Features
   setuptools. See our documentation on local plugins for more information.
   (See also `GitLab#357`_)
 
+Bugs Fixed
+~~~~~~~~~~
+
+- Catch and helpfully report ``UnicodeDecodeError``\ s when parsing
+  configuration files. (See also `GitLab#358`_)
+
 
 .. all links
 .. _3.5.0 milestone:
@@ -30,6 +36,8 @@ Features
     https://gitlab.com/pycqa/flake8/issues/335
 .. _GitLab#357:
     https://gitlab.com/pycqa/flake8/issues/357
+.. _GitLab#358:
+    https://gitlab.com/pycqa/flake8/issues/358
 .. _GitLab#359:
     https://gitlab.com/pycqa/flake8/issues/359
 .. _GitLab#361:

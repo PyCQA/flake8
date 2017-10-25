@@ -350,8 +350,7 @@ def get_local_plugins(config_finder, cli_config=None, isolated=False):
             ))
     if config.has_option(section, 'paths'):
         raw_paths = utils.parse_comma_separated_list(
-            config.get(section, 'paths').strip(),
-            regexp=utils.LOCAL_PLUGIN_LIST_RE,
+            config.get(section, 'paths').strip()
         )
         norm_paths = []
         for base_dir in base_dirs:

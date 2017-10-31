@@ -52,7 +52,7 @@ def register_default_options(option_manager):
 
     add_option(
         '--count', action='store_true', parse_from_config=True,
-        help='Print total number of errors and warnings to standard error and'
+        help='Print total number of errors and warnings and'
              ' set the exit code to 1 if total is not empty.',
     )
 

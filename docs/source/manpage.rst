@@ -37,8 +37,8 @@ All options available as of Flake8 3.1.0::
                           verbosity each time it is repeated.
     -q, --quiet           Report only file names, or nothing. This option is
                           repeatable.
-    --count               Print total number of errors and warnings to standard
-                          error and set the exit code to 1 if total is not
+    --count               Print total number of errors and warnings
+                          and set the exit code to 1 if total is not
                           empty.
     --diff                Report changes only within line number ranges in the
                           unified diff provided on standard in by the user.

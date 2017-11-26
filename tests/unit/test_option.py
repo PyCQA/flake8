@@ -24,7 +24,7 @@ def test_to_optparse():
 
 
 @mock.patch('optparse.Option')
-def test_to_optparse_creates_an_option_as_we_expect(Option):
+def test_to_optparse_creates_an_option_as_we_expect(Option):  # noqa: N803
     """Show that we pass all keyword args to optparse.Option."""
     opt = manager.Option('-t', '--test', action='count')
     opt.to_optparse()

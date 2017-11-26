@@ -5,7 +5,7 @@ from flake8 import checker
 
 
 @mock.patch('flake8.processor.FileProcessor')
-def test_run_ast_checks_handles_SyntaxErrors(FileProcessor):
+def test_run_ast_checks_handles_SyntaxErrors(FileProcessor):  # noqa: N802,N803
     """Stress our SyntaxError handling.
 
     Related to: https://gitlab.com/pycqa/flake8/issues/237

@@ -83,7 +83,7 @@ class TestTrieNode(object):
         assert child.prefix == 'a'
         assert child.data == 'a is for Apple'
 
-    def test_find_prefix_returns_None_when_no_children_have_the_prefix(self):
+    def test_find_prefix_returns_none_when_no_children_have_the_prefix(self):
         """Verify we receive None from find_prefix for missing children."""
         node = trie.TrieNode('E', 'E is for Eat', children={
             'a': trie.TrieNode('a', 'a is for Apple')

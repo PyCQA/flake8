@@ -3,6 +3,7 @@ from flake8.main import application
 
 
 LOCAL_PLUGIN_CONFIG = 'tests/fixtures/config_files/local-plugin.ini'
+LOCAL_PLUGIN_PATH_CONFIG = 'tests/fixtures/config_files/local-plugin-path.ini'
 
 
 class ExtensionTestPlugin(object):
@@ -56,3 +57,11 @@ def test_local_plugin_can_add_option():
         ['flake8', '--config', LOCAL_PLUGIN_CONFIG, '--anopt', 'foo'])
 
     assert app.options.anopt == 'foo'
+
+
+def test_enable_local_plugin_at_non_installed_path():
+    """Can add a paths option in local-plugins config section for finding."""
+    app = application.Application()
+    app.initialize(['flake8', '--config', LOCAL_PLUGIN_PATH_CONFIG])
+
+    assert app.check_plugins['XE'].plugin.name == 'ExtensionTestPlugin2'

@@ -267,6 +267,27 @@ example:
 These configurations will allow you to select your own custom reporter plugin
 that you've designed or will utilize your new check classes.
 
+If your package is installed in the same virtualenv that |Flake8| will run
+from, and your local plugins are part of that package, you're all set; |Flake8|
+will be able to import your local plugins. However, if you are working on a
+project that isn't set up as an installable package, or |Flake8| doesn't run
+from the same virtualenv your code runs in, you may need to tell |Flake8| where
+to import your local plugins from. You can do this via the ``paths`` option in
+the ``local-plugins`` section of your config:
+
+.. code-block:: ini
+
+    [flake8:local-plugins]
+    extension =
+      MC1 = myflake8plugin:MyChecker1
+    paths =
+      ./path/to
+
+Relative paths will be interpreted relative to the config file. Multiple paths
+can be listed (comma separated just like ``exclude``) as needed. If your local
+plugins have any dependencies, it's up to you to ensure they are installed in
+whatever Python environment |Flake8| runs in.
+
 .. note::
 
     These plugins otherwise follow the same guidelines as regular plugins.

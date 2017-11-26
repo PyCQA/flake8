@@ -54,6 +54,7 @@ class ConfigFileFinder(object):
 
         # caches to avoid double-reading config files
         self._local_configs = None
+        self._local_found_files = []
         self._user_config = None
         self._cli_configs = {}
 
@@ -120,14 +121,22 @@ class ConfigFileFinder(object):
             for filename in self.generate_possible_local_files()
         ] + [f for f in self.extra_config_files if exists(f)]
 
-    def local_configs(self):
-        """Parse all local config files into one config object."""
+    def local_configs_with_files(self):
+        """Parse all local config files into one config object.
+
+        Return (config, found_config_files) tuple.
+        """
         if self._local_configs is None:
             config, found_files = self._read_config(self.local_config_files())
             if found_files:
                 LOG.debug('Found local configuration files: %s', found_files)
             self._local_configs = config
-        return self._local_configs
+            self._local_found_files = found_files
+        return (self._local_configs, self._local_found_files)
+
+    def local_configs(self):
+        """Parse all local config files into one config object."""
+        return self.local_configs_with_files()[0]
 
     def user_config_file(self):
         """Find the user-level config file."""
@@ -314,7 +323,7 @@ def get_local_plugins(config_finder, cli_config=None, isolated=False):
     :rtype:
         flake8.options.config.LocalPlugins
     """
-    local_plugins = LocalPlugins(extension=[], report=[])
+    local_plugins = LocalPlugins(extension=[], report=[], paths=[])
     if isolated:
         LOG.debug('Refusing to look for local plugins in configuration'
                   'files due to user-requested isolation')
@@ -324,8 +333,11 @@ def get_local_plugins(config_finder, cli_config=None, isolated=False):
         LOG.debug('Reading local plugins only from "%s" specified via '
                   '--config by the user', cli_config)
         config = config_finder.cli_config(cli_config)
+        config_files = [cli_config]
     else:
-        config = config_finder.local_configs()
+        config, config_files = config_finder.local_configs_with_files()
+
+    base_dirs = {os.path.dirname(cf) for cf in config_files}
 
     section = '%s:local-plugins' % config_finder.program_name
     for plugin_type in ['extension', 'report']:
@@ -336,7 +348,19 @@ def get_local_plugins(config_finder, cli_config=None, isolated=False):
                 local_plugins_string,
                 regexp=utils.LOCAL_PLUGIN_LIST_RE,
             ))
+    if config.has_option(section, 'paths'):
+        raw_paths = utils.parse_comma_separated_list(
+            config.get(section, 'paths').strip()
+        )
+        norm_paths = []
+        for base_dir in base_dirs:
+            norm_paths.extend(
+                path for path in
+                utils.normalize_paths(raw_paths, parent=base_dir)
+                if os.path.exists(path)
+            )
+        local_plugins.paths.extend(norm_paths)
     return local_plugins
 
 
-LocalPlugins = collections.namedtuple('LocalPlugins', 'extension report')
+LocalPlugins = collections.namedtuple('LocalPlugins', 'extension report paths')

@@ -177,6 +177,8 @@ class Application(object):
                 self.prelim_opts.isolated,
             )
 
+        sys.path.extend(self.local_plugins.paths)
+
         if self.check_plugins is None:
             self.check_plugins = plugin_manager.Checkers(
                 self.local_plugins.extension)

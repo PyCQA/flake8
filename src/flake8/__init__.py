@@ -19,7 +19,7 @@ except ImportError:
         def emit(self, record):
             """Do nothing."""
             pass
-import sys
+import sys  # noqa: I202
 
 LOG = logging.getLogger(__name__)
 LOG.addHandler(NullHandler())

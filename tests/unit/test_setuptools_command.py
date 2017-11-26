@@ -1,6 +1,5 @@
 """Module containing tests for the setuptools command integration."""
 import pytest
-
 from setuptools import dist
 
 from flake8.main import setuptools_command

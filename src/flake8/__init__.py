@@ -10,22 +10,10 @@ This module
 
 """
 import logging
-try:
-    from logging import NullHandler
-except ImportError:
-    class NullHandler(logging.Handler):
-        """Shim for version of Python < 2.7."""
-
-        def emit(self, record):
-            """Do nothing."""
-            pass
-import sys  # noqa: I202
+import sys
 
 LOG = logging.getLogger(__name__)
-LOG.addHandler(NullHandler())
-
-# Clean up after LOG config
-del NullHandler
+LOG.addHandler(logging.NullHandler())
 
 __version__ = '3.5.0'
 __version_info__ = tuple(int(i) for i in __version__.split('.') if i.isdigit())

@@ -25,7 +25,6 @@ like:
 
 .. code-block:: python
 
-    from __future__ import with_statement
     import setuptools
 
     requires = [

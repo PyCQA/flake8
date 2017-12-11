@@ -34,13 +34,13 @@ like:
     flake8_entry_point = # ...
 
     setuptools.setup(
-        name="flake8_example",
+        name="flake8-example",
         license="MIT",
         version="0.1.0",
         description="our extension to flake8",
         author="Me",
         author_email="example@example.com",
-        url="https://gitlab.com/me/flake8_example",
+        url="https://gitlab.com/me/flake8-example",
         packages=[
             "flake8_example",
         ],

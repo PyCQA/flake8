@@ -106,7 +106,7 @@ class FileProcessor(object):
 
     @property
     def file_tokens(self):
-        """The complete set of tokens for a file.
+        """Return the complete set of tokens for a file.
 
         Accessing this attribute *may* raise an InvalidSyntax exception.
 
@@ -334,7 +334,7 @@ class FileProcessor(object):
 
     def should_ignore_file(self):
         # type: () -> bool
-        """Check if ``# flake8: noqa`` is in the file to be ignored.
+        """Check if ``flake8: noqa`` is in the file to be ignored.
 
         :returns:
             True if a line matches :attr:`defaults.NOQA_FILE`,
@@ -342,8 +342,16 @@ class FileProcessor(object):
         :rtype:
             bool
         """
-        ignore_file = defaults.NOQA_FILE.search
-        return any(ignore_file(line) for line in self.lines)
+        if any(defaults.NOQA_FILE.match(line) for line in self.lines):
+            return True
+        elif any(defaults.NOQA_FILE.search(line) for line in self.lines):
+            LOG.warning(
+                'Detected `flake8: noqa` on line with code. To ignore an '
+                'error on a line use `noqa` instead.',
+            )
+            return False
+        else:
+            return False
 
     def strip_utf_bom(self):
         # type: () -> NoneType

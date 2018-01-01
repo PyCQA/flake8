@@ -92,8 +92,8 @@ def test_write_uses_an_output_file(tee):
         if tee:
             assert print_func.called
             assert print_func.mock_calls == [
-                mock.call(line),
-                mock.call(source),
+                mock.call(line, end='\n'),
+                mock.call(source, end='\n'),
             ]
         else:
             assert not print_func.called
@@ -118,8 +118,8 @@ def test_write_uses_print(print_function):
     assert print_function.called is True
     assert print_function.call_count == 2
     assert print_function.mock_calls == [
-        mock.call(line),
-        mock.call(source),
+        mock.call(line, end='\n'),
+        mock.call(source, end='\n'),
     ]
 
 

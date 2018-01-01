@@ -309,7 +309,12 @@ class Application(object):
         if self.running_against_diff:
             files = sorted(self.parsed_diff)
         self.file_checker_manager.start(files)
-        self.file_checker_manager.run()
+        try:
+            self.file_checker_manager.run()
+        except exceptions.PluginExecutionFailed as plugin_failed:
+            print(str(plugin_failed))
+            print('Run flake8 with greater verbosity to see more details')
+            self.catastrophic_failure = True
         LOG.info('Finished running')
         self.file_checker_manager.stop()
         self.end_time = time.time()

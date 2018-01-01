@@ -76,6 +76,25 @@ class PluginRequestedUnknownParameters(Flake8Exception):
                               'exc': self.original_exception}
 
 
+class PluginExecutionFailed(Flake8Exception):
+    """The plugin failed during execution."""
+
+    FORMAT = '"%(name)s" failed during execution due to "%(exc)s"'
+
+    def __init__(self, *args, **kwargs):
+        """Utilize keyword arguments for message generation."""
+        self.original_exception = kwargs.pop('exception')
+        self.plugin = kwargs.pop('plugin')
+        super(PluginExecutionFailed, self).__init__(
+            str(self), *args, **kwargs
+        )
+
+    def __str__(self):
+        """Format our exception message."""
+        return self.FORMAT % {'name': self.plugin['plugin_name'],
+                              'exc': self.original_exception}
+
+
 class HookInstallationError(Flake8Exception):
     """Parent exception for all hooks errors."""
 

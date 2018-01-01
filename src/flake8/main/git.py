@@ -132,6 +132,12 @@ def find_git_directory():
 
 
 def copy_indexed_files_to(temporary_directory, lazy):
+    # some plugins (e.g. flake8-isort) need these files to run their checks
+    setup_cfgs = find_setup_cfgs(lazy)
+    for filename in setup_cfgs:
+        contents = get_staged_contents_from(filename)
+        copy_file_to(temporary_directory, filename, contents)
+
     modified_files = find_modified_files(lazy)
     for filename in modified_files:
         contents = get_staged_contents_from(filename)
@@ -166,6 +172,18 @@ def find_modified_files(lazy):
 
     diff_index = piped_process(diff_index_cmd)
     (stdout, _) = diff_index.communicate()
+    stdout = to_text(stdout)
+    return stdout.splitlines()
+
+
+def find_setup_cfgs(lazy):
+    setup_cfg_cmd = [
+        'git', 'ls-files', '--cached', '*setup.cfg'
+    ]
+    if lazy:
+        setup_cfg_cmd.remove('--cached')
+    extra_files = piped_process(setup_cfg_cmd)
+    (stdout, _) = extra_files.communicate()
     stdout = to_text(stdout)
     return stdout.splitlines()
 

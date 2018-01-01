@@ -432,7 +432,15 @@ class FileChecker(object):
                 plugin=plugin,
                 exception=ae,
             )
-        return plugin['plugin'](**arguments)
+        try:
+            return plugin['plugin'](**arguments)
+        except Exception as all_exc:
+            LOG.critical('Plugin %s raised an unexpected exception',
+                         plugin['name'])
+            raise exceptions.PluginExecutionFailed(
+                plugin=plugin,
+                excetion=all_exc,
+            )
 
     @staticmethod
     def _extract_syntax_information(exception):

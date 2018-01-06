@@ -30,4 +30,4 @@
 .. _GitLab#35: https://gitlab.com/pycqa/flake8/issues/35
 .. _GitLab!18: https://gitlab.com/pycqa/flake8/merge_requests/18
 .. _GitLab!20: https://gitlab.com/pycqa/flake8/merge_requests/20
-.. _VCS hooks docs: https://flake8.readthedocs.org/en/latest/vcs.html
+.. _VCS hooks docs: https://flake8.readthedocs.io/en/latest/user/using-hooks.html

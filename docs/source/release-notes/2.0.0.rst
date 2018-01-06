@@ -5,7 +5,7 @@
 - McCabe complexity warnings are prefixed by a ``C`` instead of a ``W``
 - Flake8 supports extensions through entry points
 - Due to the above support, we **require** setuptools
-- We publish the `documentation <https://flake8.readthedocs.org/>`_
+- We publish the `documentation <https://flake8.readthedocs.io/>`_
 - Fixes #13: pep8, pyflakes and mccabe become external dependencies
 - Split run.py into main.py, engine.py and hooks.py for better logic
 - Expose our parser for our users

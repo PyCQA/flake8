@@ -4,7 +4,7 @@
  Writing Code for Flake8
 =========================
 
-The maintainers of |Flake8| unsurprisingly have some opinions about the styl
+The maintainers of |Flake8| unsurprisingly have some opinions about the style
 of code maintained in the project.
 
 At the time of this writing, |Flake8| enables all of PyCodeStyle's checks, all

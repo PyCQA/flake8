@@ -32,3 +32,14 @@ def test_repr(*args):
         'example.py', checks={}, options=object(),
     )
     assert repr(file_checker) == 'FileChecker for example.py'
+
+
+def test_nonexistent_file():
+    """Verify that checking non-existent file results in an error."""
+    c = checker.FileChecker("foobar.py", checks={}, options=object())
+
+    assert c.processor is None
+    assert not c.should_process
+    assert len(c.results) == 1
+    error = c.results[0]
+    assert error[0] == "E902"

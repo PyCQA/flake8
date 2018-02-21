@@ -321,3 +321,8 @@ def test_log_token(token, log_string):
 def test_count_parentheses(current_count, token_text, expected):
     """Verify our arithmetic is correct."""
     assert processor.count_parentheses(current_count, token_text) == expected
+
+
+def test_nonexistent_file():
+    with pytest.raises(IOError):
+        processor.FileProcessor("foobar.py", options_from())

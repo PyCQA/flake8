@@ -22,7 +22,9 @@ def test_oserrors_cause_serial_fall_back():
     style_guide = style_guide_mock()
     with mock.patch('_multiprocessing.SemLock', side_effect=err):
         manager = checker.Manager(style_guide, [], [])
-        manager.run()
+        with mock.patch.object(manager, 'run_serial') as serial:
+                manager.run()
+    assert serial.call_count == 1
     assert manager.using_multiprocessing is False
 
 
@@ -34,7 +36,9 @@ def test_oserrors_are_reraised(is_windows):
     with mock.patch('_multiprocessing.SemLock', side_effect=err):
         with pytest.raises(OSError):
             manager = checker.Manager(style_guide, [], [])
-            manager.run()
+            with mock.patch.object(manager, 'run_serial') as serial:
+                manager.run()
+    assert serial.call_count == 0
 
 
 def test_multiprocessing_is_disabled():

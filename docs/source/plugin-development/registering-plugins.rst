@@ -133,9 +133,9 @@ would look like the original example.
 in the users environment. Selecting an entry point that is already used can
 cause plugins to be deactivated without warning!
 
-_Please Note: Your entry point does not need to be exactly 4 characters as of
-|Flake8| 3.0. Consider using an entry point with 3 letters followed by 3
-numbers (i.e. ABC123)._
+**Please Note:** Your entry point does not need to be exactly 4 characters
+as of |Flake8| 3.0. *Consider using an entry point with 3 letters followed
+by 3 numbers (i.e.* ``ABC123`` *).*
 
 
 .. _Entry Points:

@@ -210,7 +210,6 @@ class Manager(object):
                 filename, filename_patterns
             )
             is_stdin = filename == '-'
-            file_exists = os.path.exists(filename)
             # NOTE(sigmavirus24): If a user explicitly specifies something,
             # e.g, ``flake8 bin/script`` then we should run Flake8 against
             # that. Since should_create_file_checker looks to see if the
@@ -221,8 +220,7 @@ class Manager(object):
             explicitly_provided = (not running_from_vcs and
                                    not running_from_diff and
                                    (argument == filename))
-            return ((file_exists and
-                     (explicitly_provided or matches_filename_patterns)) or
+            return ((explicitly_provided or matches_filename_patterns) or
                     is_stdin)
 
         checks = self.checks.to_dictionary()

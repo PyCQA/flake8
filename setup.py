@@ -22,7 +22,7 @@ requires = [
     # And in which releases we will update those ranges here:
     # http://flake8.pycqa.org/en/latest/internal/releases.html#releasing-flake8
     "pyflakes >= 1.5.0, < 1.7.0",
-    "pycodestyle >= 2.3.0, < 2.4.0",
+    "pycodestyle >= 2.4.0, < 2.5.0",
     "mccabe >= 0.6.0, < 0.7.0",
     "setuptools >= 30",
 ]
@@ -108,7 +108,8 @@ setuptools.setup(
             PEP8_PLUGIN('module_imports_on_top_of_file'),
             PEP8_PLUGIN('compound_statements'),
             PEP8_PLUGIN('explicit_line_join'),
-            PEP8_PLUGIN('break_around_binary_operator'),
+            PEP8_PLUGIN('break_after_binary_operator'),
+            PEP8_PLUGIN('break_before_binary_operator'),
             PEP8_PLUGIN('comparison_to_singleton'),
             PEP8_PLUGIN('comparison_negative'),
             PEP8_PLUGIN('comparison_type'),

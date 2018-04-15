@@ -119,6 +119,8 @@ setuptools.setup(
             PEP8_PLUGIN('python_3000_raise_comma'),
             PEP8_PLUGIN('python_3000_not_equal'),
             PEP8_PLUGIN('python_3000_backticks'),
+            PEP8_PLUGIN('python_3000_invalid_escape_sequence'),
+            PEP8_PLUGIN('python_3000_async_await_keywords'),
         ],
         'flake8.report': [
             'default = flake8.formatting.default:Default',

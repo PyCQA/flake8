@@ -129,6 +129,14 @@ like::
 Finally, if all of your plugin's error codes start with just ``X`` then it
 would look like the original example.
 
+|Flake8| requires each entry point to be unique amongst all plugins installed
+in the users environment. Selecting an entry point that is already used can
+cause plugins to be deactivated without warning!
+
+**Please Note:** Your entry point does not need to be exactly 4 characters
+as of |Flake8| 3.0. *Consider using an entry point with 3 letters followed
+by 3 numbers (i.e.* ``ABC123`` *).*
+
 
 .. _Entry Points:
-    https://pythonhosted.org/setuptools/pkg_resources.html#entry-points
+    http://setuptools.readthedocs.io/en/latest/pkg_resources.html#entry-points

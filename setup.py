@@ -22,7 +22,7 @@ requires = [
     # And in which releases we will update those ranges here:
     # http://flake8.pycqa.org/en/latest/internal/releases.html#releasing-flake8
     "pyflakes >= 1.5.0, < 1.7.0",
-    "pycodestyle >= 2.3.0, < 2.4.0",
+    "pycodestyle >= 2.4.0, < 2.5.0",
     "mccabe >= 0.6.0, < 0.7.0",
     "setuptools >= 30",
 ]

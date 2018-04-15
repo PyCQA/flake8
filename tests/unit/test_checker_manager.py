@@ -22,17 +22,23 @@ def test_oserrors_cause_serial_fall_back():
     style_guide = style_guide_mock()
     with mock.patch('_multiprocessing.SemLock', side_effect=err):
         manager = checker.Manager(style_guide, [], [])
+        with mock.patch.object(manager, 'run_serial') as serial:
+                manager.run()
+    assert serial.call_count == 1
     assert manager.using_multiprocessing is False
 
 
 @mock.patch('flake8.utils.is_windows', return_value=False)
 def test_oserrors_are_reraised(is_windows):
-    """Verify that OSErrors will cause the Manager to fallback to serial."""
+    """Verify that unexpected OSErrors will cause the Manager to reraise."""
     err = OSError(errno.EAGAIN, 'Ominous message')
     style_guide = style_guide_mock()
     with mock.patch('_multiprocessing.SemLock', side_effect=err):
         with pytest.raises(OSError):
-            checker.Manager(style_guide, [], [])
+            manager = checker.Manager(style_guide, [], [])
+            with mock.patch.object(manager, 'run_serial') as serial:
+                manager.run()
+    assert serial.call_count == 0
 
 
 def test_multiprocessing_is_disabled():

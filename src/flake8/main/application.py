@@ -405,7 +405,6 @@ class Application(object):
             print('... stopped')
             LOG.critical('Caught keyboard interrupt from user')
             LOG.exception(exc)
-            self.file_checker_manager._force_cleanup()
             self.catastrophic_failure = True
         except exceptions.ExecutionError as exc:
             print('There was a critical error during execution of Flake8:')

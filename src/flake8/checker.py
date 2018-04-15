@@ -74,7 +74,6 @@ class Manager(object):
         self.checks = checker_plugins
         self.jobs = self._job_count()
         self.using_multiprocessing = self.jobs > 1
-        self.pool = None
         self.processes = []
         self.checkers = []
         self.statistics = {
@@ -83,14 +82,6 @@ class Manager(object):
             'physical lines': 0,
             'tokens': 0,
         }
-
-        if self.using_multiprocessing:
-            try:
-                self.pool = multiprocessing.Pool(self.jobs, _pool_init)
-            except OSError as oserr:
-                if oserr.errno not in SERIAL_RETRY_ERRNOS:
-                    raise
-                self.using_multiprocessing = False
 
     def _process_statistics(self):
         for checker in self.checkers:
@@ -268,30 +259,40 @@ class Manager(object):
             results_found += len(results)
         return (results_found, results_reported)
 
-    def _force_cleanup(self):
-        if self.pool is not None:
-            self.pool.terminate()
-            self.pool.join()
-
     def run_parallel(self):
         """Run the checkers in parallel."""
         final_results = collections.defaultdict(list)
         final_statistics = collections.defaultdict(dict)
-        pool_map = self.pool.imap_unordered(
-            _run_checks,
-            self.checkers,
-            chunksize=calculate_pool_chunksize(
-                len(self.checkers),
-                self.jobs,
-            ),
-        )
-        for ret in pool_map:
-            filename, results, statistics = ret
-            final_results[filename] = results
-            final_statistics[filename] = statistics
-        self.pool.close()
-        self.pool.join()
-        self.pool = None
+
+        try:
+            pool = multiprocessing.Pool(self.jobs, _pool_init)
+        except OSError as oserr:
+            if oserr.errno not in SERIAL_RETRY_ERRNOS:
+                raise
+            self.using_multiprocessing = False
+            self.run_serial()
+            return
+
+        try:
+            pool_map = pool.imap_unordered(
+                _run_checks,
+                self.checkers,
+                chunksize=calculate_pool_chunksize(
+                    len(self.checkers),
+                    self.jobs,
+                ),
+            )
+            for ret in pool_map:
+                filename, results, statistics = ret
+                final_results[filename] = results
+                final_statistics[filename] = statistics
+            pool.close()
+            pool.join()
+            pool = None
+        finally:
+            if pool is not None:
+                pool.terminate()
+                pool.join()
 
         for checker in self.checkers:
             filename = checker.display_name
@@ -328,8 +329,6 @@ class Manager(object):
         except KeyboardInterrupt:
             LOG.warning('Flake8 was interrupted by the user')
             raise exceptions.EarlyQuit('Early quit while running checks')
-        finally:
-            self._force_cleanup()
 
     def start(self, paths=None):
         """Start checking files.

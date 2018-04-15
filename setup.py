@@ -108,6 +108,8 @@ setuptools.setup(
             PEP8_PLUGIN('module_imports_on_top_of_file'),
             PEP8_PLUGIN('compound_statements'),
             PEP8_PLUGIN('explicit_line_join'),
+            PEP8_PLUGIN('break_after_binary_operator'),
+            PEP8_PLUGIN('break_before_binary_operator'),
             PEP8_PLUGIN('comparison_to_singleton'),
             PEP8_PLUGIN('comparison_negative'),
             PEP8_PLUGIN('comparison_type'),

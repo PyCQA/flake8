@@ -2,7 +2,7 @@
  Contributing to Flake8
 ========================
 
-There are many ways to contriubte to |Flake8|, and we encourage them all:
+There are many ways to contribute to |Flake8|, and we encourage them all:
 
 - contributing bug reports and feature requests
 

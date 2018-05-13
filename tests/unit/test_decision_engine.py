@@ -12,6 +12,7 @@ def create_options(**kwargs):
     kwargs.setdefault('select', [])
     kwargs.setdefault('extended_default_select', [])
     kwargs.setdefault('ignore', [])
+    kwargs.setdefault('extend_ignore', [])
     kwargs.setdefault('disable_noqa', False)
     kwargs.setdefault('enable_extensions', [])
     return optparse.Values(kwargs)

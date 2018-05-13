@@ -3,6 +3,7 @@ import collections
 import contextlib
 import enum
 import functools
+import itertools
 import linecache
 import logging
 
@@ -166,7 +167,10 @@ class DecisionEngine(object):
             self.selected + self.enabled_extensions,
             reverse=True,
         ))
-        self.ignored = tuple(sorted(options.ignore, reverse=True))
+        self.ignored = tuple(sorted(
+            itertools.chain(options.ignore, options.extend_ignore),
+            reverse=True,
+        ))
         self.using_default_ignore = set(self.ignored) == set(defaults.IGNORE)
         self.using_default_select = (
             set(self.selected) == set(defaults.SELECT)

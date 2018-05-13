@@ -56,6 +56,8 @@ Index of Options
 
 - :option:`flake8 --ignore`
 
+- :option:`flake8 --extend-ignore`
+
 - :option:`flake8 --max-line-length`
 
 - :option:`flake8 --select`
@@ -414,6 +416,37 @@ Options and their Descriptions
             E121,
             E123
         ignore = E121,E123
+
+
+.. option:: --extend-ignore=<errors>
+
+    :ref:`Go back to index <top>`
+
+    Specify a list of codes to add to the list of ignored ones. Similar
+    considerations as in :option:`--ignore` apply here with regard to the
+    value.
+
+    The difference to the :option:`--ignore` option is, that this option can be
+    used to selectively add individual codes without overriding the default
+    list entirely.
+
+    Command-line example:
+
+    .. prompt:: bash
+
+        flake8 --extend-ignore=E4,E51,W234 dir/
+
+    This **can** be specified in config files.
+
+    Example config file usage:
+
+    .. code-block:: ini
+
+        extend-ignore =
+            E4,
+            E51,
+            W234
+        extend-ignore = E4,E51,W234
 
 
 .. option:: --max-line-length=<n>

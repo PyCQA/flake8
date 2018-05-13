@@ -33,7 +33,7 @@ Let's do that next.
             return 'Example formatter: {0!r}'.format(error)
 
 With that we're done. Obviously this isn't a very useful formatter, but it
-should highlight the simplicitly of creating a formatter with Flake8. If we
+should highlight the simplicity of creating a formatter with Flake8. If we
 wanted to instead create a formatter that aggregated the results and returned
 XML, JSON, or subunit we could also do that. |Flake8| interacts with the
 formatter in two ways:

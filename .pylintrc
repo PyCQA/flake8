@@ -349,7 +349,7 @@ min-public-methods=2
 # Maximum number of public methods for a class (see R0904).
 max-public-methods=20
 
-# Maximum number of boolean expressions in a if statement
+# Maximum number of boolean expressions in an if statement
 max-bool-expr=5
 
 

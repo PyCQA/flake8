@@ -199,7 +199,7 @@ Aggregating Configuration File and Command Line Arguments
 ---------------------------------------------------------
 
 :func:`~flake8.options.aggregator.aggregate_options` accepts an instance of
-:class:`~flake8.options.maanger.OptionManager` and does the work to parse the
+:class:`~flake8.options.manager.OptionManager` and does the work to parse the
 command-line arguments passed by the user necessary for creating an instance
 of :class:`~flake8.options.config.MergedConfigParser`.
 

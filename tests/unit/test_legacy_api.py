@@ -11,11 +11,11 @@ def test_get_style_guide():
     mockedapp = mock.Mock()
     mockedapp.prelim_opts.verbose = 0
     mockedapp.prelim_opts.output_file = None
-    with mock.patch('flake8.main.application.Application') as Application:
-        Application.return_value = mockedapp
+    with mock.patch('flake8.main.application.Application') as application:
+        application.return_value = mockedapp
         style_guide = api.get_style_guide()
 
-    Application.assert_called_once_with()
+    application.assert_called_once_with()
     mockedapp.parse_preliminary_options_and_args.assert_called_once_with([])
     mockedapp.make_config_finder.assert_called_once_with()
     mockedapp.find_plugins.assert_called_once_with()

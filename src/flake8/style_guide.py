@@ -74,7 +74,7 @@ class Violation(_Violation):
 
     def is_inline_ignored(self, disable_noqa):
         # type: (Violation) -> bool
-        """Determine if an comment has been added to ignore this line.
+        """Determine if a comment has been added to ignore this line.
 
         :param bool disable_noqa:
             Whether or not users have provided ``--disable-noqa``.

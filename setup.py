@@ -86,7 +86,7 @@ setuptools.setup(
         ],
         'flake8.extension': [
             'F = flake8.plugins.pyflakes:FlakesChecker',
-            # PEP-0008 checks provied by PyCQA/pycodestyle
+            # PEP-0008 checks provided by PyCQA/pycodestyle
             PEP8_PLUGIN('tabs_or_spaces'),
             PEP8_PLUGIN('tabs_obsolete'),
             PEP8_PLUGIN('trailing_whitespace'),

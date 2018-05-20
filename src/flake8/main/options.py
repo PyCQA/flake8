@@ -18,6 +18,7 @@ def register_default_options(option_manager):
     - ``--format``
     - ``--hang-closing``
     - ``--ignore``
+    - ``--extend-ignore``
     - ``--max-line-length``
     - ``--select``
     - ``--disable-noqa``
@@ -106,6 +107,13 @@ def register_default_options(option_manager):
         parse_from_config=True, comma_separated_list=True,
         help='Comma-separated list of errors and warnings to ignore (or skip).'
              ' For example, ``--ignore=E4,E51,W234``. (Default: %default)',
+    )
+
+    add_option(
+        '--extend-ignore', metavar='errors', default='',
+        parse_from_config=True, comma_separated_list=True,
+        help='Comma-separated list of errors and warnings to add to the list'
+             ' of ignored ones. For example, ``--extend-ignore=E4,E51,W234``.',
     )
 
     add_option(

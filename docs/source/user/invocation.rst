@@ -107,6 +107,10 @@ And you should see something like:
       --ignore=errors       Comma-separated list of errors and warnings to ignore
                             (or skip). For example, ``--ignore=E4,E51,W234``.
                             (Default: E121,E123,E126,E226,E24,E704)
+      --extend-ignore=errors
+                            Comma-separated list of errors and warnings to add to
+                            the list of ignored ones. For example, ``--extend-
+                            ignore=E4,E51,W234``.
       --max-line-length=n   Maximum allowed line length for the entirety of this
                             run. (Default: 79)
       --select=errors       Comma-separated list of errors and warnings to enable.

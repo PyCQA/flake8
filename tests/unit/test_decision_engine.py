@@ -12,35 +12,42 @@ def create_options(**kwargs):
     kwargs.setdefault('select', [])
     kwargs.setdefault('extended_default_select', [])
     kwargs.setdefault('ignore', [])
+    kwargs.setdefault('extend_ignore', [])
     kwargs.setdefault('disable_noqa', False)
     kwargs.setdefault('enable_extensions', [])
     return optparse.Values(kwargs)
 
 
-@pytest.mark.parametrize('ignore_list,error_code', [
-    (['E111', 'E121'], 'E111'),
-    (['E111', 'E121'], 'E121'),
-    (['E11', 'E12'], 'E121'),
-    (['E2', 'E12'], 'E121'),
-    (['E2', 'E12'], 'E211'),
+@pytest.mark.parametrize('ignore_list,extend_ignore,error_code', [
+    (['E111', 'E121'], [], 'E111'),
+    (['E111', 'E121'], [], 'E121'),
+    (['E111'], ['E121'], 'E121'),
+    (['E11', 'E12'], [], 'E121'),
+    (['E2', 'E12'], [], 'E121'),
+    (['E2', 'E12'], [], 'E211'),
+    (['E2', 'E3'], ['E12'], 'E211'),
 ])
-def test_was_ignored_ignores_errors(ignore_list, error_code):
+def test_was_ignored_ignores_errors(ignore_list, extend_ignore, error_code):
     """Verify we detect users explicitly ignoring an error."""
-    decider = style_guide.DecisionEngine(create_options(ignore=ignore_list))
+    decider = style_guide.DecisionEngine(
+        create_options(ignore=ignore_list, extend_ignore=extend_ignore))
 
     assert decider.was_ignored(error_code) is style_guide.Ignored.Explicitly
 
 
-@pytest.mark.parametrize('ignore_list,error_code', [
-    (['E111', 'E121'], 'E112'),
-    (['E111', 'E121'], 'E122'),
-    (['E11', 'E12'], 'W121'),
-    (['E2', 'E12'], 'E112'),
-    (['E2', 'E12'], 'E111'),
+@pytest.mark.parametrize('ignore_list,extend_ignore,error_code', [
+    (['E111', 'E121'], [], 'E112'),
+    (['E111', 'E121'], [], 'E122'),
+    (['E11', 'E12'], ['E121'], 'W121'),
+    (['E2', 'E12'], [], 'E112'),
+    (['E2', 'E12'], [], 'E111'),
+    (['E2', 'E12'], ['W11', 'E3'], 'E111'),
 ])
-def test_was_ignored_implicitly_selects_errors(ignore_list, error_code):
+def test_was_ignored_implicitly_selects_errors(ignore_list, extend_ignore,
+                                               error_code):
     """Verify we detect users does not explicitly ignore an error."""
-    decider = style_guide.DecisionEngine(create_options(ignore=ignore_list))
+    decider = style_guide.DecisionEngine(
+        create_options(ignore=ignore_list, extend_ignore=extend_ignore))
 
     assert decider.was_ignored(error_code) is style_guide.Selected.Implicitly
 
@@ -93,35 +100,46 @@ def test_was_selected_excludes_errors(select_list, error_code):
     assert decider.was_selected(error_code) is style_guide.Ignored.Implicitly
 
 
-@pytest.mark.parametrize('select_list,ignore_list,error_code,expected', [
-    (['E111', 'E121'], [], 'E111', style_guide.Decision.Selected),
-    (['E111', 'E121'], [], 'E112', style_guide.Decision.Ignored),
-    (['E111', 'E121'], [], 'E121', style_guide.Decision.Selected),
-    (['E111', 'E121'], [], 'E122', style_guide.Decision.Ignored),
-    (['E11', 'E12'], [], 'E132', style_guide.Decision.Ignored),
-    (['E2', 'E12'], [], 'E321', style_guide.Decision.Ignored),
-    (['E2', 'E12'], [], 'E410', style_guide.Decision.Ignored),
-    (['E11', 'E121'], ['E1'], 'E112', style_guide.Decision.Selected),
-    (['E111', 'E121'], ['E2'], 'E122', style_guide.Decision.Ignored),
-    (['E11', 'E12'], ['E13'], 'E132', style_guide.Decision.Ignored),
-    (['E1', 'E3'], ['E32'], 'E321', style_guide.Decision.Ignored),
-    ([], ['E2', 'E12'], 'E410', style_guide.Decision.Ignored),
-    (['E4'], ['E2', 'E12', 'E41'], 'E410', style_guide.Decision.Ignored),
-    (['E41'], ['E2', 'E12', 'E4'], 'E410', style_guide.Decision.Selected),
-    (['E'], ['F'], 'E410', style_guide.Decision.Selected),
-    (['F'], [], 'E410', style_guide.Decision.Ignored),
-    (['E'], defaults.IGNORE, 'E126', style_guide.Decision.Selected),
-    (['W'], defaults.IGNORE, 'E126', style_guide.Decision.Ignored),
-    (['E'], defaults.IGNORE, 'W391', style_guide.Decision.Ignored),
-    (['E', 'W'], ['E13'], 'E131', style_guide.Decision.Ignored),
-    (defaults.SELECT, ['E13'], 'E131', style_guide.Decision.Ignored),
-    (defaults.SELECT, defaults.IGNORE, 'E126', style_guide.Decision.Ignored),
-    (defaults.SELECT, defaults.IGNORE, 'W391', style_guide.Decision.Selected),
-])
-def test_decision_for(select_list, ignore_list, error_code, expected):
+@pytest.mark.parametrize(
+    'select_list,ignore_list,extend_ignore,error_code,expected', [
+        (['E111', 'E121'], [], [], 'E111', style_guide.Decision.Selected),
+        (['E111', 'E121'], [], [], 'E112', style_guide.Decision.Ignored),
+        (['E111', 'E121'], [], [], 'E121', style_guide.Decision.Selected),
+        (['E111', 'E121'], [], [], 'E122', style_guide.Decision.Ignored),
+        (['E11', 'E12'], [], [], 'E132', style_guide.Decision.Ignored),
+        (['E2', 'E12'], [], [], 'E321', style_guide.Decision.Ignored),
+        (['E2', 'E12'], [], [], 'E410', style_guide.Decision.Ignored),
+        (['E11', 'E121'], ['E1'], [], 'E112', style_guide.Decision.Selected),
+        (['E11', 'E121'], [], ['E1'], 'E112', style_guide.Decision.Selected),
+        (['E111', 'E121'], ['E2'], ['E3'], 'E122',
+         style_guide.Decision.Ignored),
+        (['E11', 'E12'], ['E13'], [], 'E132', style_guide.Decision.Ignored),
+        (['E1', 'E3'], ['E32'], [], 'E321', style_guide.Decision.Ignored),
+        ([], ['E2', 'E12'], [], 'E410', style_guide.Decision.Ignored),
+        (['E4'], ['E2', 'E12', 'E41'], [], 'E410',
+         style_guide.Decision.Ignored),
+        (['E41'], ['E2', 'E12', 'E4'], [], 'E410',
+         style_guide.Decision.Selected),
+        (['E'], ['F'], [], 'E410', style_guide.Decision.Selected),
+        (['F'], [], [], 'E410', style_guide.Decision.Ignored),
+        (['E'], defaults.IGNORE, [], 'E126', style_guide.Decision.Selected),
+        (['W'], defaults.IGNORE, [], 'E126', style_guide.Decision.Ignored),
+        (['E'], defaults.IGNORE, [], 'W391', style_guide.Decision.Ignored),
+        (['E', 'W'], ['E13'], [], 'E131', style_guide.Decision.Ignored),
+        (defaults.SELECT, ['E13'], [], 'E131', style_guide.Decision.Ignored),
+        (defaults.SELECT, defaults.IGNORE, ['W391'], 'E126',
+         style_guide.Decision.Ignored),
+        (defaults.SELECT, defaults.IGNORE, [], 'W391',
+         style_guide.Decision.Selected),
+    ]
+)
+def test_decision_for(select_list, ignore_list, extend_ignore, error_code,
+                      expected):
     """Verify we decide when to report an error."""
-    decider = style_guide.DecisionEngine(create_options(select=select_list,
-                                                        ignore=ignore_list))
+    decider = style_guide.DecisionEngine(
+        create_options(select=select_list,
+                       ignore=ignore_list,
+                       extend_ignore=extend_ignore))
 
     assert decider.decision_for(error_code) is expected
 

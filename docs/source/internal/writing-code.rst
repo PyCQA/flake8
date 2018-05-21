@@ -4,7 +4,7 @@
  Writing Code for Flake8
 =========================
 
-The maintainers of |Flake8| unsurprisingly have some opinions about the styl
+The maintainers of |Flake8| unsurprisingly have some opinions about the style
 of code maintained in the project.
 
 At the time of this writing, |Flake8| enables all of PyCodeStyle's checks, all
@@ -141,7 +141,7 @@ As a result, of the above, we do not:
 
 - Import only the objects we're using
 
-- Add commnts explaining that an import is a standard library module or
+- Add comments explaining that an import is a standard library module or
   something else
 
 

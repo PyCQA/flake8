@@ -74,4 +74,4 @@ Maintenance
 ===========
 
 Flake8 was created by Tarek Ziadé and is currently maintained by `Ian Cordasco
-<https://coglib.com/~icordasc/>`_
+<http://www.coglib.com/~icordasc/>`_

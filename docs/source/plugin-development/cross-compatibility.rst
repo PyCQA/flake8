@@ -182,6 +182,6 @@ fact that pep8 or pycodestyle is not installed.
 
 
 .. links
-.. _flake8-polyfill: https://pypi.io/project/flake8-polyfill/
+.. _flake8-polyfill: https://pypi.org/project/flake8-polyfill/
 
 .. |polyfill| replace:: ``flake8-polyfill``

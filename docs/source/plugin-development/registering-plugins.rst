@@ -139,4 +139,4 @@ by 3 numbers (i.e.* ``ABC123`` *).*
 
 
 .. _Entry Points:
-    http://setuptools.readthedocs.io/en/latest/pkg_resources.html#entry-points
+    https://setuptools.readthedocs.io/en/latest/pkg_resources.html#entry-points

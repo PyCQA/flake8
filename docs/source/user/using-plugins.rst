@@ -59,8 +59,8 @@ documented this for you.
 
 
 .. _PyPI:
-    https://pypi.io/
+    https://pypi.org/
 .. _flake8-docstrings:
-    https://pypi.io/project/flake8-docstrings/
+    https://pypi.org/project/flake8-docstrings/
 .. _flake8-future:
-    https://pypi.io/project/flake8-future/
+    https://pypi.org/project/flake8-future/

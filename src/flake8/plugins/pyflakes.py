@@ -38,6 +38,7 @@ FLAKE8_PYFLAKES_CODES = {
     'ReturnOutsideFunction': 'F706',
     'DefaultExceptNotLast': 'F707',
     'DoctestSyntaxError': 'F721',
+    'ForwardAnnotationSyntaxError': 'F722',
     'RedefinedWhileUnused': 'F811',
     'RedefinedInListComp': 'F812',
     'UndefinedName': 'F821',
@@ -45,6 +46,7 @@ FLAKE8_PYFLAKES_CODES = {
     'UndefinedLocal': 'F823',
     'DuplicateArgument': 'F831',
     'UnusedVariable': 'F841',
+    'RaiseNotImplemented': 'F901',
 }
 
 

@@ -54,6 +54,9 @@ generates its own :term:`error code`\ s for ``pyflakes``:
 +------+---------------------------------------------------------------------+
 | F707 | an ``except:`` block as not the last exception handler              |
 +------+---------------------------------------------------------------------+
+| F721 | doctest syntax error                                                |
+| F722 | syntax error in forward type annotation                             |
++------+---------------------------------------------------------------------+
 +------+---------------------------------------------------------------------+
 | F811 | redefinition of unused ``name`` from line ``N``                     |
 +------+---------------------------------------------------------------------+
@@ -68,6 +71,9 @@ generates its own :term:`error code`\ s for ``pyflakes``:
 | F831 | duplicate argument ``name`` in function definition                  |
 +------+---------------------------------------------------------------------+
 | F841 | local variable ``name`` is assigned to but never used               |
++------+---------------------------------------------------------------------+
++------+---------------------------------------------------------------------+
+| F901 | ``raise NotImplemented`` should be ``raise NotImplementedError``    |
 +------+---------------------------------------------------------------------+
 
 Note that some of these entries behave differently on Python 2 and Python 3,

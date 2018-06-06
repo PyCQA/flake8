@@ -119,7 +119,7 @@ And you should see something like:
                             errors on lines with "# noqa" at the end.
       --show-source         Show the source generate each error or warning.
       --statistics          Count errors and warnings.
-      --enabled-extensions=ENABLED_EXTENSIONS
+      --enable-extensions=ENABLED_EXTENSIONS
                             Enable plugins and extensions that are otherwise
                             disabled by default
       --exit-zero           Exit with status code "0" even if there are errors.

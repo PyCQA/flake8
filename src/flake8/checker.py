@@ -3,6 +3,7 @@ import collections
 import errno
 import logging
 import os
+import re
 import signal
 import sys
 import tokenize
@@ -53,6 +54,8 @@ class Manager(object):
     - Organizing the results of each checker so we can group the output
       together and make our output deterministic.
     """
+
+    SHEBANG_RE = re.compile(br'^#!.*\bpython[23w]?\b')
 
     def __init__(self, style_guide, arguments, checker_plugins):
         """Initialize our Manager instance.
@@ -199,8 +202,25 @@ class Manager(object):
             paths = ['.']
 
         filename_patterns = self.options.filename
+        patterns_exist = True
+        if not filename_patterns:
+            filename_patterns = ['*.py']
+            patterns_exist = False
         running_from_vcs = self.options._running_from_vcs
         running_from_diff = self.options.diff
+
+        def has_shebang(filename):
+            if patterns_exist:
+                # If a user explicitly specifies something, e.g. ``*.py``,
+                # don't inspect the shebang.
+                return False
+
+            if not os.path.isfile(filename):
+                return False
+
+            with open(filename, 'rb') as fp:
+                line = fp.readline(100)
+            return bool(self.SHEBANG_RE.match(line))
 
         # NOTE(sigmavirus24): Yes this is a little unsightly, but it's our
         # best solution right now.
@@ -220,8 +240,8 @@ class Manager(object):
             explicitly_provided = (not running_from_vcs and
                                    not running_from_diff and
                                    (argument == filename))
-            return ((explicitly_provided or matches_filename_patterns) or
-                    is_stdin)
+            return (explicitly_provided or matches_filename_patterns or
+                    is_stdin or has_shebang(filename))
 
         checks = self.checks.to_dictionary()
         checkers = (

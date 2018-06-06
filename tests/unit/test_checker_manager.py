@@ -1,5 +1,6 @@
 """Tests for the Manager object for FileCheckers."""
 import errno
+import os
 
 import mock
 import pytest
@@ -70,3 +71,57 @@ def test_make_checkers():
 
     for file_checker in manager.checkers:
         assert file_checker.filename in files
+
+
+def test_make_checkers_shebang():
+    """Verify that extension-less files with a Python shebang are checked."""
+    style_guide = style_guide_mock(
+        filename=[],
+        exclude=[],
+    )
+    checkplugins = mock.Mock()
+    checkplugins.to_dictionary.return_value = {
+        'ast_plugins': [],
+        'logical_line_plugins': [],
+        'physical_line_plugins': [],
+    }
+    with mock.patch('flake8.checker.multiprocessing', None):
+        manager = checker.Manager(style_guide, [], checkplugins)
+
+    path = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), '..', 'fixtures')
+    )
+    manager.make_checkers([path])
+
+    filenames = [
+        os.path.relpath(file_checker.filename, path)
+        for file_checker in manager.checkers
+    ]
+    assert 'example-code/script' in filenames
+
+
+def test_make_checkers_explicit_pattern_ignore_shebang():
+    """Verify that shebangs are ignored when passing a pattern."""
+    style_guide = style_guide_mock(
+        filename=['*.py'],
+        exclude=[],
+    )
+    checkplugins = mock.Mock()
+    checkplugins.to_dictionary.return_value = {
+        'ast_plugins': [],
+        'logical_line_plugins': [],
+        'physical_line_plugins': [],
+    }
+    with mock.patch('flake8.checker.multiprocessing', None):
+        manager = checker.Manager(style_guide, [], checkplugins)
+
+    path = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), '..', 'fixtures')
+    )
+    manager.make_checkers([path])
+
+    filenames = [
+        os.path.relpath(file_checker.filename, path)
+        for file_checker in manager.checkers
+    ]
+    assert 'example-code/script' not in filenames

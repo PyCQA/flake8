@@ -72,7 +72,7 @@ def register_default_options(option_manager):
     )
 
     add_option(
-        '--filename', metavar='patterns', default='*.py',
+        '--filename', metavar='patterns',
         parse_from_config=True, comma_separated_list=True,
         help='Only check for filenames matching the patterns in this comma-'
              'separated list. (Default: %default)',

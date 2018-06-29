@@ -18,7 +18,7 @@ def install(option, option_string, value, parser):
     """Determine which version control hook to install.
 
     For more information about the callback signature, see:
-    https://docs.python.org/2/library/optparse.html#optparse-option-callbacks
+    https://docs.python.org/3/library/optparse.html#optparse-option-callbacks
     """
     installer = _INSTALLERS.get(value)
     errored = False

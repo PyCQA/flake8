@@ -141,7 +141,7 @@ As a result, of the above, we do not:
 
 - Import only the objects we're using
 
-- Add commnts explaining that an import is a standard library module or
+- Add comments explaining that an import is a standard library module or
   something else
 
 

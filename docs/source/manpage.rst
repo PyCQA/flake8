@@ -80,6 +80,11 @@ All options available as of Flake8 3.1.0::
     --output-file=OUTPUT_FILE
                           Redirect report to a file.
     --tee                 Write to stdout and output-file.
+    --prepend-config=PREPEND_CONFIG
+                          Provide extra config files to parse in addition to the
+                          files found by Flake8 by default. These files are the
+                          first ones read and so they take the lowest precedence
+                          when multiple files provide the same option.
     --append-config=APPEND_CONFIG
                           Provide extra config files to parse in addition to the
                           files found by Flake8 by default. These files are the

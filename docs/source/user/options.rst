@@ -80,6 +80,8 @@ Index of Options
 
 - :option:`flake8 --tee`
 
+- :option:`flake8 --prepend-config`
+
 - :option:`flake8 --append-config`
 
 - :option:`flake8 --config`
@@ -737,6 +739,27 @@ Options and their Descriptions
 
         output-file = output.txt
         tee = True
+
+
+.. option:: --prepend-config=<config>
+
+    :ref:`Go back to index <top>`
+
+    Provide extra config files to parse in before and in addition to the files
+    that |Flake8| found on its own. Since these files are the first ones read
+    into the Configuration Parser, they have the lowest precedence if it
+    provides an option specified in another config file.
+
+    Typical use is to specify cross-project options that can still be
+    overridden by user or project config files.
+
+    Command-line example:
+
+    .. prompt:: bash
+
+        flake8 --prepend-config=my-default-config.ini dir/
+
+    This **can not** be specified in config files.
 
 
 .. option:: --append-config=<config>

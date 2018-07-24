@@ -191,6 +191,14 @@ def register_default_options(option_manager):
     # Config file options
 
     add_option(
+        '--prepend-config', action='append',
+        help='Provide extra config files to parse in addition to the files '
+             'found by Flake8 by default. These files are the first ones read '
+             'and so they take the lowest precedence when multiple files '
+             'provide the same option.',
+    )
+
+    add_option(
         '--append-config', action='append',
         help='Provide extra config files to parse in addition to the files '
              'found by Flake8 by default. These files are the last ones read '

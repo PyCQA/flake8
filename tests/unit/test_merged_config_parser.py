@@ -17,7 +17,7 @@ def optmanager():
 @pytest.fixture
 def config_finder():
     """Generate a simple ConfigFileFinder."""
-    return config.ConfigFileFinder('flake8', [], [])
+    return config.ConfigFileFinder('flake8', [], [], [])
 
 
 def test_parse_cli_config(optmanager, config_finder):

@@ -17,16 +17,30 @@ class ConfigFileFinder(object):
 
     PROJECT_FILENAMES = ('setup.cfg', 'tox.ini')
 
-    def __init__(self, program_name, args, extra_config_files):
+    def __init__(
+            self, program_name, args,
+            prepend_config_files, extra_config_files
+    ):
         """Initialize object to find config files.
 
         :param str program_name:
             Name of the current program (e.g., flake8).
         :param list args:
             The extra arguments passed on the command-line.
+        :param list prepend_config_files:
+            Extra configuration files specified by the user to read before user
+            and project configs.
         :param list extra_config_files:
-            Extra configuration files specified by the user to read.
+            Extra configuration files specified by the user to read after user
+            and project configs.
         """
+        # The values of --prepend-config from the CLI
+        prepend_config_files = prepend_config_files or []
+        self.prepend_config_files = [
+            # Ensure the paths are absolute paths for local_config_files
+            os.path.abspath(f) for f in prepend_config_files
+        ]
+
         # The values of --append-config from the CLI
         extra_config_files = extra_config_files or []
         self.extra_config_files = [
@@ -57,6 +71,7 @@ class ConfigFileFinder(object):
         self._local_found_files = []
         self._user_config = None
         self._cli_configs = {}
+        self._prepend_config = None
 
     @staticmethod
     def _read_config(files):
@@ -152,6 +167,16 @@ class ConfigFileFinder(object):
                 LOG.debug('Found user configuration files: %s', found_files)
             self._user_config = config
         return self._user_config
+
+    def prepend_configs(self):
+        """Return configuration as per prepend files found."""
+        if self._prepend_config is None:
+            prepend_files = filter(os.path.exists, self.prepend_config_files)
+            config, found_files = self._read_config(prepend_files)
+            if found_files:
+                LOG.debug('Found prepend configuration files: %s', found_files)
+            self._prepend_config = config
+        return self._prepend_config
 
 
 class MergedConfigParser(object):
@@ -258,6 +283,17 @@ class MergedConfigParser(object):
         LOG.debug('Parsing CLI configuration files.')
         return self._parse_config(config)
 
+    def parse_prepend_config(self):
+        """Parse and return the prepend configuration files."""
+        config = self.config_finder.prepend_configs()
+        if not self.is_configured_by(config):
+            LOG.debug('Prepend configuration files have no %s section',
+                      self.program_name)
+            return {}
+
+        LOG.debug('Parsing prepend configuration files.')
+        return self._parse_config(config)
+
     def merge_user_and_local_config(self):
         """Merge the parsed user and local configuration files.
 
@@ -266,10 +302,14 @@ class MergedConfigParser(object):
         :rtype:
             dict
         """
+        prepend_config = self.parse_prepend_config()
         user_config = self.parse_user_config()
         config = self.parse_local_config()
 
         for option, value in user_config.items():
+            config.setdefault(option, value)
+
+        for option, value in prepend_config.items():
             config.setdefault(option, value)
 
         return config

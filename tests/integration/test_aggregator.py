@@ -14,6 +14,8 @@ CLI_SPECIFIED_CONFIG = 'tests/fixtures/config_files/cli-specified.ini'
 USER_CONFIG = 'tests/fixtures/config_files/user-config.ini'
 LOCAL_CONFIG = 'tests/fixtures/config_files/local-config.ini'
 MISSING_CONFIG = 'tests/fixtures/config_files/missing.ini'
+PREPEND_CONFIG = 'tests/fixtures/config_files/prepend-config.ini'
+APPEND_CONFIG = 'tests/fixtures/config_files/append-config.ini'
 
 
 @pytest.fixture
@@ -72,6 +74,56 @@ def mock_config_finder(program='flake8', arguments=[],
         "select": {'E', 'W', 'F', 'C90'},
         "ignore": set(defaults.IGNORE),
         "max_line_length": 79,
+    }),
+    # Correct values with prepend config only
+    ({'prepend_configs': [PREPEND_CONFIG]}, {
+        "select": {'E', 'W'},
+        "ignore": set(defaults.IGNORE),
+        "max_line_length": 78,
+    }),
+    # Correct values with append config only
+    ({'append_configs': [APPEND_CONFIG]}, {
+        "select": {'W', 'F'},
+        "ignore": set(defaults.IGNORE),
+        "max_line_length": 80,
+    }),
+    # Correct values with user and prepend configs
+    ({
+        'user_config': USER_CONFIG,
+        'prepend_configs': [PREPEND_CONFIG]
+    }, {
+        "select": {'E', 'W'},
+        "ignore": ['D203'],
+        "max_line_length": 78,
+    }),
+    # Correct values with prepend and local configs
+    ({
+        'prepend_configs': [PREPEND_CONFIG],
+        'local_configs': [LOCAL_CONFIG]
+    }, {
+        "select": {'E', 'W', 'F'},
+        "ignore": set(defaults.IGNORE),
+        "max_line_length": 78,
+    }),
+    # Correct values with prepend and append configs
+    ({
+        'prepend_configs': [PREPEND_CONFIG],
+        'append_configs': [APPEND_CONFIG]
+    }, {
+        "select": {'W', 'F'},
+        "ignore": set(defaults.IGNORE),
+        "max_line_length": 80,
+    }),
+    # Correct values with user, append, local and prepend configs
+    ({
+        'user_config': USER_CONFIG,
+        'prepend_configs': [PREPEND_CONFIG],
+        'local_configs': [LOCAL_CONFIG],
+        'append_configs': [APPEND_CONFIG],
+    }, {
+        "select": {'W', 'F'},
+        "ignore": ['D203'],
+        "max_line_length": 80,
     }),
 ])
 def test_aggregate_options_resulting_values(

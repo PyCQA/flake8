@@ -88,7 +88,7 @@ All options available as of Flake8 3.1.0::
     --config=CONFIG       Path to the config file that will be the authoritative
                           config source. This will cause Flake8 to ignore all
                           other configuration files.
-    --isolated            Ignore all found configuration files.
+    --isolated            Ignore all configuration files.
     --benchmark           Print benchmark information about this run of Flake8
     --bug-report          Print information necessary when preparing a bug
                           report

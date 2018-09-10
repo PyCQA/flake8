@@ -207,7 +207,7 @@ def register_default_options(option_manager):
 
     add_option(
         '--isolated', default=False, action='store_true',
-        help='Ignore all found configuration files.',
+        help='Ignore all configuration files.',
     )
 
     # Benchmarking

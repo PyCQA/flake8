@@ -215,7 +215,7 @@ class MergedConfigParser(object):
                     method = config_parser.getboolean
             except ValueError:
                 raise ValueError('Unable to parse value ("%s") of option "%s',
-                        option, option_name)
+                                 option, option_name)
 
             value = method(self.program_name, option_name)
             LOG.debug('Option "%s" returned value: %r', option_name, value)

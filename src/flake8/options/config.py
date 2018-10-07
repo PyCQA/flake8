@@ -207,11 +207,15 @@ class MergedConfigParser(object):
 
             # Use the appropriate method to parse the config value
             method = config_parser.get
-            if (option.type in self.GETINT_TYPES or
-                    option.action in self.GETINT_TYPES):
-                method = config_parser.getint
-            elif option.action in self.GETBOOL_ACTIONS:
-                method = config_parser.getboolean
+            try:
+                if (option.type in self.GETINT_TYPES or
+                        option.action in self.GETINT_TYPES):
+                    method = config_parser.getint
+                elif option.action in self.GETBOOL_ACTIONS:
+                    method = config_parser.getboolean
+            except ValueError:
+                raise ValueError('Unable to parse value ("%s") of option "%s',
+                        option, option_name)
 
             value = method(self.program_name, option_name)
             LOG.debug('Option "%s" returned value: %r', option_name, value)

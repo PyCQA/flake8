@@ -76,6 +76,7 @@ class Manager(object):
         self.using_multiprocessing = self.jobs > 1
         self.processes = []
         self.checkers = []
+        self.unprocessed_checkers = []
         self.statistics = {
             'files': 0,
             'logical lines': 0,
@@ -231,9 +232,16 @@ class Manager(object):
                                                  self.is_path_excluded)
             if should_create_file_checker(filename, argument)
         )
-        self.checkers = [
-            checker for checker in checkers if checker.should_process
-        ]
+        # errors may already have been captured during checker set up,
+        # preserve these malfunctioning checkers in a separate list so reports
+        # can be generated
+        self.checkers = []
+        self.unprocessed_checkers = []
+        for checker in checkers:
+            if checker.should_process:
+                self.checkers.append(checker)
+            else:
+                self.unprocessed_checkers.append(checker)
         LOG.info('Checking %d files', len(self.checkers))
 
     def report(self):
@@ -249,7 +257,7 @@ class Manager(object):
             tuple(int, int)
         """
         results_reported = results_found = 0
-        for checker in self.checkers:
+        for checker in self.checkers + self.unprocessed_checkers:
             results = sorted(checker.results, key=lambda tup: (tup[1], tup[2]))
             filename = checker.display_name
             with self.style_guide.processing_file(filename):

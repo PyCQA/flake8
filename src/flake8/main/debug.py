@@ -4,8 +4,6 @@ from __future__ import print_function
 import json
 import platform
 
-import setuptools
-
 
 def print_information(option, option_string, value, parser,
                       option_manager=None):
@@ -65,4 +63,7 @@ def plugins_from(option_manager):
 
 def dependencies():
     """Generate the list of dependencies we care about."""
+    # defer this expensive import, not used outside --bug-report
+    import setuptools
+
     return [{'dependency': 'setuptools', 'version': setuptools.__version__}]

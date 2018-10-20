@@ -22,7 +22,7 @@ LOG = logging.getLogger(__name__)
 class Application(object):
     """Abstract our application into a class."""
 
-    def __init__(self, program='flake8', version=flake8.__version__):
+    def __init__(self, program="flake8", version=flake8.__version__):
         # type: (str, str) -> NoneType
         """Initialize our application.
 
@@ -42,7 +42,7 @@ class Application(object):
         #: The instance of :class:`flake8.options.manager.OptionManager` used
         #: to parse and handle the options and arguments passed by the user
         self.option_manager = manager.OptionManager(
-            prog='flake8', version=flake8.__version__
+            prog="flake8", version=flake8.__version__
         )
         options.register_default_options(self.option_manager)
         #: The preliminary options parsed from CLI before plugins are loaded,
@@ -118,21 +118,21 @@ class Application(object):
         # Similarly we have to defer printing the help text until later.
         args = (argv or sys.argv)[:]
         try:
-            args.remove('--version')
+            args.remove("--version")
         except ValueError:
             pass
         try:
-            args.remove('--help')
+            args.remove("--help")
         except ValueError:
             pass
         try:
-            args.remove('-h')
+            args.remove("-h")
         except ValueError:
             pass
 
         opts, args = self.option_manager.parse_known_args(args)
         # parse_known_args includes program name and unknown options as args
-        args = [a for a in args[1:] if not a.startswith('-')]
+        args = [a for a in args[1:] if not a.startswith("-")]
         self.prelim_opts, self.prelim_args = opts, args
 
     def exit(self):
@@ -146,14 +146,16 @@ class Application(object):
             print(self.result_count)
 
         if not self.options.exit_zero:
-            raise SystemExit((self.result_count > 0) or
-                             self.catastrophic_failure)
+            raise SystemExit(
+                (self.result_count > 0) or self.catastrophic_failure
+            )
 
     def make_config_finder(self):
         """Make our ConfigFileFinder based on preliminary opts and args."""
         if self.config_finder is None:
             extra_config_files = utils.normalize_paths(
-                self.prelim_opts.append_config)
+                self.prelim_opts.append_config
+            )
             self.config_finder = config.ConfigFileFinder(
                 self.option_manager.program_name,
                 self.prelim_args,
@@ -181,14 +183,16 @@ class Application(object):
 
         if self.check_plugins is None:
             self.check_plugins = plugin_manager.Checkers(
-                self.local_plugins.extension)
+                self.local_plugins.extension
+            )
 
         if self.listening_plugins is None:
             self.listening_plugins = plugin_manager.Listeners()
 
         if self.formatting_plugins is None:
             self.formatting_plugins = plugin_manager.ReportFormatters(
-                self.local_plugins.report)
+                self.local_plugins.report
+            )
 
         self.check_plugins.load_plugins()
         self.listening_plugins.load_plugins()
@@ -222,19 +226,20 @@ class Application(object):
 
         self.options._running_from_vcs = False
 
-        self.check_plugins.provide_options(self.option_manager, self.options,
-                                           self.args)
-        self.listening_plugins.provide_options(self.option_manager,
-                                               self.options,
-                                               self.args)
-        self.formatting_plugins.provide_options(self.option_manager,
-                                                self.options,
-                                                self.args)
+        self.check_plugins.provide_options(
+            self.option_manager, self.options, self.args
+        )
+        self.listening_plugins.provide_options(
+            self.option_manager, self.options, self.args
+        )
+        self.formatting_plugins.provide_options(
+            self.option_manager, self.options, self.args
+        )
 
     def formatter_for(self, formatter_plugin_name):
         """Retrieve the formatter class by plugin name."""
         try:
-            default_formatter = self.formatting_plugins['default']
+            default_formatter = self.formatting_plugins["default"]
         except KeyError:
             raise exceptions.ExecutionError(
                 "The 'default' Flake8 formatting plugin is unavailable. "
@@ -259,9 +264,9 @@ class Application(object):
         if self.formatter is None:
             format_plugin = self.options.format
             if 1 <= self.options.quiet < 2:
-                format_plugin = 'quiet-filename'
+                format_plugin = "quiet-filename"
             elif 2 <= self.options.quiet:
-                format_plugin = 'quiet-nothing'
+                format_plugin = "quiet-nothing"
 
             if formatter_class is None:
                 formatter_class = self.formatter_for(format_plugin)
@@ -313,9 +318,9 @@ class Application(object):
             self.file_checker_manager.run()
         except exceptions.PluginExecutionFailed as plugin_failed:
             print(str(plugin_failed))
-            print('Run flake8 with greater verbosity to see more details')
+            print("Run flake8 with greater verbosity to see more details")
             self.catastrophic_failure = True
-        LOG.info('Finished running')
+        LOG.info("Finished running")
         self.file_checker_manager.stop()
         self.end_time = time.time()
 
@@ -325,13 +330,13 @@ class Application(object):
             return
 
         time_elapsed = self.end_time - self.start_time
-        statistics = [('seconds elapsed', time_elapsed)]
+        statistics = [("seconds elapsed", time_elapsed)]
         add_statistic = statistics.append
-        for statistic in (defaults.STATISTIC_NAMES + ('files',)):
+        for statistic in defaults.STATISTIC_NAMES + ("files",):
             value = self.file_checker_manager.statistics[statistic]
-            total_description = 'total ' + statistic + ' processed'
+            total_description = "total " + statistic + " processed"
             add_statistic((total_description, value))
-            per_second_description = statistic + ' processed per second'
+            per_second_description = statistic + " processed per second"
             add_statistic((per_second_description, int(value / time_elapsed)))
 
         self.formatter.show_benchmarks(statistics)
@@ -343,11 +348,14 @@ class Application(object):
         This also updates the :attr:`result_count` attribute with the total
         number of errors, warnings, and other messages found.
         """
-        LOG.info('Reporting errors')
+        LOG.info("Reporting errors")
         results = self.file_checker_manager.report()
         self.total_result_count, self.result_count = results
-        LOG.info('Found a total of %d violations and reported %d',
-                 self.total_result_count, self.result_count)
+        LOG.info(
+            "Found a total of %d violations and reported %d",
+            self.total_result_count,
+            self.result_count,
+        )
 
     def report_statistics(self):
         """Aggregate and report statistics from this run."""
@@ -367,7 +375,8 @@ class Application(object):
         # our legacy API calls to these same methods.
         self.parse_preliminary_options_and_args(argv)
         flake8.configure_logging(
-            self.prelim_opts.verbose, self.prelim_opts.output_file)
+            self.prelim_opts.verbose, self.prelim_opts.output_file
+        )
         self.make_config_finder()
         self.find_plugins()
         self.register_plugin_options()
@@ -402,15 +411,15 @@ class Application(object):
         try:
             self._run(argv)
         except KeyboardInterrupt as exc:
-            print('... stopped')
-            LOG.critical('Caught keyboard interrupt from user')
+            print("... stopped")
+            LOG.critical("Caught keyboard interrupt from user")
             LOG.exception(exc)
             self.catastrophic_failure = True
         except exceptions.ExecutionError as exc:
-            print('There was a critical error during execution of Flake8:')
+            print("There was a critical error during execution of Flake8:")
             print(exc.message)
             LOG.exception(exc)
             self.catastrophic_failure = True
         except exceptions.EarlyQuit:
             self.catastrophic_failure = True
-            print('... stopped while processing files')
+            print("... stopped while processing files")

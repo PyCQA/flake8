@@ -77,17 +77,17 @@ class Manager(object):
         self.processes = []
         self.checkers = []
         self.statistics = {
-            'files': 0,
-            'logical lines': 0,
-            'physical lines': 0,
-            'tokens': 0,
+            "files": 0,
+            "logical lines": 0,
+            "physical lines": 0,
+            "tokens": 0,
         }
 
     def _process_statistics(self):
         for checker in self.checkers:
             for statistic in defaults.STATISTIC_NAMES:
                 self.statistics[statistic] += checker.statistics[statistic]
-        self.statistics['files'] += len(self.checkers)
+        self.statistics["files"] += len(self.checkers)
 
     def _job_count(self):
         # type: () -> int
@@ -101,40 +101,53 @@ class Manager(object):
         #   multiprocessing and which really shouldn't require multiprocessing
         # - the user provided some awful input
         if not multiprocessing:
-            LOG.warning('The multiprocessing module is not available. '
-                        'Ignoring --jobs arguments.')
+            LOG.warning(
+                "The multiprocessing module is not available. "
+                "Ignoring --jobs arguments."
+            )
             return 0
 
-        if (utils.is_windows() and
-                not utils.can_run_multiprocessing_on_windows()):
-            LOG.warning('The --jobs option is not available on Windows due to'
-                        ' a bug (https://bugs.python.org/issue27649) in '
-                        'Python 2.7.11+ and 3.3+. We have detected that you '
-                        'are running an unsupported version of Python on '
-                        'Windows. Ignoring --jobs arguments.')
+        if (
+            utils.is_windows()
+            and not utils.can_run_multiprocessing_on_windows()
+        ):
+            LOG.warning(
+                "The --jobs option is not available on Windows due to"
+                " a bug (https://bugs.python.org/issue27649) in "
+                "Python 2.7.11+ and 3.3+. We have detected that you "
+                "are running an unsupported version of Python on "
+                "Windows. Ignoring --jobs arguments."
+            )
             return 0
 
         if utils.is_using_stdin(self.arguments):
-            LOG.warning('The --jobs option is not compatible with supplying '
-                        'input using - . Ignoring --jobs arguments.')
+            LOG.warning(
+                "The --jobs option is not compatible with supplying "
+                "input using - . Ignoring --jobs arguments."
+            )
             return 0
 
         if self.options.diff:
-            LOG.warning('The --diff option was specified with --jobs but '
-                        'they are not compatible. Ignoring --jobs arguments.')
+            LOG.warning(
+                "The --diff option was specified with --jobs but "
+                "they are not compatible. Ignoring --jobs arguments."
+            )
             return 0
 
         jobs = self.options.jobs
-        if jobs != 'auto' and not jobs.isdigit():
-            LOG.warning('"%s" is not a valid parameter to --jobs. Must be one '
-                        'of "auto" or a numerical value, e.g., 4.', jobs)
+        if jobs != "auto" and not jobs.isdigit():
+            LOG.warning(
+                '"%s" is not a valid parameter to --jobs. Must be one '
+                'of "auto" or a numerical value, e.g., 4.',
+                jobs,
+            )
             return 0
 
         # If the value is "auto", we want to let the multiprocessing library
         # decide the number based on the number of CPUs. However, if that
         # function is not implemented for this particular value of Python we
         # default to 1
-        if jobs == 'auto':
+        if jobs == "auto":
             try:
                 return multiprocessing.cpu_count()
             except NotImplementedError:
@@ -170,8 +183,8 @@ class Manager(object):
         :rtype:
             bool
         """
-        if path == '-':
-            if self.options.stdin_display_name == 'stdin':
+        if path == "-":
+            if self.options.stdin_display_name == "stdin":
                 return False
             path = self.options.stdin_display_name
 
@@ -185,8 +198,9 @@ class Manager(object):
 
         absolute_path = os.path.abspath(path)
         match = utils.fnmatch(absolute_path, exclude)
-        LOG.debug('"%s" has %sbeen excluded', absolute_path,
-                  '' if match else 'not ')
+        LOG.debug(
+            '"%s" has %sbeen excluded', absolute_path, "" if match else "not "
+        )
         return match
 
     def make_checkers(self, paths=None):
@@ -196,7 +210,7 @@ class Manager(object):
             paths = self.arguments
 
         if not paths:
-            paths = ['.']
+            paths = ["."]
 
         filename_patterns = self.options.filename
         running_from_vcs = self.options._running_from_vcs
@@ -209,7 +223,7 @@ class Manager(object):
             matches_filename_patterns = utils.fnmatch(
                 filename, filename_patterns
             )
-            is_stdin = filename == '-'
+            is_stdin = filename == "-"
             # NOTE(sigmavirus24): If a user explicitly specifies something,
             # e.g, ``flake8 bin/script`` then we should run Flake8 against
             # that. Since should_create_file_checker looks to see if the
@@ -217,24 +231,28 @@ class Manager(object):
             # the event that the argument and the filename are identical.
             # If it was specified explicitly, the user intended for it to be
             # checked.
-            explicitly_provided = (not running_from_vcs and
-                                   not running_from_diff and
-                                   (argument == filename))
-            return ((explicitly_provided or matches_filename_patterns) or
-                    is_stdin)
+            explicitly_provided = (
+                not running_from_vcs
+                and not running_from_diff
+                and (argument == filename)
+            )
+            return (
+                explicitly_provided or matches_filename_patterns
+            ) or is_stdin
 
         checks = self.checks.to_dictionary()
         checkers = (
             FileChecker(filename, checks, self.options)
             for argument in paths
-            for filename in utils.filenames_from(argument,
-                                                 self.is_path_excluded)
+            for filename in utils.filenames_from(
+                argument, self.is_path_excluded
+            )
             if should_create_file_checker(filename, argument)
         )
         self.checkers = [
             checker for checker in checkers if checker.should_process
         ]
-        LOG.info('Checking %d files', len(self.checkers))
+        LOG.info("Checking %d files", len(self.checkers))
 
     def report(self):
         # type: () -> (int, int)
@@ -250,7 +268,9 @@ class Manager(object):
         """
         results_reported = results_found = 0
         for checker in self.checkers:
-            results = sorted(checker.results, key=lambda tup: (tup[1], tup[2]))
+            results = sorted(
+                checker.results, key=lambda tup: (tup[1], tup[2])
+            )
             filename = checker.display_name
             with self.style_guide.processing_file(filename):
                 results_reported += self._handle_results(filename, results)
@@ -276,8 +296,7 @@ class Manager(object):
                 _run_checks,
                 self.checkers,
                 chunksize=calculate_pool_chunksize(
-                    len(self.checkers),
-                    self.jobs,
+                    len(self.checkers), self.jobs
                 ),
             )
             for ret in pool_map:
@@ -294,8 +313,9 @@ class Manager(object):
 
         for checker in self.checkers:
             filename = checker.display_name
-            checker.results = sorted(final_results[filename],
-                                     key=lambda tup: (tup[2], tup[2]))
+            checker.results = sorted(
+                final_results[filename], key=lambda tup: (tup[2], tup[2])
+            )
             checker.statistics = final_statistics[filename]
 
     def run_serial(self):
@@ -322,11 +342,11 @@ class Manager(object):
             if oserr.errno not in SERIAL_RETRY_ERRNOS:
                 LOG.exception(oserr)
                 raise
-            LOG.warning('Running in serial after OS exception, %r', oserr)
+            LOG.warning("Running in serial after OS exception, %r", oserr)
             self.run_serial()
         except KeyboardInterrupt:
-            LOG.warning('Flake8 was interrupted by the user')
-            raise exceptions.EarlyQuit('Early quit while running checks')
+            LOG.warning("Flake8 was interrupted by the user")
+            raise exceptions.EarlyQuit("Early quit while running checks")
 
     def start(self, paths=None):
         """Start checking files.
@@ -335,14 +355,14 @@ class Manager(object):
             Path names to check. This is passed directly to
             :meth:`~Manager.make_checkers`.
         """
-        LOG.info('Making checkers')
+        LOG.info("Making checkers")
         self.make_checkers(paths)
 
     def stop(self):
         """Stop checking files."""
         self._process_statistics()
         for proc in self.processes:
-            LOG.info('Joining %s to the main process', proc.name)
+            LOG.info("Joining %s to the main process", proc.name)
             proc.join()
 
 
@@ -368,9 +388,9 @@ class FileChecker(object):
         self.checks = checks
         self.results = []
         self.statistics = {
-            'tokens': 0,
-            'logical lines': 0,
-            'physical lines': 0,
+            "tokens": 0,
+            "logical lines": 0,
+            "physical lines": 0,
         }
         self.processor = self._make_processor()
         self.display_name = filename
@@ -378,11 +398,11 @@ class FileChecker(object):
         if self.processor is not None:
             self.display_name = self.processor.filename
             self.should_process = not self.processor.should_ignore_file()
-            self.statistics['physical lines'] = len(self.processor.lines)
+            self.statistics["physical lines"] = len(self.processor.lines)
 
     def __repr__(self):
         """Provide helpful debugging representation."""
-        return 'FileChecker for {}'.format(self.filename)
+        return "FileChecker for {}".format(self.filename)
 
     def _make_processor(self):
         try:
@@ -395,20 +415,20 @@ class FileChecker(object):
             # as an E902. We probably *want* a better error code for this
             # going forward.
             (exc_type, exception) = sys.exc_info()[:2]
-            message = '{0}: {1}'.format(exc_type.__name__, exception)
-            self.report('E902', 0, 0, message)
+            message = "{0}: {1}".format(exc_type.__name__, exception)
+            self.report("E902", 0, 0, message)
             return None
 
     def report(self, error_code, line_number, column, text, line=None):
         # type: (str, int, int, str) -> str
         """Report an error by storing it in the results list."""
         if error_code is None:
-            error_code, text = text.split(' ', 1)
+            error_code, text = text.split(" ", 1)
 
         physical_line = line
         # If we're recovering from a problem in _make_processor, we will not
         # have this attribute.
-        if not physical_line and getattr(self, 'processor', None):
+        if not physical_line and getattr(self, "processor", None):
             physical_line = self.processor.line_for(line_number)
 
         error = (error_code, line_number, column, text, physical_line)
@@ -417,26 +437,24 @@ class FileChecker(object):
 
     def run_check(self, plugin, **arguments):
         """Run the check in a single plugin."""
-        LOG.debug('Running %r with %r', plugin, arguments)
+        LOG.debug("Running %r with %r", plugin, arguments)
         try:
             self.processor.keyword_arguments_for(
-                plugin['parameters'],
-                arguments,
+                plugin["parameters"], arguments
             )
         except AttributeError as ae:
-            LOG.error('Plugin requested unknown parameters.')
+            LOG.error("Plugin requested unknown parameters.")
             raise exceptions.PluginRequestedUnknownParameters(
-                plugin=plugin,
-                exception=ae,
+                plugin=plugin, exception=ae
             )
         try:
-            return plugin['plugin'](**arguments)
+            return plugin["plugin"](**arguments)
         except Exception as all_exc:
-            LOG.critical('Plugin %s raised an unexpected exception',
-                         plugin['name'])
+            LOG.critical(
+                "Plugin %s raised an unexpected exception", plugin["name"]
+            )
             raise exceptions.PluginExecutionFailed(
-                plugin=plugin,
-                excetion=all_exc,
+                plugin=plugin, excetion=all_exc
             )
 
     @staticmethod
@@ -466,7 +484,7 @@ class FileChecker(object):
                 # "physical" line so much as what was accumulated by the point
                 # tokenizing failed.
                 # See also: https://gitlab.com/pycqa/flake8/issues/237
-                lines = physical_line.rstrip('\n').split('\n')
+                lines = physical_line.rstrip("\n").split("\n")
                 row_offset = len(lines) - 1
                 logical_line = lines[0]
                 logical_line_length = len(logical_line)
@@ -483,11 +501,15 @@ class FileChecker(object):
         except (ValueError, SyntaxError, TypeError):
             (exc_type, exception) = sys.exc_info()[:2]
             row, column = self._extract_syntax_information(exception)
-            self.report('E999', row, column, '%s: %s' %
-                        (exc_type.__name__, exception.args[0]))
+            self.report(
+                "E999",
+                row,
+                column,
+                "%s: %s" % (exc_type.__name__, exception.args[0]),
+            )
             return
 
-        for plugin in self.checks['ast_plugins']:
+        for plugin in self.checks["ast_plugins"]:
             checker = self.run_check(plugin, tree=ast)
             # If the plugin uses a class, call the run method of it, otherwise
             # the call should return something iterable itself
@@ -512,7 +534,7 @@ class FileChecker(object):
 
         LOG.debug('Logical line: "%s"', logical_line.rstrip())
 
-        for plugin in self.checks['logical_line_plugins']:
+        for plugin in self.checks["logical_line_plugins"]:
             self.processor.update_checker_state_for(plugin)
             results = self.run_check(plugin, logical_line=logical_line) or ()
             for offset, text in results:
@@ -529,7 +551,7 @@ class FileChecker(object):
 
     def run_physical_checks(self, physical_line, override_error_line=None):
         """Run all checks for a given physical line."""
-        for plugin in self.checks['physical_line_plugins']:
+        for plugin in self.checks["physical_line_plugins"]:
             self.processor.update_checker_state_for(plugin)
             result = self.run_check(plugin, physical_line=physical_line)
             if result is not None:
@@ -555,7 +577,7 @@ class FileChecker(object):
         statistics = self.statistics
         file_processor = self.processor
         for token in file_processor.generate_tokens():
-            statistics['tokens'] += 1
+            statistics["tokens"] += 1
             self.check_physical_eol(token)
             token_type, text = token[0:2]
             processor.log_token(LOG, token)
@@ -564,8 +586,10 @@ class FileChecker(object):
             elif parens == 0:
                 if processor.token_is_newline(token):
                     self.handle_newline(token_type)
-                elif (processor.token_is_comment(token) and
-                        len(file_processor.tokens) == 1):
+                elif (
+                    processor.token_is_comment(token)
+                    and len(file_processor.tokens) == 1
+                ):
                     self.handle_comment(token, text)
 
         if file_processor.tokens:
@@ -578,20 +602,24 @@ class FileChecker(object):
         try:
             self.process_tokens()
         except exceptions.InvalidSyntax as exc:
-            self.report(exc.error_code, exc.line_number, exc.column_number,
-                        exc.error_message)
+            self.report(
+                exc.error_code,
+                exc.line_number,
+                exc.column_number,
+                exc.error_message,
+            )
 
         self.run_ast_checks()
 
-        logical_lines = self.processor.statistics['logical lines']
-        self.statistics['logical lines'] = logical_lines
+        logical_lines = self.processor.statistics["logical lines"]
+        self.statistics["logical lines"] = logical_lines
         return self.filename, self.results, self.statistics
 
     def handle_comment(self, token, token_text):
         """Handle the logic when encountering a comment token."""
         # The comment also ends a physical line
         token = list(token)
-        token[1] = token_text.rstrip('\r\n')
+        token[1] = token_text.rstrip("\r\n")
         token[3] = (token[2][0], token[2][1] + len(token[1]))
         self.processor.tokens = [tuple(token)]
         self.run_logical_checks()
@@ -628,8 +656,9 @@ class FileChecker(object):
             line_no = token[2][0]
             with self.processor.inside_multiline(line_number=line_no):
                 for line in self.processor.split_line(token):
-                    self.run_physical_checks(line + '\n',
-                                             override_error_line=token[4])
+                    self.run_physical_checks(
+                        line + "\n", override_error_line=token[4]
+                    )
 
 
 def _pool_init():

@@ -8,10 +8,7 @@ from flake8.main import mercurial
 # as plugins, e.g., adding a flake8.vcs entry-point. In that case, this
 # dictionary should disappear, and this module might contain more code for
 # managing those bits (in conjuntion with flake8.plugins.manager).
-_INSTALLERS = {
-    'git': git.install,
-    'mercurial': mercurial.install,
-}
+_INSTALLERS = {"git": git.install, "mercurial": mercurial.install}
 
 
 def install(option, option_string, value, parser):
@@ -30,7 +27,7 @@ def install(option, option_string, value, parser):
         errored = True
 
     if not successful:
-        print('Could not find the {0} directory'.format(value))
+        print("Could not find the {0} directory".format(value))
     raise SystemExit(not successful and errored)
 
 

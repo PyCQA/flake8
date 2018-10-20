@@ -70,8 +70,8 @@ def test_generate_possible_local_files(args, expected):
     """Verify generation of all possible config paths."""
     finder = config.ConfigFileFinder('flake8', args, [])
 
-    assert (list(finder.generate_possible_local_files()) ==
-            expected)
+    assert (list(finder.generate_possible_local_files())
+            == expected)
 
 
 @pytest.mark.parametrize('args,extra_config_files,expected', [

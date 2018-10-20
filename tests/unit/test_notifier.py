@@ -50,5 +50,5 @@ class TestNotifier(object):
     ])
     def test_listeners_for(self, code, expected):
         """Verify that we retrieve the correct listeners."""
-        assert ([l.error_code for l in self.notifier.listeners_for(code)] ==
-                expected)
+        assert ([l.error_code
+                for l in self.notifier.listeners_for(code)] == expected)

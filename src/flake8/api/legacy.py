@@ -13,7 +13,7 @@ from flake8.main import application as app
 LOG = logging.getLogger(__name__)
 
 
-__all__ = ('get_style_guide',)
+__all__ = ("get_style_guide",)
 
 
 def get_style_guide(**kwargs):
@@ -29,7 +29,8 @@ def get_style_guide(**kwargs):
     application = app.Application()
     application.parse_preliminary_options_and_args([])
     flake8.configure_logging(
-        application.prelim_opts.verbose, application.prelim_opts.output_file)
+        application.prelim_opts.verbose, application.prelim_opts.output_file
+    )
     application.make_config_finder()
     application.find_plugins()
     application.register_plugin_options()
@@ -113,18 +114,22 @@ class StyleGuide(object):
         :rtype:
             bool
         """
-        return (self._file_checker_manager.is_path_excluded(filename) or
-                (parent and
-                    self._file_checker_manager.is_path_excluded(
-                        os.path.join(parent, filename))))
+        return self._file_checker_manager.is_path_excluded(filename) or (
+            parent
+            and self._file_checker_manager.is_path_excluded(
+                os.path.join(parent, filename)
+            )
+        )
 
     def init_report(self, reporter=None):
         """Set up a formatter for this run of Flake8."""
         if reporter is None:
             return
         if not issubclass(reporter, formatter.BaseFormatter):
-            raise ValueError("Report should be subclass of "
-                             "flake8.formatter.BaseFormatter.")
+            raise ValueError(
+                "Report should be subclass of "
+                "flake8.formatter.BaseFormatter."
+            )
         self._application.formatter = None
         self._application.make_formatter(reporter)
         self._application.guide = None
@@ -197,6 +202,6 @@ class Report(object):
             list
         """
         return [
-            '{} {} {}'.format(s.count, s.error_code, s.message)
+            "{} {} {}".format(s.count, s.error_code, s.message)
             for s in self._stats.statistics_for(violation)
         ]

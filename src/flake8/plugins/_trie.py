@@ -1,11 +1,11 @@
 """Independent implementation of a Trie tree."""
 
-__all__ = ('Trie', 'TrieNode')
+__all__ = ("Trie", "TrieNode")
 
 
 def _iterate_stringlike_objects(string):
     for i in range(len(string)):
-        yield string[i:i + 1]
+        yield string[i : i + 1]
 
 
 class Trie(object):
@@ -57,9 +57,7 @@ class TrieNode(object):
 
     def __repr__(self):
         """Generate an easy to read representation of the node."""
-        return 'TrieNode(prefix={0}, data={1})'.format(
-            self.prefix, self.data
-        )
+        return "TrieNode(prefix={0}, data={1})".format(self.prefix, self.data)
 
     def find_prefix(self, prefix):
         """Find the prefix in the children of this node.

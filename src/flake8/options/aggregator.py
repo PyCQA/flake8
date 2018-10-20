@@ -37,26 +37,28 @@ def aggregate_options(manager, config_finder, arglist=None, values=None):
 
     # Make our new configuration file mergerator
     config_parser = config.MergedConfigParser(
-        option_manager=manager,
-        config_finder=config_finder,
+        option_manager=manager, config_finder=config_finder
     )
 
     # Get the parsed config
-    parsed_config = config_parser.parse(original_values.config,
-                                        original_values.isolated)
+    parsed_config = config_parser.parse(
+        original_values.config, original_values.isolated
+    )
 
     # Extend the default ignore value with the extended default ignore list,
     # registered by plugins.
     extended_default_ignore = manager.extended_default_ignore.copy()
-    LOG.debug('Extended default ignore list: %s',
-              list(extended_default_ignore))
+    LOG.debug(
+        "Extended default ignore list: %s", list(extended_default_ignore)
+    )
     extended_default_ignore.update(default_values.ignore)
     default_values.ignore = list(extended_default_ignore)
-    LOG.debug('Merged default ignore list: %s', default_values.ignore)
+    LOG.debug("Merged default ignore list: %s", default_values.ignore)
 
     extended_default_select = manager.extended_default_select.copy()
-    LOG.debug('Extended default select list: %s',
-              list(extended_default_select))
+    LOG.debug(
+        "Extended default select list: %s", list(extended_default_select)
+    )
     default_values.extended_default_select = extended_default_select
 
     # Merge values parsed from config onto the default values returned
@@ -67,10 +69,12 @@ def aggregate_options(manager, config_finder, arglist=None, values=None):
         if not hasattr(default_values, config_name):
             dest_name = config_parser.config_options[config_name].dest
 
-        LOG.debug('Overriding default value of (%s) for "%s" with (%s)',
-                  getattr(default_values, dest_name, None),
-                  dest_name,
-                  value)
+        LOG.debug(
+            'Overriding default value of (%s) for "%s" with (%s)',
+            getattr(default_values, dest_name, None),
+            dest_name,
+            value,
+        )
         # Override the default values with the config values
         setattr(default_values, dest_name, value)
 

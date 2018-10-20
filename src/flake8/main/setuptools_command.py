@@ -11,7 +11,7 @@ UNSET = object()
 class Flake8(setuptools.Command):
     """Run Flake8 via setuptools/distutils for registered modules."""
 
-    description = 'Run Flake8 on modules registered in setup.py'
+    description = "Run Flake8 on modules registered in setup.py"
     # NOTE(sigmavirus24): If we populated this with a list of tuples, users
     # could do something like ``python setup.py flake8 --ignore=E123,E234``
     # but we would have to redefine it and we can't define it dynamically.
@@ -39,23 +39,26 @@ class Flake8(setuptools.Command):
                 value = getattr(self, name, UNSET)
                 if value is UNSET:
                     continue
-                setattr(self.flake8.options,
-                        name,
-                        option.normalize_from_setuptools(value))
+                setattr(
+                    self.flake8.options,
+                    name,
+                    option.normalize_from_setuptools(value),
+                )
 
     def package_files(self):
         """Collect the files/dirs included in the registered modules."""
         seen_package_directories = ()
         directories = self.distribution.package_dir or {}
-        empty_directory_exists = '' in directories
+        empty_directory_exists = "" in directories
         packages = self.distribution.packages or []
         for package in packages:
             package_directory = package
             if package in directories:
                 package_directory = directories[package]
             elif empty_directory_exists:
-                package_directory = os.path.join(directories[''],
-                                                 package_directory)
+                package_directory = os.path.join(
+                    directories[""], package_directory
+                )
 
             # NOTE(sigmavirus24): Do not collect submodules, e.g.,
             # if we have:
@@ -66,13 +69,13 @@ class Flake8(setuptools.Command):
             if package_directory.startswith(seen_package_directories):
                 continue
 
-            seen_package_directories += (package_directory + '.',)
+            seen_package_directories += (package_directory + ".",)
             yield package_directory
 
     def module_files(self):
         """Collect the files listed as py_modules."""
         modules = self.distribution.py_modules or []
-        filename_from = '{0}.py'.format
+        filename_from = "{0}.py".format
         for module in modules:
             yield filename_from(module)
 
@@ -84,7 +87,7 @@ class Flake8(setuptools.Command):
         for module in self.module_files():
             yield module
 
-        yield 'setup.py'
+        yield "setup.py"
 
     def run(self):
         """Run the Flake8 application."""

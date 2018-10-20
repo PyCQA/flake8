@@ -9,9 +9,9 @@ import re
 import sys
 import tokenize
 
-DIFF_HUNK_REGEXP = re.compile(r'^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@.*$')
-COMMA_SEPARATED_LIST_RE = re.compile(r'[,\s]')
-LOCAL_PLUGIN_LIST_RE = re.compile(r'[,\t\n\r\f\v]')
+DIFF_HUNK_REGEXP = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@.*$")
+COMMA_SEPARATED_LIST_RE = re.compile(r"[,\s]")
+LOCAL_PLUGIN_LIST_RE = re.compile(r"[,\t\n\r\f\v]")
 
 
 def parse_comma_separated_list(value, regexp=COMMA_SEPARATED_LIST_RE):
@@ -49,8 +49,9 @@ def normalize_paths(paths, parent=os.curdir):
     :rtype:
         [str]
     """
-    return [normalize_path(p, parent)
-            for p in parse_comma_separated_list(paths)]
+    return [
+        normalize_path(p, parent) for p in parse_comma_separated_list(paths)
+    ]
 
 
 def normalize_path(path, parent=os.curdir):
@@ -67,9 +68,10 @@ def normalize_path(path, parent=os.curdir):
     # Unix style paths (/foo/bar).
     separator = os.path.sep
     # NOTE(sigmavirus24): os.path.altsep may be None
-    alternate_separator = os.path.altsep or ''
-    if separator in path or (alternate_separator and
-                             alternate_separator in path):
+    alternate_separator = os.path.altsep or ""
+    if separator in path or (
+        alternate_separator and alternate_separator in path
+    ):
         path = os.path.abspath(os.path.join(parent, path))
     return path.rstrip(separator + alternate_separator)
 
@@ -81,13 +83,13 @@ def _stdin_get_value_py3():
         (coding, lines) = tokenize.detect_encoding(fd.readline)
         return io.StringIO(stdin_value.decode(coding))
     except (LookupError, SyntaxError, UnicodeError):
-        return io.StringIO(stdin_value.decode('utf-8'))
+        return io.StringIO(stdin_value.decode("utf-8"))
 
 
 def stdin_get_value():
     # type: () -> str
     """Get and cache it so plugins can use it."""
-    cached_value = getattr(stdin_get_value, 'cached_stdin', None)
+    cached_value = getattr(stdin_get_value, "cached_stdin", None)
     if cached_value is None:
         if sys.version_info < (3, 0):
             stdin_value = io.BytesIO(sys.stdin.read())
@@ -118,7 +120,7 @@ def parse_unified_diff(diff=None):
         if number_of_rows:
             # NOTE(sigmavirus24): Below we use a slice because stdin may be
             # bytes instead of text on Python 3.
-            if line[:1] != '-':
+            if line[:1] != "-":
                 number_of_rows -= 1
             # We're in the part of the diff that has lines starting with +, -,
             # and ' ' to show context and the changes made. We skip these
@@ -139,10 +141,10 @@ def parse_unified_diff(diff=None):
         #    +++ b/file.py\t100644
         # Which is an example that has the new file permissions/mode.
         # In this case we only care about the file name.
-        if line[:3] == '+++':
-            current_path = line[4:].split('\t', 1)[0]
+        if line[:3] == "+++":
+            current_path = line[4:].split("\t", 1)[0]
             # NOTE(sigmavirus24): This check is for diff output from git.
-            if current_path[:2] == 'b/':
+            if current_path[:2] == "b/":
                 current_path = current_path[2:]
             # We don't need to do anything else. We have set up our local
             # ``current_path`` variable. We can skip the rest of this loop.
@@ -179,7 +181,7 @@ def is_windows():
     :rtype:
         bool
     """
-    return os.name == 'nt'
+    return os.name == "nt"
 
 
 # NOTE(sigmavirus24): If and when https://bugs.python.org/issue27649 is fixed,
@@ -217,7 +219,7 @@ def is_using_stdin(paths):
     :rtype:
         bool
     """
-    return '-' in paths
+    return "-" in paths
 
 
 def _default_predicate(*args):
@@ -312,19 +314,23 @@ def parameters_for(plugin):
         argspec = inspect.getargspec(func)
         start_of_optional_args = len(argspec[0]) - len(argspec[-1] or [])
         parameter_names = argspec[0]
-        parameters = collections.OrderedDict([
-            (name, position < start_of_optional_args)
-            for position, name in enumerate(parameter_names)
-        ])
+        parameters = collections.OrderedDict(
+            [
+                (name, position < start_of_optional_args)
+                for position, name in enumerate(parameter_names)
+            ]
+        )
     else:
-        parameters = collections.OrderedDict([
-            (parameter.name, parameter.default is parameter.empty)
-            for parameter in inspect.signature(func).parameters.values()
-            if parameter.kind == parameter.POSITIONAL_OR_KEYWORD
-        ])
+        parameters = collections.OrderedDict(
+            [
+                (parameter.name, parameter.default is parameter.empty)
+                for parameter in inspect.signature(func).parameters.values()
+                if parameter.kind == parameter.POSITIONAL_OR_KEYWORD
+            ]
+        )
 
     if is_class:
-        parameters.pop('self', None)
+        parameters.pop("self", None)
 
     return parameters
 
@@ -341,5 +347,5 @@ def get_python_version():
     try:
         impl = platform.python_implementation() + " "
     except AttributeError:  # Python 2.5
-        impl = ''
-    return '%s%s on %s' % (impl, platform.python_version(), platform.system())
+        impl = ""
+    return "%s%s on %s" % (impl, platform.python_version(), platform.system())

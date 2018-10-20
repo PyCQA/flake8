@@ -40,7 +40,7 @@ python37:
   script: tox -e py37
 
 linters:
-  image: python:3.5
+  image: python:3.6
   stage: test
   script: tox -e linters
 

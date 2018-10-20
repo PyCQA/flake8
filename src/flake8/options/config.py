@@ -9,13 +9,13 @@ from flake8 import utils
 
 LOG = logging.getLogger(__name__)
 
-__all__ = ('ConfigFileFinder', 'MergedConfigParser')
+__all__ = ("ConfigFileFinder", "MergedConfigParser")
 
 
 class ConfigFileFinder(object):
     """Encapsulate the logic for finding and reading config files."""
 
-    PROJECT_FILENAMES = ('setup.cfg', 'tox.ini')
+    PROJECT_FILENAMES = ("setup.cfg", "tox.ini")
 
     def __init__(self, program_name, args, extra_config_files):
         """Initialize object to find config files.
@@ -31,25 +31,27 @@ class ConfigFileFinder(object):
         extra_config_files = extra_config_files or []
         self.extra_config_files = [
             # Ensure the paths are absolute paths for local_config_files
-            os.path.abspath(f) for f in extra_config_files
+            os.path.abspath(f)
+            for f in extra_config_files
         ]
 
         # Platform specific settings
-        self.is_windows = sys.platform == 'win32'
-        self.xdg_home = os.environ.get('XDG_CONFIG_HOME',
-                                       os.path.expanduser('~/.config'))
+        self.is_windows = sys.platform == "win32"
+        self.xdg_home = os.environ.get(
+            "XDG_CONFIG_HOME", os.path.expanduser("~/.config")
+        )
 
         # Look for '.<program_name>' files
-        self.program_config = '.' + program_name
+        self.program_config = "." + program_name
         self.program_name = program_name
 
         # List of filenames to find in the local/project directory
-        self.project_filenames = ('setup.cfg', 'tox.ini', self.program_config)
+        self.project_filenames = ("setup.cfg", "tox.ini", self.program_config)
 
         self.local_directory = os.path.abspath(os.curdir)
 
         if not args:
-            args = ['.']
+            args = ["."]
         self.parent = self.tail = os.path.abspath(os.path.commonprefix(args))
 
         # caches to avoid double-reading config files
@@ -61,7 +63,7 @@ class ConfigFileFinder(object):
     @staticmethod
     def _read_config(files):
         config = configparser.RawConfigParser()
-        if isinstance(files, (str, type(u''))):
+        if isinstance(files, (str, type(u""))):
             files = [files]
 
         found_files = []
@@ -69,13 +71,17 @@ class ConfigFileFinder(object):
             try:
                 found_files.extend(config.read(filename))
             except UnicodeDecodeError:
-                LOG.exception("There was an error decoding a config file."
-                              "The file with a problem was %s.",
-                              filename)
+                LOG.exception(
+                    "There was an error decoding a config file."
+                    "The file with a problem was %s.",
+                    filename,
+                )
             except configparser.ParsingError:
-                LOG.exception("There was an error trying to parse a config "
-                              "file. The file with a problem was %s.",
-                              filename)
+                LOG.exception(
+                    "There was an error trying to parse a config "
+                    "file. The file with a problem was %s.",
+                    filename,
+                )
         return (config, found_files)
 
     def cli_config(self, files):
@@ -83,7 +89,7 @@ class ConfigFileFinder(object):
         if files not in self._cli_configs:
             config, found_files = self._read_config(files)
             if found_files:
-                LOG.debug('Found cli configuration files: %s', found_files)
+                LOG.debug("Found cli configuration files: %s", found_files)
             self._cli_configs[files] = config
         return self._cli_configs[files]
 
@@ -94,8 +100,9 @@ class ConfigFileFinder(object):
         found_config_files = False
         while tail and not found_config_files:
             for project_filename in self.project_filenames:
-                filename = os.path.abspath(os.path.join(parent,
-                                                        project_filename))
+                filename = os.path.abspath(
+                    os.path.join(parent, project_filename)
+                )
                 if os.path.exists(filename):
                     yield filename
                     found_config_files = True
@@ -117,8 +124,7 @@ class ConfigFileFinder(object):
         """
         exists = os.path.exists
         return [
-            filename
-            for filename in self.generate_possible_local_files()
+            filename for filename in self.generate_possible_local_files()
         ] + [f for f in self.extra_config_files if exists(f)]
 
     def local_configs_with_files(self):
@@ -129,7 +135,7 @@ class ConfigFileFinder(object):
         if self._local_configs is None:
             config, found_files = self._read_config(self.local_config_files())
             if found_files:
-                LOG.debug('Found local configuration files: %s', found_files)
+                LOG.debug("Found local configuration files: %s", found_files)
             self._local_configs = config
             self._local_found_files = found_files
         return (self._local_configs, self._local_found_files)
@@ -141,7 +147,7 @@ class ConfigFileFinder(object):
     def user_config_file(self):
         """Find the user-level config file."""
         if self.is_windows:
-            return os.path.expanduser('~\\' + self.program_config)
+            return os.path.expanduser("~\\" + self.program_config)
         return os.path.join(self.xdg_home, self.program_name)
 
     def user_config(self):
@@ -149,7 +155,7 @@ class ConfigFileFinder(object):
         if self._user_config is None:
             config, found_files = self._read_config(self.user_config_file())
             if found_files:
-                LOG.debug('Found user configuration files: %s', found_files)
+                LOG.debug("Found user configuration files: %s", found_files)
             self._user_config = config
         return self._user_config
 
@@ -164,10 +170,10 @@ class MergedConfigParser(object):
 
     #: Set of types that should use the
     #: :meth:`~configparser.RawConfigParser.getint` method.
-    GETINT_TYPES = {'int', 'count'}
+    GETINT_TYPES = {"int", "count"}
     #: Set of actions that should use the
     #: :meth:`~configparser.RawConfigParser.getbool` method.
-    GETBOOL_ACTIONS = {'store_true', 'store_false'}
+    GETBOOL_ACTIONS = {"store_true", "store_false"}
 
     def __init__(self, option_manager, config_finder):
         """Initialize the MergedConfigParser instance.
@@ -189,26 +195,32 @@ class MergedConfigParser(object):
 
     def _normalize_value(self, option, value):
         final_value = option.normalize(
-            value,
-            self.config_finder.local_directory,
+            value, self.config_finder.local_directory
         )
-        LOG.debug('%r has been normalized to %r for option "%s"',
-                  value, final_value, option.config_name)
+        LOG.debug(
+            '%r has been normalized to %r for option "%s"',
+            value,
+            final_value,
+            option.config_name,
+        )
         return final_value
 
     def _parse_config(self, config_parser):
         config_dict = {}
         for option_name in config_parser.options(self.program_name):
             if option_name not in self.config_options:
-                LOG.debug('Option "%s" is not registered. Ignoring.',
-                          option_name)
+                LOG.debug(
+                    'Option "%s" is not registered. Ignoring.', option_name
+                )
                 continue
             option = self.config_options[option_name]
 
             # Use the appropriate method to parse the config value
             method = config_parser.get
-            if (option.type in self.GETINT_TYPES or
-                    option.action in self.GETINT_TYPES):
+            if (
+                option.type in self.GETINT_TYPES
+                or option.action in self.GETINT_TYPES
+            ):
                 method = config_parser.getint
             elif option.action in self.GETBOOL_ACTIONS:
                 method = config_parser.getboolean
@@ -229,33 +241,39 @@ class MergedConfigParser(object):
         """Parse and return the local configuration files."""
         config = self.config_finder.local_configs()
         if not self.is_configured_by(config):
-            LOG.debug('Local configuration files have no %s section',
-                      self.program_name)
+            LOG.debug(
+                "Local configuration files have no %s section",
+                self.program_name,
+            )
             return {}
 
-        LOG.debug('Parsing local configuration files.')
+        LOG.debug("Parsing local configuration files.")
         return self._parse_config(config)
 
     def parse_user_config(self):
         """Parse and return the user configuration files."""
         config = self.config_finder.user_config()
         if not self.is_configured_by(config):
-            LOG.debug('User configuration files have no %s section',
-                      self.program_name)
+            LOG.debug(
+                "User configuration files have no %s section",
+                self.program_name,
+            )
             return {}
 
-        LOG.debug('Parsing user configuration files.')
+        LOG.debug("Parsing user configuration files.")
         return self._parse_config(config)
 
     def parse_cli_config(self, config_path):
         """Parse and return the file specified by --config."""
         config = self.config_finder.cli_config(config_path)
         if not self.is_configured_by(config):
-            LOG.debug('CLI configuration files have no %s section',
-                      self.program_name)
+            LOG.debug(
+                "CLI configuration files have no %s section",
+                self.program_name,
+            )
             return {}
 
-        LOG.debug('Parsing CLI configuration files.')
+        LOG.debug("Parsing CLI configuration files.")
         return self._parse_config(config)
 
     def merge_user_and_local_config(self):
@@ -293,14 +311,19 @@ class MergedConfigParser(object):
             dict
         """
         if isolated:
-            LOG.debug('Refusing to parse configuration files due to user-'
-                      'requested isolation')
+            LOG.debug(
+                "Refusing to parse configuration files due to user-"
+                "requested isolation"
+            )
             return {}
 
         if cli_config:
-            LOG.debug('Ignoring user and locally found configuration files. '
-                      'Reading only configuration from "%s" specified via '
-                      '--config by the user', cli_config)
+            LOG.debug(
+                "Ignoring user and locally found configuration files. "
+                'Reading only configuration from "%s" specified via '
+                "--config by the user",
+                cli_config,
+            )
             return self.parse_cli_config(cli_config)
 
         return self.merge_user_and_local_config()
@@ -325,13 +348,18 @@ def get_local_plugins(config_finder, cli_config=None, isolated=False):
     """
     local_plugins = LocalPlugins(extension=[], report=[], paths=[])
     if isolated:
-        LOG.debug('Refusing to look for local plugins in configuration'
-                  'files due to user-requested isolation')
+        LOG.debug(
+            "Refusing to look for local plugins in configuration"
+            "files due to user-requested isolation"
+        )
         return local_plugins
 
     if cli_config:
-        LOG.debug('Reading local plugins only from "%s" specified via '
-                  '--config by the user', cli_config)
+        LOG.debug(
+            'Reading local plugins only from "%s" specified via '
+            "--config by the user",
+            cli_config,
+        )
         config = config_finder.cli_config(cli_config)
         config_files = [cli_config]
     else:
@@ -339,28 +367,31 @@ def get_local_plugins(config_finder, cli_config=None, isolated=False):
 
     base_dirs = {os.path.dirname(cf) for cf in config_files}
 
-    section = '%s:local-plugins' % config_finder.program_name
-    for plugin_type in ['extension', 'report']:
+    section = "%s:local-plugins" % config_finder.program_name
+    for plugin_type in ["extension", "report"]:
         if config.has_option(section, plugin_type):
             local_plugins_string = config.get(section, plugin_type).strip()
             plugin_type_list = getattr(local_plugins, plugin_type)
-            plugin_type_list.extend(utils.parse_comma_separated_list(
-                local_plugins_string,
-                regexp=utils.LOCAL_PLUGIN_LIST_RE,
-            ))
-    if config.has_option(section, 'paths'):
+            plugin_type_list.extend(
+                utils.parse_comma_separated_list(
+                    local_plugins_string, regexp=utils.LOCAL_PLUGIN_LIST_RE
+                )
+            )
+    if config.has_option(section, "paths"):
         raw_paths = utils.parse_comma_separated_list(
-            config.get(section, 'paths').strip()
+            config.get(section, "paths").strip()
         )
         norm_paths = []
         for base_dir in base_dirs:
             norm_paths.extend(
-                path for path in
-                utils.normalize_paths(raw_paths, parent=base_dir)
+                path
+                for path in utils.normalize_paths(raw_paths, parent=base_dir)
                 if os.path.exists(path)
             )
         local_plugins.paths.extend(norm_paths)
     return local_plugins
 
 
-LocalPlugins = collections.namedtuple('LocalPlugins', 'extension report paths')
+LocalPlugins = collections.namedtuple(
+    "LocalPlugins", "extension report paths"
+)

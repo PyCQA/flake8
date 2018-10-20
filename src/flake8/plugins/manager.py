@@ -11,11 +11,11 @@ from flake8.plugins import notifier
 LOG = logging.getLogger(__name__)
 
 __all__ = (
-    'Checkers',
-    'Listeners',
-    'Plugin',
-    'PluginManager',
-    'ReportFormatters',
+    "Checkers",
+    "Listeners",
+    "Plugin",
+    "PluginManager",
+    "ReportFormatters",
 )
 
 NO_GROUP_FOUND = object()
@@ -55,11 +55,11 @@ class Plugin(object):
     def to_dictionary(self):
         """Convert this plugin to a dictionary."""
         return {
-            'name': self.name,
-            'parameters': self.parameters,
-            'parameter_names': self.parameter_names,
-            'plugin': self.plugin,
-            'plugin_name': self.plugin_name,
+            "name": self.name,
+            "parameters": self.parameters,
+            "parameter_names": self.parameter_names,
+            "plugin": self.plugin,
+            "plugin_name": self.plugin_name,
         }
 
     def is_in_a_group(self):
@@ -75,7 +75,7 @@ class Plugin(object):
     def group(self):
         """Find and parse the group the plugin is in."""
         if self._group is None:
-            name = self.name.split('.', 1)
+            name = self.name.split(".", 1)
             if len(name) > 1:
                 self._group = name[0]
             else:
@@ -132,7 +132,7 @@ class Plugin(object):
     @property
     def off_by_default(self):
         """Return whether the plugin is ignored by default."""
-        return getattr(self.plugin, 'off_by_default', False)
+        return getattr(self.plugin, "off_by_default", False)
 
     def execute(self, *args, **kwargs):
         r"""Call the plugin with \*args and \*\*kwargs."""
@@ -140,22 +140,21 @@ class Plugin(object):
 
     def _load(self, verify_requirements):
         # Avoid relying on hasattr() here.
-        resolve = getattr(self.entry_point, 'resolve', None)
-        require = getattr(self.entry_point, 'require', None)
+        resolve = getattr(self.entry_point, "resolve", None)
+        require = getattr(self.entry_point, "require", None)
         if resolve and require:
             if verify_requirements:
-                LOG.debug('Verifying plugin "%s"\'s requirements.',
-                          self.name)
+                LOG.debug('Verifying plugin "%s"\'s requirements.', self.name)
                 require()
             self._plugin = resolve()
         else:
-            self._plugin = self.entry_point.load(
-                require=verify_requirements
-            )
+            self._plugin = self.entry_point.load(require=verify_requirements)
         if not callable(self._plugin):
-            msg = ('Plugin %r is not a callable. It might be written for an'
-                   ' older version of flake8 and might not work with this'
-                   ' version' % self._plugin)
+            msg = (
+                "Plugin %r is not a callable. It might be written for an"
+                " older version of flake8 and might not work with this"
+                " version" % self._plugin
+            )
             LOG.critical(msg)
             raise TypeError(msg)
 
@@ -179,8 +178,7 @@ class Plugin(object):
             except Exception as load_exception:
                 LOG.exception(load_exception)
                 failed_to_load = exceptions.FailedToLoadPlugin(
-                    plugin=self,
-                    exception=load_exception,
+                    plugin=self, exception=load_exception
                 )
                 LOG.critical(str(failed_to_load))
                 raise failed_to_load
@@ -194,8 +192,11 @@ class Plugin(object):
         try:
             options.ignore.remove(self.name)
         except (ValueError, KeyError):
-            LOG.debug('Attempted to remove %s from the ignore list but it was '
-                      'not a member of the list.', self.name)
+            LOG.debug(
+                "Attempted to remove %s from the ignore list but it was "
+                "not a member of the list.",
+                self.name,
+            )
 
     def disable(self, optmanager):
         """Add the plugin name to the default ignore list."""
@@ -203,7 +204,7 @@ class Plugin(object):
 
     def provide_options(self, optmanager, options, extra_args):
         """Pass the parsed options and extra arguments to the plugin."""
-        parse_options = getattr(self.plugin, 'parse_options', None)
+        parse_options = getattr(self.plugin, "parse_options", None)
         if parse_options is not None:
             LOG.debug('Providing options to plugin "%s".', self.name)
             try:
@@ -224,11 +225,12 @@ class Plugin(object):
         :returns:
             Nothing
         """
-        add_options = getattr(self.plugin, 'add_options', None)
+        add_options = getattr(self.plugin, "add_options", None)
         if add_options is not None:
             LOG.debug(
                 'Registering options from plugin "%s" on OptionManager %r',
-                self.name, optmanager
+                self.name,
+                optmanager,
             )
             add_options(optmanager)
 
@@ -239,8 +241,9 @@ class Plugin(object):
 class PluginManager(object):  # pylint: disable=too-few-public-methods
     """Find and manage plugins consistently."""
 
-    def __init__(self, namespace,
-                 verify_requirements=False, local_plugins=None):
+    def __init__(
+        self, namespace, verify_requirements=False, local_plugins=None
+    ):
         """Initialize the manager.
 
         :param str namespace:
@@ -348,7 +351,7 @@ def version_for(plugin):
     except ImportError:
         return None
 
-    return getattr(module, '__version__', None)
+    return getattr(module, "__version__", None)
 
 
 class PluginTypeManager(object):
@@ -363,7 +366,8 @@ class PluginTypeManager(object):
             Plugins from config file instead of entry-points
         """
         self.manager = PluginManager(
-            self.namespace, local_plugins=local_plugins)
+            self.namespace, local_plugins=local_plugins
+        )
         self.plugins_loaded = False
 
     def __contains__(self, name):
@@ -406,9 +410,11 @@ class PluginTypeManager(object):
     def _generate_call_function(method_name, optmanager, *args, **kwargs):
         def generated_function(plugin):  # noqa: D105
             method = getattr(plugin, method_name, None)
-            if (method is not None and
-                    isinstance(method, collections.Callable)):
+            if method is not None and isinstance(
+                method, collections.Callable
+            ):
                 return method(optmanager, *args, **kwargs)
+
         return generated_function
 
     def load_plugins(self):
@@ -435,7 +441,7 @@ class PluginTypeManager(object):
         """Register all of the checkers' options to the OptionManager."""
         self.load_plugins()
         call_register_options = self._generate_call_function(
-            'register_options', optmanager,
+            "register_options", optmanager
         )
 
         list(self.manager.map(call_register_options))
@@ -443,7 +449,7 @@ class PluginTypeManager(object):
     def provide_options(self, optmanager, options, extra_args):
         """Provide parsed options and extra arguments to the plugins."""
         call_provide_options = self._generate_call_function(
-            'provide_options', optmanager, options, extra_args,
+            "provide_options", optmanager, options, extra_args
         )
 
         list(self.manager.map(call_provide_options))
@@ -470,7 +476,7 @@ class NotifierBuilderMixin(object):  # pylint: disable=too-few-public-methods
 class Checkers(PluginTypeManager):
     """All of the checkers registered through entry-points or config."""
 
-    namespace = 'flake8.extension'
+    namespace = "flake8.extension"
 
     def checks_expecting(self, argument_name):
         """Retrieve checks that expect an argument with the specified name.
@@ -484,14 +490,15 @@ class Checkers(PluginTypeManager):
     def to_dictionary(self):
         """Return a dictionary of AST and line-based plugins."""
         return {
-            'ast_plugins': [
+            "ast_plugins": [
                 plugin.to_dictionary() for plugin in self.ast_plugins
             ],
-            'logical_line_plugins': [
+            "logical_line_plugins": [
                 plugin.to_dictionary() for plugin in self.logical_line_plugins
             ],
-            'physical_line_plugins': [
-                plugin.to_dictionary() for plugin in self.physical_line_plugins
+            "physical_line_plugins": [
+                plugin.to_dictionary()
+                for plugin in self.physical_line_plugins
             ],
         }
 
@@ -508,7 +515,7 @@ class Checkers(PluginTypeManager):
         # function to map over the plugins.
         self.load_plugins()
         call_register_options = self._generate_call_function(
-            'register_options', optmanager,
+            "register_options", optmanager
         )
 
         def register_and_enable(plugin):
@@ -521,27 +528,27 @@ class Checkers(PluginTypeManager):
     @property
     def ast_plugins(self):
         """List of plugins that expect the AST tree."""
-        plugins = getattr(self, '_ast_plugins', [])
+        plugins = getattr(self, "_ast_plugins", [])
         if not plugins:
-            plugins = list(self.checks_expecting('tree'))
+            plugins = list(self.checks_expecting("tree"))
             self._ast_plugins = plugins
         return plugins
 
     @property
     def logical_line_plugins(self):
         """List of plugins that expect the logical lines."""
-        plugins = getattr(self, '_logical_line_plugins', [])
+        plugins = getattr(self, "_logical_line_plugins", [])
         if not plugins:
-            plugins = list(self.checks_expecting('logical_line'))
+            plugins = list(self.checks_expecting("logical_line"))
             self._logical_line_plugins = plugins
         return plugins
 
     @property
     def physical_line_plugins(self):
         """List of plugins that expect the physical lines."""
-        plugins = getattr(self, '_physical_line_plugins', [])
+        plugins = getattr(self, "_physical_line_plugins", [])
         if not plugins:
-            plugins = list(self.checks_expecting('physical_line'))
+            plugins = list(self.checks_expecting("physical_line"))
             self._physical_line_plugins = plugins
         return plugins
 
@@ -549,10 +556,10 @@ class Checkers(PluginTypeManager):
 class Listeners(PluginTypeManager, NotifierBuilderMixin):
     """All of the listeners registered through entry-points or config."""
 
-    namespace = 'flake8.listen'
+    namespace = "flake8.listen"
 
 
 class ReportFormatters(PluginTypeManager):
     """All of the report formatters registered through entry-points/config."""
 
-    namespace = 'flake8.report'
+    namespace = "flake8.report"

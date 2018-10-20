@@ -135,8 +135,8 @@ def test_generate_versions(optmanager):
         manager.PluginVersion('Testing 101', '0.0.0', False),
         manager.PluginVersion('Testing 300', '0.0.0', True),
     ]
-    assert (optmanager.generate_versions() ==
-            'Testing 100: 0.0.0, Testing 101: 0.0.0, Testing 300: 0.0.0')
+    assert (optmanager.generate_versions()
+            == 'Testing 100: 0.0.0, Testing 101: 0.0.0, Testing 300: 0.0.0')
 
 
 def test_plugins_are_sorted_in_generate_versions(optmanager):
@@ -148,12 +148,12 @@ def test_plugins_are_sorted_in_generate_versions(optmanager):
         manager.PluginVersion('flake8-docstrings', '0.6.1', False),
         manager.PluginVersion('flake8-bugbear', '2016.12.1', False),
     ]
-    assert (optmanager.generate_versions() ==
-            'flake8-bugbear: 2016.12.1, '
-            'flake8-docstrings: 0.6.1, '
-            'mccabe: 0.7.0, '
-            'pycodestyle: 2.2.0, '
-            'pyflakes: 1.5.0')
+    assert (optmanager.generate_versions()
+            == 'flake8-bugbear: 2016.12.1, '
+               'flake8-docstrings: 0.6.1, '
+               'mccabe: 0.7.0, '
+               'pycodestyle: 2.2.0, '
+               'pyflakes: 1.5.0')
 
 
 def test_generate_versions_with_format_string(optmanager):
@@ -182,9 +182,9 @@ def test_update_version_string(optmanager):
     optmanager.update_version_string()
 
     assert optmanager.version == TEST_VERSION
-    assert (optmanager.parser.version == TEST_VERSION + ' ('
-            'Testing 100: 0.0.0, Testing 101: 0.0.0, Testing 300: 0.0.0) ' +
-            utils.get_python_version())
+    assert (optmanager.parser.version == TEST_VERSION
+            + ' (Testing 100: 0.0.0, Testing 101: 0.0.0, Testing 300: 0.0.0) '
+            + utils.get_python_version())
 
 
 def test_generate_epilog(optmanager):

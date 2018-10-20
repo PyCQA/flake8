@@ -138,7 +138,7 @@ And you should see something like:
       --config=CONFIG       Path to the config file that will be the authoritative
                             config source. This will cause Flake8 to ignore all
                             other configuration files.
-      --isolated            Ignore all found configuration files.
+      --isolated            Ignore all configuration files.
       --builtins=BUILTINS   define more built-ins, comma separated
       --doctests            check syntax of the doctests
       --include-in-doctest=INCLUDE_IN_DOCTEST

@@ -42,24 +42,24 @@ class Default(SimpleFormatter):
     format string.
     """
 
-    error_format = '%(path)s:%(row)d:%(col)d: %(code)s %(text)s'
+    error_format = "%(path)s:%(row)d:%(col)d: %(code)s %(text)s"
 
     def after_init(self):
         """Check for a custom format string."""
-        if self.options.format.lower() != 'default':
+        if self.options.format.lower() != "default":
             self.error_format = self.options.format
 
 
 class Pylint(SimpleFormatter):
     """Pylint formatter for Flake8."""
 
-    error_format = '%(path)s:%(row)d: [%(code)s] %(text)s'
+    error_format = "%(path)s:%(row)d: [%(code)s] %(text)s"
 
 
 class FilenameOnly(SimpleFormatter):
     """Only print filenames, e.g., flake8 -q."""
 
-    error_format = '%(path)s'
+    error_format = "%(path)s"
 
     def after_init(self):
         """Initialize our set of filenames."""

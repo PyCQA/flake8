@@ -37,7 +37,7 @@ class BaseFormatter(object):
         self.options = options
         self.filename = options.output_file
         self.output_fd = None
-        self.newline = '\n'
+        self.newline = "\n"
         self.after_init()
 
     def after_init(self):
@@ -68,7 +68,7 @@ class BaseFormatter(object):
         This defaults to initializing :attr:`output_fd` if :attr:`filename`
         """
         if self.filename:
-            self.output_fd = open(self.filename, 'a')
+            self.output_fd = open(self.filename, "a")
 
     def handle(self, error):
         """Handle an error reported by Flake8.
@@ -102,8 +102,9 @@ class BaseFormatter(object):
         :rtype:
             str
         """
-        raise NotImplementedError('Subclass of BaseFormatter did not implement'
-                                  ' format.')
+        raise NotImplementedError(
+            "Subclass of BaseFormatter did not implement" " format."
+        )
 
     def show_statistics(self, statistics):
         """Format and print the statistics."""
@@ -112,11 +113,13 @@ class BaseFormatter(object):
             statistic = next(stats_for_error_code)
             count = statistic.count
             count += sum(stat.count for stat in stats_for_error_code)
-            self._write('{count:<5} {error_code} {message}'.format(
-                count=count,
-                error_code=error_code,
-                message=statistic.message,
-            ))
+            self._write(
+                "{count:<5} {error_code} {message}".format(
+                    count=count,
+                    error_code=error_code,
+                    message=statistic.message,
+                )
+            )
 
     def show_benchmarks(self, benchmarks):
         """Format and print the benchmarks."""
@@ -130,8 +133,8 @@ class BaseFormatter(object):
         # the decimal point to be displayed. This is the precision and it
         # can not be specified for integers which is why we need two separate
         # format strings.
-        float_format = '{value:<10.3} {statistic}'.format
-        int_format = '{value:<10} {statistic}'.format
+        float_format = "{value:<10.3} {statistic}".format
+        int_format = "{value:<10} {statistic}".format
         for statistic, value in benchmarks:
             if isinstance(value, int):
                 benchmark = int_format(statistic=statistic, value=value)
@@ -158,11 +161,11 @@ class BaseFormatter(object):
             str
         """
         if not self.options.show_source or error.physical_line is None:
-            return ''
+            return ""
 
         # Because column numbers are 1-indexed, we need to remove one to get
         # the proper number of space characters.
-        pointer = (' ' * (error.column_number - 1)) + '^'
+        pointer = (" " * (error.column_number - 1)) + "^"
         # Physical lines have a newline at the end, no need to add an extra
         # one
         return error.physical_line + pointer

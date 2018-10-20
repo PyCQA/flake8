@@ -18,35 +18,35 @@ from flake8 import utils
 
 
 FLAKE8_PYFLAKES_CODES = {
-    'UnusedImport': 'F401',
-    'ImportShadowedByLoopVar': 'F402',
-    'ImportStarUsed': 'F403',
-    'LateFutureImport': 'F404',
-    'ImportStarUsage': 'F405',
-    'ImportStarNotPermitted': 'F406',
-    'FutureFeatureNotDefined': 'F407',
-    'MultiValueRepeatedKeyLiteral': 'F601',
-    'MultiValueRepeatedKeyVariable': 'F602',
-    'TooManyExpressionsInStarredAssignment': 'F621',
-    'TwoStarredExpressions': 'F622',
-    'AssertTuple': 'F631',
-    'BreakOutsideLoop': 'F701',
-    'ContinueOutsideLoop': 'F702',
-    'ContinueInFinally': 'F703',
-    'YieldOutsideFunction': 'F704',
-    'ReturnWithArgsInsideGenerator': 'F705',
-    'ReturnOutsideFunction': 'F706',
-    'DefaultExceptNotLast': 'F707',
-    'DoctestSyntaxError': 'F721',
-    'ForwardAnnotationSyntaxError': 'F722',
-    'RedefinedWhileUnused': 'F811',
-    'RedefinedInListComp': 'F812',
-    'UndefinedName': 'F821',
-    'UndefinedExport': 'F822',
-    'UndefinedLocal': 'F823',
-    'DuplicateArgument': 'F831',
-    'UnusedVariable': 'F841',
-    'RaiseNotImplemented': 'F901',
+    "UnusedImport": "F401",
+    "ImportShadowedByLoopVar": "F402",
+    "ImportStarUsed": "F403",
+    "LateFutureImport": "F404",
+    "ImportStarUsage": "F405",
+    "ImportStarNotPermitted": "F406",
+    "FutureFeatureNotDefined": "F407",
+    "MultiValueRepeatedKeyLiteral": "F601",
+    "MultiValueRepeatedKeyVariable": "F602",
+    "TooManyExpressionsInStarredAssignment": "F621",
+    "TwoStarredExpressions": "F622",
+    "AssertTuple": "F631",
+    "BreakOutsideLoop": "F701",
+    "ContinueOutsideLoop": "F702",
+    "ContinueInFinally": "F703",
+    "YieldOutsideFunction": "F704",
+    "ReturnWithArgsInsideGenerator": "F705",
+    "ReturnOutsideFunction": "F706",
+    "DefaultExceptNotLast": "F707",
+    "DoctestSyntaxError": "F721",
+    "ForwardAnnotationSyntaxError": "F722",
+    "RedefinedWhileUnused": "F811",
+    "RedefinedInListComp": "F812",
+    "UndefinedName": "F821",
+    "UndefinedExport": "F822",
+    "UndefinedLocal": "F823",
+    "DuplicateArgument": "F831",
+    "UnusedVariable": "F841",
+    "RaiseNotImplemented": "F901",
 }
 
 
@@ -54,8 +54,9 @@ def patch_pyflakes():
     """Add error codes to Pyflakes messages."""
     for name, obj in vars(pyflakes.messages).items():
         if name[0].isupper() and obj.message:
-            obj.flake8_msg = '%s %s' % (
-                FLAKE8_PYFLAKES_CODES.get(name, 'F999'), obj.message
+            obj.flake8_msg = "%s %s" % (
+                FLAKE8_PYFLAKES_CODES.get(name, "F999"),
+                obj.message,
             )
 
 
@@ -65,7 +66,7 @@ patch_pyflakes()
 class FlakesChecker(pyflakes.checker.Checker):
     """Subclass the Pyflakes checker to conform with the flake8 API."""
 
-    name = 'pyflakes'
+    name = "pyflakes"
     version = pyflakes.__version__
     with_doctest = False
     include_in_doctest = []
@@ -75,48 +76,65 @@ class FlakesChecker(pyflakes.checker.Checker):
         """Initialize the PyFlakes plugin with an AST tree and filename."""
         filename = utils.normalize_paths(filename)[0]
         with_doctest = self.with_doctest
-        included_by = [include for include in self.include_in_doctest
-                       if include != '' and filename.startswith(include)]
+        included_by = [
+            include
+            for include in self.include_in_doctest
+            if include != "" and filename.startswith(include)
+        ]
         if included_by:
             with_doctest = True
 
         for exclude in self.exclude_from_doctest:
-            if exclude != '' and filename.startswith(exclude):
+            if exclude != "" and filename.startswith(exclude):
                 with_doctest = False
-                overlaped_by = [include for include in included_by
-                                if include.startswith(exclude)]
+                overlaped_by = [
+                    include
+                    for include in included_by
+                    if include.startswith(exclude)
+                ]
 
                 if overlaped_by:
                     with_doctest = True
 
-        super(FlakesChecker, self).__init__(tree, filename,
-                                            withDoctest=with_doctest)
+        super(FlakesChecker, self).__init__(
+            tree, filename, withDoctest=with_doctest
+        )
 
     @classmethod
     def add_options(cls, parser):
         """Register options for PyFlakes on the Flake8 OptionManager."""
         parser.add_option(
-            '--builtins', parse_from_config=True, comma_separated_list=True,
+            "--builtins",
+            parse_from_config=True,
+            comma_separated_list=True,
             help="define more built-ins, comma separated",
         )
         parser.add_option(
-            '--doctests', default=False, action='store_true',
+            "--doctests",
+            default=False,
+            action="store_true",
             parse_from_config=True,
             help="check syntax of the doctests",
         )
         parser.add_option(
-            '--include-in-doctest', default='',
-            dest='include_in_doctest', parse_from_config=True,
-            comma_separated_list=True, normalize_paths=True,
-            help='Run doctests only on these files',
-            type='string',
+            "--include-in-doctest",
+            default="",
+            dest="include_in_doctest",
+            parse_from_config=True,
+            comma_separated_list=True,
+            normalize_paths=True,
+            help="Run doctests only on these files",
+            type="string",
         )
         parser.add_option(
-            '--exclude-from-doctest', default='',
-            dest='exclude_from_doctest', parse_from_config=True,
-            comma_separated_list=True, normalize_paths=True,
-            help='Skip these files when running doctests',
-            type='string',
+            "--exclude-from-doctest",
+            default="",
+            dest="exclude_from_doctest",
+            parse_from_config=True,
+            comma_separated_list=True,
+            normalize_paths=True,
+            help="Skip these files when running doctests",
+            type="string",
         )
 
     @classmethod
@@ -128,20 +146,20 @@ class FlakesChecker(pyflakes.checker.Checker):
 
         included_files = []
         for included_file in options.include_in_doctest:
-            if included_file == '':
+            if included_file == "":
                 continue
-            if not included_file.startswith((os.sep, './', '~/')):
-                included_files.append('./' + included_file)
+            if not included_file.startswith((os.sep, "./", "~/")):
+                included_files.append("./" + included_file)
             else:
                 included_files.append(included_file)
         cls.include_in_doctest = utils.normalize_paths(included_files)
 
         excluded_files = []
         for excluded_file in options.exclude_from_doctest:
-            if excluded_file == '':
+            if excluded_file == "":
                 continue
-            if not excluded_file.startswith((os.sep, './', '~/')):
-                excluded_files.append('./' + excluded_file)
+            if not excluded_file.startswith((os.sep, "./", "~/")):
+                excluded_files.append("./" + excluded_file)
             else:
                 excluded_files.append(excluded_file)
         cls.exclude_from_doctest = utils.normalize_paths(excluded_files)
@@ -150,16 +168,20 @@ class FlakesChecker(pyflakes.checker.Checker):
             cls.exclude_from_doctest
         )
         if inc_exc:
-            raise ValueError('"%s" was specified in both the '
-                             'include-in-doctest and exclude-from-doctest '
-                             'options. You are not allowed to specify it in '
-                             'both for doctesting.' % inc_exc)
+            raise ValueError(
+                '"%s" was specified in both the '
+                "include-in-doctest and exclude-from-doctest "
+                "options. You are not allowed to specify it in "
+                "both for doctesting." % inc_exc
+            )
 
     def run(self):
         """Run the plugin."""
         for message in self.messages:
-            col = getattr(message, 'col', 0)
-            yield (message.lineno,
-                   col,
-                   (message.flake8_msg % message.message_args),
-                   message.__class__)
+            col = getattr(message, "col", 0)
+            yield (
+                message.lineno,
+                col,
+                (message.flake8_msg % message.message_args),
+                message.__class__,
+            )

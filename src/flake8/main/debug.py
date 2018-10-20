@@ -5,8 +5,9 @@ import json
 import platform
 
 
-def print_information(option, option_string, value, parser,
-                      option_manager=None):
+def print_information(
+    option, option_string, value, parser, option_manager=None
+):
     """Print debugging information used in bug reports.
 
     :param option:
@@ -38,13 +39,13 @@ def print_information(option, option_string, value, parser,
 def information(option_manager):
     """Generate the information to be printed for the bug report."""
     return {
-        'version': option_manager.version,
-        'plugins': plugins_from(option_manager),
-        'dependencies': dependencies(),
-        'platform': {
-            'python_implementation': platform.python_implementation(),
-            'python_version': platform.python_version(),
-            'system': platform.system(),
+        "version": option_manager.version,
+        "plugins": plugins_from(option_manager),
+        "dependencies": dependencies(),
+        "platform": {
+            "python_implementation": platform.python_implementation(),
+            "python_version": platform.python_version(),
+            "system": platform.system(),
         },
     }
 
@@ -53,9 +54,9 @@ def plugins_from(option_manager):
     """Generate the list of plugins installed."""
     return [
         {
-            'plugin': plugin.name,
-            'version': plugin.version,
-            'is_local': plugin.local,
+            "plugin": plugin.name,
+            "version": plugin.version,
+            "is_local": plugin.local,
         }
         for plugin in sorted(option_manager.registered_plugins)
     ]
@@ -66,4 +67,4 @@ def dependencies():
     # defer this expensive import, not used outside --bug-report
     import setuptools
 
-    return [{'dependency': 'setuptools', 'version': setuptools.__version__}]
+    return [{"dependency": "setuptools", "version": setuptools.__version__}]

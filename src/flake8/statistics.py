@@ -56,13 +56,14 @@ class Statistics(object):
         :returns:
             Generator of instances of :class:`Statistic`
         """
-        matching_errors = sorted(key for key in self._store
-                                 if key.matches(prefix, filename))
+        matching_errors = sorted(
+            key for key in self._store if key.matches(prefix, filename)
+        )
         for error_code in matching_errors:
             yield self._store[error_code]
 
 
-class Key(collections.namedtuple('Key', ['filename', 'code'])):
+class Key(collections.namedtuple("Key", ["filename", "code"])):
     """Simple key structure for the Statistics dictionary.
 
     To make things clearer, easier to read, and more understandable, we use a
@@ -75,10 +76,7 @@ class Key(collections.namedtuple('Key', ['filename', 'code'])):
     @classmethod
     def create_from(cls, error):
         """Create a Key from :class:`flake8.style_guide.Violation`."""
-        return cls(
-            filename=error.filename,
-            code=error.code,
-        )
+        return cls(filename=error.filename, code=error.code)
 
     def matches(self, prefix, filename):
         """Determine if this key matches some constraints.
@@ -94,9 +92,9 @@ class Key(collections.namedtuple('Key', ['filename', 'code'])):
         :rtype:
             bool
         """
-        return (self.code.startswith(prefix) and
-                (filename is None or
-                    self.filename == filename))
+        return self.code.startswith(prefix) and (
+            filename is None or self.filename == filename
+        )
 
 
 class Statistic(object):

@@ -11,9 +11,7 @@ from flake8 import defaults
 from flake8 import statistics
 from flake8 import utils
 
-__all__ = (
-    'StyleGuide',
-)
+__all__ = ("StyleGuide",)
 
 LOG = logging.getLogger(__name__)
 
@@ -21,34 +19,32 @@ LOG = logging.getLogger(__name__)
 try:
     lru_cache = functools.lru_cache
 except AttributeError:
+
     def lru_cache(maxsize=128, typed=False):
         """Stub for missing lru_cache."""
-        def fake_decorator(func):
-            return func
-
-        return fake_decorator
+        return lambda func: func
 
 
 # TODO(sigmavirus24): Determine if we need to use enum/enum34
 class Selected(enum.Enum):
     """Enum representing an explicitly or implicitly selected code."""
 
-    Explicitly = 'explicitly selected'
-    Implicitly = 'implicitly selected'
+    Explicitly = "explicitly selected"
+    Implicitly = "implicitly selected"
 
 
 class Ignored(enum.Enum):
     """Enum representing an explicitly or implicitly ignored code."""
 
-    Explicitly = 'explicitly ignored'
-    Implicitly = 'implicitly ignored'
+    Explicitly = "explicitly ignored"
+    Implicitly = "implicitly ignored"
 
 
 class Decision(enum.Enum):
     """Enum representing whether a code should be ignored or selected."""
 
-    Ignored = 'ignored error'
-    Selected = 'selected error'
+    Ignored = "ignored error"
+    Selected = "selected error"
 
 
 @lru_cache(maxsize=512)
@@ -57,14 +53,14 @@ def find_noqa(physical_line):
 
 
 _Violation = collections.namedtuple(
-    'Violation',
+    "Violation",
     [
-        'code',
-        'filename',
-        'line_number',
-        'column_number',
-        'text',
-        'physical_line',
+        "code",
+        "filename",
+        "line_number",
+        "column_number",
+        "text",
+        "physical_line",
     ],
 )
 
@@ -89,26 +85,29 @@ class Violation(_Violation):
             return False
 
         if physical_line is None:
-            physical_line = linecache.getline(self.filename,
-                                              self.line_number)
+            physical_line = linecache.getline(self.filename, self.line_number)
         noqa_match = find_noqa(physical_line)
         if noqa_match is None:
-            LOG.debug('%r is not inline ignored', self)
+            LOG.debug("%r is not inline ignored", self)
             return False
 
-        codes_str = noqa_match.groupdict()['codes']
+        codes_str = noqa_match.groupdict()["codes"]
         if codes_str is None:
-            LOG.debug('%r is ignored by a blanket ``# noqa``', self)
+            LOG.debug("%r is ignored by a blanket ``# noqa``", self)
             return True
 
         codes = set(utils.parse_comma_separated_list(codes_str))
         if self.code in codes or self.code.startswith(tuple(codes)):
-            LOG.debug('%r is ignored specifically inline with ``# noqa: %s``',
-                      self, codes_str)
+            LOG.debug(
+                "%r is ignored specifically inline with ``# noqa: %s``",
+                self,
+                codes_str,
+            )
             return True
 
-        LOG.debug('%r is not ignored inline with ``# noqa: %s``',
-                  self, codes_str)
+        LOG.debug(
+            "%r is not ignored inline with ``# noqa: %s``", self, codes_str
+        )
         return False
 
     def is_in(self, diff):
@@ -158,30 +157,29 @@ class DecisionEngine(object):
         """Initialize the engine."""
         self.cache = {}
         self.selected = tuple(options.select)
-        self.extended_selected = tuple(sorted(
-            options.extended_default_select,
-            reverse=True,
-        ))
-        self.enabled_extensions = tuple(options.enable_extensions)
-        self.all_selected = tuple(sorted(
-            self.selected + self.enabled_extensions,
-            reverse=True,
-        ))
-        self.ignored = tuple(sorted(
-            itertools.chain(options.ignore, options.extend_ignore),
-            reverse=True,
-        ))
-        self.using_default_ignore = set(self.ignored) == set(defaults.IGNORE)
-        self.using_default_select = (
-            set(self.selected) == set(defaults.SELECT)
+        self.extended_selected = tuple(
+            sorted(options.extended_default_select, reverse=True)
         )
+        self.enabled_extensions = tuple(options.enable_extensions)
+        self.all_selected = tuple(
+            sorted(self.selected + self.enabled_extensions, reverse=True)
+        )
+        self.ignored = tuple(
+            sorted(
+                itertools.chain(options.ignore, options.extend_ignore),
+                reverse=True,
+            )
+        )
+        self.using_default_ignore = set(self.ignored) == set(defaults.IGNORE)
+        self.using_default_select = set(self.selected) == set(defaults.SELECT)
 
     def _in_all_selected(self, code):
         return self.all_selected and code.startswith(self.all_selected)
 
     def _in_extended_selected(self, code):
-        return (self.extended_selected and
-                code.startswith(self.extended_selected))
+        return self.extended_selected and code.startswith(
+            self.extended_selected
+        )
 
     def was_selected(self, code):
         # type: (str) -> Union[Selected, Ignored]
@@ -264,11 +262,13 @@ class DecisionEngine(object):
             # default select list. In either case, we want the violation to be
             # selected.
             return Decision.Selected
-        if (select is None and
-                (extra_select is None or not self.using_default_ignore)):
+        if select is None and (
+            extra_select is None or not self.using_default_ignore
+        ):
             return Decision.Ignored
-        if ((select is None and not self.using_default_select) and
-                (ignore is None and self.using_default_ignore)):
+        if (select is None and not self.using_default_select) and (
+            ignore is None and self.using_default_ignore
+        ):
             return Decision.Ignored
         return Decision.Selected
 
@@ -277,20 +277,24 @@ class DecisionEngine(object):
         LOG.debug('Deciding if "%s" should be reported', code)
         selected = self.was_selected(code)
         ignored = self.was_ignored(code)
-        LOG.debug('The user configured "%s" to be "%s", "%s"',
-                  code, selected, ignored)
+        LOG.debug(
+            'The user configured "%s" to be "%s", "%s"',
+            code,
+            selected,
+            ignored,
+        )
 
-        if ((selected is Selected.Explicitly or
-             selected is Selected.Implicitly) and
-                ignored is Selected.Implicitly):
+        if (
+            selected is Selected.Explicitly or selected is Selected.Implicitly
+        ) and ignored is Selected.Implicitly:
             decision = Decision.Selected
-        elif ((selected is Selected.Explicitly and
-              ignored is Ignored.Explicitly) or
-              (selected is Ignored.Implicitly and
-               ignored is Selected.Implicitly)):
+        elif (
+            selected is Selected.Explicitly and ignored is Ignored.Explicitly
+        ) or (
+            selected is Ignored.Implicitly and ignored is Selected.Implicitly
+        ):
             decision = self.more_specific_decision_for(code)
-        elif (selected is Ignored.Implicitly or
-              ignored is Ignored.Explicitly):
+        elif selected is Ignored.Implicitly or ignored is Ignored.Explicitly:
             decision = Decision.Ignored  # pylint: disable=R0204
         return decision
 
@@ -354,8 +358,15 @@ class StyleGuide(object):
         """
         return self.decider.decision_for(code)
 
-    def handle_error(self, code, filename, line_number, column_number, text,
-                     physical_line=None):
+    def handle_error(
+        self,
+        code,
+        filename,
+        line_number,
+        column_number,
+        text,
+        physical_line=None,
+    ):
         # type: (str, str, int, int, str) -> int
         """Handle an error reported by a check.
 
@@ -385,14 +396,24 @@ class StyleGuide(object):
         # caught, column_number may be None.
         if not column_number:
             column_number = 0
-        error = Violation(code, filename, line_number, column_number + 1,
-                          text, physical_line)
-        error_is_selected = (self.should_report_error(error.code) is
-                             Decision.Selected)
+        error = Violation(
+            code,
+            filename,
+            line_number,
+            column_number + 1,
+            text,
+            physical_line,
+        )
+        error_is_selected = (
+            self.should_report_error(error.code) is Decision.Selected
+        )
         is_not_inline_ignored = error.is_inline_ignored(disable_noqa) is False
         is_included_in_diff = error.is_in(self._parsed_diff)
-        if (error_is_selected and is_not_inline_ignored and
-                is_included_in_diff):
+        if (
+            error_is_selected
+            and is_not_inline_ignored
+            and is_included_in_diff
+        ):
             self.formatter.handle(error)
             self.stats.record(error)
             self.listener.notify(error.code, error)

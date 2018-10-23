@@ -1,11 +1,16 @@
 """Tests for flake8.plugins.manager.PluginTypeManager."""
-import collections
+import sys
 
 import mock
 import pytest
 
 from flake8 import exceptions
 from flake8.plugins import manager
+
+if sys.version_info >= (3, 3):
+    import collections.abc as collections_abc
+else:
+    import collections as collections_abc
 
 TEST_NAMESPACE = "testing.plugin-type-manager"
 
@@ -86,7 +91,7 @@ def test_generate_call_function():
         'method_name', optmanager,
     )
 
-    assert isinstance(func, collections.Callable)
+    assert isinstance(func, collections_abc.Callable)
     assert func(plugin) is optmanager
 
 

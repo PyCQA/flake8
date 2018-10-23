@@ -1,12 +1,17 @@
 """Plugin loading and management logic and classes."""
-import collections
 import logging
+import sys
 
 import pkg_resources
 
 from flake8 import exceptions
 from flake8 import utils
 from flake8.plugins import notifier
+
+if sys.version_info >= (3, 3):
+    import collections.abc as collections_abc
+else:
+    import collections as collections_abc
 
 LOG = logging.getLogger(__name__)
 
@@ -411,7 +416,7 @@ class PluginTypeManager(object):
         def generated_function(plugin):  # noqa: D105
             method = getattr(plugin, method_name, None)
             if method is not None and isinstance(
-                method, collections.Callable
+                method, collections_abc.Callable
             ):
                 return method(optmanager, *args, **kwargs)
 

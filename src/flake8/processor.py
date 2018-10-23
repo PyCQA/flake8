@@ -1,5 +1,6 @@
 """Module containing our file processor that tokenizes a file for checks."""
 import contextlib
+import io
 import logging
 import sys
 import tokenize
@@ -307,9 +308,11 @@ class FileProcessor(object):
     def _readlines_py3(self):
         # type: () -> List[str]
         try:
-            with tokenize.open(self.filename) as fd:
-                return fd.readlines()
-        except (SyntaxError, UnicodeError):
+            with open(self.filename, "rb") as fd:
+                (coding, lines) = tokenize.detect_encoding(fd.readline)
+                textfd = io.TextIOWrapper(fd, coding, line_buffering=True)
+                return [l.decode(coding) for l in lines] + textfd.readlines()
+        except (LookupError, SyntaxError, UnicodeError):
             # If we can't detect the codec with tokenize.detect_encoding, or
             # the detected encoding is incorrect, just fallback to latin-1.
             with open(self.filename, encoding="latin-1") as fd:

@@ -27,6 +27,32 @@ def test_read_lines_splits_lines():
                for line in lines)
 
 
+def lines_from_file(tmpdir, lines):
+    f = tmpdir.join('f.py')
+    f.write(''.join(lines))
+    return processor.FileProcessor(f.strpath, options_from()).lines
+
+
+def test_read_lines_universal_newlines(tmpdir):
+    r"""Verify that line endings are translated to \n."""
+    lines = lines_from_file(tmpdir, ['# coding: utf-8\r\n', 'x = 1\r\n'])
+    assert lines == ['# coding: utf-8\n', 'x = 1\n']
+
+
+def test_read_lines_incorrect_utf_16(tmpdir):
+    """Verify that a file which incorrectly claims it is utf16 is still read
+    as latin-1.
+    """
+    lines = lines_from_file(tmpdir, ['# coding: utf16\n', 'x = 1\n'])
+    assert lines == ['# coding: utf16\n', 'x = 1\n']
+
+
+def test_read_lines_unknown_encoding(tmpdir):
+    """Verify that an unknown encoding is still read as latin-1."""
+    lines = lines_from_file(tmpdir, ['# coding: fake-encoding\n', 'x = 1\n'])
+    assert lines == ['# coding: fake-encoding\n', 'x = 1\n']
+
+
 @pytest.mark.parametrize('first_line', [
     '\xEF\xBB\xBF"""Module docstring."""\n',
     u'\uFEFF"""Module docstring."""\n',

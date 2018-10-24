@@ -18,19 +18,42 @@ by a version of |Flake8| may be different than the list used by a different
 version. To see the default list, :option:`flake8 --help` will
 show the output with the current default list.
 
+Extending the Default Ignore List
+---------------------------------
 
-Changing the Ignore List
-------------------------
+If we want to extend the default list of ignored error codes, we can use
+:option:`flake8 --extend-ignore` to specify a comma-separated list of codes
+for a specific run on the command line, e.g.,
 
-If we want to change the list of ignored codes for a single run, we can use
-:option:`flake8 --ignore` to specify a comma-separated list of codes for a
-specific run on the command-line, e.g.,
+.. prompt:: bash
+
+    flake8 --extend-ignore=E1,E23 path/to/files/ path/to/more/files
+
+This tells |Flake8| to ignore any error codes starting with ``E1`` and ``E23``,
+in addition the default ignore list. To view the default error code ignore
+list, run :option:`flake8 --help` and refer to the help text for
+:option:`flake8 --ignore`.
+
+
+..
+   The section below used to be titled `Changing the Default Ignore List`, but
+   was renamed for clarity.
+   Explicitly retain the old section anchor so as to not break links:
+
+.. _changing-the-ignore-list:
+
+Overriding the Default Ignore List
+----------------------------------
+
+If we want to *completely* override the default list of ignored error codes, we
+can use :option:`flake8 --ignore` to specify a comma-separated list of codes
+for a specific run on the command-line, e.g.,
 
 .. prompt:: bash
 
     flake8 --ignore=E1,E23,W503 path/to/files/ path/to/more/files/
 
-This tells |Flake8| to ignore any error codes starting with ``E1``, ``E23``,
+This tells |Flake8| to *only* ignore error codes starting with ``E1``, ``E23``,
 or ``W503`` while it is running.
 
 .. note::

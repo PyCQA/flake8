@@ -3,10 +3,10 @@ import ast
 import optparse
 import tokenize
 
-from flake8 import processor
-
 import mock
 import pytest
+
+from flake8 import processor
 
 
 def options_from(**kwargs):
@@ -27,7 +27,7 @@ def test_read_lines_splits_lines():
                for line in lines)
 
 
-def lines_from_file(tmpdir, contents):
+def _lines_from_file(tmpdir, contents):
     f = tmpdir.join('f.py')
     # be careful to write the bytes exactly to avoid newline munging
     f.write_binary(contents)
@@ -36,21 +36,19 @@ def lines_from_file(tmpdir, contents):
 
 def test_read_lines_universal_newlines(tmpdir):
     r"""Verify that line endings are translated to \n."""
-    lines = lines_from_file(tmpdir, b'# coding: utf-8\r\nx = 1\r\n')
+    lines = _lines_from_file(tmpdir, b'# coding: utf-8\r\nx = 1\r\n')
     assert lines == ['# coding: utf-8\n', 'x = 1\n']
 
 
 def test_read_lines_incorrect_utf_16(tmpdir):
-    """Verify that a file which incorrectly claims it is utf16 is still read
-    as latin-1.
-    """
-    lines = lines_from_file(tmpdir, b'# coding: utf16\nx = 1\n')
+    """Verify that an incorrectly encoded file is read as latin-1."""
+    lines = _lines_from_file(tmpdir, b'# coding: utf16\nx = 1\n')
     assert lines == ['# coding: utf16\n', 'x = 1\n']
 
 
 def test_read_lines_unknown_encoding(tmpdir):
     """Verify that an unknown encoding is still read as latin-1."""
-    lines = lines_from_file(tmpdir, b'# coding: fake-encoding\nx = 1\n')
+    lines = _lines_from_file(tmpdir, b'# coding: fake-encoding\nx = 1\n')
     assert lines == ['# coding: fake-encoding\n', 'x = 1\n']
 
 
@@ -329,9 +327,9 @@ def test_expand_indent(string, expected):
 ])
 def test_log_token(token, log_string):
     """Verify we use the log object passed in."""
-    LOG = mock.Mock()
-    processor.log_token(LOG, token)
-    LOG.log.assert_called_once_with(
+    log = mock.Mock()
+    processor.log_token(log, token)
+    log.log.assert_called_once_with(
         5,  # flake8._EXTRA_VERBOSE
         log_string,
     )
@@ -352,5 +350,6 @@ def test_count_parentheses(current_count, token_text, expected):
 
 
 def test_nonexistent_file():
+    """Verify that FileProcessor raises IOError when a file does not exist."""
     with pytest.raises(IOError):
         processor.FileProcessor("foobar.py", options_from())

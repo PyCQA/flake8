@@ -33,7 +33,7 @@ Features
   also `GitLab#405`_, `GitLab!227`_)
 
 - Add ``--extend-ignore`` for extending the default ``ignore`` instead of
-  overriding it (See also `GitLab!233`_)
+  overriding it (See also `GitLab#365`_, `GitLab!233`_)
 
 Bugs Fixed
 ~~~~~~~~~~
@@ -50,7 +50,7 @@ Bugs Fixed
   ``collections`` module (See also `GitLab!249`_)
 
 - Defer ``setuptools`` import to improve flake8 startup time (See also
-  `GitLab#365`_, `GitLab!250`_)
+  `GitLab!250`_)
 
 - Fix inconsistent line endings in ``FileProcessor.lines`` when running under
   python 3.x (See also `GitLab#457`_, `GitLab!255`_)

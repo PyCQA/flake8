@@ -6,9 +6,18 @@
 its extensibility. Our community has developed :term:`plugin`\ s that augment
 |Flake8|'s behaviour. Most of these plugins are uploaded to PyPI_. The
 developers of these plugins often have some style they wish to enforce.
-
 For example, `flake8-docstrings`_ adds a check for :pep:`257` style
 conformance. Others attempt to enforce consistency, like `flake8-future`_.
+
+We suggest searching PyPI with `pip search flake8`:
+
+.. prompt:: bash
+
+    pip search flake8 | grep -i quote
+    flake8-quotes (1.0.0)                   - Flake8 lint for quotes.
+    flake8-quotes2 (0.0.1)                  - flake8 plugin for string quotes checking
+    flake8-double-quotes (0.0.1)            - Flake8 lint to forbide single quotes.
+    flake8-single-quotes (0.1.0)            - A Flake8 extension to enforce single-quotes.
 
 .. note::
 

@@ -65,8 +65,8 @@ class Application(object):
         self.formatter = None
         #: The :class:`flake8.plugins.notifier.Notifier` for listening plugins
         self.listener_trie = None
-        #: The :class:`flake8.style_guide.StyleGuide` built from the user's
-        #: options
+        #: The :class:`flake8.style_guide.StyleGuideManager` built from the
+        #: user's options
         self.guide = None
         #: The :class:`flake8.checker.Manager` that will handle running all of
         #: the checks selected by the user.
@@ -283,7 +283,7 @@ class Application(object):
         # type: () -> NoneType
         """Initialize our StyleGuide."""
         if self.guide is None:
-            self.guide = style_guide.StyleGuide(
+            self.guide = style_guide.StyleGuideManager(
                 self.options, self.listener_trie, self.formatter
             )
 

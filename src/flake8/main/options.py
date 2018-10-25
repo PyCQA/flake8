@@ -1,5 +1,6 @@
 """Contains the logic for all of the default options for Flake8."""
 from flake8 import defaults
+from flake8 import utils
 from flake8.main import debug
 from flake8.main import vcs
 
@@ -19,6 +20,7 @@ def register_default_options(option_manager):
     - ``--hang-closing``
     - ``--ignore``
     - ``--extend-ignore``
+    - ``--per-file-ignores``
     - ``--max-line-length``
     - ``--select``
     - ``--disable-noqa``
@@ -140,6 +142,18 @@ def register_default_options(option_manager):
         comma_separated_list=True,
         help="Comma-separated list of errors and warnings to add to the list"
         " of ignored ones. For example, ``--extend-ignore=E4,E51,W234``.",
+    )
+
+    add_option(
+        "--per-file-ignores",
+        parse_from_config=True,
+        comma_separated_list=True,
+        separator=utils.NEWLINE_SEPARATED_LIST_RE,
+        help="A pairing of filenames and violation codes that defines which "
+        "violations to ignore in a particular file. The filenames can be "
+        "specified in a manner similar to the ``--exclude`` option and the "
+        "violations work similarly to the ``--ignore`` and ``--select`` "
+        "options.",
     )
 
     add_option(

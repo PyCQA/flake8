@@ -459,7 +459,7 @@ class StyleGuide(object):
     def copy(self, filename=None, extend_ignore_with=None, **kwargs):
         """Create a copy of this style guide with different values."""
         filename = filename or self.filename
-        options = copy.copy(self.options)
+        options = copy.deepcopy(self.options)
         options.ignore.extend(extend_ignore_with or [])
         return StyleGuide(
             options, self.listener, self.formatter, filename=filename
@@ -485,11 +485,11 @@ class StyleGuide(object):
         """
         if self.filename is None:
             return True
-        normalized_filename = utils.normalize_path(filename)
-        return (
-            normalized_filename == self.filename
-            or utils.fnmatch(filename, self.filename)
-            or utils.fnmatch(normalized_filename, self.filename)
+        return utils.matches_filename(
+            filename,
+            patterns=[self.filename],
+            log_message='{!r} does %(whether)smatch "%(path)s"'.format(self),
+            logger=LOG,
         )
 
     def should_report_error(self, code):

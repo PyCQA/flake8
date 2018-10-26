@@ -336,6 +336,38 @@ def parameters_for(plugin):
     return parameters
 
 
+def matches_filename(path, patterns, log_message, logger):
+    """Use fnmatch to discern if a path exists in patterns.
+
+    :param str path:
+        The path to the file under question
+    :param patterns:
+        The patterns to match the path against.
+    :type patterns:
+        list[str]
+    :param str log_message:
+        The message used for logging purposes.
+    :returns:
+        True if path matches patterns, False otherwise
+    :rtype:
+        bool
+    """
+    if not patterns:
+        return False
+    basename = os.path.basename(path)
+    if fnmatch(basename, patterns):
+        logger.debug(log_message, {"path": basename, "whether": ""})
+        return True
+
+    absolute_path = os.path.abspath(path)
+    match = fnmatch(absolute_path, patterns)
+    logger.debug(
+        log_message,
+        {"path": absolute_path, "whether": "" if match else "not "},
+    )
+    return match
+
+
 def get_python_version():
     """Find and format the python implementation and version.
 

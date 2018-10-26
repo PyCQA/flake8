@@ -2,7 +2,6 @@
 import collections
 import errno
 import logging
-import os
 import signal
 import sys
 import tokenize
@@ -188,20 +187,12 @@ class Manager(object):
                 return False
             path = self.options.stdin_display_name
 
-        exclude = self.options.exclude
-        if not exclude:
-            return False
-        basename = os.path.basename(path)
-        if utils.fnmatch(basename, exclude):
-            LOG.debug('"%s" has been excluded', basename)
-            return True
-
-        absolute_path = os.path.abspath(path)
-        match = utils.fnmatch(absolute_path, exclude)
-        LOG.debug(
-            '"%s" has %sbeen excluded', absolute_path, "" if match else "not "
+        return utils.matches_filename(
+            path,
+            patterns=self.options.exclude,
+            log_message='"%(path)s" has %(whether)sbeen excluded',
+            logger=LOG,
         )
-        return match
 
     def make_checkers(self, paths=None):
         # type: (List[str]) -> NoneType

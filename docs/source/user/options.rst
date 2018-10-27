@@ -424,6 +424,8 @@ Options and their Descriptions
 
     :ref:`Go back to index <top>`
 
+    .. versionadded:: 3.6.0
+
     Specify a list of codes to add to the list of ignored ones. Similar
     considerations as in :option:`--ignore` apply here with regard to the
     value.
@@ -454,6 +456,8 @@ Options and their Descriptions
 .. option:: --per-file-ignores=<filename:errors>[ <filename:errors>]
 
     :ref:`Go back to index <top>`
+
+    .. versionadded:: 3.7.0
 
     Specify a list of mappings of files and the codes that should be ignored
     for the entirety of the file. This allows for a project to have a default
@@ -776,6 +780,8 @@ Options and their Descriptions
 .. option:: --append-config=<config>
 
     :ref:`Go back to index <top>`
+
+    .. versionadded:: 3.6.0
 
     Provide extra config files to parse in after and in addition to the files
     that |Flake8| found on its own. Since these files are the last ones read

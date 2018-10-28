@@ -156,6 +156,10 @@ class Option(object):
         value = self.normalize(value)
         if self.type == "int" or self.action == "count":
             return int(value)
+        elif self.type == "float":
+            return float(value)
+        elif self.type == "complex":
+            return complex(value)
         if self.action in ("store_true", "store_false"):
             value = str(value).upper()
             if value in ("1", "T", "TRUE", "ON"):

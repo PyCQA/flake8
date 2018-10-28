@@ -85,12 +85,13 @@ what is actually happening. In those cases, we can also do:
 
 This will only ignore the error from pycodestyle that checks for lambda
 assignments and generates an ``E731``. If there are other errors on the line
-then those will be reported.
+then those will be reported. ``# noqa`` is case-insensitive, without the colon
+the part after ``# noqa`` would be ignored.
 
 .. note::
 
     If we ever want to disable |Flake8| respecting ``# noqa`` comments, we can
-    can refer to :option:`flake8 --disable-noqa`.
+    refer to :option:`flake8 --disable-noqa`.
 
 If we instead had more than one error that we wished to ignore, we could
 list all of the errors with commas separating them:

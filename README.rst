@@ -19,7 +19,7 @@ It also adds a few features:
 
 - lines that contain a ``# noqa`` comment at the end will not issue warnings.
 - you can ignore specific errors on a line with ``# noqa: <error>``, e.g.,
-  ``# noqa: E234``
+  ``# noqa: E234``. Multiple codes can be given, separated by comma. The ``noqa`` token is case insensitive, the colon before the list of codes is required otherwise the part after ``noqa`` is ignored
 - Git and Mercurial hooks
 - extendable through ``flake8.extension`` and ``flake8.formatting`` entry
   points

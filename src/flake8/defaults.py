@@ -30,7 +30,7 @@ NOQA_INLINE_REGEXP = re.compile(
     # ``# noqa: E123,W451,F921``
     # ``# NoQA: E123,W451,F921``
     # ``# NOQA: E123,W451,F921``
-    # We do not care about the ``: `` that follows ``noqa``
+    # We do not want to capture the ``: `` that follows ``noqa``
     # We do not care about the casing of ``noqa``
     # We want a comma-separated list of errors
     r"# noqa(?:: (?P<codes>([A-Z][0-9]+(?:[,\s]+)?)+))?",

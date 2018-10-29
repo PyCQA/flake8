@@ -58,6 +58,8 @@ Index of Options
 
 - :option:`flake8 --extend-ignore`
 
+- :option:`flake8 --per-file-ignores`
+
 - :option:`flake8 --max-line-length`
 
 - :option:`flake8 --select`
@@ -422,6 +424,8 @@ Options and their Descriptions
 
     :ref:`Go back to index <top>`
 
+    .. versionadded:: 3.6.0
+
     Specify a list of codes to add to the list of ignored ones. Similar
     considerations as in :option:`--ignore` apply here with regard to the
     value.
@@ -448,6 +452,40 @@ Options and their Descriptions
             W234
         extend-ignore = E4,E51,W234
 
+
+.. option:: --per-file-ignores=<filename:errors>[ <filename:errors>]
+
+    :ref:`Go back to index <top>`
+
+    .. versionadded:: 3.7.0
+
+    Specify a list of mappings of files and the codes that should be ignored
+    for the entirety of the file. This allows for a project to have a default
+    list of violations that should be ignored as well as file-specific
+    violations for files that have not been made compliant with the project
+    rules.
+
+    This option supports syntax similar to :option:`--exclude` such that glob
+    patterns will also work here.
+
+    This can be combined with both :option:`--ignore` and
+    :option:`--extend-ignore` to achieve a full flexibility of style options.
+
+    Command-line usage:
+
+    .. prompt:: bash
+
+        flake8 --per-file-ignores='project/__init__.py:F401 setup.py:E121'
+        flake8 --per-file-ignores='project/*/__init__.py:F401 setup.py:E121'
+
+    This **can** be specified in config files.
+
+    .. code-block:: ini
+
+        per-file-ignores =
+            project/__init__.py:F401
+            setup.py:E121
+            other_project/*:W9
 
 .. option:: --max-line-length=<n>
 
@@ -742,6 +780,8 @@ Options and their Descriptions
 .. option:: --append-config=<config>
 
     :ref:`Go back to index <top>`
+
+    .. versionadded:: 3.6.0
 
     Provide extra config files to parse in after and in addition to the files
     that |Flake8| found on its own. Since these files are the last ones read

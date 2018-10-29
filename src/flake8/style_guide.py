@@ -1,6 +1,7 @@
 """Implementation of the StyleGuide used by Flake8."""
 import collections
 import contextlib
+import copy
 import enum
 import functools
 import itertools
@@ -321,8 +322,8 @@ class DecisionEngine(object):
         return decision
 
 
-class StyleGuide(object):
-    """Manage a Flake8 user's style guide."""
+class StyleGuideManager(object):
+    """Manage multiple style guides for a single run."""
 
     def __init__(self, options, listener_trie, formatter, decider=None):
         """Initialize our StyleGuide.
@@ -334,7 +335,135 @@ class StyleGuide(object):
         self.formatter = formatter
         self.stats = statistics.Statistics()
         self.decider = decider or DecisionEngine(options)
+        self.style_guides = []
+        self.default_style_guide = StyleGuide(
+            options, listener_trie, formatter, decider=decider
+        )
+        self.style_guides = list(
+            itertools.chain(
+                [self.default_style_guide],
+                self.populate_style_guides_with(options),
+            )
+        )
+
+    def populate_style_guides_with(self, options):
+        """Generate style guides from the per-file-ignores option.
+
+        :param options:
+            The original options parsed from the CLI and config file.
+        :type options:
+            :class:`~optparse.Values`
+        :returns:
+            A copy of the default style guide with overridden values.
+        :rtype:
+            :class:`~flake8.style_guide.StyleGuide`
+        """
+        for value in options.per_file_ignores:
+            filename, violations_str = value.split(":")
+            violations = utils.parse_comma_separated_list(violations_str)
+            yield self.default_style_guide.copy(
+                filename=filename, extend_ignore_with=violations
+            )
+
+    def style_guide_for(self, filename):
+        """Find the StyleGuide for the filename in particular."""
+        guides = sorted(
+            (g for g in self.style_guides if g.applies_to(filename)),
+            key=lambda g: len(g.filename or ""),
+        )
+        if len(guides) > 1:
+            return guides[-1]
+        return guides[0]
+
+    @contextlib.contextmanager
+    def processing_file(self, filename):
+        """Record the fact that we're processing the file's results."""
+        guide = self.style_guide_for(filename)
+        with guide.processing_file(filename):
+            yield guide
+
+    def handle_error(
+        self,
+        code,
+        filename,
+        line_number,
+        column_number,
+        text,
+        physical_line=None,
+    ):
+        # type: (str, str, int, int, str) -> int
+        """Handle an error reported by a check.
+
+        :param str code:
+            The error code found, e.g., E123.
+        :param str filename:
+            The file in which the error was found.
+        :param int line_number:
+            The line number (where counting starts at 1) at which the error
+            occurs.
+        :param int column_number:
+            The column number (where counting starts at 1) at which the error
+            occurs.
+        :param str text:
+            The text of the error message.
+        :param str physical_line:
+            The actual physical line causing the error.
+        :returns:
+            1 if the error was reported. 0 if it was ignored. This is to allow
+            for counting of the number of errors found that were not ignored.
+        :rtype:
+            int
+        """
+        guide = self.style_guide_for(filename)
+        return guide.handle_error(
+            code, filename, line_number, column_number, text, physical_line
+        )
+
+    def add_diff_ranges(self, diffinfo):
+        """Update the StyleGuides to filter out information not in the diff.
+
+        This provides information to the underlying StyleGuides so that only
+        the errors in the line number ranges are reported.
+
+        :param dict diffinfo:
+            Dictionary mapping filenames to sets of line number ranges.
+        """
+        for guide in self.style_guides.values():
+            guide.add_diff_ranges(diffinfo)
+
+
+class StyleGuide(object):
+    """Manage a Flake8 user's style guide."""
+
+    def __init__(
+        self, options, listener_trie, formatter, filename=None, decider=None
+    ):
+        """Initialize our StyleGuide.
+
+        .. todo:: Add parameter documentation.
+        """
+        self.options = options
+        self.listener = listener_trie
+        self.formatter = formatter
+        self.stats = statistics.Statistics()
+        self.decider = decider or DecisionEngine(options)
+        self.filename = filename
+        if self.filename:
+            self.filename = utils.normalize_path(self.filename)
         self._parsed_diff = {}
+
+    def __repr__(self):
+        """Make it easier to debug which StyleGuide we're using."""
+        return "<StyleGuide [{}]>".format(self.filename)
+
+    def copy(self, filename=None, extend_ignore_with=None, **kwargs):
+        """Create a copy of this style guide with different values."""
+        filename = filename or self.filename
+        options = copy.deepcopy(self.options)
+        options.ignore.extend(extend_ignore_with or [])
+        return StyleGuide(
+            options, self.listener, self.formatter, filename=filename
+        )
 
     @contextlib.contextmanager
     def processing_file(self, filename):
@@ -342,6 +471,26 @@ class StyleGuide(object):
         self.formatter.beginning(filename)
         yield self
         self.formatter.finished(filename)
+
+    def applies_to(self, filename):
+        """Check if this StyleGuide applies to the file.
+
+        :param str filename:
+            The name of the file with violations that we're potentially
+            applying this StyleGuide to.
+        :returns:
+            True if this applies, False otherwise
+        :rtype:
+            bool
+        """
+        if self.filename is None:
+            return True
+        return utils.matches_filename(
+            filename,
+            patterns=[self.filename],
+            log_message='{!r} does %(whether)smatch "%(path)s"'.format(self),
+            logger=LOG,
+        )
 
     def should_report_error(self, code):
         # type: (str) -> Decision

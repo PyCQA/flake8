@@ -11,7 +11,7 @@ import tokenize
 
 DIFF_HUNK_REGEXP = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@.*$")
 COMMA_SEPARATED_LIST_RE = re.compile(r"[,\s]")
-NEWLINE_SEPARATED_LIST_RE = re.compile(r"[\s]")
+NEWLINE_SEPARATED_LIST_RE = re.compile(r"[\n]")
 LOCAL_PLUGIN_LIST_RE = re.compile(r"[,\t\n\r\f\v]")
 
 

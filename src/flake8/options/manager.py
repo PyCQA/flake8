@@ -152,7 +152,7 @@ class Option(object):
                 normalize = utils.normalize_paths
             return normalize(value, *normalize_args)
         elif self.comma_separated_list:
-            return utils.parse_comma_separated_list(value)
+            return utils.parse_comma_separated_list(value, self.separator)
         return value
 
     def normalize_from_setuptools(self, value):

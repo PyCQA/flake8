@@ -48,7 +48,7 @@ possible. As a result, the |Flake8| Git pre-commit will default to only
 checking files that have been staged (i.e., added to the index). If, however,
 you are keen to be lazy and not independenty add files to your git index, you
 can set ``flake8.lazy`` to ``true`` (similar to how you would set
-``flake8.strict`` above) and this will check all tracked files.
+``flake8.strict`` above) and this will check all modified tracked files.
 
 This is to support users who often find themselves doing things like:
 

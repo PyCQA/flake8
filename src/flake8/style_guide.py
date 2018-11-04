@@ -371,9 +371,7 @@ class StyleGuideManager(object):
             (g for g in self.style_guides if g.applies_to(filename)),
             key=lambda g: len(g.filename or ""),
         )
-        if len(guides) > 1:
-            return guides[-1]
-        return guides[0]
+        return guides[-1]
 
     @contextlib.contextmanager
     def processing_file(self, filename):

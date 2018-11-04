@@ -7,6 +7,7 @@ import functools
 import itertools
 import linecache
 import logging
+import os.path
 
 from flake8 import defaults
 from flake8 import statistics
@@ -447,7 +448,14 @@ class StyleGuide(object):
         self.decider = decider or DecisionEngine(options)
         self.filename = filename
         if self.filename:
-            self.filename = utils.normalize_path(self.filename)
+            path = self.filename
+            separator = os.path.sep
+            # NOTE(sigmavirus24): os.path.altsep may be None
+            alternate_separator = os.path.altsep or ""
+            if separator in path or (
+                    alternate_separator and alternate_separator in path
+            ):
+                self.filename = '*' + path
         self._parsed_diff = {}
 
     def __repr__(self):

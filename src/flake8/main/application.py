@@ -169,7 +169,7 @@ class Application(object):
         If :attr:`check_plugins`, :attr:`listening_plugins`, or
         :attr:`formatting_plugins` are ``None`` then this method will update
         them with the appropriate plugin manager instance. Given the expense
-        of finding plugins (via :mod:`pkg_resources`) we want this to be
+        of finding plugins (via :mod:`entrypoints`) we want this to be
         idempotent and so only update those attributes if they are ``None``.
         """
         if self.local_plugins is None:
@@ -238,16 +238,7 @@ class Application(object):
 
     def formatter_for(self, formatter_plugin_name):
         """Retrieve the formatter class by plugin name."""
-        try:
-            default_formatter = self.formatting_plugins["default"]
-        except KeyError:
-            raise exceptions.ExecutionError(
-                "The 'default' Flake8 formatting plugin is unavailable. "
-                "This usually indicates that your setuptools is too old. "
-                "Please upgrade setuptools. If that does not fix the issue"
-                " please file an issue."
-            )
-
+        default_formatter = self.formatting_plugins["default"]
         formatter_plugin = self.formatting_plugins.get(formatter_plugin_name)
         if formatter_plugin is None:
             LOG.warning(

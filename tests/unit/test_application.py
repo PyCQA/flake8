@@ -4,7 +4,6 @@ import optparse
 import mock
 import pytest
 
-from flake8 import exceptions
 from flake8.main import application as app
 
 
@@ -59,14 +58,6 @@ def test_exit_does_raise(result_count, catastrophic, exit_zero, value,
         application.exit()
 
     assert excinfo.value.args[0] is value
-
-
-def test_missing_default_formatter(application):
-    """Verify we raise an ExecutionError when there's no default formatter."""
-    application.formatting_plugins = {}
-
-    with pytest.raises(exceptions.ExecutionError):
-        application.formatter_for('fake-plugin-name')
 
 
 def test_warns_on_unknown_formatter_plugin_name(application):

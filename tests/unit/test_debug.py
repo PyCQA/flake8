@@ -1,7 +1,7 @@
 """Tests for our debugging module."""
+import entrypoints
 import mock
 import pytest
-import setuptools
 
 from flake8.main import debug
 from flake8.options import manager
@@ -9,8 +9,8 @@ from flake8.options import manager
 
 def test_dependencies():
     """Verify that we format our dependencies appropriately."""
-    expected = [{'dependency': 'setuptools',
-                 'version': setuptools.__version__}]
+    expected = [{'dependency': 'entrypoints',
+                 'version': entrypoints.__version__}]
     assert expected == debug.dependencies()
 
 
@@ -46,8 +46,8 @@ def test_information(system, pyversion, pyimpl):
                      'is_local': False},
                     {'plugin': 'pycodestyle', 'version': '2.0.0',
                      'is_local': False}],
-        'dependencies': [{'dependency': 'setuptools',
-                          'version': setuptools.__version__}],
+        'dependencies': [{'dependency': 'entrypoints',
+                          'version': entrypoints.__version__}],
         'platform': {
             'python_implementation': 'CPython',
             'python_version': '3.5.3',

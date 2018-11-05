@@ -2,7 +2,7 @@
 import logging
 import sys
 
-import pkg_resources
+import entrypoints
 
 from flake8 import exceptions
 from flake8 import utils
@@ -143,17 +143,8 @@ class Plugin(object):
         r"""Call the plugin with \*args and \*\*kwargs."""
         return self.plugin(*args, **kwargs)  # pylint: disable=not-callable
 
-    def _load(self, verify_requirements):
-        # Avoid relying on hasattr() here.
-        resolve = getattr(self.entry_point, "resolve", None)
-        require = getattr(self.entry_point, "require", None)
-        if resolve and require:
-            if verify_requirements:
-                LOG.debug('Verifying plugin "%s"\'s requirements.', self.name)
-                require()
-            self._plugin = resolve()
-        else:
-            self._plugin = self.entry_point.load(require=verify_requirements)
+    def _load(self):
+        self._plugin = self.entry_point.load()
         if not callable(self._plugin):
             msg = (
                 "Plugin %r is not a callable. It might be written for an"
@@ -171,15 +162,14 @@ class Plugin(object):
         cached plugin.
 
         :param bool verify_requirements:
-            Whether or not to make setuptools verify that the requirements for
-            the plugin are satisfied.
+            Does nothing, retained for backwards compatibility.
         :returns:
             Nothing
         """
         if self._plugin is None:
             LOG.info('Loading plugin "%s" from entry-point.', self.name)
             try:
-                self._load(verify_requirements)
+                self._load()
             except Exception as load_exception:
                 LOG.exception(load_exception)
                 failed_to_load = exceptions.FailedToLoadPlugin(
@@ -256,11 +246,9 @@ class PluginManager(object):  # pylint: disable=too-few-public-methods
         :param list local_plugins:
             Plugins from config (as "X = path.to:Plugin" strings).
         :param bool verify_requirements:
-            Whether or not to make setuptools verify that the requirements for
-            the plugin are satisfied.
+            Does nothing, retained for backwards compatibility.
         """
         self.namespace = namespace
-        self.verify_requirements = verify_requirements
         self.plugins = {}
         self.names = []
         self._load_local_plugins(local_plugins or [])
@@ -273,12 +261,14 @@ class PluginManager(object):  # pylint: disable=too-few-public-methods
             Plugins from config (as "X = path.to:Plugin" strings).
         """
         for plugin_str in local_plugins:
-            entry_point = pkg_resources.EntryPoint.parse(plugin_str)
+            name, _, entry_str = plugin_str.partition("=")
+            name, entry_str = name.strip(), entry_str.strip()
+            entry_point = entrypoints.EntryPoint.from_string(entry_str, name)
             self._load_plugin_from_entrypoint(entry_point, local=True)
 
     def _load_entrypoint_plugins(self):
         LOG.info('Loading entry-points for "%s".', self.namespace)
-        for entry_point in pkg_resources.iter_entry_points(self.namespace):
+        for entry_point in entrypoints.get_group_all(self.namespace):
             self._load_plugin_from_entrypoint(entry_point)
 
     def _load_plugin_from_entrypoint(self, entry_point, local=False):

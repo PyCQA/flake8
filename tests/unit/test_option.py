@@ -23,12 +23,14 @@ def test_to_optparse():
     assert optparse_opt.action == 'count'
 
 
-def test_to_support_optparses_standard_types():
+@pytest.mark.parametrize('opttype,str_val,expected', [
+    ('float', '2', 2.0),
+    ('complex', '2', (2+0j)),
+])
+def test_to_support_optparses_standard_types(opttype, str_val, expected):
     """Show that optparse converts float and complex types correctly."""
-    opt = manager.Option('-t', '--test')
-
-    assert type(opt.normalize_from_setuptools(float(2))) == float
-    assert type(opt.normalize_from_setuptools(complex(2))) == complex
+    opt = manager.Option('-t', '--test', type=opttype)
+    assert opt.normalize_from_setuptools(str_val) == expected
 
 
 @mock.patch('optparse.Option')

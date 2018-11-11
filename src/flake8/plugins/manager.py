@@ -339,7 +339,7 @@ class PluginManager(object):  # pylint: disable=too-few-public-methods
 
 def version_for(plugin):
     # (Plugin) -> Union[str, NoneType]
-    """Determine the version of a plugin by it's module.
+    """Determine the version of a plugin by its module.
 
     :param plugin:
         The loaded plugin

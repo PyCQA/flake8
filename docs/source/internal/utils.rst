@@ -51,7 +51,7 @@ path if the string has a ``/`` in it. It also removes trailing ``/``\ s.
 .. autofunction:: flake8.utils.normalize_paths
 
 This function utilizes :func:`~flake8.utils.parse_comma_separated_list` and
-:func:`~flake8.utils.normalize_path` to normalize it's input to a list of
+:func:`~flake8.utils.normalize_path` to normalize its input to a list of
 strings that should be paths.
 
 .. autofunction:: flake8.utils.stdin_get_value

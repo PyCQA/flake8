@@ -11,7 +11,7 @@ be documented here.
 Legacy API
 ==========
 
-When |Flake8| broke it's hard dependency on the tricky internals of
+When |Flake8| broke its hard dependency on the tricky internals of
 pycodestyle, it lost the easy backwards compatibility as well. To help
 existing users of that API we have :mod:`flake8.api.legacy`. This module
 includes a couple classes (which are documented below) and a function.

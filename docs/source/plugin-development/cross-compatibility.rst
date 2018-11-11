@@ -161,7 +161,7 @@ some plugins. |Flake8| 2.5 and earlier had started monkey-patching pep8's
 monkey-patched that. 3.0 has its own internal implementation and uses that but
 does not directly provide anything for plugins using pep8 and pycodestyle's
 ``stdin_get_value`` function. |polyfill| provides this functionality for
-plugin developers via it's :mod:`flake8_polyfill.stdin` module.
+plugin developers via its :mod:`flake8_polyfill.stdin` module.
 
 If a plugin needs to read the content from stdin, it can do the following:
 

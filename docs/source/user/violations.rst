@@ -218,7 +218,7 @@ Selecting and Ignoring Simultaneously For Fun and Profit
 ========================================================
 
 Prior to |Flake8| 3.0, all handling of :option:`flake8 --select` and
-:option:`flake8 --ignore` was delegated to pycodestyle. It's handling of the
+:option:`flake8 --ignore` was delegated to pycodestyle. Its handling of the
 options significantly differs from how |Flake8| 3.0 has been designed.
 
 pycodestyle has always preferred ``--ignore`` over ``--select`` and will

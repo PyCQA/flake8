@@ -11,51 +11,51 @@ def create_entry_point_mock(name):
     return ep
 
 
-@mock.patch('pkg_resources.iter_entry_points')
-def test_calls_pkg_resources_on_instantiation(iter_entry_points):
-    """Verify that we call iter_entry_points when we create a manager."""
-    iter_entry_points.return_value = []
-    manager.PluginManager(namespace='testing.pkg_resources')
+@mock.patch('entrypoints.get_group_all')
+def test_calls_entrypoints_on_instantiation(get_group_all):
+    """Verify that we call get_group_all when we create a manager."""
+    get_group_all.return_value = []
+    manager.PluginManager(namespace='testing.entrypoints')
 
-    iter_entry_points.assert_called_once_with('testing.pkg_resources')
+    get_group_all.assert_called_once_with('testing.entrypoints')
 
 
-@mock.patch('pkg_resources.iter_entry_points')
-def test_calls_pkg_resources_creates_plugins_automaticaly(iter_entry_points):
+@mock.patch('entrypoints.get_group_all')
+def test_calls_entrypoints_creates_plugins_automaticaly(get_group_all):
     """Verify that we create Plugins on instantiation."""
-    iter_entry_points.return_value = [
+    get_group_all.return_value = [
         create_entry_point_mock('T100'),
         create_entry_point_mock('T200'),
     ]
-    plugin_mgr = manager.PluginManager(namespace='testing.pkg_resources')
+    plugin_mgr = manager.PluginManager(namespace='testing.entrypoints')
 
-    iter_entry_points.assert_called_once_with('testing.pkg_resources')
+    get_group_all.assert_called_once_with('testing.entrypoints')
     assert 'T100' in plugin_mgr.plugins
     assert 'T200' in plugin_mgr.plugins
     assert isinstance(plugin_mgr.plugins['T100'], manager.Plugin)
     assert isinstance(plugin_mgr.plugins['T200'], manager.Plugin)
 
 
-@mock.patch('pkg_resources.iter_entry_points')
-def test_handles_mapping_functions_across_plugins(iter_entry_points):
+@mock.patch('entrypoints.get_group_all')
+def test_handles_mapping_functions_across_plugins(get_group_all):
     """Verify we can use the PluginManager call functions on all plugins."""
     entry_point_mocks = [
         create_entry_point_mock('T100'),
         create_entry_point_mock('T200'),
     ]
-    iter_entry_points.return_value = entry_point_mocks
-    plugin_mgr = manager.PluginManager(namespace='testing.pkg_resources')
+    get_group_all.return_value = entry_point_mocks
+    plugin_mgr = manager.PluginManager(namespace='testing.entrypoints')
     plugins = [plugin_mgr.plugins[name] for name in plugin_mgr.names]
 
     assert list(plugin_mgr.map(lambda x: x)) == plugins
 
 
-@mock.patch('pkg_resources.iter_entry_points')
-def test_local_plugins(iter_entry_points):
+@mock.patch('entrypoints.get_group_all')
+def test_local_plugins(get_group_all):
     """Verify PluginManager can load given local plugins."""
-    iter_entry_points.return_value = []
+    get_group_all.return_value = []
     plugin_mgr = manager.PluginManager(
-        namespace='testing.pkg_resources',
+        namespace='testing.entrypoints',
         local_plugins=['X = path.to:Plugin']
     )
 

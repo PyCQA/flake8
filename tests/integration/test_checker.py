@@ -51,13 +51,12 @@ def plugin_func_list(tree):
 def test_handle_file_plugins(plugin_target):
     """Test the FileChecker class handling different file plugin types."""
     # Mock an entry point returning the plugin target
-    entry_point = mock.Mock(spec=['require', 'resolve', 'load'])
+    entry_point = mock.Mock(spec=['load'])
     entry_point.name = plugin_target.name
-    entry_point.resolve.return_value = plugin_target
+    entry_point.load.return_value = plugin_target
 
     # Load the checker plugins using the entry point mock
-    with mock.patch('pkg_resources.iter_entry_points',
-                    return_value=[entry_point]):
+    with mock.patch('entrypoints.get_group_all', return_value=[entry_point]):
         checks = manager.Checkers()
 
     # Prevent it from reading lines from stdin or somewhere else

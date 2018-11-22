@@ -1,0 +1,6 @@
+-   id: flake8
+    name: flake8
+    description: '`flake8` is a command-line utility for enforcing style consistency across Python projects.'
+    entry: flake8
+    language: python
+    types: [python]

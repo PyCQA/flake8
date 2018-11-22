@@ -2,6 +2,51 @@
  Using Version Control Hooks
 =============================
 
+Usage with the `pre-commit`_ git hooks framework
+================================================
+
+|Flake8| can be included as a hook for `pre-commit`_.  The easiest way to get
+started is to add this configuration to your ``.pre-commit-config.yaml``:
+
+.. code-block:: yaml
+
+    -   repo: https://gitlab.com/pycqa/flake8
+        rev: ''  # pick a git hash / tag to point to
+        hooks:
+        -   id: flake8
+
+See the `pre-commit docs`_ for how to customize this configuration.
+
+Checked-in python files will be passed as positional arguments.  ``flake8``
+will always lint explicitly passed arguments (:option:`flake8 --exclude` has
+no effect).  Instead use ``pre-commit``'s ``exclude: ...`` regex to exclude
+files.  ``pre-commit`` won't ever pass untracked files to ``flake8`` so
+excluding ``.git`` / ``.tox`` / etc. is unnecesary.
+
+.. code-block:: yaml
+
+        -   id: flake8
+            exclude: ^testing/(data|examples)/
+
+``pre-commit`` creates an isolated environment for hooks.  To use ``flake8``
+plugins, use the ``additional_dependencies`` setting.
+
+.. code-block:: yaml
+
+        -   id: flake8
+            additional_dependencies: [flake8-docstrings]
+
+
+Built-in Hook Integration
+=========================
+
+.. note::
+
+    It is strongly suggested to use |Flake8| via `pre-commit`_ over the
+    built-in hook mechanisms.  ``pre-commit`` smooths out many of the rough
+    edges of ``git`` and is much more battle-tested than the |Flake8|
+    hook impementation.
+
 |Flake8| can be integrated into your development workflow in many ways. A
 default installation of |Flake8| can install pre-commit hooks for both
 `Git`_ and `Mercurial`_. To install a built-in hook, you can use the
@@ -63,6 +108,10 @@ This is to support users who often find themselves doing things like:
     first.
 
 
+.. _pre-commit:
+    https://pre-commit.com/
+.. _pre-commit docs:
+    https://pre-commit.com/#pre-commit-configyaml---hooks
 .. _Git:
     https://git-scm.com/
 .. _Mercurial:

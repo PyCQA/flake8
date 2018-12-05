@@ -376,9 +376,8 @@ def get_python_version():
     :rtype:
         str
     """
-    # The implementation isn't all that important.
-    try:
-        impl = platform.python_implementation() + " "
-    except AttributeError:  # Python 2.5
-        impl = ""
-    return "%s%s on %s" % (impl, platform.python_version(), platform.system())
+    return "%s %s on %s" % (
+        platform.python_implementation(),
+        platform.python_version(),
+        platform.system(),
+    )

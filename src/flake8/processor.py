@@ -12,9 +12,6 @@ from flake8 import utils
 LOG = logging.getLogger(__name__)
 PyCF_ONLY_AST = 1024
 NEWLINE = frozenset([tokenize.NL, tokenize.NEWLINE])
-# Work around Python < 2.6 behaviour, which does not generate NL after
-# a comment which is on a line by itself.
-COMMENT_WITH_NL = tokenize.generate_tokens(["#\n"].pop).send(None)[1] == "#\n"
 
 SKIP_TOKENS = frozenset(
     [tokenize.NL, tokenize.NEWLINE, tokenize.INDENT, tokenize.DEDENT]
@@ -373,15 +370,6 @@ def is_eol_token(token):
     return token[0] in NEWLINE or token[4][token[3][1] :].lstrip() == "\\\n"
 
 
-if COMMENT_WITH_NL:  # If on Python 2.6
-
-    def is_eol_token(token, _is_eol_token=is_eol_token):
-        """Check if the token is an end-of-line token."""
-        return _is_eol_token(token) or (
-            token[0] == tokenize.COMMENT and token[1] == token[4]
-        )
-
-
 def is_multiline_string(token):
     """Check if this is a multiline string."""
     return token[0] == tokenize.STRING and "\n" in token[1]
@@ -390,11 +378,6 @@ def is_multiline_string(token):
 def token_is_newline(token):
     """Check if the token type is a newline token type."""
     return token[0] in NEWLINE
-
-
-def token_is_comment(token):
-    """Check if the token type is a comment."""
-    return COMMENT_WITH_NL and token[0] == tokenize.COMMENT
 
 
 def count_parentheses(current_parentheses_count, token_text):

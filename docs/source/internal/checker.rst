@@ -61,8 +61,6 @@ Utility Functions
 
 .. autofunction:: flake8.processor.mutate_string
 
-.. autofunction:: flake8.processor.token_is_comment
-
 .. autofunction:: flake8.processor.token_is_newline
 
 .. Substitutions

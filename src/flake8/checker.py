@@ -577,11 +577,6 @@ class FileChecker(object):
             elif parens == 0:
                 if processor.token_is_newline(token):
                     self.handle_newline(token_type)
-                elif (
-                    processor.token_is_comment(token)
-                    and len(file_processor.tokens) == 1
-                ):
-                    self.handle_comment(token, text)
 
         if file_processor.tokens:
             # If any tokens are left over, process them
@@ -605,15 +600,6 @@ class FileChecker(object):
         logical_lines = self.processor.statistics["logical lines"]
         self.statistics["logical lines"] = logical_lines
         return self.filename, self.results, self.statistics
-
-    def handle_comment(self, token, token_text):
-        """Handle the logic when encountering a comment token."""
-        # The comment also ends a physical line
-        token = list(token)
-        token[1] = token_text.rstrip("\r\n")
-        token[3] = (token[2][0], token[2][1] + len(token[1]))
-        self.processor.tokens = [tuple(token)]
-        self.run_logical_checks()
 
     def handle_newline(self, token_type):
         """Handle the logic when encountering a newline token."""

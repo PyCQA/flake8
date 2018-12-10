@@ -5,8 +5,17 @@ import pytest
 from flake8 import checker
 from flake8.plugins import manager
 
+PHYSICAL_LINE = "# Physical line content"
 
 EXPECTED_REPORT = (1, 1, 'T000 Expected Message')
+EXPECTED_REPORT_PHYSICAL_LINE = (1, 'T000 Expected Message')
+EXPECTED_RESULT_PHYSICAL_LINE = (
+    'T000',
+    0,
+    1,
+    'Expected Message',
+    PHYSICAL_LINE,
+)
 
 
 class PluginClass(object):
@@ -43,13 +52,48 @@ def plugin_func_list(tree):
     return [EXPECTED_REPORT + (type(plugin_func_list), )]
 
 
-@pytest.mark.parametrize('plugin_target', [
-    PluginClass,
-    plugin_func_gen,
-    plugin_func_list,
-])
-def test_handle_file_plugins(plugin_target):
-    """Test the FileChecker class handling different file plugin types."""
+@plugin_func
+def plugin_func_physical_ret(physical_line):
+    """Expect report from a physical_line. Single return."""
+    return EXPECTED_REPORT_PHYSICAL_LINE
+
+
+@plugin_func
+def plugin_func_physical_none(physical_line):
+    """Expect report from a physical_line. No results."""
+    return None
+
+
+@plugin_func
+def plugin_func_physical_list_single(physical_line):
+    """Expect report from a physical_line. List of single result."""
+    return [EXPECTED_REPORT_PHYSICAL_LINE]
+
+
+@plugin_func
+def plugin_func_physical_list_multiple(physical_line):
+    """Expect report from a physical_line. List of multiple results."""
+    return [EXPECTED_REPORT_PHYSICAL_LINE] * 2
+
+
+@plugin_func
+def plugin_func_physical_gen_single(physical_line):
+    """Expect report from a physical_line. Generator of single result."""
+    yield EXPECTED_REPORT_PHYSICAL_LINE
+
+
+@plugin_func
+def plugin_func_physical_gen_multiple(physical_line):
+    """Expect report from a physical_line. Generator of multiple results."""
+    for _ in range(3):
+        yield EXPECTED_REPORT_PHYSICAL_LINE
+
+
+def mock_file_checker_with_plugin(plugin_target):
+    """Get a mock FileChecker class with plugin_target registered.
+
+    Useful as a starting point for mocking reports/results.
+    """
     # Mock an entry point returning the plugin target
     entry_point = mock.Mock(spec=['load'])
     entry_point.name = plugin_target.name
@@ -67,6 +111,17 @@ def test_handle_file_plugins(plugin_target):
             checks.to_dictionary(),
             mock.MagicMock()
         )
+    return file_checker
+
+
+@pytest.mark.parametrize('plugin_target', [
+    PluginClass,
+    plugin_func_gen,
+    plugin_func_list,
+])
+def test_handle_file_plugins(plugin_target):
+    """Test the FileChecker class handling different file plugin types."""
+    file_checker = mock_file_checker_with_plugin(plugin_target)
 
     # Do not actually build an AST
     file_checker.processor.build_ast = lambda: True
@@ -79,6 +134,25 @@ def test_handle_file_plugins(plugin_target):
                                    line_number=EXPECTED_REPORT[0],
                                    column=EXPECTED_REPORT[1],
                                    text=EXPECTED_REPORT[2])
+
+
+@pytest.mark.parametrize('plugin_target,len_results', [
+    (plugin_func_physical_ret, 1),
+    (plugin_func_physical_none, 0),
+    (plugin_func_physical_list_single, 1),
+    (plugin_func_physical_list_multiple, 2),
+    (plugin_func_physical_gen_single, 1),
+    (plugin_func_physical_gen_multiple, 3),
+])
+def test_line_check_results(plugin_target, len_results):
+    """Test the FileChecker class handling results from line checks."""
+    file_checker = mock_file_checker_with_plugin(plugin_target)
+
+    # Results will be store in an internal array
+    file_checker.run_physical_checks(PHYSICAL_LINE)
+    assert file_checker.results == [
+        EXPECTED_RESULT_PHYSICAL_LINE
+    ] * len_results
 
 
 PLACEHOLDER_CODE = 'some_line = "of" * code'

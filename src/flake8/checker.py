@@ -541,21 +541,38 @@ class FileChecker(object):
         self.processor.next_logical_line()
 
     def run_physical_checks(self, physical_line, override_error_line=None):
-        """Run all checks for a given physical line."""
+        """Run all checks for a given physical line.
+
+        A single physical check may return multiple errors.
+        """
         for plugin in self.checks["physical_line_plugins"]:
             self.processor.update_checker_state_for(plugin)
             result = self.run_check(plugin, physical_line=physical_line)
-            if result is not None:
-                column_offset, text = result
-                error_code = self.report(
-                    error_code=None,
-                    line_number=self.processor.line_number,
-                    column=column_offset,
-                    text=text,
-                    line=(override_error_line or physical_line),
-                )
 
-                self.processor.check_physical_error(error_code, physical_line)
+            if result is not None:
+                # This is a single result if first element is an int
+                column_offset = None
+                try:
+                    column_offset = result[0]
+                except (IndexError, TypeError):
+                    pass
+
+                if isinstance(column_offset, int):
+                    # If we only have a single result, convert to a collection
+                    result = (result,)
+
+                for result_single in result:
+                    column_offset, text = result_single
+                    error_code = self.report(
+                        error_code=None,
+                        line_number=self.processor.line_number,
+                        column=column_offset,
+                        text=text,
+                        line=(override_error_line or physical_line),
+                    )
+                    self.processor.check_physical_error(
+                        error_code, physical_line
+                    )
 
     def process_tokens(self):
         """Process tokens and trigger checks.

@@ -65,10 +65,10 @@ once per file. The parameters listed above can be combined with
 Registering Options
 ===================
 
-Any plugin that has callable attributes ``provide_options`` and
-``register_options`` can parse option information and register new options.
+Any plugin that has callable attributes ``add_options`` and
+``parse_options`` can parse option information and register new options.
 
-Your ``register_options`` function should expect to receive an instance of
+Your ``add_options`` function should expect to receive an instance of
 |OptionManager|. An |OptionManager| instance behaves very similarly to
 :class:`optparse.OptionParser`. It, however, uses the layer that |Flake8| has
 developed on top of :mod:`optparse` to also handle configuration file parsing.
@@ -157,19 +157,19 @@ documentation of :mod:`optparse`.
 Accessing Parsed Options
 ========================
 
-When a plugin has a callable ``provide_options`` attribute, |Flake8| will call
+When a plugin has a callable ``parse_options`` attribute, |Flake8| will call
 it and attempt to provide the |OptionManager| instance, the parsed options
 which will be an instance of :class:`optparse.Values`, and the extra arguments
 that were not parsed by the |OptionManager|. If that fails, we will just pass
-the :class:`optparse.Values`. In other words, your ``provide_options``
+the :class:`optparse.Values`. In other words, your ``parse_options``
 callable will have one of the following signatures:
 
 .. code-block:: python
 
-    def provide_options(option_manager, options, args):
+    def parse_options(option_manager, options, args):
         pass
     # or
-    def provide_options(options):
+    def parse_options(options):
         pass
 
 .. substitutions

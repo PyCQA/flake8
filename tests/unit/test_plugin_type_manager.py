@@ -203,31 +203,3 @@ def test_proxies_getitem_to_managers_plugins_dict(PluginManager):  # noqa: N803
     for i in range(8):
         key = 'T10%i' % i
         assert type_mgr[key] is plugins[key]
-
-
-class FakePluginTypeManager(manager.NotifierBuilderMixin):
-    """Provide an easy way to test the NotifierBuilderMixin."""
-
-    def __init__(self, manager):
-        """Initialize with our fake manager."""
-        self.names = sorted(manager)
-        self.manager = manager
-
-
-@pytest.fixture
-def notifier_builder():
-    """Create a fake plugin type manager."""
-    return FakePluginTypeManager(manager={
-        'T100': object(),
-        'T101': object(),
-        'T110': object(),
-    })
-
-
-def test_build_notifier(notifier_builder):
-    """Verify we properly build a Notifier object."""
-    notifier = notifier_builder.build_notifier()
-    for name in ('T100', 'T101', 'T110'):
-        assert list(notifier.listeners_for(name)) == [
-            notifier_builder.manager[name]
-        ]

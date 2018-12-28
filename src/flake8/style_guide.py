@@ -325,19 +325,18 @@ class DecisionEngine(object):
 class StyleGuideManager(object):
     """Manage multiple style guides for a single run."""
 
-    def __init__(self, options, listener_trie, formatter, decider=None):
+    def __init__(self, options, formatter, decider=None):
         """Initialize our StyleGuide.
 
         .. todo:: Add parameter documentation.
         """
         self.options = options
-        self.listener = listener_trie
         self.formatter = formatter
         self.stats = statistics.Statistics()
         self.decider = decider or DecisionEngine(options)
         self.style_guides = []
         self.default_style_guide = StyleGuide(
-            options, listener_trie, formatter, decider=decider
+            options, formatter, decider=decider
         )
         self.style_guides = list(
             itertools.chain(
@@ -435,15 +434,12 @@ class StyleGuideManager(object):
 class StyleGuide(object):
     """Manage a Flake8 user's style guide."""
 
-    def __init__(
-        self, options, listener_trie, formatter, filename=None, decider=None
-    ):
+    def __init__(self, options, formatter, filename=None, decider=None):
         """Initialize our StyleGuide.
 
         .. todo:: Add parameter documentation.
         """
         self.options = options
-        self.listener = listener_trie
         self.formatter = formatter
         self.stats = statistics.Statistics()
         self.decider = decider or DecisionEngine(options)
@@ -461,9 +457,7 @@ class StyleGuide(object):
         filename = filename or self.filename
         options = copy.deepcopy(self.options)
         options.ignore.extend(extend_ignore_with or [])
-        return StyleGuide(
-            options, self.listener, self.formatter, filename=filename
-        )
+        return StyleGuide(options, self.formatter, filename=filename)
 
     @contextlib.contextmanager
     def processing_file(self, filename):
@@ -565,7 +559,6 @@ class StyleGuide(object):
         ):
             self.formatter.handle(error)
             self.stats.record(error)
-            self.listener.notify(error.code, error)
             return 1
         return 0
 

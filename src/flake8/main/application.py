@@ -57,14 +57,10 @@ class Application(object):
         self.local_plugins = None
         #: The instance of :class:`flake8.plugins.manager.Checkers`
         self.check_plugins = None
-        #: The instance of :class:`flake8.plugins.manager.Listeners`
-        self.listening_plugins = None
         #: The instance of :class:`flake8.plugins.manager.ReportFormatters`
         self.formatting_plugins = None
         #: The user-selected formatter from :attr:`formatting_plugins`
         self.formatter = None
-        #: The :class:`flake8.plugins.notifier.Notifier` for listening plugins
-        self.listener_trie = None
         #: The :class:`flake8.style_guide.StyleGuideManager` built from the
         #: user's options
         self.guide = None
@@ -166,11 +162,11 @@ class Application(object):
         # type: () -> NoneType
         """Find and load the plugins for this application.
 
-        If :attr:`check_plugins`, :attr:`listening_plugins`, or
-        :attr:`formatting_plugins` are ``None`` then this method will update
-        them with the appropriate plugin manager instance. Given the expense
-        of finding plugins (via :mod:`entrypoints`) we want this to be
-        idempotent and so only update those attributes if they are ``None``.
+        If :attr:`check_plugins`, or :attr:`formatting_plugins` are ``None``
+        then this method will update them with the appropriate plugin manager
+        instance. Given the expense of finding plugins (via :mod:`entrypoints`)
+        we want this to be idempotent and so only update those attributes if
+        they are ``None``.
         """
         if self.local_plugins is None:
             self.local_plugins = config.get_local_plugins(
@@ -186,16 +182,12 @@ class Application(object):
                 self.local_plugins.extension
             )
 
-        if self.listening_plugins is None:
-            self.listening_plugins = plugin_manager.Listeners()
-
         if self.formatting_plugins is None:
             self.formatting_plugins = plugin_manager.ReportFormatters(
                 self.local_plugins.report
             )
 
         self.check_plugins.load_plugins()
-        self.listening_plugins.load_plugins()
         self.formatting_plugins.load_plugins()
 
     def register_plugin_options(self):
@@ -203,7 +195,6 @@ class Application(object):
         """Register options provided by plugins to our option manager."""
         self.check_plugins.register_options(self.option_manager)
         self.check_plugins.register_plugin_versions(self.option_manager)
-        self.listening_plugins.register_options(self.option_manager)
         self.formatting_plugins.register_options(self.option_manager)
 
     def parse_configuration_and_cli(self, argv=None):
@@ -227,9 +218,6 @@ class Application(object):
         self.options._running_from_vcs = False
 
         self.check_plugins.provide_options(
-            self.option_manager, self.options, self.args
-        )
-        self.listening_plugins.provide_options(
             self.option_manager, self.options, self.args
         )
         self.formatting_plugins.provide_options(
@@ -264,18 +252,12 @@ class Application(object):
 
             self.formatter = formatter_class(self.options)
 
-    def make_notifier(self):
-        # type: () -> NoneType
-        """Initialize our listener Notifier."""
-        if self.listener_trie is None:
-            self.listener_trie = self.listening_plugins.build_notifier()
-
     def make_guide(self):
         # type: () -> NoneType
         """Initialize our StyleGuide."""
         if self.guide is None:
             self.guide = style_guide.StyleGuideManager(
-                self.options, self.listener_trie, self.formatter
+                self.options, self.formatter
             )
 
         if self.running_against_diff:
@@ -373,7 +355,6 @@ class Application(object):
         self.register_plugin_options()
         self.parse_configuration_and_cli(argv)
         self.make_formatter()
-        self.make_notifier()
         self.make_guide()
         self.make_file_checker_manager()
 

@@ -7,7 +7,6 @@ import pytest
 from flake8 import style_guide
 from flake8 import utils
 from flake8.formatting import base
-from flake8.plugins import notifier
 
 
 def create_options(**kwargs):
@@ -22,35 +21,10 @@ def create_options(**kwargs):
     return optparse.Values(kwargs)
 
 
-@pytest.mark.parametrize('select_list,ignore_list,error_code', [
-    (['E111', 'E121'], [], 'E111'),
-    (['E111', 'E121'], [], 'E121'),
-    (['E11', 'E121'], ['E1'], 'E112'),
-    (['E41'], ['E2', 'E12', 'E4'], 'E410'),
-])
-def test_handle_error_notifies_listeners(select_list, ignore_list, error_code):
-    """Verify that error codes notify the listener trie appropriately."""
-    listener_trie = mock.create_autospec(notifier.Notifier, instance=True)
-    formatter = mock.create_autospec(base.BaseFormatter, instance=True)
-    guide = style_guide.StyleGuide(create_options(select=select_list,
-                                                  ignore=ignore_list),
-                                   listener_trie=listener_trie,
-                                   formatter=formatter)
-
-    with mock.patch('linecache.getline', return_value=''):
-        guide.handle_error(error_code, 'stdin', 1, 0, 'error found')
-    error = style_guide.Violation(
-        error_code, 'stdin', 1, 1, 'error found', None)
-    listener_trie.notify.assert_called_once_with(error_code, error)
-    formatter.handle.assert_called_once_with(error)
-
-
 def test_handle_error_does_not_raise_type_errors():
     """Verify that we handle our inputs better."""
-    listener_trie = mock.create_autospec(notifier.Notifier, instance=True)
     formatter = mock.create_autospec(base.BaseFormatter, instance=True)
     guide = style_guide.StyleGuide(create_options(select=['T111'], ignore=[]),
-                                   listener_trie=listener_trie,
                                    formatter=formatter)
 
     assert 1 == guide.handle_error(
@@ -58,41 +32,11 @@ def test_handle_error_does_not_raise_type_errors():
     )
 
 
-@pytest.mark.parametrize('select_list,ignore_list,error_code', [
-    (['E111', 'E121'], [], 'E122'),
-    (['E11', 'E12'], [], 'E132'),
-    (['E2', 'E12'], [], 'E321'),
-    (['E2', 'E12'], [], 'E410'),
-    (['E111', 'E121'], ['E2'], 'E122'),
-    (['E11', 'E12'], ['E13'], 'E132'),
-    (['E1', 'E3'], ['E32'], 'E321'),
-    (['E4'], ['E2', 'E12', 'E41'], 'E410'),
-    (['E111', 'E121'], [], 'E112'),
-])
-def test_handle_error_does_not_notify_listeners(select_list, ignore_list,
-                                                error_code):
-    """Verify that error codes notify the listener trie appropriately."""
-    listener_trie = mock.create_autospec(notifier.Notifier, instance=True)
-    formatter = mock.create_autospec(base.BaseFormatter, instance=True)
-    guide = style_guide.StyleGuide(create_options(select=select_list,
-                                                  ignore=ignore_list),
-                                   listener_trie=listener_trie,
-                                   formatter=formatter)
-
-    with mock.patch('linecache.getline', return_value=''):
-        guide.handle_error(error_code, 'stdin', 1, 1, 'error found')
-    assert listener_trie.notify.called is False
-    assert formatter.handle.called is False
-
-
 def test_style_guide_manager():
     """Verify how the StyleGuideManager creates a default style guide."""
-    listener_trie = mock.create_autospec(notifier.Notifier, instance=True)
     formatter = mock.create_autospec(base.BaseFormatter, instance=True)
     options = create_options()
-    guide = style_guide.StyleGuideManager(options,
-                                          listener_trie=listener_trie,
-                                          formatter=formatter)
+    guide = style_guide.StyleGuideManager(options, formatter=formatter)
     assert guide.default_style_guide.options is options
     assert len(guide.style_guides) == 1
 
@@ -114,11 +58,9 @@ PER_FILE_IGNORES_UNPARSED = [
 ])
 def test_style_guide_applies_to(style_guide_file, filename, expected):
     """Verify that we match a file to its style guide."""
-    listener_trie = mock.create_autospec(notifier.Notifier, instance=True)
     formatter = mock.create_autospec(base.BaseFormatter, instance=True)
     options = create_options()
     guide = style_guide.StyleGuide(options,
-                                   listener_trie=listener_trie,
                                    formatter=formatter,
                                    filename=style_guide_file)
     assert guide.applies_to(filename) is expected
@@ -126,12 +68,9 @@ def test_style_guide_applies_to(style_guide_file, filename, expected):
 
 def test_style_guide_manager_pre_file_ignores_parsing():
     """Verify how the StyleGuideManager creates a default style guide."""
-    listener_trie = mock.create_autospec(notifier.Notifier, instance=True)
     formatter = mock.create_autospec(base.BaseFormatter, instance=True)
     options = create_options(per_file_ignores=PER_FILE_IGNORES_UNPARSED)
-    guide = style_guide.StyleGuideManager(options,
-                                          listener_trie=listener_trie,
-                                          formatter=formatter)
+    guide = style_guide.StyleGuideManager(options, formatter=formatter)
     assert len(guide.style_guides) == 5
     assert list(map(utils.normalize_path,
                     ["first_file.py", "second_file.py", "third_file.py",
@@ -150,14 +89,11 @@ def test_style_guide_manager_pre_file_ignores_parsing():
 def test_style_guide_manager_pre_file_ignores(ignores, violation, filename,
                                               handle_error_return):
     """Verify how the StyleGuideManager creates a default style guide."""
-    listener_trie = mock.create_autospec(notifier.Notifier, instance=True)
     formatter = mock.create_autospec(base.BaseFormatter, instance=True)
     options = create_options(ignore=ignores,
                              select=['E', 'F', 'W'],
                              per_file_ignores=PER_FILE_IGNORES_UNPARSED)
-    guide = style_guide.StyleGuideManager(options,
-                                          listener_trie=listener_trie,
-                                          formatter=formatter)
+    guide = style_guide.StyleGuideManager(options, formatter=formatter)
     assert (guide.handle_error(violation, filename, 1, 1, "Fake text")
             == handle_error_return)
 
@@ -172,12 +108,9 @@ def test_style_guide_manager_pre_file_ignores(ignores, violation, filename,
 ])
 def test_style_guide_manager_style_guide_for(filename, expected):
     """Verify the style guide selection function."""
-    listener_trie = mock.create_autospec(notifier.Notifier, instance=True)
     formatter = mock.create_autospec(base.BaseFormatter, instance=True)
     options = create_options(per_file_ignores=PER_FILE_IGNORES_UNPARSED)
-    guide = style_guide.StyleGuideManager(options,
-                                          listener_trie=listener_trie,
-                                          formatter=formatter)
+    guide = style_guide.StyleGuideManager(options, formatter=formatter)
 
     file_guide = guide.style_guide_for(filename)
     assert file_guide.filename == expected

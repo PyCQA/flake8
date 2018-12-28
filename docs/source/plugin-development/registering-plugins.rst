@@ -86,13 +86,10 @@ grouping of entry-points that flake8 should look in.
 
 - ``flake8.extension``
 
-- ``flake8.listen``
-
 - ``flake8.report``
 
 If your plugin is one that adds checks to |Flake8|, you will use
-``flake8.extension``. If your plugin automatically fixes errors in code, you
-will use ``flake8.listen``.  Finally, if your plugin performs extra report
+``flake8.extension``. If your plugin performs extra report
 handling (formatting, filtering, etc.) it will use ``flake8.report``.
 
 If our ``ExamplePlugin`` is something that adds checks, our code would look

@@ -6,7 +6,6 @@ import entrypoints
 
 from flake8 import exceptions
 from flake8 import utils
-from flake8.plugins import notifier
 
 if sys.version_info >= (3, 3):
     import collections.abc as collections_abc
@@ -15,13 +14,7 @@ else:
 
 LOG = logging.getLogger(__name__)
 
-__all__ = (
-    "Checkers",
-    "Listeners",
-    "Plugin",
-    "PluginManager",
-    "ReportFormatters",
-)
+__all__ = ("Checkers", "Plugin", "PluginManager", "ReportFormatters")
 
 NO_GROUP_FOUND = object()
 
@@ -444,24 +437,6 @@ class PluginTypeManager(object):
         list(self.manager.map(call_provide_options))
 
 
-class NotifierBuilderMixin(object):  # pylint: disable=too-few-public-methods
-    """Mixin class that builds a Notifier from a PluginManager."""
-
-    def build_notifier(self):
-        """Build a Notifier for our Listeners.
-
-        :returns:
-            Object to notify our listeners of certain error codes and
-            warnings.
-        :rtype:
-            :class:`~flake8.notifier.Notifier`
-        """
-        notifier_trie = notifier.Notifier()
-        for name in self.names:
-            notifier_trie.register_listener(name, self.manager[name])
-        return notifier_trie
-
-
 class Checkers(PluginTypeManager):
     """All of the checkers registered through entry-points or config."""
 
@@ -540,12 +515,6 @@ class Checkers(PluginTypeManager):
             plugins = list(self.checks_expecting("physical_line"))
             self._physical_line_plugins = plugins
         return plugins
-
-
-class Listeners(PluginTypeManager, NotifierBuilderMixin):
-    """All of the listeners registered through entry-points or config."""
-
-    namespace = "flake8.listen"
 
 
 class ReportFormatters(PluginTypeManager):

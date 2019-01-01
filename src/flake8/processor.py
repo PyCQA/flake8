@@ -270,7 +270,7 @@ class FileProcessor(object):
         """Retrieve the physical line at the specified line number."""
         adjusted_line_number = line_number - 1
         # NOTE(sigmavirus24): Some plugins choose to report errors for empty
-        # files on Line 1. In those casese, we shouldn't bother trying to
+        # files on Line 1. In those cases, we shouldn't bother trying to
         # retrieve a physical line (since none exist).
         if 0 <= adjusted_line_number < len(self.lines):
             return self.lines[adjusted_line_number]

@@ -97,7 +97,7 @@ class FlakesChecker(pyflakes.checker.Checker):
                     with_doctest = True
 
         super(FlakesChecker, self).__init__(
-            tree, filename, withDoctest=with_doctest
+            tree, filename=filename, withDoctest=with_doctest
         )
 
     @classmethod

@@ -12,8 +12,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))  # noqa
 import flake8
 
 
-tests_require = ['mock >= 2.0.0', 'pytest']
-
 # NOTE(sigmavirus24): When updating these requirements, update them in
 # setup.cfg as well.
 requires = [
@@ -147,6 +145,4 @@ setuptools.setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Software Development :: Quality Assurance",
     ],
-    tests_require=tests_require,
-    setup_requires=['pytest-runner'],
 )

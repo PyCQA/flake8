@@ -71,7 +71,6 @@ class ConfigFileFinder(object):
             try:
                 if sys.version_info < (3,) and isinstance(filename, bytes):
                     filename = filename.decode('UTF-8')
-
                 found_files.extend(config.read(filename))
             except UnicodeDecodeError:
                 LOG.exception(

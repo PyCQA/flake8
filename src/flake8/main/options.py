@@ -1,6 +1,5 @@
 """Contains the logic for all of the default options for Flake8."""
 from flake8 import defaults
-from flake8 import utils
 from flake8.main import debug
 from flake8.main import vcs
 
@@ -146,9 +145,8 @@ def register_default_options(option_manager):
 
     add_option(
         "--per-file-ignores",
+        default="",
         parse_from_config=True,
-        comma_separated_list=True,
-        separator=utils.NEWLINE_SEPARATED_LIST_RE,
         help="A pairing of filenames and violation codes that defines which "
         "violations to ignore in a particular file. The filenames can be "
         "specified in a manner similar to the ``--exclude`` option and the "

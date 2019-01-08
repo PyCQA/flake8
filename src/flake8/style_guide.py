@@ -357,9 +357,10 @@ class StyleGuideManager(object):
         :rtype:
             :class:`~flake8.style_guide.StyleGuide`
         """
-        for value in options.per_file_ignores:
-            filename, violations_str = value.split(":")
-            violations = utils.parse_comma_separated_list(violations_str)
+        per_file = utils.parse_files_to_codes_mapping(
+            options.per_file_ignores
+        )
+        for filename, violations in per_file:
             yield self.default_style_guide.copy(
                 filename=filename, extend_ignore_with=violations
             )

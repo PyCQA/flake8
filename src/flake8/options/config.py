@@ -15,8 +15,6 @@ __all__ = ("ConfigFileFinder", "MergedConfigParser")
 class ConfigFileFinder(object):
     """Encapsulate the logic for finding and reading config files."""
 
-    PROJECT_FILENAMES = ("setup.cfg", "tox.ini")
-
     def __init__(self, program_name, args, extra_config_files):
         """Initialize object to find config files.
 

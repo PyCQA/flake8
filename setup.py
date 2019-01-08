@@ -127,6 +127,9 @@ setuptools.setup(
             'quiet-filename = flake8.formatting.default:FilenameOnly',
             'quiet-nothing = flake8.formatting.default:Nothing',
         ],
+        'breezy.plugin': [
+            'flake8 = flake8.main.breezy',
+        ],
     },
     classifiers=[
         "Development Status :: 5 - Production/Stable",

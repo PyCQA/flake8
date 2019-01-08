@@ -1,5 +1,6 @@
 """Module containing some of the logic for our VCS installation logic."""
 from flake8 import exceptions as exc
+from flake8.main import breezy
 from flake8.main import git
 from flake8.main import mercurial
 
@@ -8,7 +9,9 @@ from flake8.main import mercurial
 # as plugins, e.g., adding a flake8.vcs entry-point. In that case, this
 # dictionary should disappear, and this module might contain more code for
 # managing those bits (in conjuntion with flake8.plugins.manager).
-_INSTALLERS = {"git": git.install, "mercurial": mercurial.install}
+_INSTALLERS = {"git": git.install,
+               "mercurial": mercurial.install,
+               "breezy": breezy.install}
 
 
 def install(option, option_string, value, parser):

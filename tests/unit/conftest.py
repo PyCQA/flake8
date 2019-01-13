@@ -1,6 +1,7 @@
-"""Shared fixtures between unit tests"""
-import pytest
+"""Shared fixtures between unit tests."""
 import optparse
+
+import pytest
 
 
 def options_from(**kwargs):
@@ -14,5 +15,5 @@ def options_from(**kwargs):
 
 @pytest.fixture
 def default_options():
-    """Fixture returning the default options of flake8"""
+    """Fixture returning the default options of flake8."""
     return options_from()

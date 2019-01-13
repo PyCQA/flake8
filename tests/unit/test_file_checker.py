@@ -1,8 +1,8 @@
 """Unit tests for the FileChecker class."""
 import mock
 import pytest
-import flake8
 
+import flake8
 from flake8 import checker
 
 
@@ -48,8 +48,9 @@ def test_nonexistent_file():
 
 
 def test_raises_exception_on_failed_plugin(tmp_path, default_options):
+    """Checks that a failing plugin results in PluginExecutionFailed."""
     foobar = tmp_path / 'foobar.py'
-    foobar.write_text("I exist")
+    foobar.write_text(u"I exist!")  # Create temp file
     plugin = {
         "name": "failure",
         "plugin_name": "failure",  # Both are necessary

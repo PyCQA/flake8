@@ -47,7 +47,7 @@ def test_nonexistent_file():
     assert error[0] == "E902"
 
 
-def test_raises_proper_exception_on_failed_plugin_run(tmp_path, default_options):
+def test_raises_exception_on_failed_plugin(tmp_path, default_options):
     foobar = tmp_path / 'foobar.py'
     foobar.write_text("I exist")
     plugin = {

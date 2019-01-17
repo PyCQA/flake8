@@ -11,7 +11,6 @@ import tokenize
 
 DIFF_HUNK_REGEXP = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@.*$")
 COMMA_SEPARATED_LIST_RE = re.compile(r"[,\s]")
-NEWLINE_SEPARATED_LIST_RE = re.compile(r"[\s]")
 LOCAL_PLUGIN_LIST_RE = re.compile(r"[,\t\n\r\f\v]")
 
 
@@ -39,6 +38,100 @@ def parse_comma_separated_list(value, regexp=COMMA_SEPARATED_LIST_RE):
 
     item_gen = (item.strip() for item in value)
     return [item for item in item_gen if item]
+
+
+_Token = collections.namedtuple("Token", ("tp", "src"))
+_CODE, _FILE, _COLON, _COMMA, _WS = "code", "file", "colon", "comma", "ws"
+_EOF = "eof"
+_FILE_LIST_TOKEN_TYPES = [
+    (re.compile(r"[A-Z][0-9]*"), _CODE),
+    (re.compile(r"[^\s:,]+"), _FILE),
+    (re.compile(r"\s*:\s*"), _COLON),
+    (re.compile(r"\s*,\s*"), _COMMA),
+    (re.compile(r"\s+"), _WS),
+]
+
+
+def _tokenize_files_to_codes_mapping(value):
+    # type: (str) -> List[_Token]
+    tokens = []
+    i = 0
+    while i < len(value):
+        for token_re, token_name in _FILE_LIST_TOKEN_TYPES:
+            match = token_re.match(value, i)
+            if match:
+                tokens.append(_Token(token_name, match.group().strip()))
+                i = match.end()
+                break
+        else:
+            raise AssertionError("unreachable", value, i)
+    tokens.append(_Token(_EOF, ""))
+
+    return tokens
+
+
+def parse_files_to_codes_mapping(value):  # noqa: C901
+    # type: (Union[Sequence[str], str]) -> List[Tuple[List[str], List[str]]]
+    """Parse a files-to-codes maping.
+
+    A files-to-codes mapping a sequence of values specified as
+    `filenames list:codes list ...`.  Each of the lists may be separated by
+    either comma or whitespace tokens.
+
+    :param value: String to be parsed and normalized.
+    :type value: str
+    """
+    if isinstance(value, (list, tuple)):
+        value = "\n".join(value)
+
+    ret = []
+    if not value.strip():
+        return ret
+
+    class State:
+        seen_sep = True
+        seen_colon = False
+        filenames = []
+        codes = []
+
+    def _reset():
+        if State.codes:
+            for filename in State.filenames:
+                ret.append((filename, State.codes))
+        State.seen_sep = True
+        State.seen_colon = False
+        State.filenames = []
+        State.codes = []
+
+    for token in _tokenize_files_to_codes_mapping(value):
+        # legal in any state: separator sets the sep bit
+        if token.tp in {_COMMA, _WS}:
+            State.seen_sep = True
+        # looking for filenames
+        elif not State.seen_colon:
+            if token.tp == _COLON:
+                State.seen_colon = True
+                State.seen_sep = True
+            elif State.seen_sep and token.tp == _FILE:
+                State.filenames.append(token.src)
+                State.seen_sep = False
+            else:
+                raise ValueError("Unexpected token: {}".format(token))
+        # looking for codes
+        else:
+            if token.tp == _EOF:
+                _reset()
+            elif State.seen_sep and token.tp == _CODE:
+                State.codes.append(token.src)
+                State.seen_sep = False
+            elif State.seen_sep and token.tp == _FILE:
+                _reset()
+                State.filenames.append(token.src)
+                State.seen_sep = False
+            else:
+                raise ValueError("Unexpected token: {}".format(token))
+
+    return ret
 
 
 def normalize_paths(paths, parent=os.curdir):

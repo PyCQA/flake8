@@ -32,7 +32,6 @@ class Option(object):
         parse_from_config=False,
         comma_separated_list=False,
         normalize_paths=False,
-        separator=None,
     ):
         """Initialize an Option instance wrapping optparse.Option.
 
@@ -80,8 +79,6 @@ class Option(object):
         :param bool normalize_paths:
             Whether the option is expecting a path or list of paths and should
             attempt to normalize the paths to absolute paths.
-        :param separator:
-            The item that separates the "comma"-separated list.
         """
         self.short_option_name = short_option_name
         self.long_option_name = long_option_name
@@ -110,7 +107,6 @@ class Option(object):
         self.parse_from_config = parse_from_config
         self.comma_separated_list = comma_separated_list
         self.normalize_paths = normalize_paths
-        self.separator = separator or utils.COMMA_SEPARATED_LIST_RE
 
         self.config_name = None
         if parse_from_config:

@@ -32,6 +32,82 @@ def test_parse_comma_separated_list(value, expected):
     assert utils.parse_comma_separated_list(value) == expected
 
 
+@pytest.mark.parametrize(
+    ('value', 'expected'),
+    (
+        # empty option configures nothing
+        ('', []), ('   ', []), ('\n\n\n', []),
+        # basic case
+        (
+            'f.py:E123',
+            [('f.py', ['E123'])],
+        ),
+        # multiple filenames, multiple codes
+        (
+            'f.py,g.py:E,F',
+            [('f.py', ['E', 'F']), ('g.py', ['E', 'F'])],
+        ),
+        # demonstrate that whitespace is not important around tokens
+        (
+            '   f.py  , g.py  : E  , F  ',
+            [('f.py', ['E', 'F']), ('g.py', ['E', 'F'])],
+        ),
+        # whitespace can separate groups of configuration
+        (
+            'f.py:E g.py:F',
+            [('f.py', ['E']), ('g.py', ['F'])],
+        ),
+        # newlines can separate groups of configuration
+        (
+            'f.py: E\ng.py: F\n',
+            [('f.py', ['E']), ('g.py', ['F'])],
+        ),
+        # whitespace can be used in place of commas
+        (
+            'f.py g.py: E F',
+            [('f.py', ['E', 'F']), ('g.py', ['E', 'F'])],
+        ),
+        # go ahead, indent your codes
+        (
+            'f.py:\n    E,F\ng.py:\n    G,H',
+            [('f.py', ['E', 'F']), ('g.py', ['G', 'H'])],
+        ),
+        #  it's easier to allow zero filenames or zero codes than forbid it
+        (':E', []), ('f.py:', []),
+        (':E f.py:F', [('f.py', ['F'])]),
+        ('f.py: g.py:F', [('g.py', ['F'])]),
+        # sequences are also valid (?)
+        (
+            ['f.py:E,F', 'g.py:G,H'],
+            [('f.py', ['E', 'F']), ('g.py', ['G', 'H'])],
+        ),
+    ),
+)
+def test_parse_files_to_codes_mapping(value, expected):
+    """Test parsing of valid files-to-codes mappings."""
+    assert utils.parse_files_to_codes_mapping(value) == expected
+
+
+@pytest.mark.parametrize(
+    'value',
+    (
+        # code while looking for filenames
+        'E123', 'f.py,E123', 'f.py E123',
+        # eof while looking for filenames
+        'f.py', 'f.py:E,g.py'
+        # colon while looking for codes
+        'f.py::', 'f.py:E:',
+
+        # no separator between
+        'f.py:Eg.py:F', 'f.py:E1F1',
+    ),
+)
+def test_invalid_file_list(value):
+    """Test parsing of invalid files-to-codes mappings."""
+    with pytest.raises(ValueError):
+        utils.parse_files_to_codes_mapping(value)
+
+
 @pytest.mark.parametrize("value,expected", [
     ("flake8", "flake8"),
     ("../flake8", os.path.abspath("../flake8")),

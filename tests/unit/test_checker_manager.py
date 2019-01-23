@@ -23,7 +23,7 @@ def test_oserrors_cause_serial_fall_back():
     with mock.patch('_multiprocessing.SemLock', side_effect=err):
         manager = checker.Manager(style_guide, [], [])
         with mock.patch.object(manager, 'run_serial') as serial:
-                manager.run()
+            manager.run()
     assert serial.call_count == 1
     assert manager.using_multiprocessing is False
 

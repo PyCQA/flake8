@@ -21,7 +21,7 @@ requires = [
     # http://flake8.pycqa.org/en/latest/internal/releases.html#releasing-flake8
     "entrypoints >= 0.2.3, < 0.3.0",
     "pyflakes >= 2.1.0, < 2.2.0",
-    "pycodestyle >= 2.4.0, < 2.5.0",
+    "pycodestyle >= 2.5.0, < 2.6.0",
     "mccabe >= 0.6.0, < 0.7.0",
 ]
 
@@ -115,6 +115,7 @@ setuptools.setup(
             PEP8_PLUGIN('comparison_type'),
             PEP8_PLUGIN('ambiguous_identifier'),
             PEP8_PLUGIN('bare_except'),
+            PEP8_PLUGIN('maximum_doc_length'),
             PEP8_PLUGIN('python_3000_has_key'),
             PEP8_PLUGIN('python_3000_raise_comma'),
             PEP8_PLUGIN('python_3000_not_equal'),

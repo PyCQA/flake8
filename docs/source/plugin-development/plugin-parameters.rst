@@ -48,6 +48,7 @@ the data instead of being called on each physical or logical line.
 - :attr:`~flake8.processor.FileProcessor.file_tokens`
 - :attr:`~flake8.processor.FileProcessor.lines`
 - :attr:`~flake8.processor.FileProcessor.max_line_length`
+- :attr:`~flake8.processor.FileProcessor.max_doc_length`
 - :attr:`~flake8.processor.FileProcessor.total_lines`
 - :attr:`~flake8.processor.FileProcessor.verbose`
 

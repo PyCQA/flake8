@@ -1,5 +1,6 @@
 """The logic for Flake8's integration with setuptools."""
 import os
+from typing import List  # noqa: F401 (until flake8 3.7)
 
 import setuptools
 
@@ -19,7 +20,7 @@ class Flake8(setuptools.Command):
     # of options, and since this will break when users use plugins that
     # provide command-line options, we are leaving this empty. If users want
     # to configure this command, they can do so through config files.
-    user_options = []
+    user_options = []  # type: List[str]
 
     def initialize_options(self):
         """Override this method to initialize our application."""

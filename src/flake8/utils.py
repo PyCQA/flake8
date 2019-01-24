@@ -8,6 +8,13 @@ import platform
 import re
 import sys
 import tokenize
+from typing import Callable, Dict, Generator  # noqa: F401 (until flake8 3.7)
+from typing import List, Pattern, Sequence  # noqa: F401 (until flake8 3,7)
+from typing import Tuple, TYPE_CHECKING  # noqa: F401 (until flake8 3.7)
+from typing import Union  # noqa: F401 (until flake8 3.7)
+
+if TYPE_CHECKING:
+    from flake8.plugins.manager import Plugin  # noqa: F401 (until flake8 3.7)
 
 DIFF_HUNK_REGEXP = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@.*$")
 COMMA_SEPARATED_LIST_RE = re.compile(r"[,\s]")
@@ -15,7 +22,7 @@ LOCAL_PLUGIN_LIST_RE = re.compile(r"[,\t\n\r\f\v]")
 
 
 def parse_comma_separated_list(value, regexp=COMMA_SEPARATED_LIST_RE):
-    # type: (Union[Sequence[str], str]) -> List[str]
+    # type: (Union[Sequence[str], str], Pattern[str]) -> List[str]
     """Parse a comma-separated list.
 
     :param value:
@@ -321,7 +328,7 @@ def _default_predicate(*args):
 
 
 def filenames_from(arg, predicate=None):
-    # type: (str, callable) -> Generator
+    # type: (str, Callable[[str], bool]) -> Generator
     """Generate filenames from an argument.
 
     :param str arg:
@@ -382,7 +389,7 @@ def fnmatch(filename, patterns, default=True):
 
 
 def parameters_for(plugin):
-    # type: (flake8.plugins.manager.Plugin) -> Dict[str, bool]
+    # type: (Plugin) -> Dict[str, bool]
     """Return the parameters for the plugin.
 
     This will inspect the plugin and return either the function parameters

@@ -7,6 +7,7 @@ import functools
 import itertools
 import linecache
 import logging
+from typing import Optional, Union  # noqa: F401 (until flake8 3.7)
 
 from flake8 import defaults
 from flake8 import statistics
@@ -391,7 +392,7 @@ class StyleGuideManager(object):
         text,
         physical_line=None,
     ):
-        # type: (str, str, int, int, str) -> int
+        # type: (str, str, int, int, str, Optional[str]) -> int
         """Handle an error reported by a check.
 
         :param str code:
@@ -511,7 +512,7 @@ class StyleGuide(object):
         text,
         physical_line=None,
     ):
-        # type: (str, str, int, int, str) -> int
+        # type: (str, str, int, int, str, Optional[str]) -> int
         """Handle an error reported by a check.
 
         :param str code:

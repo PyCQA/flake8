@@ -3,6 +3,7 @@ import contextlib
 import logging
 import sys
 import tokenize
+from typing import List  # noqa: F401 (until flake8 3.7)
 
 import flake8
 from flake8 import defaults
@@ -348,7 +349,7 @@ class FileProcessor(object):
             return False
 
     def strip_utf_bom(self):
-        # type: () -> NoneType
+        # type: () -> None
         """Strip the UTF bom from the lines of the file."""
         if not self.lines:
             # If we have nothing to analyze quit early

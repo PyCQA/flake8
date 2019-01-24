@@ -27,6 +27,7 @@ requires = [
 
 extras_require = {
     ":python_version<'3.4'": ['enum34'],
+    ":python_version<'3.5'": ['typing'],
     ":python_version<'3.2'": ['configparser'],
 }
 

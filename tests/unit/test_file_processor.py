@@ -239,7 +239,7 @@ def test_next_logical_line_updates_the_previous_logical_line():
     file_processor.indent_level = 1
     file_processor.logical_line = 'a = 1'
     assert file_processor.previous_logical == ''
-    assert file_processor.previous_indent_level is 0
+    assert file_processor.previous_indent_level == 0
 
     file_processor.next_logical_line()
     assert file_processor.previous_logical == 'a = 1'

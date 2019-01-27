@@ -52,7 +52,7 @@ def test_show_source_returns_nothing_when_not_showing_source():
     formatter = base.BaseFormatter(options(show_source=False))
     assert formatter.show_source(
         style_guide.Violation('A000', 'file.py', 1, 1, 'error text', 'line')
-    ) is ''
+    ) == ''
 
 
 def test_show_source_returns_nothing_when_there_is_source():
@@ -60,7 +60,7 @@ def test_show_source_returns_nothing_when_there_is_source():
     formatter = base.BaseFormatter(options(show_source=True))
     assert formatter.show_source(
         style_guide.Violation('A000', 'file.py', 1, 1, 'error text', None)
-    ) is ''
+    ) == ''
 
 
 @pytest.mark.parametrize('line, column', [

@@ -4,6 +4,8 @@ from __future__ import print_function
 import logging
 import sys
 import time
+from typing import List, Optional, Sequence  # noqa: F401 (until flake8 3.7)
+from typing import Type, TYPE_CHECKING  # noqa: F401 (until flake8 3.7)
 
 import flake8
 from flake8 import checker
@@ -16,6 +18,12 @@ from flake8.options import aggregator, config
 from flake8.options import manager
 from flake8.plugins import manager as plugin_manager
 
+if TYPE_CHECKING:
+    # fmt: off
+    from flake8.formatting.base import BaseFormatter  # noqa: F401, E501 (until flake8 3.7)
+    # fmt: on
+
+
 LOG = logging.getLogger(__name__)
 
 
@@ -23,7 +31,7 @@ class Application(object):
     """Abstract our application into a class."""
 
     def __init__(self, program="flake8", version=flake8.__version__):
-        # type: (str, str) -> NoneType
+        # type: (str, str) -> None
         """Initialize our application.
 
         :param str program:
@@ -132,7 +140,7 @@ class Application(object):
         self.prelim_opts, self.prelim_args = opts, args
 
     def exit(self):
-        # type: () -> NoneType
+        # type: () -> None
         """Handle finalization and exiting the program.
 
         This should be the last thing called on the application instance. It
@@ -159,7 +167,7 @@ class Application(object):
             )
 
     def find_plugins(self):
-        # type: () -> NoneType
+        # type: () -> None
         """Find and load the plugins for this application.
 
         If :attr:`check_plugins`, or :attr:`formatting_plugins` are ``None``
@@ -191,14 +199,14 @@ class Application(object):
         self.formatting_plugins.load_plugins()
 
     def register_plugin_options(self):
-        # type: () -> NoneType
+        # type: () -> None
         """Register options provided by plugins to our option manager."""
         self.check_plugins.register_options(self.option_manager)
         self.check_plugins.register_plugin_versions(self.option_manager)
         self.formatting_plugins.register_options(self.option_manager)
 
     def parse_configuration_and_cli(self, argv=None):
-        # type: (Union[NoneType, List[str]]) -> NoneType
+        # type: (Optional[List[str]]) -> None
         """Parse configuration files and the CLI options.
 
         :param list argv:
@@ -238,7 +246,7 @@ class Application(object):
         return formatter_plugin.execute
 
     def make_formatter(self, formatter_class=None):
-        # type: () -> NoneType
+        # type: (Optional[Type[BaseFormatter]]) -> None
         """Initialize a formatter based on the parsed options."""
         if self.formatter is None:
             format_plugin = self.options.format
@@ -253,7 +261,7 @@ class Application(object):
             self.formatter = formatter_class(self.options)
 
     def make_guide(self):
-        # type: () -> NoneType
+        # type: () -> None
         """Initialize our StyleGuide."""
         if self.guide is None:
             self.guide = style_guide.StyleGuideManager(
@@ -264,7 +272,7 @@ class Application(object):
             self.guide.add_diff_ranges(self.parsed_diff)
 
     def make_file_checker_manager(self):
-        # type: () -> NoneType
+        # type: () -> None
         """Initialize our FileChecker Manager."""
         if self.file_checker_manager is None:
             self.file_checker_manager = checker.Manager(
@@ -274,7 +282,7 @@ class Application(object):
             )
 
     def run_checks(self, files=None):
-        # type: (Union[List[str], NoneType]) -> NoneType
+        # type: (Optional[List[str]]) -> None
         """Run the actual checks with the FileChecker Manager.
 
         This method encapsulates the logic to make a
@@ -315,7 +323,7 @@ class Application(object):
         self.formatter.show_benchmarks(statistics)
 
     def report_errors(self):
-        # type: () -> NoneType
+        # type: () -> None
         """Report all the errors found by flake8 3.0.
 
         This also updates the :attr:`result_count` attribute with the total
@@ -338,7 +346,7 @@ class Application(object):
         self.formatter.show_statistics(self.guide.stats)
 
     def initialize(self, argv):
-        # type: () -> NoneType
+        # type: (Sequence[str]) -> None
         """Initialize the application to be run.
 
         This finds the plugins, registers their options, and parses the
@@ -367,13 +375,13 @@ class Application(object):
         self.formatter.stop()
 
     def _run(self, argv):
-        # type: (Union[NoneType, List[str]]) -> NoneType
+        # type: (Optional[List[str]]) -> None
         self.initialize(argv)
         self.run_checks()
         self.report()
 
     def run(self, argv=None):
-        # type: (Union[NoneType, List[str]]) -> NoneType
+        # type: (Optional[List[str]]) -> None
         """Run our application.
 
         This method will also handle KeyboardInterrupt exceptions for the
@@ -389,7 +397,7 @@ class Application(object):
             self.catastrophic_failure = True
         except exceptions.ExecutionError as exc:
             print("There was a critical error during execution of Flake8:")
-            print(exc.message)
+            print(exc)
             LOG.exception(exc)
             self.catastrophic_failure = True
         except exceptions.EarlyQuit:

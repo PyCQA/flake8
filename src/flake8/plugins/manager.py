@@ -315,7 +315,7 @@ class PluginManager(object):  # pylint: disable=too-few-public-methods
 
 
 def version_for(plugin):
-    # (Plugin) -> Union[str, NoneType]
+    # (Plugin) -> Optional[str]
     """Determine the version of a plugin by its module.
 
     :param plugin:

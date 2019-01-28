@@ -30,6 +30,8 @@ FLAKE8_PYFLAKES_CODES = {
     "TooManyExpressionsInStarredAssignment": "F621",
     "TwoStarredExpressions": "F622",
     "AssertTuple": "F631",
+    "IsLiteral": "F632",
+    "InvalidPrintSyntax": "F633",
     "BreakOutsideLoop": "F701",
     "ContinueOutsideLoop": "F702",
     "ContinueInFinally": "F703",
@@ -39,6 +41,7 @@ FLAKE8_PYFLAKES_CODES = {
     "DefaultExceptNotLast": "F707",
     "DoctestSyntaxError": "F721",
     "ForwardAnnotationSyntaxError": "F722",
+    "CommentAnnotationSyntaxError": "F723",
     "RedefinedWhileUnused": "F811",
     "RedefinedInListComp": "F812",
     "UndefinedName": "F821",
@@ -72,7 +75,7 @@ class FlakesChecker(pyflakes.checker.Checker):
     include_in_doctest = []
     exclude_from_doctest = []
 
-    def __init__(self, tree, filename):
+    def __init__(self, tree, file_tokens, filename):
         """Initialize the PyFlakes plugin with an AST tree and filename."""
         filename = utils.normalize_paths(filename)[0]
         with_doctest = self.with_doctest
@@ -97,7 +100,10 @@ class FlakesChecker(pyflakes.checker.Checker):
                     with_doctest = True
 
         super(FlakesChecker, self).__init__(
-            tree, filename=filename, withDoctest=with_doctest
+            tree,
+            filename=filename,
+            withDoctest=with_doctest,
+            file_tokens=file_tokens,
         )
 
     @classmethod

@@ -5,6 +5,7 @@ import logging
 import signal
 import sys
 import tokenize
+from typing import List, Optional  # noqa: F401 (until flake8 3.7)
 
 try:
     import multiprocessing
@@ -195,7 +196,7 @@ class Manager(object):
         )
 
     def make_checkers(self, paths=None):
-        # type: (List[str]) -> NoneType
+        # type: (List[str]) -> None
         """Create checkers for each file."""
         if paths is None:
             paths = self.arguments
@@ -411,7 +412,7 @@ class FileChecker(object):
             return None
 
     def report(self, error_code, line_number, column, text, line=None):
-        # type: (str, int, int, str) -> str
+        # type: (str, int, int, str, Optional[str]) -> str
         """Report an error by storing it in the results list."""
         if error_code is None:
             error_code, text = text.split(" ", 1)

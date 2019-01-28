@@ -20,13 +20,14 @@ requires = [
     # And in which releases we will update those ranges here:
     # http://flake8.pycqa.org/en/latest/internal/releases.html#releasing-flake8
     "entrypoints >= 0.2.3, < 0.3.0",
-    "pyflakes >= 2.0.0, < 2.1.0",
+    "pyflakes >= 2.1.0, < 2.2.0",
     "pycodestyle >= 2.4.0, < 2.5.0",
     "mccabe >= 0.6.0, < 0.7.0",
 ]
 
 extras_require = {
     ":python_version<'3.4'": ['enum34'],
+    ":python_version<'3.5'": ['typing'],
     ":python_version<'3.2'": ['configparser'],
 }
 

@@ -1,9 +1,11 @@
 """Command-line implementation of flake8."""
+from typing import List, Optional  # noqa: F401 (until flake8 3.7)
+
 from flake8.main import application
 
 
 def main(argv=None):
-    # type: (Union[NoneType, List[str]]) -> NoneType
+    # type: (Optional[List[str]]) -> None
     """Execute the main bit of the application.
 
     This handles the creation of an instance of :class:`Application`, runs it,

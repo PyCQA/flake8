@@ -35,6 +35,7 @@ class FileProcessor(object):
     - :attr:`line_number`
     - :attr:`logical_line`
     - :attr:`max_line_length`
+    - :attr:`max_doc_length`
     - :attr:`multiline`
     - :attr:`noqa`
     - :attr:`previous_indent_level`
@@ -80,6 +81,8 @@ class FileProcessor(object):
         self.logical_line = ""
         #: Maximum line length as configured by the user
         self.max_line_length = options.max_line_length
+        #: Maximum docstring / comment line length as configured by the user
+        self.max_doc_length = options.max_doc_length
         #: Whether the current physical line is multiline
         self.multiline = False
         #: Whether or not we're observing NoQA

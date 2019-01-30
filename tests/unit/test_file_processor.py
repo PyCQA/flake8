@@ -1,6 +1,5 @@
 """Tests for the FileProcessor class."""
 import ast
-import optparse
 import tokenize
 
 import mock
@@ -110,7 +109,9 @@ def test_read_lines_uses_display_name(stdin_get_value, default_options):
 
 
 @mock.patch('flake8.utils.stdin_get_value')
-def test_read_lines_ignores_empty_display_name(stdin_get_value, default_options):
+def test_read_lines_ignores_empty_display_name(
+        stdin_get_value, default_options,
+):
     """Verify that when processing stdin we use a display name if present."""
     stdin_value = mock.Mock()
     stdin_value.splitlines.return_value = []
@@ -151,7 +152,9 @@ def test_next_line(default_options):
     ('W101', 'frobulate()', None),
     ('F821', 'class FizBuz:', None),
 ])
-def test_check_physical_error(error_code, line, expected_indent_char, default_options):
+def test_check_physical_error(
+        error_code, line, expected_indent_char, default_options,
+):
     """Verify we update the indet char for the appropriate error code."""
     file_processor = processor.FileProcessor('-', default_options, lines=[
         'Line 1',
@@ -184,7 +187,9 @@ def test_keyword_arguments_for(params, args, expected_kwargs, default_options):
     assert kwargs_for(params, args) == expected_kwargs
 
 
-def test_keyword_arguments_for_does_not_handle_attribute_errors(default_options):
+def test_keyword_arguments_for_does_not_handle_attribute_errors(
+        default_options,
+):
     """Verify we re-raise AttributeErrors."""
     file_processor = processor.FileProcessor('-', default_options, lines=[
         'Line 1',

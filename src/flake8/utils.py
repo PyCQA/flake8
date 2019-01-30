@@ -10,10 +10,9 @@ import sys
 import tokenize
 from typing import Callable, Dict, Generator  # noqa: F401 (until flake8 3.7)
 from typing import List, Pattern, Sequence  # noqa: F401 (until flake8 3,7)
-from typing import Tuple, TYPE_CHECKING  # noqa: F401 (until flake8 3.7)
-from typing import Union  # noqa: F401 (until flake8 3.7)
+from typing import Tuple, Union  # noqa: F401 (until flake8 3.7)
 
-if TYPE_CHECKING:
+if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
     from flake8.plugins.manager import Plugin  # noqa: F401 (until flake8 3.7)
 
 DIFF_HUNK_REGEXP = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@.*$")

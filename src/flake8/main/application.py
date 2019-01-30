@@ -5,7 +5,6 @@ import logging
 import sys
 import time
 from typing import List, Optional, Sequence  # noqa: F401 (until flake8 3.7)
-from typing import Type, TYPE_CHECKING  # noqa: F401 (until flake8 3.7)
 
 import flake8
 from flake8 import checker
@@ -18,8 +17,10 @@ from flake8.options import aggregator, config
 from flake8.options import manager
 from flake8.plugins import manager as plugin_manager
 
-if TYPE_CHECKING:
+if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
     # fmt: off
+    # `typing.Type` as introduced in 3.5.2
+    from typing import Type  # noqa: F401 (until flake8 3.7)
     from flake8.formatting.base import BaseFormatter  # noqa: F401, E501 (until flake8 3.7)
     # fmt: on
 

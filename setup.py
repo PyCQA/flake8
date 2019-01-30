@@ -19,7 +19,7 @@ requires = [
     # http://flake8.pycqa.org/en/latest/faq.html#why-does-flake8-use-ranges-for-its-dependencies
     # And in which releases we will update those ranges here:
     # http://flake8.pycqa.org/en/latest/internal/releases.html#releasing-flake8
-    "entrypoints >= 0.2.3, < 0.3.0",
+    "entrypoints >= 0.3.0, < 0.4.0",
     "pyflakes >= 2.1.0, < 2.2.0",
     "pycodestyle >= 2.5.0, < 2.6.0",
     "mccabe >= 0.6.0, < 0.7.0",

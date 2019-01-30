@@ -429,7 +429,7 @@ class StyleGuideManager(object):
         :param dict diffinfo:
             Dictionary mapping filenames to sets of line number ranges.
         """
-        for guide in self.style_guides.values():
+        for guide in self.style_guides:
             guide.add_diff_ranges(diffinfo)
 
 

@@ -46,7 +46,6 @@ def get_style_guide(**kwargs):
         except AttributeError:
             LOG.error('Could not update option "%s"', key)
     application.make_formatter()
-    application.make_notifier()
     application.make_guide()
     application.make_file_checker_manager()
     return StyleGuide(application)

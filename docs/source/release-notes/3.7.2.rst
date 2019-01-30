@@ -1,0 +1,36 @@
+3.7.1 -- 2019-01-30
+-------------------
+
+You can view the `3.7.2 milestone`_ on GitLab for more details.
+
+Bugs Fixed
+~~~~~~~~~~
+
+- Fix broken ``flake8 --diff`` (regressed in 3.7.0) (See also `GitLab!292`_,
+  `GitLab#490`_)
+
+- Fix typo in plugin exception reporting (See also `GitLab!275`_,
+  `GitLab#491`_)
+
+- Fix ``AttributeError`` while attempting to use the legacy api (regressed in
+  3.7.0) (See also `GitLab!293`_, `GitLab#497`_)
+
+.. all links
+.. _3.7.2 milestone:
+    https://gitlab.com/pycqa/flake8/milestones/25
+
+.. issue links
+.. _GitLab#490:
+    https://gitlab.com/pycqa/flake8/issues/490
+.. _GitLab#491:
+    https://gitlab.com/pycqa/flake8/issues/491
+.. _GitLab#497:
+    https://gitlab.com/pycqa/flake8/issues/497
+
+.. merge request links
+.. _GitLab!292:
+    https://gitlab.com/pycqa/flake8/merge_requests/292
+.. _GitLab!275:
+    https://gitlab.com/pycqa/flake8/merge_requests/275
+.. _GitLab!293:
+    https://gitlab.com/pycqa/flake8/merge_requests/293

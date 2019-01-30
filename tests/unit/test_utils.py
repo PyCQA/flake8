@@ -72,10 +72,18 @@ def test_parse_comma_separated_list(value, expected):
             'f.py:\n    E,F\ng.py:\n    G,H',
             [('f.py', ['E', 'F']), ('g.py', ['G', 'H'])],
         ),
+        # capitalized filenames are ok too
+        (
+            'F.py,G.py: F,G',
+            [('F.py', ['F', 'G']), ('G.py', ['F', 'G'])],
+        ),
         #  it's easier to allow zero filenames or zero codes than forbid it
         (':E', []), ('f.py:', []),
         (':E f.py:F', [('f.py', ['F'])]),
         ('f.py: g.py:F', [('g.py', ['F'])]),
+        ('f.py:E:', []),
+        ('f.py:E.py:', []),
+        ('f.py:Eg.py:F', [('Eg.py', ['F'])]),
         # sequences are also valid (?)
         (
             ['f.py:E,F', 'g.py:G,H'],
@@ -96,10 +104,9 @@ def test_parse_files_to_codes_mapping(value, expected):
         # eof while looking for filenames
         'f.py', 'f.py:E,g.py'
         # colon while looking for codes
-        'f.py::', 'f.py:E:',
-
+        'f.py::',
         # no separator between
-        'f.py:Eg.py:F', 'f.py:E1F1',
+        'f.py:E1F1',
     ),
 )
 def test_invalid_file_list(value):

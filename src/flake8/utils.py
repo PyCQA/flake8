@@ -51,7 +51,7 @@ _Token = collections.namedtuple("Token", ("tp", "src"))
 _CODE, _FILE, _COLON, _COMMA, _WS = "code", "file", "colon", "comma", "ws"
 _EOF = "eof"
 _FILE_LIST_TOKEN_TYPES = [
-    (re.compile(r"[A-Z][0-9]*"), _CODE),
+    (re.compile(r"[A-Z][0-9]*(?=$|\s|,)"), _CODE),
     (re.compile(r"[^\s:,]+"), _FILE),
     (re.compile(r"\s*:\s*"), _COLON),
     (re.compile(r"\s*,\s*"), _COMMA),

@@ -1,6 +1,5 @@
 """Tests for the FileProcessor class."""
 import ast
-import optparse
 import tokenize
 
 import mock
@@ -9,47 +8,40 @@ import pytest
 from flake8 import processor
 
 
-def options_from(**kwargs):
-    """Generate a Values instances with our kwargs."""
-    kwargs.setdefault('hang_closing', True)
-    kwargs.setdefault('max_line_length', 79)
-    kwargs.setdefault('max_doc_length', None)
-    kwargs.setdefault('verbose', False)
-    kwargs.setdefault('stdin_display_name', 'stdin')
-    return optparse.Values(kwargs)
-
-
-def test_read_lines_splits_lines():
+def test_read_lines_splits_lines(default_options):
     """Verify that read_lines splits the lines of the file."""
-    file_processor = processor.FileProcessor(__file__, options_from())
+    file_processor = processor.FileProcessor(__file__, default_options)
     lines = file_processor.lines
     assert len(lines) > 5
     assert any('"""Tests for the FileProcessor class."""' in line.rstrip()
                for line in lines)
 
 
-def _lines_from_file(tmpdir, contents):
+def _lines_from_file(tmpdir, contents, options):
     f = tmpdir.join('f.py')
     # be careful to write the bytes exactly to avoid newline munging
     f.write_binary(contents)
-    return processor.FileProcessor(f.strpath, options_from()).lines
+    return processor.FileProcessor(f.strpath, options).lines
 
 
-def test_read_lines_universal_newlines(tmpdir):
+def test_read_lines_universal_newlines(tmpdir, default_options):
     r"""Verify that line endings are translated to \n."""
-    lines = _lines_from_file(tmpdir, b'# coding: utf-8\r\nx = 1\r\n')
+    lines = _lines_from_file(
+        tmpdir, b'# coding: utf-8\r\nx = 1\r\n', default_options)
     assert lines == ['# coding: utf-8\n', 'x = 1\n']
 
 
-def test_read_lines_incorrect_utf_16(tmpdir):
+def test_read_lines_incorrect_utf_16(tmpdir, default_options):
     """Verify that an incorrectly encoded file is read as latin-1."""
-    lines = _lines_from_file(tmpdir, b'# coding: utf16\nx = 1\n')
+    lines = _lines_from_file(
+        tmpdir, b'# coding: utf16\nx = 1\n', default_options)
     assert lines == ['# coding: utf16\n', 'x = 1\n']
 
 
-def test_read_lines_unknown_encoding(tmpdir):
+def test_read_lines_unknown_encoding(tmpdir, default_options):
     """Verify that an unknown encoding is still read as latin-1."""
-    lines = _lines_from_file(tmpdir, b'# coding: fake-encoding\nx = 1\n')
+    lines = _lines_from_file(
+        tmpdir, b'# coding: fake-encoding\nx = 1\n', default_options)
     assert lines == ['# coding: fake-encoding\n', 'x = 1\n']
 
 
@@ -57,10 +49,10 @@ def test_read_lines_unknown_encoding(tmpdir):
     '\xEF\xBB\xBF"""Module docstring."""\n',
     u'\uFEFF"""Module docstring."""\n',
 ])
-def test_strip_utf_bom(first_line):
+def test_strip_utf_bom(first_line, default_options):
     r"""Verify that we strip '\xEF\xBB\xBF' from the first line."""
     lines = [first_line]
-    file_processor = processor.FileProcessor('-', options_from(), lines[:])
+    file_processor = processor.FileProcessor('-', default_options, lines[:])
     assert file_processor.lines != lines
     assert file_processor.lines[0] == '"""Module docstring."""\n'
 
@@ -78,60 +70,60 @@ def test_strip_utf_bom(first_line):
     (['#!/usr/bin/python', 'a = 1  # flake8: noqa'], False),
     (['#!/usr/bin/python', 'a = 1  # flake8:noqa'], False),
 ])
-def test_should_ignore_file(lines, expected):
+def test_should_ignore_file(lines, expected, default_options):
     """Verify that we ignore a file if told to."""
-    file_processor = processor.FileProcessor('-', options_from(), lines)
+    file_processor = processor.FileProcessor('-', default_options, lines)
     assert file_processor.should_ignore_file() is expected
 
 
 @mock.patch('flake8.utils.stdin_get_value')
-def test_read_lines_from_stdin(stdin_get_value):
+def test_read_lines_from_stdin(stdin_get_value, default_options):
     """Verify that we use our own utility function to retrieve stdin."""
     stdin_value = mock.Mock()
     stdin_value.splitlines.return_value = []
     stdin_get_value.return_value = stdin_value
-    processor.FileProcessor('-', options_from())
+    processor.FileProcessor('-', default_options)
     stdin_get_value.assert_called_once_with()
     stdin_value.splitlines.assert_called_once_with(True)
 
 
 @mock.patch('flake8.utils.stdin_get_value')
-def test_stdin_filename_attribute(stdin_get_value):
+def test_stdin_filename_attribute(stdin_get_value, default_options):
     """Verify that we update the filename attribute."""
     stdin_value = mock.Mock()
     stdin_value.splitlines.return_value = []
     stdin_get_value.return_value = stdin_value
-    file_processor = processor.FileProcessor('-', options_from())
+    file_processor = processor.FileProcessor('-', default_options)
     assert file_processor.filename == 'stdin'
 
 
 @mock.patch('flake8.utils.stdin_get_value')
-def test_read_lines_uses_display_name(stdin_get_value):
+def test_read_lines_uses_display_name(stdin_get_value, default_options):
     """Verify that when processing stdin we use a display name if present."""
+    default_options.stdin_display_name = 'display_name.py'
     stdin_value = mock.Mock()
     stdin_value.splitlines.return_value = []
     stdin_get_value.return_value = stdin_value
-    file_processor = processor.FileProcessor('-', options_from(
-        stdin_display_name='display_name.py'
-    ))
+    file_processor = processor.FileProcessor('-', default_options)
     assert file_processor.filename == 'display_name.py'
 
 
 @mock.patch('flake8.utils.stdin_get_value')
-def test_read_lines_ignores_empty_display_name(stdin_get_value):
+def test_read_lines_ignores_empty_display_name(
+        stdin_get_value, default_options,
+):
     """Verify that when processing stdin we use a display name if present."""
     stdin_value = mock.Mock()
     stdin_value.splitlines.return_value = []
     stdin_get_value.return_value = stdin_value
-    file_processor = processor.FileProcessor('-', options_from(
-        stdin_display_name=''
-    ))
+    default_options.stdin_display_name = ''
+    file_processor = processor.FileProcessor('-', default_options)
     assert file_processor.filename == 'stdin'
 
 
-def test_line_for():
+def test_line_for(default_options):
     """Verify we grab the correct line from the cached lines."""
-    file_processor = processor.FileProcessor('-', options_from(), lines=[
+    file_processor = processor.FileProcessor('-', default_options, lines=[
         'Line 1',
         'Line 2',
         'Line 3',
@@ -141,9 +133,9 @@ def test_line_for():
         assert file_processor.line_for(i) == 'Line {0}'.format(i)
 
 
-def test_next_line():
+def test_next_line(default_options):
     """Verify we update the file_processor state for each new line."""
-    file_processor = processor.FileProcessor('-', options_from(), lines=[
+    file_processor = processor.FileProcessor('-', default_options, lines=[
         'Line 1',
         'Line 2',
         'Line 3',
@@ -160,9 +152,11 @@ def test_next_line():
     ('W101', 'frobulate()', None),
     ('F821', 'class FizBuz:', None),
 ])
-def test_check_physical_error(error_code, line, expected_indent_char):
+def test_check_physical_error(
+        error_code, line, expected_indent_char, default_options,
+):
     """Verify we update the indet char for the appropriate error code."""
-    file_processor = processor.FileProcessor('-', options_from(), lines=[
+    file_processor = processor.FileProcessor('-', default_options, lines=[
         'Line 1',
     ])
 
@@ -183,9 +177,9 @@ def test_check_physical_error(error_code, line, expected_indent_char):
     ({}, {'fake': 'foo'}, {'fake': 'foo'}),
     ({'non-existent': False}, {'fake': 'foo'}, {'fake': 'foo'}),
 ])
-def test_keyword_arguments_for(params, args, expected_kwargs):
+def test_keyword_arguments_for(params, args, expected_kwargs, default_options):
     """Verify the keyword args are generated properly."""
-    file_processor = processor.FileProcessor('-', options_from(), lines=[
+    file_processor = processor.FileProcessor('-', default_options, lines=[
         'Line 1',
     ])
     kwargs_for = file_processor.keyword_arguments_for
@@ -193,9 +187,11 @@ def test_keyword_arguments_for(params, args, expected_kwargs):
     assert kwargs_for(params, args) == expected_kwargs
 
 
-def test_keyword_arguments_for_does_not_handle_attribute_errors():
+def test_keyword_arguments_for_does_not_handle_attribute_errors(
+        default_options,
+):
     """Verify we re-raise AttributeErrors."""
-    file_processor = processor.FileProcessor('-', options_from(), lines=[
+    file_processor = processor.FileProcessor('-', default_options, lines=[
         'Line 1',
     ])
 
@@ -209,9 +205,9 @@ def test_keyword_arguments_for_does_not_handle_attribute_errors():
     ('line 1\nline 2\n', ['line 1', 'line 2']),
     ('line 1\n\nline 2\n', ['line 1', '', 'line 2']),
 ])
-def test_split_line(unsplit_line, expected_lines):
+def test_split_line(unsplit_line, expected_lines, default_options):
     """Verify the token line spliting."""
-    file_processor = processor.FileProcessor('-', options_from(), lines=[
+    file_processor = processor.FileProcessor('-', default_options, lines=[
         'Line 1',
     ])
 
@@ -221,9 +217,9 @@ def test_split_line(unsplit_line, expected_lines):
     assert len(actual_lines) == file_processor.line_number
 
 
-def test_build_ast():
+def test_build_ast(default_options):
     """Verify the logic for how we build an AST for plugins."""
-    file_processor = processor.FileProcessor('-', options_from(), lines=[
+    file_processor = processor.FileProcessor('-', default_options, lines=[
         'a = 1\n'
     ])
 
@@ -231,9 +227,9 @@ def test_build_ast():
     assert isinstance(module, ast.Module)
 
 
-def test_next_logical_line_updates_the_previous_logical_line():
+def test_next_logical_line_updates_the_previous_logical_line(default_options):
     """Verify that we update our tracking of the previous logical line."""
-    file_processor = processor.FileProcessor('-', options_from(), lines=[
+    file_processor = processor.FileProcessor('-', default_options, lines=[
         'a = 1\n'
     ])
 
@@ -247,9 +243,9 @@ def test_next_logical_line_updates_the_previous_logical_line():
     assert file_processor.previous_indent_level == 1
 
 
-def test_visited_new_blank_line():
+def test_visited_new_blank_line(default_options):
     """Verify we update the number of blank lines seen."""
-    file_processor = processor.FileProcessor('-', options_from(), lines=[
+    file_processor = processor.FileProcessor('-', default_options, lines=[
         'a = 1\n'
     ])
 
@@ -258,9 +254,9 @@ def test_visited_new_blank_line():
     assert file_processor.blank_lines == 1
 
 
-def test_inside_multiline():
+def test_inside_multiline(default_options):
     """Verify we update the line number and reset multiline."""
-    file_processor = processor.FileProcessor('-', options_from(), lines=[
+    file_processor = processor.FileProcessor('-', default_options, lines=[
         'a = 1\n'
     ])
 
@@ -293,7 +289,7 @@ def test_inside_multiline():
     ('"""xxxxxx"""', '"""xxxxxx"""'),
     ("'''xxxxxx'''", "'''xxxxxx'''"),
 ])
-def test_mutate_string(string, expected):
+def test_mutate_string(string, expected, default_options):
     """Verify we appropriately mutate the string to sanitize it."""
     actual = processor.mutate_string(string)
     assert expected == actual
@@ -354,7 +350,7 @@ def test_count_parentheses(current_count, token_text, expected):
     assert processor.count_parentheses(current_count, token_text) == expected
 
 
-def test_nonexistent_file():
+def test_nonexistent_file(default_options):
     """Verify that FileProcessor raises IOError when a file does not exist."""
     with pytest.raises(IOError):
-        processor.FileProcessor("foobar.py", options_from())
+        processor.FileProcessor("foobar.py", default_options)

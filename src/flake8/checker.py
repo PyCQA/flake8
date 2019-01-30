@@ -446,7 +446,7 @@ class FileChecker(object):
                 "Plugin %s raised an unexpected exception", plugin["name"]
             )
             raise exceptions.PluginExecutionFailed(
-                plugin=plugin, excetion=all_exc
+                plugin=plugin, exception=all_exc
             )
 
     @staticmethod

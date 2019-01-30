@@ -337,7 +337,7 @@ class StyleGuideManager(object):
         self.decider = decider or DecisionEngine(options)
         self.style_guides = []
         self.default_style_guide = StyleGuide(
-            options, formatter, decider=decider
+            options, formatter, self.stats, decider=decider
         )
         self.style_guides = list(
             itertools.chain(
@@ -436,14 +436,16 @@ class StyleGuideManager(object):
 class StyleGuide(object):
     """Manage a Flake8 user's style guide."""
 
-    def __init__(self, options, formatter, filename=None, decider=None):
+    def __init__(
+        self, options, formatter, stats, filename=None, decider=None
+    ):
         """Initialize our StyleGuide.
 
         .. todo:: Add parameter documentation.
         """
         self.options = options
         self.formatter = formatter
-        self.stats = statistics.Statistics()
+        self.stats = stats
         self.decider = decider or DecisionEngine(options)
         self.filename = filename
         if self.filename:
@@ -459,7 +461,9 @@ class StyleGuide(object):
         filename = filename or self.filename
         options = copy.deepcopy(self.options)
         options.ignore.extend(extend_ignore_with or [])
-        return StyleGuide(options, self.formatter, filename=filename)
+        return StyleGuide(
+            options, self.formatter, self.stats, filename=filename
+        )
 
     @contextlib.contextmanager
     def processing_file(self, filename):

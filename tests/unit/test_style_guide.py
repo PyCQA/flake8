@@ -4,6 +4,7 @@ import optparse
 import mock
 import pytest
 
+from flake8 import statistics
 from flake8 import style_guide
 from flake8 import utils
 from flake8.formatting import base
@@ -24,8 +25,11 @@ def create_options(**kwargs):
 def test_handle_error_does_not_raise_type_errors():
     """Verify that we handle our inputs better."""
     formatter = mock.create_autospec(base.BaseFormatter, instance=True)
-    guide = style_guide.StyleGuide(create_options(select=['T111'], ignore=[]),
-                                   formatter=formatter)
+    guide = style_guide.StyleGuide(
+        create_options(select=['T111'], ignore=[]),
+        formatter=formatter,
+        stats=statistics.Statistics(),
+    )
 
     assert 1 == guide.handle_error(
         'T111', 'file.py', 1, None, 'error found', 'a = 1'
@@ -60,9 +64,11 @@ def test_style_guide_applies_to(style_guide_file, filename, expected):
     """Verify that we match a file to its style guide."""
     formatter = mock.create_autospec(base.BaseFormatter, instance=True)
     options = create_options()
-    guide = style_guide.StyleGuide(options,
-                                   formatter=formatter,
-                                   filename=style_guide_file)
+    guide = style_guide.StyleGuide(
+        options,
+        formatter=formatter,
+        stats=statistics.Statistics(),
+        filename=style_guide_file)
     assert guide.applies_to(filename) is expected
 
 

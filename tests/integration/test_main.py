@@ -6,7 +6,7 @@ from flake8.main import application
 
 
 def test_diff_option(tmpdir, capsys):
-    """Ensure that FileChecker can handle --diff."""
+    """Ensure that `flake8 --diff` works."""
     t_py_contents = '''\
 import os
 import sys  # unused but not part of diff
@@ -40,4 +40,21 @@ index d64ac39..7d943de 100644
 
     out, err = capsys.readouterr()
     assert out == "t.py:8:1: F821 undefined name 'y'\n"
+    assert err == ''
+
+
+def test_statistics_option(tmpdir, capsys):
+    """Ensure that `flake8 --statistics` works."""
+    with tmpdir.as_cwd():
+        tmpdir.join('t.py').write('import os\nimport sys\n')
+
+        app = application.Application()
+        app.run(['--statistics', 't.py'])
+
+    out, err = capsys.readouterr()
+    assert out == '''\
+t.py:1:1: F401 'os' imported but unused
+t.py:2:1: F401 'sys' imported but unused
+2     F401 'os' imported but unused
+'''
     assert err == ''

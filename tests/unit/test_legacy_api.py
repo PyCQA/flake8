@@ -22,7 +22,6 @@ def test_get_style_guide():
     mockedapp.register_plugin_options.assert_called_once_with()
     mockedapp.parse_configuration_and_cli.assert_called_once_with([])
     mockedapp.make_formatter.assert_called_once_with()
-    mockedapp.make_notifier.assert_called_once_with()
     mockedapp.make_guide.assert_called_once_with()
     mockedapp.make_file_checker_manager.assert_called_once_with()
     assert isinstance(style_guide, api.StyleGuide)

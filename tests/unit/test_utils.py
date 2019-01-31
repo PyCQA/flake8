@@ -4,6 +4,7 @@ import os
 import mock
 import pytest
 
+from flake8 import exceptions
 from flake8 import utils
 from flake8.plugins import manager as plugin_manager
 
@@ -111,7 +112,7 @@ def test_parse_files_to_codes_mapping(value, expected):
 )
 def test_invalid_file_list(value):
     """Test parsing of invalid files-to-codes mappings."""
-    with pytest.raises(ValueError):
+    with pytest.raises(exceptions.ExecutionError):
         utils.parse_files_to_codes_mapping(value)
 
 

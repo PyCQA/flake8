@@ -58,3 +58,30 @@ t.py:2:1: F401 'sys' imported but unused
 2     F401 'os' imported but unused
 '''
     assert err == ''
+
+
+def test_malformed_per_file_ignores_error(tmpdir, capsys):
+    """Test the error message for malformed `per-file-ignores`."""
+    setup_cfg = '''\
+[flake8]
+per-file-ignores =
+    incorrect/*
+    values/*
+'''
+
+    with tmpdir.as_cwd():
+        tmpdir.join('setup.cfg').write(setup_cfg)
+
+        app = application.Application()
+        app.run(['.'])
+
+    out, err = capsys.readouterr()
+    assert out == '''\
+There was a critical error during execution of Flake8:
+Expected `per-file-ignores` to be a mapping from file exclude patterns to ignore codes.
+
+Configured `per-file-ignores` setting:
+
+    incorrect/*
+    values/*
+'''  # noqa: E501

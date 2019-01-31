@@ -1,0 +1,43 @@
+3.7.3 -- 2019-01-30
+-------------------
+
+You can view the `3.7.3 milestone`_ on GitLab for more details.
+
+Bugs Fixed
+~~~~~~~~~~
+
+- Fix imports of ``typing`` in python 3.5.0 / 3.5.1 (See also `GitLab!294`_,
+  `GitLab#498`_)
+
+- Fix ``flake8 --statistics`` (See also `GitLab!295`_, `GitLab#499`_)
+
+- Gracefully ignore ``flake8-per-file-ignores`` plugin if installed (See also
+  `GitLab!297`_, `GitLab#495`_)
+
+- Improve error message for malformed ``per-file-ignores`` (See also
+  `GitLab!298`_, `GitLab#489`_)
+
+
+.. all links
+.. _3.7.3 milestone:
+    https://gitlab.com/pycqa/flake8/milestones/26
+
+.. issue links
+.. _GitLab#489:
+    https://gitlab.com/pycqa/flake8/issues/489
+.. _GitLab#495:
+    https://gitlab.com/pycqa/flake8/issues/495
+.. _GitLab#498:
+    https://gitlab.com/pycqa/flake8/issues/498
+.. _GitLab#499:
+    https://gitlab.com/pycqa/flake8/issues/499
+
+.. merge request links
+.. _GitLab!294:
+    https://gitlab.com/pycqa/flake8/merge_requests/294
+.. _GitLab!295:
+    https://gitlab.com/pycqa/flake8/merge_requests/295
+.. _GitLab!297:
+    https://gitlab.com/pycqa/flake8/merge_requests/297
+.. _GitLab!298:
+    https://gitlab.com/pycqa/flake8/merge_requests/298

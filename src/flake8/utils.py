@@ -12,6 +12,8 @@ from typing import Callable, Dict, Generator  # noqa: F401 (until flake8 3.7)
 from typing import List, Pattern, Sequence  # noqa: F401 (until flake8 3,7)
 from typing import Tuple, Union  # noqa: F401 (until flake8 3.7)
 
+from flake8 import exceptions
+
 if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
     from flake8.plugins.manager import Plugin  # noqa: F401 (until flake8 3.7)
 
@@ -109,6 +111,21 @@ def parse_files_to_codes_mapping(value):  # noqa: C901
         State.filenames = []
         State.codes = []
 
+    def _unexpected_token():
+        # type: () -> exceptions.ExecutionError
+
+        def _indent(s):
+            # type: (str) -> str
+            return "    " + s.strip().replace("\n", "\n    ")
+
+        return exceptions.ExecutionError(
+            "Expected `per-file-ignores` to be a mapping from file exclude "
+            "patterns to ignore codes.\n\n"
+            "Configured `per-file-ignores` setting:\n\n{}".format(
+                _indent(value)
+            )
+        )
+
     for token in _tokenize_files_to_codes_mapping(value):
         # legal in any state: separator sets the sep bit
         if token.tp in {_COMMA, _WS}:
@@ -122,7 +139,7 @@ def parse_files_to_codes_mapping(value):  # noqa: C901
                 State.filenames.append(token.src)
                 State.seen_sep = False
             else:
-                raise ValueError("Unexpected token: {}".format(token))
+                raise _unexpected_token()
         # looking for codes
         else:
             if token.tp == _EOF:
@@ -135,7 +152,7 @@ def parse_files_to_codes_mapping(value):  # noqa: C901
                 State.filenames.append(token.src)
                 State.seen_sep = False
             else:
-                raise ValueError("Unexpected token: {}".format(token))
+                raise _unexpected_token()
 
     return ret
 

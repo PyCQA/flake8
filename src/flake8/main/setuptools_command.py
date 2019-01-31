@@ -71,14 +71,14 @@ class Flake8(setuptools.Command):
                 continue
 
             seen_package_directories += (package_directory + ".",)
-            yield package_directory
+            yield package_directory.replace('.', os.path.sep)
 
     def module_files(self):
         """Collect the files listed as py_modules."""
         modules = self.distribution.py_modules or []
         filename_from = "{0}.py".format
         for module in modules:
-            yield filename_from(module)
+            yield filename_from(module.replace('.', os.path.sep))
 
     def distribution_files(self):
         """Collect package and module files."""

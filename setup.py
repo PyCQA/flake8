@@ -28,7 +28,7 @@ requires = [
 extras_require = {
     ":python_version<'3.4'": ['enum34'],
     ":python_version<'3.5'": ['typing'],
-    ":python_version<'3.2'": ['configparser'],
+    ":python_version<'3.2'": ['configparser', 'functools32'],
 }
 
 if int(setuptools.__version__.split('.')[0]) < 18:

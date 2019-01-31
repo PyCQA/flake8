@@ -3,10 +3,10 @@ import collections
 import contextlib
 import copy
 import enum
-import functools
 import itertools
 import linecache
 import logging
+import sys
 from typing import Optional, Union  # noqa: F401 (until flake8 3.7)
 
 from flake8 import defaults
@@ -18,13 +18,10 @@ __all__ = ("StyleGuide",)
 LOG = logging.getLogger(__name__)
 
 
-try:
-    lru_cache = functools.lru_cache
-except AttributeError:
-
-    def lru_cache(maxsize=128, typed=False):
-        """Stub for missing lru_cache."""
-        return lambda func: func
+if sys.version_info < (3, 2):
+    from functools32 import lru_cache
+else:
+    from functools import lru_cache
 
 
 # TODO(sigmavirus24): Determine if we need to use enum/enum34
@@ -366,6 +363,7 @@ class StyleGuideManager(object):
                 filename=filename, extend_ignore_with=violations
             )
 
+    @lru_cache(maxsize=None)
     def style_guide_for(self, filename):
         """Find the StyleGuide for the filename in particular."""
         guides = sorted(

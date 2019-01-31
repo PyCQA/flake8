@@ -256,6 +256,12 @@ class PluginManager(object):  # pylint: disable=too-few-public-methods
     def _load_entrypoint_plugins(self):
         LOG.info('Loading entry-points for "%s".', self.namespace)
         for entry_point in entrypoints.get_group_all(self.namespace):
+            if entry_point.name == "per-file-ignores":
+                LOG.warning(
+                    "flake8-per-file-ignores plugin is incompatible with "
+                    "flake8>=3.7 (which implements per-file-ignores itself)."
+                )
+                continue
             self._load_plugin_from_entrypoint(entry_point)
 
     def _load_plugin_from_entrypoint(self, entry_point, local=False):

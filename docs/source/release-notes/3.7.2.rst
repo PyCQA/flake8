@@ -1,4 +1,4 @@
-3.7.1 -- 2019-01-30
+3.7.2 -- 2019-01-30
 -------------------
 
 You can view the `3.7.2 milestone`_ on GitLab for more details.

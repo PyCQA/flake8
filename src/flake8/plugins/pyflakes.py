@@ -57,10 +57,7 @@ def patch_pyflakes():
     """Add error codes to Pyflakes messages."""
     for name, obj in vars(pyflakes.messages).items():
         if name[0].isupper() and obj.message:
-            obj.flake8_msg = "%s %s" % (
-                FLAKE8_PYFLAKES_CODES.get(name, "F999"),
-                obj.message,
-            )
+            obj.flake8_code = FLAKE8_PYFLAKES_CODES.get(name, "F999")
 
 
 patch_pyflakes()
@@ -188,6 +185,9 @@ class FlakesChecker(pyflakes.checker.Checker):
             yield (
                 message.lineno,
                 col,
-                (message.flake8_msg % message.message_args),
+                "{} {}".format(
+                    message.flake8_code,
+                    message.message % message.message_args,
+                ),
                 message.__class__,
             )

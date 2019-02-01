@@ -13,10 +13,15 @@ based on different inputs.
 Ignoring Violations with Flake8
 ===============================
 
+The Default Ignore List
+-----------------------
+
 By default, |Flake8| has a list of error codes that it ignores. The list used
-by a version of |Flake8| may be different than the list used by a different
-version. To see the default list, :option:`flake8 --help` will
-show the output with the current default list.
+by one version of |Flake8| may be different than the list used by a different
+version. To view the default error code ignore list, run
+:option:`flake8 --help` and refer to the help text for
+:option:`flake8 --ignore`.
+
 
 Extending the Default Ignore List
 ---------------------------------
@@ -30,9 +35,7 @@ for a specific run on the command line, e.g.,
     flake8 --extend-ignore=E1,E23 path/to/files/ path/to/more/files
 
 This tells |Flake8| to ignore any error codes starting with ``E1`` and ``E23``,
-in addition the default ignore list. To view the default error code ignore
-list, run :option:`flake8 --help` and refer to the help text for
-:option:`flake8 --ignore`.
+in addition the default ignore list.
 
 
 ..
@@ -129,7 +132,8 @@ configuration. Both exist so we can choose which is better for us.
 Selecting Violations with Flake8
 ================================
 
-|Flake8| has a default list of violation classes that we use. This list is:
+|Flake8| has a default list of violation :term:`class`\ es that we use. This
+list is:
 
 - ``C90``
 

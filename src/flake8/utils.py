@@ -8,14 +8,13 @@ import platform
 import re
 import sys
 import tokenize
-from typing import Callable, Dict, Generator  # noqa: F401 (until flake8 3.7)
-from typing import List, Pattern, Sequence  # noqa: F401 (until flake8 3,7)
-from typing import Tuple, Union  # noqa: F401 (until flake8 3.7)
+from typing import Callable, Dict, Generator, List, Pattern, Sequence, Tuple
+from typing import Union
 
 from flake8 import exceptions
 
 if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
-    from flake8.plugins.manager import Plugin  # noqa: F401 (until flake8 3.7)
+    from flake8.plugins.manager import Plugin
 
 DIFF_HUNK_REGEXP = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@.*$")
 COMMA_SEPARATED_LIST_RE = re.compile(r"[,\s]")

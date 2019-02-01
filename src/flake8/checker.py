@@ -5,7 +5,7 @@ import logging
 import signal
 import sys
 import tokenize
-from typing import List, Optional  # noqa: F401 (until flake8 3.7)
+from typing import List, Optional
 
 try:
     import multiprocessing

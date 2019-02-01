@@ -1,6 +1,6 @@
 """The logic for Flake8's integration with setuptools."""
 import os
-from typing import List  # noqa: F401 (until flake8 3.7)
+from typing import List
 
 import setuptools
 

@@ -3,7 +3,7 @@ import contextlib
 import logging
 import sys
 import tokenize
-from typing import List  # noqa: F401 (until flake8 3.7)
+from typing import List
 
 import flake8
 from flake8 import defaults

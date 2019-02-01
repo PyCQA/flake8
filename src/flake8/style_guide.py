@@ -7,7 +7,7 @@ import itertools
 import linecache
 import logging
 import sys
-from typing import Optional, Union  # noqa: F401 (until flake8 3.7)
+from typing import Optional, Union
 
 from flake8 import defaults
 from flake8 import statistics

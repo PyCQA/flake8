@@ -4,7 +4,7 @@ from __future__ import print_function
 import logging
 import sys
 import time
-from typing import List, Optional, Sequence  # noqa: F401 (until flake8 3.7)
+from typing import List, Optional, Sequence
 
 import flake8
 from flake8 import checker

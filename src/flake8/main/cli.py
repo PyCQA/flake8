@@ -1,5 +1,5 @@
 """Command-line implementation of flake8."""
-from typing import List, Optional  # noqa: F401 (until flake8 3.7)
+from typing import List, Optional
 
 from flake8.main import application
 

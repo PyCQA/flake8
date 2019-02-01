@@ -1,0 +1,23 @@
+3.7.4 -- 2019-01-31
+-------------------
+
+You can view the `3.7.4 milestone`_ on GitLab for more details.
+
+Bugs Fixed
+~~~~~~~~~~
+
+- Fix performance regression with lots of ``per-file-ignores`` and errors
+  (See also `GitLab!299`_, `GitLab#501`_)
+
+
+.. all links
+.. _3.7.4 milestone:
+    https://gitlab.com/pycqa/flake8/milestones/27
+
+.. issue links
+.. _GitLab#501:
+    https://gitlab.com/pycqa/flake8/issues/501
+
+.. merge request links
+.. _GitLab!299:
+    https://gitlab.com/pycqa/flake8/merge_requests/299

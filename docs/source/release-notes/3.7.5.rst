@@ -1,0 +1,23 @@
+3.7.5 -- 2019-02-04
+-------------------
+
+You can view the `3.7.5 milestone`_ on GitLab for more details.
+
+Bugs Fixed
+~~~~~~~~~~
+
+- Fix reporting of pyflakes "referenced before assignment" error (See also
+  `GitLab!301`_, `GitLab#503`_)
+
+
+.. all links
+.. _3.7.5 milestone:
+    https://gitlab.com/pycqa/flake8/milestones/28
+
+.. issue links
+.. _GitLab#503:
+    https://gitlab.com/pycqa/flake8/issues/503
+
+.. merge request links
+.. _GitLab!301:
+    https://gitlab.com/pycqa/flake8/merge_requests/301

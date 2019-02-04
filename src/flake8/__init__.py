@@ -15,7 +15,7 @@ import sys
 LOG = logging.getLogger(__name__)
 LOG.addHandler(logging.NullHandler())
 
-__version__ = "3.7.4"
+__version__ = "3.7.5"
 __version_info__ = tuple(
     int(i) for i in __version__.split(".") if i.isdigit()
 )

@@ -90,6 +90,11 @@ def test_parse_comma_separated_list(value, expected):
             ['f.py:E,F', 'g.py:G,H'],
             [('f.py', ['E', 'F']), ('g.py', ['G', 'H'])],
         ),
+        # six-digits codes are allowed
+        (
+            'f.py: ABC123',
+            [('f.py', ['ABC123'])],
+        )
     ),
 )
 def test_parse_files_to_codes_mapping(value, expected):

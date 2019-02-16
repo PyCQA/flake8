@@ -399,7 +399,7 @@ Options and their Descriptions
     need only specify ``W23`` to ignore them. This also works for ``W2`` and
     ``W`` (for example).
 
-    This defaults to: ``E121,E123,E126,E226,E24,E704``
+    This defaults to: ``E121,E123,E126,E226,E24,E704,W503,W504``
 
     Command-line example:
 

@@ -4,7 +4,7 @@ from __future__ import print_function
 import logging
 import sys
 import time
-from typing import List, Optional, Sequence
+from typing import List, Optional
 
 import flake8
 from flake8 import checker
@@ -99,6 +99,7 @@ class Application(object):
         self.parsed_diff = {}
 
     def parse_preliminary_options_and_args(self, argv=None):
+        # type: (Optional[List[str]]) -> None
         """Get preliminary options and args from CLI, pre-plugin-loading.
 
         We need to know the values of a few standard options and args now, so
@@ -347,7 +348,7 @@ class Application(object):
         self.formatter.show_statistics(self.guide.stats)
 
     def initialize(self, argv):
-        # type: (Sequence[str]) -> None
+        # type: (Optional[List[str]]) -> None
         """Initialize the application to be run.
 
         This finds the plugins, registers their options, and parses the

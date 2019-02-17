@@ -8,8 +8,8 @@ import platform
 import re
 import sys
 import tokenize
-from typing import Callable, Dict, Generator, List, Pattern, Sequence, Tuple
-from typing import Union
+from typing import Callable, Dict, Generator, List, Pattern, Sequence, Set
+from typing import Tuple, Union
 
 from flake8 import exceptions
 
@@ -217,7 +217,7 @@ def stdin_get_value():
 
 
 def parse_unified_diff(diff=None):
-    # type: (str) -> List[str]
+    # type: (str) -> Dict[str, Set[int]]
     """Parse the unified diff passed on stdin.
 
     :returns:

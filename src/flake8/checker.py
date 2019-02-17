@@ -5,7 +5,7 @@ import logging
 import signal
 import sys
 import tokenize
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 try:
     import multiprocessing
@@ -246,7 +246,7 @@ class Manager(object):
         LOG.info("Checking %d files", len(self.checkers))
 
     def report(self):
-        # type: () -> (int, int)
+        # type: () -> Tuple[int, int]
         """Report all of the errors found in the managed file checkers.
 
         This iterates over each of the checkers and reports the errors sorted

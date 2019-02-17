@@ -73,7 +73,6 @@ class Manager(object):
         self.options = style_guide.options
         self.checks = checker_plugins
         self.jobs = self._job_count()
-        self.using_multiprocessing = self.jobs > 1
         self.processes = []
         self.checkers = []
         self.statistics = {
@@ -279,7 +278,6 @@ class Manager(object):
         except OSError as oserr:
             if oserr.errno not in SERIAL_RETRY_ERRNOS:
                 raise
-            self.using_multiprocessing = False
             self.run_serial()
             return
 
@@ -326,16 +324,10 @@ class Manager(object):
         fallback to serial processing.
         """
         try:
-            if self.using_multiprocessing:
+            if self.jobs > 1 and len(self.checkers) > 1:
                 self.run_parallel()
             else:
                 self.run_serial()
-        except OSError as oserr:
-            if oserr.errno not in SERIAL_RETRY_ERRNOS:
-                LOG.exception(oserr)
-                raise
-            LOG.warning("Running in serial after OS exception, %r", oserr)
-            self.run_serial()
         except KeyboardInterrupt:
             LOG.warning("Flake8 was interrupted by the user")
             raise exceptions.EarlyQuit("Early quit while running checks")

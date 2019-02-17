@@ -16,27 +16,33 @@ def style_guide_mock(**kwargs):
     return style_guide
 
 
+def _parallel_checker_manager():
+    """Call Manager.run() and return the number of calls to `run_serial`."""
+    style_guide = style_guide_mock()
+    manager = checker.Manager(style_guide, [], [])
+    # multiple checkers is needed for parallel mode
+    manager.checkers = [mock.Mock(), mock.Mock()]
+    return manager
+
+
 def test_oserrors_cause_serial_fall_back():
     """Verify that OSErrors will cause the Manager to fallback to serial."""
     err = OSError(errno.ENOSPC, 'Ominous message about spaceeeeee')
-    style_guide = style_guide_mock()
     with mock.patch('_multiprocessing.SemLock', side_effect=err):
-        manager = checker.Manager(style_guide, [], [])
+        manager = _parallel_checker_manager()
         with mock.patch.object(manager, 'run_serial') as serial:
             manager.run()
     assert serial.call_count == 1
-    assert manager.using_multiprocessing is False
 
 
 @mock.patch('flake8.utils.is_windows', return_value=False)
 def test_oserrors_are_reraised(is_windows):
     """Verify that unexpected OSErrors will cause the Manager to reraise."""
     err = OSError(errno.EAGAIN, 'Ominous message')
-    style_guide = style_guide_mock()
     with mock.patch('_multiprocessing.SemLock', side_effect=err):
-        with pytest.raises(OSError):
-            manager = checker.Manager(style_guide, [], [])
-            with mock.patch.object(manager, 'run_serial') as serial:
+        manager = _parallel_checker_manager()
+        with mock.patch.object(manager, 'run_serial') as serial:
+            with pytest.raises(OSError):
                 manager.run()
     assert serial.call_count == 0
 

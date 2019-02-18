@@ -1,0 +1,27 @@
+3.7.6 -- 2019-02-18
+-------------------
+
+You can view the `3.7.6 milestone`_ on GitLab for more details.
+
+Bugs Fixed
+~~~~~~~~~~
+
+- Fix ``--per-file-ignores`` for multi-letter error codes (See also
+  `GitLab!303`_, `GitLab#507`_)
+
+- Improve flake8 speed when only 1 filename is passed (See also `GitLab!305`_)
+
+
+.. all links
+.. _3.7.6 milestone:
+    https://gitlab.com/pycqa/flake8/milestones/29
+
+.. issue links
+.. _GitLab#507:
+    https://gitlab.com/pycqa/flake8/issues/507
+
+.. merge request links
+.. _GitLab!303:
+    https://gitlab.com/pycqa/flake8/merge_requests/303
+.. _GitLab!305:
+    https://gitlab.com/pycqa/flake8/merge_requests/305

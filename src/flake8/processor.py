@@ -118,7 +118,7 @@ class FileProcessor(object):
                     tokenize.generate_tokens(lambda: next(line_iter))
                 )
             except tokenize.TokenError as exc:
-                raise exceptions.InvalidSyntax(exc.message, exception=exc)
+                raise exceptions.InvalidSyntax(exception=exc)
 
         return self._file_tokens
 

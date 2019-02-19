@@ -4,13 +4,9 @@
 class Flake8Exception(Exception):
     """Plain Flake8 exception."""
 
-    pass
-
 
 class EarlyQuit(Flake8Exception):
     """Except raised when encountering a KeyboardInterrupt."""
-
-    pass
 
 
 class ExecutionError(Flake8Exception):
@@ -22,15 +18,15 @@ class FailedToLoadPlugin(Flake8Exception):
 
     FORMAT = 'Flake8 failed to load plugin "%(name)s" due to %(exc)s.'
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, plugin, exception):
         """Initialize our FailedToLoadPlugin exception."""
-        self.plugin = kwargs.pop("plugin")
+        self.plugin = plugin
         self.ep_name = self.plugin.name
-        self.original_exception = kwargs.pop("exception")
-        super(FailedToLoadPlugin, self).__init__(*args, **kwargs)
+        self.original_exception = exception
+        super(FailedToLoadPlugin, self).__init__(plugin, exception)
 
     def __str__(self):
-        """Return a nice string for our exception."""
+        """Format our exception message."""
         return self.FORMAT % {
             "name": self.ep_name,
             "exc": self.original_exception,
@@ -40,9 +36,8 @@ class FailedToLoadPlugin(Flake8Exception):
 class InvalidSyntax(Flake8Exception):
     """Exception raised when tokenizing a file fails."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, exception):  # type: (Exception) -> None
         """Initialize our InvalidSyntax exception."""
-        exception = kwargs.pop("exception", None)
         self.original_exception = exception
         self.error_message = "{0}: {1}".format(
             exception.__class__.__name__, exception.args[0]
@@ -50,9 +45,11 @@ class InvalidSyntax(Flake8Exception):
         self.error_code = "E902"
         self.line_number = 1
         self.column_number = 0
-        super(InvalidSyntax, self).__init__(
-            self.error_message, *args, **kwargs
-        )
+        super(InvalidSyntax, self).__init__(exception)
+
+    def __str__(self):
+        """Format our exception message."""
+        return self.error_message
 
 
 class PluginRequestedUnknownParameters(Flake8Exception):
@@ -60,12 +57,12 @@ class PluginRequestedUnknownParameters(Flake8Exception):
 
     FORMAT = '"%(name)s" requested unknown parameters causing %(exc)s'
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, plugin, exception):
         """Pop certain keyword arguments for initialization."""
-        self.original_exception = kwargs.pop("exception")
-        self.plugin = kwargs.pop("plugin")
+        self.plugin = plugin
+        self.original_exception = exception
         super(PluginRequestedUnknownParameters, self).__init__(
-            *args, **kwargs
+            plugin, exception
         )
 
     def __str__(self):
@@ -81,13 +78,11 @@ class PluginExecutionFailed(Flake8Exception):
 
     FORMAT = '"%(name)s" failed during execution due to "%(exc)s"'
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, plugin, exception):
         """Utilize keyword arguments for message generation."""
-        self.original_exception = kwargs.pop("exception")
-        self.plugin = kwargs.pop("plugin")
-        super(PluginExecutionFailed, self).__init__(
-            str(self), *args, **kwargs
-        )
+        self.plugin = plugin
+        self.original_exception = exception
+        super(PluginExecutionFailed, self).__init__(plugin, exception)
 
     def __str__(self):
         """Format our exception message."""
@@ -99,8 +94,6 @@ class PluginExecutionFailed(Flake8Exception):
 
 class HookInstallationError(Flake8Exception):
     """Parent exception for all hooks errors."""
-
-    pass
 
 
 class GitHookAlreadyExists(HookInstallationError):

@@ -1,5 +1,6 @@
 """Tests for the Application class."""
 import optparse
+import sys
 
 import mock
 import pytest
@@ -97,3 +98,12 @@ def test_prelim_opts_args(application):
     assert application.prelim_opts.statistics
     assert application.prelim_opts.verbose
     assert application.prelim_args == ['src', 'setup.py']
+
+
+def test_prelim_opts_handles_empty(application):
+    """Verify empty argv lists are handled correctly."""
+    irrelevant_args = ['myexe', '/path/to/foo']
+    with mock.patch.object(sys, 'argv', irrelevant_args):
+        application.parse_preliminary_options_and_args([])
+
+        assert application.prelim_args != irrelevant_args

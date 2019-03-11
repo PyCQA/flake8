@@ -122,7 +122,7 @@ class Application(object):
         # do not need to worry and we can continue. If it is, we successfully
         # defer printing the version until just a little bit later.
         # Similarly we have to defer printing the help text until later.
-        args = (argv or sys.argv)[:]
+        args = (argv if argv is not None else sys.argv)[:]
         try:
             args.remove("--version")
         except ValueError:

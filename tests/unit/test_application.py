@@ -106,4 +106,4 @@ def test_prelim_opts_handles_empty(application):
     with mock.patch.object(sys, 'argv', irrelevant_args):
         application.parse_preliminary_options_and_args([])
 
-        assert application.prelim_args != irrelevant_args
+        assert application.prelim_args == []

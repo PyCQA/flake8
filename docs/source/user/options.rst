@@ -546,7 +546,7 @@ Options and their Descriptions
         flake8 --select=E --ignore=E432 dir/
 
     This will report all codes that start with ``E``, but ignore ``E432``
-    specifically. This is more flexibly than the |Flake8| 2.x and 1.x used
+    specifically. This is more flexible than |Flake8| 2.x and 1.x used
     to be.
 
     This **can** be specified in config files.

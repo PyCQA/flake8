@@ -186,6 +186,16 @@ def test_filenames_from_a_directory_with_a_predicate():
     assert 'flake8/__init__.py' not in filenames
 
 
+def test_filenames_from_a_directory_with_a_predicate_from_the_current_dir():
+    """Verify that predicates filter filenames_from."""
+    filenames = list(utils.filenames_from(
+        arg='./src/flake8',
+        predicate=lambda filename: filename == '__init__.py',
+    ))
+    assert len(filenames) > 2
+    assert './src/flake8/__init__.py' in filenames
+
+
 def test_filenames_from_a_single_file():
     """Verify that we simply yield that filename."""
     filenames = list(utils.filenames_from('flake8/__init__.py'))

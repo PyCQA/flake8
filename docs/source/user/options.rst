@@ -62,6 +62,8 @@ Index of Options
 
 - :option:`flake8 --max-line-length`
 
+- :option:`flake8 --max-doc-length`
+
 - :option:`flake8 --select`
 
 - :option:`flake8 --disable-noqa`
@@ -519,6 +521,28 @@ Options and their Descriptions
     .. code-block:: ini
 
         max-line-length = 79
+
+.. option:: --max-doc-length=<n>
+
+    :ref:`Go back to index <top>`
+
+    Set the maximum length that a comment or docstring line may be.
+
+    By default, there is no limit on documentation line length.
+
+    Command-line example:
+
+    .. prompt:: bash
+
+        flake8 --max-doc-length 99 dir/
+
+    This **can** be specified in config files.
+
+    Example config file usage:
+
+    .. code-block:: ini
+
+        max-doc-length = 79
 
 
 .. option:: --select=<errors>

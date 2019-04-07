@@ -597,6 +597,7 @@ class FileChecker(object):
         """Run checks against the file."""
         try:
             self.process_tokens()
+            self.run_ast_checks()
         except exceptions.InvalidSyntax as exc:
             self.report(
                 exc.error_code,
@@ -604,8 +605,6 @@ class FileChecker(object):
                 exc.column_number,
                 exc.error_message,
             )
-
-        self.run_ast_checks()
 
         logical_lines = self.processor.statistics["logical lines"]
         self.statistics["logical lines"] = logical_lines

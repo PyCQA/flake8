@@ -6,6 +6,7 @@
 *.zip
 .cache
 .coverage
+.coverage.*
 .eggs
 .tox
 /.mypy_cache

@@ -385,11 +385,11 @@ def token_is_newline(token):
 
 
 def count_parentheses(current_parentheses_count, token_text):
+    # type: (int, str) -> int
     """Count the number of parentheses."""
-    current_parentheses_count = current_parentheses_count or 0
-    if token_text in "([{":
+    if token_text in "([{":  # nosec
         return current_parentheses_count + 1
-    elif token_text in "}])":
+    elif token_text in "}])":  # nosec
         return current_parentheses_count - 1
     return current_parentheses_count
 

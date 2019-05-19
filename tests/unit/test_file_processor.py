@@ -337,9 +337,9 @@ def test_log_token(token, log_string):
 
 
 @pytest.mark.parametrize('current_count, token_text, expected', [
-    (None, '(', 1),
-    (None, '[', 1),
-    (None, '{', 1),
+    (0, '(', 1),
+    (0, '[', 1),
+    (0, '{', 1),
     (1, ')', 0),
     (1, ']', 0),
     (1, '}', 0),

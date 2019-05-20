@@ -3,14 +3,13 @@ import collections
 import errno
 import logging
 import signal
-import sys
 import tokenize
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 try:
     import multiprocessing
 except ImportError:
-    multiprocessing = None
+    multiprocessing = None  # type: ignore
 
 from flake8 import defaults
 from flake8 import exceptions
@@ -73,8 +72,7 @@ class Manager(object):
         self.options = style_guide.options
         self.checks = checker_plugins
         self.jobs = self._job_count()
-        self.processes = []
-        self.checkers = []
+        self.checkers = []  # type: List[FileChecker]
         self.statistics = {
             "files": 0,
             "logical lines": 0,
@@ -195,7 +193,7 @@ class Manager(object):
         )
 
     def make_checkers(self, paths=None):
-        # type: (List[str]) -> None
+        # type: (Optional[List[str]]) -> None
         """Create checkers for each file."""
         if paths is None:
             paths = self.arguments
@@ -270,8 +268,10 @@ class Manager(object):
 
     def run_parallel(self):
         """Run the checkers in parallel."""
-        final_results = collections.defaultdict(list)
-        final_statistics = collections.defaultdict(dict)
+        # fmt: off
+        final_results = collections.defaultdict(list)  # type: Dict[str, List[Tuple[str, int, int, str, Optional[str]]]]  # noqa: E501
+        final_statistics = collections.defaultdict(dict)  # type: Dict[str, Dict[str, None]]  # noqa: E501
+        # fmt: on
 
         try:
             pool = multiprocessing.Pool(self.jobs, _pool_init)
@@ -281,6 +281,7 @@ class Manager(object):
             self.run_serial()
             return
 
+        pool_closed = False
         try:
             pool_map = pool.imap_unordered(
                 _run_checks,
@@ -295,9 +296,9 @@ class Manager(object):
                 final_statistics[filename] = statistics
             pool.close()
             pool.join()
-            pool = None
+            pool_closed = True
         finally:
-            if pool is not None:
+            if not pool_closed:
                 pool.terminate()
                 pool.join()
 
@@ -345,9 +346,6 @@ class Manager(object):
     def stop(self):
         """Stop checking files."""
         self._process_statistics()
-        for proc in self.processes:
-            LOG.info("Joining %s to the main process", proc.name)
-            proc.join()
 
 
 class FileChecker(object):
@@ -370,7 +368,9 @@ class FileChecker(object):
         self.options = options
         self.filename = filename
         self.checks = checks
-        self.results = []
+        # fmt: off
+        self.results = []  # type: List[Tuple[str, int, int, str, Optional[str]]]  # noqa: E501
+        # fmt: on
         self.statistics = {
             "tokens": 0,
             "logical lines": 0,
@@ -389,17 +389,17 @@ class FileChecker(object):
         return "FileChecker for {}".format(self.filename)
 
     def _make_processor(self):
+        # type: () -> Optional[processor.FileProcessor]
         try:
             return processor.FileProcessor(self.filename, self.options)
-        except IOError:
+        except IOError as e:
             # If we can not read the file due to an IOError (e.g., the file
             # does not exist or we do not have the permissions to open it)
             # then we need to format that exception for the user.
             # NOTE(sigmavirus24): Historically, pep8 has always reported this
             # as an E902. We probably *want* a better error code for this
             # going forward.
-            (exc_type, exception) = sys.exc_info()[:2]
-            message = "{0}: {1}".format(exc_type.__name__, exception)
+            message = "{0}: {1}".format(type(e).__name__, e)
             self.report("E902", 0, 0, message)
             return None
 
@@ -446,7 +446,7 @@ class FileChecker(object):
         token = ()
         if len(exception.args) > 1:
             token = exception.args[1]
-            if len(token) > 2:
+            if token and len(token) > 2:
                 row, column = token[1:3]
         else:
             row, column = (1, 0)
@@ -482,14 +482,10 @@ class FileChecker(object):
         """Run all checks expecting an abstract syntax tree."""
         try:
             ast = self.processor.build_ast()
-        except (ValueError, SyntaxError, TypeError):
-            (exc_type, exception) = sys.exc_info()[:2]
-            row, column = self._extract_syntax_information(exception)
+        except (ValueError, SyntaxError, TypeError) as e:
+            row, column = self._extract_syntax_information(e)
             self.report(
-                "E999",
-                row,
-                column,
-                "%s: %s" % (exc_type.__name__, exception.args[0]),
+                "E999", row, column, "%s: %s" % (type(e).__name__, e.args[0])
             )
             return
 

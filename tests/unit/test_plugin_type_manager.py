@@ -1,16 +1,9 @@
 """Tests for flake8.plugins.manager.PluginTypeManager."""
-import sys
-
 import mock
 import pytest
 
 from flake8 import exceptions
 from flake8.plugins import manager
-
-if sys.version_info >= (3, 3):
-    import collections.abc as collections_abc
-else:
-    import collections as collections_abc
 
 TEST_NAMESPACE = "testing.plugin-type-manager"
 
@@ -91,7 +84,7 @@ def test_generate_call_function():
         'method_name', optmanager,
     )
 
-    assert isinstance(func, collections_abc.Callable)
+    assert callable(func)
     assert func(plugin) is optmanager
 
 
@@ -168,15 +161,14 @@ def test_provide_options(PluginManager):  # noqa: N803
     PluginManager.return_value = create_mapping_manager_mock(plugins)
     optmanager = object()
     options = object()
-    extra_args = []
 
     type_mgr = FakeTestType()
-    type_mgr.provide_options(optmanager, options, extra_args)
+    type_mgr.provide_options(optmanager, options, [])
 
     for plugin in plugins:
         plugin.provide_options.assert_called_with(optmanager,
                                                   options,
-                                                  extra_args)
+                                                  [])
 
 
 @mock.patch('flake8.plugins.manager.PluginManager')

@@ -17,7 +17,7 @@ def install(option, option_string, value, parser):
     For more information about the callback signature, see:
     https://docs.python.org/3/library/optparse.html#optparse-option-callbacks
     """
-    installer = _INSTALLERS.get(value)
+    installer = _INSTALLERS[value]
     errored = False
     successful = False
     try:

@@ -35,7 +35,7 @@ python36:
   script: tox -e py36
 
 python37:
-  image: python:3.7-rc
+  image: python:3.7
   stage: test
   script: tox -e py37
 
@@ -43,6 +43,11 @@ linters:
   image: python:3.6
   stage: test
   script: tox -e linters
+
+pre-commit:
+  image: python:3.7
+  stage: test
+  script: tox -e pre-commit
 
 docs:
   stage: test

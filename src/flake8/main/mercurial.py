@@ -7,6 +7,7 @@
 import configparser
 import os
 import subprocess
+from typing import Set
 
 from flake8 import exceptions as exc
 
@@ -101,7 +102,7 @@ def install():
 
 
 def get_filenames_from(repository, kwargs):
-    seen_filenames = set()
+    seen_filenames = set()  # type: Set[str]
     node = kwargs["node"]
     for revision in range(repository[node], len(repository)):
         for filename in repository[revision].files():

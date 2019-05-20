@@ -216,9 +216,7 @@ def test_report_order(results, expected_order):
 
     # _handle_results is the first place which gets the sorted result
     # Should something non-private be mocked instead?
-    handler = mock.Mock()
-    handler.side_effect = count_side_effect
-    manager._handle_results = handler
-
-    assert manager.report() == (len(results), len(results))
-    handler.assert_called_once_with('placeholder', expected_results)
+    handler = mock.Mock(side_effect=count_side_effect)
+    with mock.patch.object(manager, '_handle_results', handler):
+        assert manager.report() == (len(results), len(results))
+        handler.assert_called_once_with('placeholder', expected_results)

@@ -44,7 +44,9 @@ def test_format_needs_to_be_implemented():
     """Ensure BaseFormatter#format raises a NotImplementedError."""
     formatter = base.BaseFormatter(options())
     with pytest.raises(NotImplementedError):
-        formatter.format('foo')
+        formatter.format(
+            style_guide.Violation('A000', 'file.py', 1, 1, 'error text', None)
+        )
 
 
 def test_show_source_returns_nothing_when_not_showing_source():
@@ -73,6 +75,7 @@ def test_show_source_updates_physical_line_appropriately(line, column):
     formatter = base.BaseFormatter(options(show_source=True))
     error = style_guide.Violation('A000', 'file.py', 1, column, 'error', line)
     output = formatter.show_source(error)
+    assert output
     _, pointer = output.rsplit('\n', 1)
     assert pointer.count(' ') == (column - 1)
 

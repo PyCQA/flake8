@@ -72,8 +72,7 @@ def test_information(system, pyversion, pyimpl):
 @mock.patch('json.dumps', return_value='{}')
 def test_print_information_no_plugins(dumps, information, print_mock):
     """Verify we print and exit only when we have plugins."""
-    plugins = []
-    option_manager = mock.Mock(registered_plugins=set(plugins))
+    option_manager = mock.Mock(registered_plugins=set())
     assert debug.print_information(
         None, None, None, None, option_manager=option_manager,
     ) is None

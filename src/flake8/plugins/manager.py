@@ -1,16 +1,11 @@
 """Plugin loading and management logic and classes."""
 import logging
-import sys
+from typing import Any, Dict, List, Set
 
 import entrypoints
 
 from flake8 import exceptions
 from flake8 import utils
-
-if sys.version_info >= (3, 3):
-    import collections.abc as collections_abc
-else:
-    import collections as collections_abc
 
 LOG = logging.getLogger(__name__)
 
@@ -37,7 +32,7 @@ class Plugin(object):
         self.name = name
         self.entry_point = entry_point
         self.local = local
-        self._plugin = None
+        self._plugin = None  # type: Any
         self._parameters = None
         self._parameter_names = None
         self._group = None
@@ -236,8 +231,8 @@ class PluginManager(object):  # pylint: disable=too-few-public-methods
             Plugins from config (as "X = path.to:Plugin" strings).
         """
         self.namespace = namespace
-        self.plugins = {}
-        self.names = []
+        self.plugins = {}  # type: Dict[str, Plugin]
+        self.names = []  # type: List[str]
         self._load_local_plugins(local_plugins or [])
         self._load_entrypoint_plugins()
 
@@ -310,7 +305,7 @@ class PluginManager(object):  # pylint: disable=too-few-public-methods
         :rtype:
             tuple
         """
-        plugins_seen = set()
+        plugins_seen = set()  # type: Set[str]
         for entry_point_name in self.names:
             plugin = self.plugins[entry_point_name]
             plugin_name = plugin.plugin_name
@@ -345,7 +340,7 @@ def version_for(plugin):
 class PluginTypeManager(object):
     """Parent class for most of the specific plugin types."""
 
-    namespace = None
+    namespace = None  # type: str
 
     def __init__(self, local_plugins=None):
         """Initialize the plugin type's manager.
@@ -398,9 +393,7 @@ class PluginTypeManager(object):
     def _generate_call_function(method_name, optmanager, *args, **kwargs):
         def generated_function(plugin):  # noqa: D105
             method = getattr(plugin, method_name, None)
-            if method is not None and isinstance(
-                method, collections_abc.Callable
-            ):
+            if method is not None and callable(method):
                 return method(optmanager, *args, **kwargs)
 
         return generated_function

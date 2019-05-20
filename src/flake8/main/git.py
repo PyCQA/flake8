@@ -90,9 +90,7 @@ def install():
         os.path.join(hooks_directory, "pre-commit")
     )
     if os.path.exists(pre_commit_file):
-        raise exceptions.GitHookAlreadyExists(
-            "File already exists", path=pre_commit_file
-        )
+        raise exceptions.GitHookAlreadyExists(path=pre_commit_file)
 
     executable = get_executable()
 

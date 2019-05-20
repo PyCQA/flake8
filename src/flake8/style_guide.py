@@ -7,7 +7,7 @@ import itertools
 import linecache
 import logging
 import sys
-from typing import Optional, Union
+from typing import Dict, List, Optional, Set, Union
 
 from flake8 import defaults
 from flake8 import statistics
@@ -68,7 +68,7 @@ class Violation(_Violation):
     """Class representing a violation reported by Flake8."""
 
     def is_inline_ignored(self, disable_noqa):
-        # type: (Violation) -> bool
+        # type: (bool) -> bool
         """Determine if a comment has been added to ignore this line.
 
         :param bool disable_noqa:
@@ -154,7 +154,7 @@ class DecisionEngine(object):
 
     def __init__(self, options):
         """Initialize the engine."""
-        self.cache = {}
+        self.cache = {}  # type: Dict[str, Decision]
         self.selected = tuple(options.select)
         self.extended_selected = tuple(
             sorted(options.extended_default_select, reverse=True)
@@ -332,7 +332,7 @@ class StyleGuideManager(object):
         self.formatter = formatter
         self.stats = statistics.Statistics()
         self.decider = decider or DecisionEngine(options)
-        self.style_guides = []
+        self.style_guides = []  # type: List[StyleGuide]
         self.default_style_guide = StyleGuide(
             options, formatter, self.stats, decider=decider
         )
@@ -390,7 +390,7 @@ class StyleGuideManager(object):
         text,
         physical_line=None,
     ):
-        # type: (str, str, int, int, str, Optional[str]) -> int
+        # type: (str, str, int, Optional[int], str, Optional[str]) -> int
         """Handle an error reported by a check.
 
         :param str code:
@@ -419,6 +419,7 @@ class StyleGuideManager(object):
         )
 
     def add_diff_ranges(self, diffinfo):
+        # type: (Dict[str, Set[int]]) -> None
         """Update the StyleGuides to filter out information not in the diff.
 
         This provides information to the underlying StyleGuides so that only
@@ -448,7 +449,7 @@ class StyleGuide(object):
         self.filename = filename
         if self.filename:
             self.filename = utils.normalize_path(self.filename)
-        self._parsed_diff = {}
+        self._parsed_diff = {}  # type: Dict[str, Set[int]]
 
     def __repr__(self):
         """Make it easier to debug which StyleGuide we're using."""
@@ -514,7 +515,7 @@ class StyleGuide(object):
         text,
         physical_line=None,
     ):
-        # type: (str, str, int, int, str, Optional[str]) -> int
+        # type: (str, str, int, Optional[int], str, Optional[str]) -> int
         """Handle an error reported by a check.
 
         :param str code:
@@ -567,6 +568,7 @@ class StyleGuide(object):
         return 0
 
     def add_diff_ranges(self, diffinfo):
+        # type: (Dict[str, Set[int]]) -> None
         """Update the StyleGuide to filter out information not in the diff.
 
         This provides information to the StyleGuide so that only the errors

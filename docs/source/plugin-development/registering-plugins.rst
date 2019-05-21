@@ -111,17 +111,17 @@ The ``X`` in checking plugins define what error codes it is going to report.
 So if the plugin reports only the error code ``X101`` your entry-point would
 look like::
 
-    X101 = flake8_example.ExamplePlugin
+    X101 = flake8_example:ExamplePlugin
 
 If your plugin reports several error codes that all start with ``X10``, then
 it would look like::
 
-    X10 = flake8_example.ExamplePlugin
+    X10 = flake8_example:ExamplePlugin
 
 If all of your plugin's error codes start with ``X1`` then it would look
 like::
 
-    X1 = flake8_example.ExamplePlugin
+    X1 = flake8_example:ExamplePlugin
 
 Finally, if all of your plugin's error codes start with just ``X`` then it
 would look like the original example.

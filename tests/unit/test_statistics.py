@@ -82,7 +82,7 @@ def test_recording_statistics():
         assert isinstance(key, stats.Key)
         assert isinstance(value, stats.Statistic)
 
-    assert storage[(DEFAULT_FILENAME, DEFAULT_ERROR_CODE)].count == 1
+    assert storage[stats.Key(DEFAULT_FILENAME, DEFAULT_ERROR_CODE)].count == 1
 
 
 def test_statistics_for_single_record():

@@ -3,7 +3,7 @@ import contextlib
 import logging
 import sys
 import tokenize
-from typing import List
+from typing import Any, Dict, List, Tuple
 
 import flake8
 from flake8 import defaults
@@ -66,9 +66,9 @@ class FileProcessor(object):
         #: Number of blank lines
         self.blank_lines = 0
         #: Checker states for each plugin?
-        self._checker_states = {}
+        self._checker_states = {}  # type: Dict[str, Dict[Any, Any]]
         #: Current checker state
-        self.checker_state = None
+        self.checker_state = None  # type: Dict[Any, Any]
         #: User provided option for hang closing
         self.hang_closing = options.hang_closing
         #: Character used for indentation
@@ -93,8 +93,10 @@ class FileProcessor(object):
         self.previous_logical = ""
         #: Previous unindented (i.e. top-level) logical line
         self.previous_unindented_logical_line = ""
+        # fmt: off
         #: Current set of tokens
-        self.tokens = []
+        self.tokens = []  # type: List[Tuple[int, str, Tuple[int, int], Tuple[int, int], str]]  # noqa: E501
+        # fmt: on
         #: Total number of lines in the file
         self.total_lines = len(self.lines)
         #: Verbosity level of Flake8

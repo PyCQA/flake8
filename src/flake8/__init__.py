@@ -12,6 +12,9 @@ This module
 import logging
 import sys
 
+if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
+    from typing import Type  # `typing.Type` was introduced in 3.5.2
+
 LOG = logging.getLogger(__name__)
 LOG.addHandler(logging.NullHandler())
 
@@ -61,7 +64,7 @@ def configure_logging(verbosity, filename=None, logformat=LOG_FORMAT):
 
     if not filename or filename in ("stderr", "stdout"):
         fileobj = getattr(sys, filename or "stderr")
-        handler_cls = logging.StreamHandler
+        handler_cls = logging.StreamHandler  # type: Type[logging.Handler]
     else:
         fileobj = filename
         handler_cls = logging.FileHandler

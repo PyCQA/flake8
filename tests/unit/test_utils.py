@@ -163,12 +163,6 @@ def test_fnmatch(filename, patterns, expected):
     assert utils.fnmatch(filename, patterns) is expected
 
 
-def test_fnmatch_returns_the_default_with_empty_default():
-    """The default parameter should be returned when no patterns are given."""
-    sentinel = object()
-    assert utils.fnmatch('file.py', [], default=sentinel) is sentinel
-
-
 def test_filenames_from_a_directory():
     """Verify that filenames_from walks a directory."""
     filenames = list(utils.filenames_from('src/flake8/'))

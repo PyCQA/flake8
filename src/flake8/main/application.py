@@ -2,9 +2,10 @@
 from __future__ import print_function
 
 import logging
+import optparse
 import sys
 import time
-from typing import List, Optional
+from typing import Dict, List, Optional, Set
 
 import flake8
 from flake8 import checker
@@ -18,11 +19,8 @@ from flake8.options import manager
 from flake8.plugins import manager as plugin_manager
 
 if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
-    # fmt: off
-    # `typing.Type` as introduced in 3.5.2
-    from typing import Type  # noqa: F401 (until flake8 3.7)
-    from flake8.formatting.base import BaseFormatter  # noqa: F401, E501 (until flake8 3.7)
-    # fmt: on
+    from typing import Type  # `typing.Type` was introduced in 3.5.2
+    from flake8.formatting.base import BaseFormatter
 
 
 LOG = logging.getLogger(__name__)
@@ -32,7 +30,6 @@ class Application(object):
     """Abstract our application into a class."""
 
     def __init__(self, program="flake8", version=flake8.__version__):
-        # type: (str, str) -> None
         """Initialize our application.
 
         :param str program:
@@ -43,7 +40,7 @@ class Application(object):
         #: The timestamp when the Application instance was instantiated.
         self.start_time = time.time()
         #: The timestamp when the Application finished reported errors.
-        self.end_time = None
+        self.end_time = None  # type: float
         #: The name of the program being run
         self.program = program
         #: The version of the program being run
@@ -56,33 +53,35 @@ class Application(object):
         options.register_default_options(self.option_manager)
         #: The preliminary options parsed from CLI before plugins are loaded,
         #: into a :class:`optparse.Values` instance
-        self.prelim_opts = None
+        self.prelim_opts = None  # type: optparse.Values
         #: The preliminary arguments parsed from CLI before plugins are loaded
-        self.prelim_args = None
+        self.prelim_args = None  # type: List[str]
         #: The instance of :class:`flake8.options.config.ConfigFileFinder`
         self.config_finder = None
 
         #: The :class:`flake8.options.config.LocalPlugins` found in config
-        self.local_plugins = None
+        self.local_plugins = None  # type: config.LocalPlugins
         #: The instance of :class:`flake8.plugins.manager.Checkers`
-        self.check_plugins = None
+        self.check_plugins = None  # type: plugin_manager.Checkers
+        # fmt: off
         #: The instance of :class:`flake8.plugins.manager.ReportFormatters`
-        self.formatting_plugins = None
+        self.formatting_plugins = None  # type: plugin_manager.ReportFormatters
+        # fmt: on
         #: The user-selected formatter from :attr:`formatting_plugins`
-        self.formatter = None
+        self.formatter = None  # type: BaseFormatter
         #: The :class:`flake8.style_guide.StyleGuideManager` built from the
         #: user's options
-        self.guide = None
+        self.guide = None  # type: style_guide.StyleGuideManager
         #: The :class:`flake8.checker.Manager` that will handle running all of
         #: the checks selected by the user.
-        self.file_checker_manager = None
+        self.file_checker_manager = None  # type: checker.Manager
 
         #: The user-supplied options parsed into an instance of
         #: :class:`optparse.Values`
-        self.options = None
+        self.options = None  # type: optparse.Values
         #: The left over arguments that were not parsed by
         #: :attr:`option_manager`
-        self.args = None
+        self.args = None  # type: List[str]
         #: The number of errors, warnings, and other messages after running
         #: flake8 and taking into account ignored errors and lines.
         self.result_count = 0
@@ -96,7 +95,7 @@ class Application(object):
         #: Whether the program is processing a diff or not
         self.running_against_diff = False
         #: The parsed diff information
-        self.parsed_diff = {}
+        self.parsed_diff = {}  # type: Dict[str, Set[int]]
 
     def parse_preliminary_options_and_args(self, argv=None):
         # type: (Optional[List[str]]) -> None

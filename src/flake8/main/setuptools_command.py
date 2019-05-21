@@ -1,6 +1,6 @@
 """The logic for Flake8's integration with setuptools."""
 import os
-from typing import List
+from typing import List, Tuple
 
 import setuptools
 
@@ -48,7 +48,7 @@ class Flake8(setuptools.Command):
 
     def package_files(self):
         """Collect the files/dirs included in the registered modules."""
-        seen_package_directories = ()
+        seen_package_directories = ()  # type: Tuple[str, ...]
         directories = self.distribution.package_dir or {}
         empty_directory_exists = "" in directories
         packages = self.distribution.packages or []

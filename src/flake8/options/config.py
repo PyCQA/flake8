@@ -4,6 +4,7 @@ import configparser
 import logging
 import os.path
 import sys
+from typing import Dict, List, Sequence, Tuple, Union
 
 from flake8 import utils
 
@@ -54,12 +55,15 @@ class ConfigFileFinder(object):
 
         # caches to avoid double-reading config files
         self._local_configs = None
-        self._local_found_files = []
+        self._local_found_files = []  # type: List[str]
         self._user_config = None
-        self._cli_configs = {}
+        # fmt: off
+        self._cli_configs = {}  # type: Dict[str, configparser.RawConfigParser]
+        # fmt: on
 
     @staticmethod
     def _read_config(files):
+        # type: (Union[Sequence[str], str]) -> Tuple[configparser.RawConfigParser, List[str]]  # noqa: E501
         config = configparser.RawConfigParser()
         if isinstance(files, (str, type(u""))):
             files = [files]
@@ -83,6 +87,7 @@ class ConfigFileFinder(object):
         return (config, found_files)
 
     def cli_config(self, files):
+        # type: (str) -> configparser.RawConfigParser
         """Read and parse the config file specified on the command-line."""
         if files not in self._cli_configs:
             config, found_files = self._read_config(files)
@@ -379,7 +384,7 @@ def get_local_plugins(config_finder, cli_config=None, isolated=False):
         raw_paths = utils.parse_comma_separated_list(
             config.get(section, "paths").strip()
         )
-        norm_paths = []
+        norm_paths = []  # type: List[str]
         for base_dir in base_dirs:
             norm_paths.extend(
                 path

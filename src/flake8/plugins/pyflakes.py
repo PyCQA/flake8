@@ -10,6 +10,7 @@ except ImportError:
 else:
     demandimport.disable()
 import os
+from typing import List
 
 import pyflakes
 import pyflakes.checker
@@ -59,8 +60,8 @@ class FlakesChecker(pyflakes.checker.Checker):
     name = "pyflakes"
     version = pyflakes.__version__
     with_doctest = False
-    include_in_doctest = []
-    exclude_from_doctest = []
+    include_in_doctest = []  # type: List[str]
+    exclude_from_doctest = []  # type: List[str]
 
     def __init__(self, tree, file_tokens, filename):
         """Initialize the PyFlakes plugin with an AST tree and filename."""

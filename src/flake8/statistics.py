@@ -1,15 +1,19 @@
 """Statistic collection logic for Flake8."""
 import collections
+from typing import Dict, Generator, List, Optional
+
+if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
+    from flake8.style_guide import Violation
 
 
 class Statistics(object):
     """Manager of aggregated statistics for a run of Flake8."""
 
-    def __init__(self):
+    def __init__(self):  # type: () -> None
         """Initialize the underlying dictionary for our statistics."""
-        self._store = {}
+        self._store = {}  # type: Dict[Key, Statistic]
 
-    def error_codes(self):
+    def error_codes(self):  # type: () -> List[str]
         """Return all unique error codes stored.
 
         :returns:
@@ -19,7 +23,7 @@ class Statistics(object):
         """
         return sorted({key.code for key in self._store})
 
-    def record(self, error):
+    def record(self, error):  # type: (Violation) -> None
         """Add the fact that the error was seen in the file.
 
         :param error:
@@ -34,6 +38,7 @@ class Statistics(object):
         self._store[key].increment()
 
     def statistics_for(self, prefix, filename=None):
+        # type: (str, Optional[str]) -> Generator[Statistic, None, None]
         """Generate statistics for the prefix and filename.
 
         If you have a :class:`Statistics` object that has recorded errors,
@@ -74,11 +79,11 @@ class Key(collections.namedtuple("Key", ["filename", "code"])):
     __slots__ = ()
 
     @classmethod
-    def create_from(cls, error):
+    def create_from(cls, error):  # type: (Violation) -> Key
         """Create a Key from :class:`flake8.style_guide.Violation`."""
         return cls(filename=error.filename, code=error.code)
 
-    def matches(self, prefix, filename):
+    def matches(self, prefix, filename):  # type: (str, Optional[str]) -> bool
         """Determine if this key matches some constraints.
 
         :param str prefix:
@@ -106,6 +111,7 @@ class Statistic(object):
     """
 
     def __init__(self, error_code, filename, message, count):
+        # type: (str, str, str, int) -> None
         """Initialize our Statistic."""
         self.error_code = error_code
         self.filename = filename
@@ -113,7 +119,7 @@ class Statistic(object):
         self.count = count
 
     @classmethod
-    def create_from(cls, error):
+    def create_from(cls, error):  # type: (Violation) -> Statistic
         """Create a Statistic from a :class:`flake8.style_guide.Violation`."""
         return cls(
             error_code=error.code,
@@ -122,6 +128,6 @@ class Statistic(object):
             count=0,
         )
 
-    def increment(self):
+    def increment(self):  # type: () -> None
         """Increment the number of times we've seen this error in this file."""
         self.count += 1

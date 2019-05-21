@@ -1,5 +1,10 @@
 """Exception classes for all of Flake8."""
 
+from typing import Dict
+
+if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
+    from flake8.plugins.manager import Plugin
+
 
 class Flake8Exception(Exception):
     """Plain Flake8 exception."""
@@ -19,13 +24,14 @@ class FailedToLoadPlugin(Flake8Exception):
     FORMAT = 'Flake8 failed to load plugin "%(name)s" due to %(exc)s.'
 
     def __init__(self, plugin, exception):
+        # type: (Plugin, Exception) -> None
         """Initialize our FailedToLoadPlugin exception."""
         self.plugin = plugin
         self.ep_name = self.plugin.name
         self.original_exception = exception
         super(FailedToLoadPlugin, self).__init__(plugin, exception)
 
-    def __str__(self):
+    def __str__(self):  # type: () -> str
         """Format our exception message."""
         return self.FORMAT % {
             "name": self.ep_name,
@@ -47,7 +53,7 @@ class InvalidSyntax(Flake8Exception):
         self.column_number = 0
         super(InvalidSyntax, self).__init__(exception)
 
-    def __str__(self):
+    def __str__(self):  # type: () -> str
         """Format our exception message."""
         return self.error_message
 
@@ -58,6 +64,7 @@ class PluginRequestedUnknownParameters(Flake8Exception):
     FORMAT = '"%(name)s" requested unknown parameters causing %(exc)s'
 
     def __init__(self, plugin, exception):
+        # type: (Dict[str, str], Exception) -> None
         """Pop certain keyword arguments for initialization."""
         self.plugin = plugin
         self.original_exception = exception
@@ -65,7 +72,7 @@ class PluginRequestedUnknownParameters(Flake8Exception):
             plugin, exception
         )
 
-    def __str__(self):
+    def __str__(self):  # type: () -> str
         """Format our exception message."""
         return self.FORMAT % {
             "name": self.plugin["plugin_name"],
@@ -79,12 +86,13 @@ class PluginExecutionFailed(Flake8Exception):
     FORMAT = '"%(name)s" failed during execution due to "%(exc)s"'
 
     def __init__(self, plugin, exception):
+        # type: (Dict[str, str], Exception) -> None
         """Utilize keyword arguments for message generation."""
         self.plugin = plugin
         self.original_exception = exception
         super(PluginExecutionFailed, self).__init__(plugin, exception)
 
-    def __str__(self):
+    def __str__(self):  # type: () -> str
         """Format our exception message."""
         return self.FORMAT % {
             "name": self.plugin["plugin_name"],
@@ -99,40 +107,33 @@ class HookInstallationError(Flake8Exception):
 class GitHookAlreadyExists(HookInstallationError):
     """Exception raised when the git pre-commit hook file already exists."""
 
-    def __init__(self, *args, **kwargs):
-        """Initialize the path attribute."""
-        self.path = kwargs.pop("path")
-        super(GitHookAlreadyExists, self).__init__(*args, **kwargs)
-
-    def __str__(self):
-        """Provide a nice message regarding the exception."""
-        msg = (
+    def __init__(self, path):  # type: (str) -> None
+        """Initialize the exception message from the `path`."""
+        self.path = path
+        tmpl = (
             "The Git pre-commit hook ({0}) already exists. To convince "
             "Flake8 to install the hook, please remove the existing "
             "hook."
         )
-        return msg.format(self.path)
+        super(GitHookAlreadyExists, self).__init__(tmpl.format(self.path))
 
 
 class MercurialHookAlreadyExists(HookInstallationError):
     """Exception raised when a mercurial hook is already configured."""
 
-    hook_name = None
+    hook_name = None  # type: str
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, path, value):  # type: (str, str) -> None
         """Initialize the relevant attributes."""
-        self.path = kwargs.pop("path")
-        self.value = kwargs.pop("value")
-        super(MercurialHookAlreadyExists, self).__init__(*args, **kwargs)
-
-    def __str__(self):
-        """Return a nicely formatted string for these errors."""
-        msg = (
+        self.path = path
+        self.value = value
+        tmpl = (
             'The Mercurial {0} hook already exists with "{1}" in {2}. '
             "To convince Flake8 to install the hook, please remove the "
             "{0} configuration from the [hooks] section of your hgrc."
         )
-        return msg.format(self.hook_name, self.value, self.path)
+        msg = tmpl.format(self.hook_name, self.value, self.path)
+        super(MercurialHookAlreadyExists, self).__init__(msg)
 
 
 class MercurialCommitHookAlreadyExists(MercurialHookAlreadyExists):

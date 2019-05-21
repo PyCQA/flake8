@@ -74,11 +74,10 @@ def test_was_selected_selects_errors(select_list, enable_extensions,
 
 def test_was_selected_implicitly_selects_errors():
     """Verify we detect users implicitly selecting an error."""
-    select_list = []
     error_code = 'E121'
     decider = style_guide.DecisionEngine(
         create_options(
-            select=select_list,
+            select=[],
             extended_default_select=['E'],
         ),
     )

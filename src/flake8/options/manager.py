@@ -2,6 +2,7 @@
 import collections
 import logging
 import optparse  # pylint: disable=deprecated-module
+from typing import Any, Callable, Dict, List, Optional, Set
 
 from flake8 import utils
 
@@ -108,7 +109,7 @@ class Option(object):
         self.comma_separated_list = comma_separated_list
         self.normalize_paths = normalize_paths
 
-        self.config_name = None
+        self.config_name = None  # type: Optional[str]
         if parse_from_config:
             if not long_option_name:
                 raise ValueError(
@@ -143,7 +144,7 @@ class Option(object):
         """Normalize the value based on the option configuration."""
         if self.normalize_paths:
             # Decide whether to parse a list of paths or a single path
-            normalize = utils.normalize_path
+            normalize = utils.normalize_path  # type: Callable[..., Any]
             if self.comma_separated_list:
                 normalize = utils.normalize_paths
             return normalize(value, *normalize_args)
@@ -200,13 +201,13 @@ class OptionManager(object):
         self.parser = optparse.OptionParser(
             prog=prog, version=version, usage=usage
         )
-        self.config_options_dict = {}
-        self.options = []
+        self.config_options_dict = {}  # type: Dict[str, Option]
+        self.options = []  # type: List[Option]
         self.program_name = prog
         self.version = version
-        self.registered_plugins = set()
-        self.extended_default_ignore = set()
-        self.extended_default_select = set()
+        self.registered_plugins = set()  # type: Set[PluginVersion]
+        self.extended_default_ignore = set()  # type: Set[str]
+        self.extended_default_select = set()  # type: Set[str]
 
     @staticmethod
     def format_plugin(plugin):
@@ -231,6 +232,7 @@ class OptionManager(object):
         self.options.append(option)
         if option.parse_from_config:
             name = option.config_name
+            assert name is not None  # nosec (for mypy)
             self.config_options_dict[name] = option
             self.config_options_dict[name.replace("_", "-")] = option
         LOG.debug('Registered option "%s".', option)
@@ -326,7 +328,7 @@ class OptionManager(object):
             values = self.parser.get_default_values()
 
         self.parser.rargs = rargs
-        self.parser.largs = largs = []
+        largs = []  # type: List[str]
         self.parser.values = values
 
         while rargs:
@@ -340,7 +342,8 @@ class OptionManager(object):
                 optparse.BadOptionError,
                 optparse.OptionValueError,
             ) as err:
-                self.parser.largs.append(err.opt_str)
+                # TODO: https://gitlab.com/pycqa/flake8/issues/541
+                largs.append(err.opt_str)  # type: ignore
 
         args = largs + rargs
         options, xargs = self.parser.check_values(values, args)

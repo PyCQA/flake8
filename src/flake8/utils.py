@@ -3,13 +3,14 @@ import collections
 import fnmatch as _fnmatch
 import inspect
 import io
+import logging
 import os
 import platform
 import re
 import sys
 import tokenize
-from typing import Callable, Dict, Generator, List, Pattern, Sequence, Set
-from typing import Tuple, Union
+from typing import Callable, Dict, Generator, List, Optional, Pattern
+from typing import Sequence, Set, Tuple, Union
 
 from flake8 import exceptions
 
@@ -19,6 +20,7 @@ if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
 DIFF_HUNK_REGEXP = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@.*$")
 COMMA_SEPARATED_LIST_RE = re.compile(r"[,\s]")
 LOCAL_PLUGIN_LIST_RE = re.compile(r"[,\t\n\r\f\v]")
+string_types = (str, type(u""))
 
 
 def parse_comma_separated_list(value, regexp=COMMA_SEPARATED_LIST_RE):
@@ -40,7 +42,7 @@ def parse_comma_separated_list(value, regexp=COMMA_SEPARATED_LIST_RE):
     if not value:
         return []
 
-    if not isinstance(value, (list, tuple)):
+    if isinstance(value, string_types):
         value = regexp.split(value)
 
     item_gen = (item.strip() for item in value)
@@ -77,8 +79,8 @@ def _tokenize_files_to_codes_mapping(value):
     return tokens
 
 
-def parse_files_to_codes_mapping(value):  # noqa: C901
-    # type: (Union[Sequence[str], str]) -> List[Tuple[List[str], List[str]]]
+def parse_files_to_codes_mapping(value_):  # noqa: C901
+    # type: (Union[Sequence[str], str]) -> List[Tuple[str, List[str]]]
     """Parse a files-to-codes maping.
 
     A files-to-codes mapping a sequence of values specified as
@@ -88,20 +90,22 @@ def parse_files_to_codes_mapping(value):  # noqa: C901
     :param value: String to be parsed and normalized.
     :type value: str
     """
-    if isinstance(value, (list, tuple)):
-        value = "\n".join(value)
+    if not isinstance(value_, string_types):
+        value = "\n".join(value_)
+    else:
+        value = value_
 
-    ret = []
+    ret = []  # type: List[Tuple[str, List[str]]]
     if not value.strip():
         return ret
 
     class State:
         seen_sep = True
         seen_colon = False
-        filenames = []
-        codes = []
+        filenames = []  # type: List[str]
+        codes = []  # type: List[str]
 
-    def _reset():
+    def _reset():  # type: () -> None
         if State.codes:
             for filename in State.filenames:
                 ret.append((filename, State.codes))
@@ -110,11 +114,8 @@ def parse_files_to_codes_mapping(value):  # noqa: C901
         State.filenames = []
         State.codes = []
 
-    def _unexpected_token():
-        # type: () -> exceptions.ExecutionError
-
-        def _indent(s):
-            # type: (str) -> str
+    def _unexpected_token():  # type: () -> exceptions.ExecutionError
+        def _indent(s):  # type: (str) -> str
             return "    " + s.strip().replace("\n", "\n    ")
 
         return exceptions.ExecutionError(
@@ -192,7 +193,7 @@ def normalize_path(path, parent=os.curdir):
     return path.rstrip(separator + alternate_separator)
 
 
-def _stdin_get_value_py3():
+def _stdin_get_value_py3():  # type: () -> io.StringIO
     stdin_value = sys.stdin.buffer.read()
     fd = io.BytesIO(stdin_value)
     try:
@@ -211,13 +212,13 @@ def stdin_get_value():
             stdin_value = io.BytesIO(sys.stdin.read())
         else:
             stdin_value = _stdin_get_value_py3()
-        stdin_get_value.cached_stdin = stdin_value
-        cached_value = stdin_get_value.cached_stdin
+        stdin_get_value.cached_stdin = stdin_value  # type: ignore
+        cached_value = stdin_get_value.cached_stdin  # type: ignore
     return cached_value.getvalue()
 
 
 def parse_unified_diff(diff=None):
-    # type: (str) -> Dict[str, Set[int]]
+    # type: (Optional[str]) -> Dict[str, Set[int]]
     """Parse the unified diff passed on stdin.
 
     :returns:
@@ -231,7 +232,7 @@ def parse_unified_diff(diff=None):
 
     number_of_rows = None
     current_path = None
-    parsed_paths = collections.defaultdict(set)
+    parsed_paths = collections.defaultdict(set)  # type: Dict[str, Set[int]]
     for line in diff.splitlines():
         if number_of_rows:
             # NOTE(sigmavirus24): Below we use a slice because stdin may be
@@ -279,6 +280,7 @@ def parse_unified_diff(diff=None):
                 1 if not group else int(group)
                 for group in hunk_match.groups()
             ]
+            assert current_path is not None  # nosec (for mypy)
             parsed_paths[current_path].update(
                 range(row, row + number_of_rows)
             )
@@ -338,12 +340,12 @@ def is_using_stdin(paths):
     return "-" in paths
 
 
-def _default_predicate(*args):
+def _default_predicate(*args):  # type: (*str) -> bool
     return False
 
 
 def filenames_from(arg, predicate=None):
-    # type: (str, Callable[[str], bool]) -> Generator
+    # type: (str, Optional[Callable[[str], bool]]) -> Generator[str, None, None]  # noqa: E501
     """Generate filenames from an argument.
 
     :param str arg:
@@ -384,8 +386,8 @@ def filenames_from(arg, predicate=None):
         yield arg
 
 
-def fnmatch(filename, patterns, default=True):
-    # type: (str, List[str], bool) -> bool
+def fnmatch(filename, patterns):
+    # type: (str, List[str]) -> bool
     """Wrap :func:`fnmatch.fnmatch` to add some functionality.
 
     :param str filename:
@@ -399,7 +401,7 @@ def fnmatch(filename, patterns, default=True):
         ``default`` if patterns is empty.
     """
     if not patterns:
-        return default
+        return True
     return any(_fnmatch.fnmatch(filename, pattern) for pattern in patterns)
 
 
@@ -452,6 +454,7 @@ def parameters_for(plugin):
 
 
 def matches_filename(path, patterns, log_message, logger):
+    # type: (str, List[str], str, logging.Logger) -> bool
     """Use fnmatch to discern if a path exists in patterns.
 
     :param str path:
@@ -483,7 +486,7 @@ def matches_filename(path, patterns, log_message, logger):
     return match
 
 
-def get_python_version():
+def get_python_version():  # type: () -> str
     """Find and format the python implementation and version.
 
     :returns:

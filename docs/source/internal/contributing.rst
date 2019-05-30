@@ -165,6 +165,17 @@ Merge requests should:
 
 - Follow the guidelines in :ref:`writing-code`
 
+- Avoid having :code:`.gitignore` file in your PR
+
+  Changes to :code:`.gitignore` will rarely be accepted.
+
+  If you need to add files to :code:`.gitignore` you have multiple options
+
+  - Create a global :code:`.gitignore` file
+  - Create/update :code:`.git/info/exclude` file.
+
+  Both these options are explained in detail `here <https://help.github.com/en/articles/ignoring-files#create-a-global-gitignore>`_
+
 
 Reviewing and Triaging Issues and Merge Requests
 ================================================

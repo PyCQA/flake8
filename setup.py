@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """Packaging logic for Flake8."""
 import functools
-import io
 import os
 import sys
 

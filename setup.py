@@ -12,25 +12,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))  # noqa
 import flake8
 
 
-# NOTE(sigmavirus24): When updating these requirements, update them in
-# setup.cfg as well.
-requires = [
-    # We document the reasoning for using ranges here:
-    # http://flake8.pycqa.org/en/latest/faq.html#why-does-flake8-use-ranges-for-its-dependencies
-    # And in which releases we will update those ranges here:
-    # http://flake8.pycqa.org/en/latest/internal/releases.html#releasing-flake8
-    "entrypoints >= 0.3.0, < 0.4.0",
-    "pyflakes >= 2.1.0, < 2.2.0",
-    "pycodestyle >= 2.5.0, < 2.6.0",
-    "mccabe >= 0.6.0, < 0.7.0",
-]
-
-extras_require = {
-    ":python_version<'3.4'": ['enum34'],
-    ":python_version<'3.5'": ['typing'],
-    ":python_version<'3.2'": ['configparser', 'functools32'],
-}
-
 if int(setuptools.__version__.split('.')[0]) < 18:
     extras_require = {}
     if sys.version_info < (3, 4):
@@ -38,44 +19,12 @@ if int(setuptools.__version__.split('.')[0]) < 18:
     if sys.version_info < (3, 2):
         requires.append('configparser')
 
-
-def get_long_description():
-    """Generate a long description from the README file."""
-    descr = []
-    for fname in ('README.rst',):
-        with io.open(fname, encoding='utf-8') as f:
-            descr.append(f.read())
-    return '\n\n'.join(descr)
-
-
 PEP8 = 'pycodestyle'
 _FORMAT = '{0}.{1} = {0}:{1}'
 PEP8_PLUGIN = functools.partial(_FORMAT.format, PEP8)
 
 
 setuptools.setup(
-    name="flake8",
-    license="MIT",
-    version=flake8.__version__,
-    description="the modular source code checker: pep8, pyflakes and co",
-    long_description=get_long_description(),
-    author="Tarek Ziade",
-    author_email="tarek@ziade.org",
-    maintainer="Ian Stapleton Cordasco",
-    maintainer_email="graffatcolmingov@gmail.com",
-    url="https://gitlab.com/pycqa/flake8",
-    package_dir={"": "src"},
-    packages=[
-        "flake8",
-        "flake8.api",
-        "flake8.formatting",
-        "flake8.main",
-        "flake8.options",
-        "flake8.plugins",
-    ],
-    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*",
-    install_requires=requires,
-    extras_require=extras_require,
     entry_points={
         'distutils.commands': [
             'flake8 = flake8.main.setuptools_command:Flake8'
@@ -130,21 +79,4 @@ setuptools.setup(
             'quiet-nothing = flake8.formatting.default:Nothing',
         ],
     },
-    classifiers=[
-        "Development Status :: 5 - Production/Stable",
-        "Environment :: Console",
-        "Framework :: Flake8",
-        "Intended Audience :: Developers",
-        "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Topic :: Software Development :: Libraries :: Python Modules",
-        "Topic :: Software Development :: Quality Assurance",
-    ],
 )

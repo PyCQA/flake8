@@ -11,6 +11,26 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))  # noqa
 
 import flake8
 
+# NOTE(sigmavirus24): When updating these requirements, update them in
+# setup.cfg as well.
+requires = [
+    # We document the reasoning for using ranges here:
+    # http://flake8.pycqa.org/en/latest/faq.html#why-does-flake8-use-ranges-for-its-dependencies
+    # And in which releases we will update those ranges here:
+    # http://flake8.pycqa.org/en/latest/internal/releases.html#releasing-flake8
+    "entrypoints >= 0.3.0, < 0.4.0",
+    "pyflakes >= 2.1.0, < 2.2.0",
+    "pycodestyle >= 2.5.0, < 2.6.0",
+    "mccabe >= 0.6.0, < 0.7.0",
+]
+
+
+extras_require = {
+    ":python_version<'3.4'": ['enum34'],
+    ":python_version<'3.5'": ['typing'],
+    ":python_version<'3.2'": ['configparser', 'functools32'],
+}
+
 
 if int(setuptools.__version__.split('.')[0]) < 18:
     extras_require = {}
@@ -25,6 +45,9 @@ PEP8_PLUGIN = functools.partial(_FORMAT.format, PEP8)
 
 
 setuptools.setup(
+    version=flake8.__version__,
+    install_requires=requires,
+    extras_require=extras_require,
     entry_points={
         'distutils.commands': [
             'flake8 = flake8.main.setuptools_command:Flake8'

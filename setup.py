@@ -10,6 +10,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))  # noqa
 
 import flake8
 
+
 # NOTE(sigmavirus24): When updating these requirements, update them in
 # setup.cfg as well.
 requires = [

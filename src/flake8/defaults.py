@@ -36,7 +36,7 @@ NOQA_INLINE_REGEXP = re.compile(
     # We do not care about the casing of ``noqa``
     # We want a comma-separated list of errors
     # https://regex101.com/r/4XUuax/2 full explenation of the regex
-    r"# noqa(?::[\s]?(?P<codes>([A-Z][0-9]+(?:[,\s]+)?)+))?",
+    r"# noqa(?::[\s]?(?P<codes>([A-Z]+[0-9]+(?:[,\s]+)?)+))?",
     re.IGNORECASE,
 )
 

@@ -23,6 +23,9 @@ from flake8 import style_guide
     ('E111', 'a = 1  # noqa - We do not care', True),
     ('E111', 'a = 1  # noqa: We do not care', True),
     ('E111', 'a = 1  # noqa:We do not care', True),
+    ('ABC123', 'a = 1  # noqa: ABC123', True),
+    ('E111', 'a = 1  # noqa: ABC123', False),
+    ('ABC123', 'a = 1  # noqa: ABC124', False),
 ])
 def test_is_inline_ignored(error_code, physical_line, expected_result):
     """Verify that we detect inline usage of ``# noqa``."""

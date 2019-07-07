@@ -65,7 +65,7 @@ class FlakesChecker(pyflakes.checker.Checker):
 
     def __init__(self, tree, file_tokens, filename):
         """Initialize the PyFlakes plugin with an AST tree and filename."""
-        filename = utils.normalize_paths(filename)[0]
+        filename = utils.normalize_path(filename)
         with_doctest = self.with_doctest
         included_by = [
             include

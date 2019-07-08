@@ -1,6 +1,6 @@
 # To activate, change the Appveyor settings to use `.appveyor.yml`.
 install:
-  - python -m pip install --upgrade tox virtualenv
+  - python -m pip install --upgrade setuptools tox virtualenv
 
 build: off
 

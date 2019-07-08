@@ -163,39 +163,68 @@ def test_fnmatch(filename, patterns, expected):
     assert utils.fnmatch(filename, patterns) is expected
 
 
+@pytest.fixture
+def files_dir(tmpdir):
+    """Create test dir for testing filenames_from."""
+    with tmpdir.as_cwd():
+        tmpdir.join('a/b/c.py').ensure()
+        tmpdir.join('a/b/d.py').ensure()
+        tmpdir.join('a/b/e/f.py').ensure()
+        yield tmpdir
+
+
+def _normpath(s):
+    return s.replace('/', os.sep)
+
+
+def _normpaths(pths):
+    return {_normpath(pth) for pth in pths}
+
+
+@pytest.mark.usefixtures('files_dir')
 def test_filenames_from_a_directory():
     """Verify that filenames_from walks a directory."""
-    filenames = list(utils.filenames_from('src/flake8/'))
-    assert len(filenames) > 2
-    assert 'src/flake8/__init__.py' in filenames
+    filenames = set(utils.filenames_from(_normpath('a/b/')))
+    # should include all files
+    expected = _normpaths(('a/b/c.py', 'a/b/d.py', 'a/b/e/f.py'))
+    assert filenames == expected
 
 
+@pytest.mark.usefixtures('files_dir')
 def test_filenames_from_a_directory_with_a_predicate():
     """Verify that predicates filter filenames_from."""
-    filenames = list(utils.filenames_from(
-        arg='src/flake8/',
-        predicate=lambda filename: filename == 'flake8/__init__.py',
+    filenames = set(utils.filenames_from(
+        arg=_normpath('a/b/'),
+        predicate=lambda path: path.endswith(_normpath('b/c.py')),
     ))
-    assert len(filenames) > 2
-    assert 'flake8/__init__.py' not in filenames
+    # should not include c.py
+    expected = _normpaths(('a/b/d.py', 'a/b/e/f.py'))
+    assert filenames == expected
 
 
+@pytest.mark.usefixtures('files_dir')
 def test_filenames_from_a_directory_with_a_predicate_from_the_current_dir():
     """Verify that predicates filter filenames_from."""
-    filenames = list(utils.filenames_from(
-        arg='./src/flake8',
-        predicate=lambda filename: filename == '__init__.py',
+    filenames = set(utils.filenames_from(
+        arg=_normpath('./a/b'),
+        predicate=lambda path: path == 'c.py',
     ))
-    assert len(filenames) > 2
-    assert './src/flake8/__init__.py' in filenames
+    # none should have matched the predicate so all returned
+    expected = _normpaths(('./a/b/c.py', './a/b/d.py', './a/b/e/f.py'))
+    assert filenames == expected
 
 
+@pytest.mark.usefixtures('files_dir')
 def test_filenames_from_a_single_file():
     """Verify that we simply yield that filename."""
-    filenames = list(utils.filenames_from('flake8/__init__.py'))
+    filenames = set(utils.filenames_from(_normpath('a/b/c.py')))
+    assert filenames == {_normpath('a/b/c.py')}
 
-    assert len(filenames) == 1
-    assert ['flake8/__init__.py'] == filenames
+
+def test_filenames_from_a_single_file_does_not_exist():
+    """Verify that a passed filename which does not exist is returned back."""
+    filenames = set(utils.filenames_from(_normpath('d/n/e.py')))
+    assert filenames == {_normpath('d/n/e.py')}
 
 
 def test_filenames_from_exclude_doesnt_exclude_directory_names(tmpdir):

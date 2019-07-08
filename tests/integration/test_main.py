@@ -1,4 +1,6 @@
 """Integration tests for the main entrypoint of flake8."""
+import os
+
 import mock
 
 from flake8 import utils
@@ -69,10 +71,11 @@ def test_extend_exclude(tmpdir, capsys):
         application.Application().run(['--extend-exclude=vendor,legacy'])
 
     out, err = capsys.readouterr()
-    assert out == '''\
+    expected_out = '''\
 ./project/t.py:1:1: F401 'os' imported but unused
 ./project/t.py:2:1: F401 'sys' imported but unused
 '''
+    assert out == expected_out.replace('/', os.sep)
     assert err == ''
 
 

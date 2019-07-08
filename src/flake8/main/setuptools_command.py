@@ -1,4 +1,5 @@
 """The logic for Flake8's integration with setuptools."""
+from distutils import log
 import os
 from typing import List, Tuple
 
@@ -105,3 +106,10 @@ class Flake8(setuptools.Command):
             # other possibly remaining/pending setuptools commands).
             if e.code:
                 raise
+        finally:
+            self.announce(
+                "WARNING: flake8 setuptools integration is deprecated and "
+                "scheduled for removal in 4.x.  For more information, see "
+                "https://gitlab.com/pycqa/flake8/issues/544",
+                log.WARN,
+            )

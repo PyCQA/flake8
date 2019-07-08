@@ -435,8 +435,9 @@ class FileChecker(object):
             return plugin["plugin"](**arguments)
         except Exception as all_exc:
             LOG.critical(
-                "Plugin %s raised an unexpected exception", plugin["name"],
-                exc_info=True
+                "Plugin %s raised an unexpected exception",
+                plugin["name"],
+                exc_info=True,
             )
             raise exceptions.PluginExecutionFailed(
                 plugin=plugin, exception=all_exc

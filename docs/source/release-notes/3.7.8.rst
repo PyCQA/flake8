@@ -1,0 +1,41 @@
+3.7.8 -- 2019-07-08
+-------------------
+
+You can view the `3.7.8 milestone`_ on GitLab for more details.
+
+Bugs Fixed
+~~~~~~~~~~
+
+- Fix handling of ``Application.parse_preliminary_options_and_args`` when
+  argv is an empty list (See also `GitLab!310`_, `GitLab#518`_)
+
+- Fix crash when a file parses but fails to tokenize (See also `GitLab!314`_,
+  `GitLab#532`_)
+
+- Log the full traceback on plugin exceptions (See also `GitLab!317`_)
+
+- Fix ``# noqa: ...`` comments with multi-letter codes (See also `GitLab!326`_,
+  `GitLab#549`_)
+
+
+.. all links
+.. _3.7.8 milestone:
+    https://gitlab.com/pycqa/flake8/milestones/31
+
+.. issue links
+.. _GitLab#518:
+    https://gitlab.com/pycqa/flake8/issues/518
+.. _GitLab#532:
+    https://gitlab.com/pycqa/flake8/issues/532
+.. _GitLab#549:
+    https://gitlab.com/pycqa/flake8/issues/549
+
+.. merge request links
+.. _GitLab!310:
+    https://gitlab.com/pycqa/flake8/merge_requests/310
+.. _GitLab!314:
+    https://gitlab.com/pycqa/flake8/merge_requests/314
+.. _GitLab!317:
+    https://gitlab.com/pycqa/flake8/merge_requests/317
+.. _GitLab!326:
+    https://gitlab.com/pycqa/flake8/merge_requests/326

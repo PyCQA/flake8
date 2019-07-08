@@ -60,6 +60,22 @@ t.py:2:1: F401 'sys' imported but unused
     assert err == ''
 
 
+def test_extend_exclude(tmpdir, capsys):
+    """Ensure that `flake8 --extend-exclude` works."""
+    for d in ['project', 'vendor', 'legacy', '.git', '.tox', '.hg']:
+        tmpdir.mkdir(d).join('t.py').write('import os\nimport sys\n')
+
+    with tmpdir.as_cwd():
+        application.Application().run(['--extend-exclude=vendor,legacy'])
+
+    out, err = capsys.readouterr()
+    assert out == '''\
+./project/t.py:1:1: F401 'os' imported but unused
+./project/t.py:2:1: F401 'sys' imported but unused
+'''
+    assert err == ''
+
+
 def test_malformed_per_file_ignores_error(tmpdir, capsys):
     """Test the error message for malformed `per-file-ignores`."""
     setup_cfg = '''\

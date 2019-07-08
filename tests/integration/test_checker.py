@@ -206,8 +206,7 @@ def test_report_order(results, expected_order):
     file_checker.results = results
     file_checker.display_name = 'placeholder'
 
-    style_guide = mock.Mock(spec=['options'])
-    style_guide.processing_file = mock.MagicMock()
+    style_guide = mock.MagicMock(spec=['options', 'processing_file'])
 
     # Create a placeholder manager without arguments or plugins
     # Just add one custom file checker which just provides the results

@@ -379,9 +379,8 @@ def filenames_from(arg, predicate=None):
 
             for filename in files:
                 joined = os.path.join(root, filename)
-                if predicate(joined) or predicate(filename):
-                    continue
-                yield joined
+                if not predicate(joined):
+                    yield joined
     else:
         yield arg
 

@@ -257,6 +257,38 @@ Options and their Descriptions
             __pycache__
 
 
+.. option:: --extend-exclude=<patterns>
+
+    :ref:`Go back to index <top>`
+
+    .. versionadded:: 3.8.0
+
+    Provide a comma-separated list of glob patterns to add to the list of excluded ones.
+    Similar considerations as in :option:`--exclude` apply here with regard to the
+    value.
+
+    The difference to the :option:`--exclude` option is, that this option can be
+    used to selectively add individual patterns without overriding the default
+    list entirely.
+
+    Command-line example:
+
+    .. prompt:: bash
+
+        flake8 --extend-exclude=legacy/,vendor/ dir/
+
+    This **can** be specified in config files.
+
+    Example config file usage:
+
+    .. code-block:: ini
+
+        extend-exclude =
+            legacy/,
+            vendor/
+        extend-exclude = legacy/,vendor/
+
+
 .. option:: --filename=<patterns>
 
     :ref:`Go back to index <top>`

@@ -7,13 +7,12 @@ import pytest
 from flake8 import checker
 
 
-def style_guide_mock(**kwargs):
+def style_guide_mock():
     """Create a mock StyleGuide object."""
-    kwargs.setdefault('diff', False)
-    kwargs.setdefault('jobs', '4')
-    style_guide = mock.Mock()
-    style_guide.options = mock.Mock(**kwargs)
-    return style_guide
+    return mock.MagicMock(**{
+        'options.diff': False,
+        'options.jobs': '4',
+    })
 
 
 def _parallel_checker_manager():

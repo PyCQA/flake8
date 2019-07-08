@@ -14,6 +14,7 @@ def register_default_options(option_manager):
     - ``--count``
     - ``--diff``
     - ``--exclude``
+    - ``--extend-exclude``
     - ``--filename``
     - ``--format``
     - ``--hang-closing``
@@ -83,6 +84,16 @@ def register_default_options(option_manager):
         normalize_paths=True,
         help="Comma-separated list of files or directories to exclude."
         " (Default: %default)",
+    )
+
+    add_option(
+        "--extend-exclude",
+        metavar="patterns",
+        default="",
+        parse_from_config=True,
+        comma_separated_list=True,
+        help="Comma-separated list of files or directories to add to the list"
+        " of excluded ones."
     )
 
     add_option(

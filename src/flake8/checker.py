@@ -1,6 +1,7 @@
 """Checker Manager and Checker classes."""
 import collections
 import errno
+import itertools
 import logging
 import signal
 import tokenize
@@ -79,6 +80,9 @@ class Manager(object):
             "physical lines": 0,
             "tokens": 0,
         }
+        self.exclude = tuple(
+            itertools.chain(self.options.exclude, self.options.extend_exclude),
+        )
 
     def _process_statistics(self):
         for checker in self.checkers:
@@ -187,7 +191,7 @@ class Manager(object):
 
         return utils.matches_filename(
             path,
-            patterns=self.options.exclude,
+            patterns=self.exclude,
             log_message='"%(path)s" has %(whether)sbeen excluded',
             logger=LOG,
         )

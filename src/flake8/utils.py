@@ -386,7 +386,7 @@ def filenames_from(arg, predicate=None):
 
 
 def fnmatch(filename, patterns):
-    # type: (str, List[str]) -> bool
+    # type: (str, Sequence[str]) -> bool
     """Wrap :func:`fnmatch.fnmatch` to add some functionality.
 
     :param str filename:
@@ -453,7 +453,7 @@ def parameters_for(plugin):
 
 
 def matches_filename(path, patterns, log_message, logger):
-    # type: (str, List[str], str, logging.Logger) -> bool
+    # type: (str, Sequence[str], str, logging.Logger) -> bool
     """Use fnmatch to discern if a path exists in patterns.
 
     :param str path:

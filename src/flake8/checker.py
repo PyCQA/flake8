@@ -81,7 +81,7 @@ class Manager(object):
             "tokens": 0,
         }
         self.exclude = tuple(
-            itertools.chain(self.options.exclude, self.options.extend_exclude),
+            itertools.chain(self.options.exclude, self.options.extend_exclude)
         )
 
     def _process_statistics(self):

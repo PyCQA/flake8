@@ -128,6 +128,18 @@ def test_bug_report_successful(capsys):
     assert err == ''
 
 
+def test_specific_noqa_does_not_clobber_pycodestyle_noqa(tmpdir, capsys):
+    """See https://gitlab.com/pycqa/flake8/issues/552."""
+    with tmpdir.as_cwd():
+        tmpdir.join('t.py').write("test = ('ABC' == None)  # noqa: E501\n")
+        _call_main(['t.py'], retv=1)
+
+    out, err = capsys.readouterr()
+    assert out == '''\
+t.py:1:15: E711 comparison to None should be 'if cond is None:'
+'''
+
+
 def test_obtaining_args_from_sys_argv_when_not_explicity_provided(capsys):
     """Test that arguments are obtained from 'sys.argv'."""
     with mock.patch('sys.argv', ['flake8', '--help']):

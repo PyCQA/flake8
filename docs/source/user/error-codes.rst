@@ -41,7 +41,7 @@ generates its own :term:`error code`\ s for ``pyflakes``:
 +------+---------------------------------------------------------------------+
 | F632 | use ``==/!=`` to compare ``str``, ``bytes``, and ``int`` literals   |
 +------+---------------------------------------------------------------------+
-| F633 | assertion test is a tuple, which are always ``True``                |
+| F633 | use of ``>>`` is invalid with ``print`` function                    |
 +------+---------------------------------------------------------------------+
 +------+---------------------------------------------------------------------+
 | F701 | a ``break`` statement outside of a ``while`` or ``for`` loop        |

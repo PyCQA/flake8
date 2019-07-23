@@ -28,11 +28,7 @@ class ConfigFileFinder(object):
         """
         # The values of --append-config from the CLI
         extra_config_files = extra_config_files or []
-        self.extra_config_files = [
-            # Ensure the paths are absolute paths for local_config_files
-            os.path.abspath(f)
-            for f in extra_config_files
-        ]
+        self.extra_config_files = utils.normalize_paths(extra_config_files)
 
         # Platform specific settings
         self.is_windows = sys.platform == "win32"

@@ -158,13 +158,10 @@ class Application(object):
     def make_config_finder(self):
         """Make our ConfigFileFinder based on preliminary opts and args."""
         if self.config_finder is None:
-            extra_config_files = utils.normalize_paths(
-                self.prelim_opts.append_config
-            )
             self.config_finder = config.ConfigFileFinder(
                 self.option_manager.program_name,
                 self.prelim_args,
-                extra_config_files,
+                self.prelim_opts.append_config,
             )
 
     def find_plugins(self):

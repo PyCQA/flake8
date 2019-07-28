@@ -24,7 +24,7 @@ string_types = (str, type(u""))
 
 
 def parse_comma_separated_list(value, regexp=COMMA_SEPARATED_LIST_RE):
-    # type: (Optional[str], Pattern[str]) -> List[str]
+    # type: (str, Pattern[str]) -> List[str]
     """Parse a comma-separated list.
 
     :param value:
@@ -40,9 +40,6 @@ def parse_comma_separated_list(value, regexp=COMMA_SEPARATED_LIST_RE):
         list
     """
     assert isinstance(value, string_types), value  # nosec (for bandit)
-
-    if not value:
-        return []
 
     separated = regexp.split(value)
     item_gen = (item.strip() for item in separated)

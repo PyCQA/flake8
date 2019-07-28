@@ -39,6 +39,10 @@ def parse_comma_separated_list(value, regexp=COMMA_SEPARATED_LIST_RE):
     :rtype:
         list
     """
+    assert isinstance(  # nosec (for bandit)
+        value, (string_types, type(None))
+    ), value
+
     if not value:
         return []
 

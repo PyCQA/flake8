@@ -2,7 +2,7 @@
 import collections
 import logging
 import optparse  # pylint: disable=deprecated-module
-from typing import Any, Callable, Dict, List, Optional, Set
+from typing import Dict, List, Optional, Set
 
 from flake8 import utils
 
@@ -142,14 +142,17 @@ class Option(object):
 
     def normalize(self, value, *normalize_args):
         """Normalize the value based on the option configuration."""
+        if self.comma_separated_list and isinstance(
+            value, utils.string_types
+        ):
+            value = utils.parse_comma_separated_list(value)
+
         if self.normalize_paths:
-            # Decide whether to parse a list of paths or a single path
-            normalize = utils.normalize_path  # type: Callable[..., Any]
-            if self.comma_separated_list:
-                normalize = utils.normalize_paths
-            return normalize(value, *normalize_args)
-        elif self.comma_separated_list:
-            return utils.parse_comma_separated_list(value)
+            if isinstance(value, list):
+                value = utils.normalize_paths(value, *normalize_args)
+            else:
+                value = utils.normalize_path(value, *normalize_args)
+
         return value
 
     def normalize_from_setuptools(self, value):

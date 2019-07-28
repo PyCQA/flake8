@@ -22,11 +22,6 @@ RELATIVE_PATHS = ["flake8", "pep8", "pyflakes", "mccabe"]
     ("E123,W234,,E206,,", ["E123", "W234", "E206"]),
     ("E123, W234,, E206,,", ["E123", "W234", "E206"]),
     ("E123,,W234,,E206,,", ["E123", "W234", "E206"]),
-    (["E123", "W234", "E206"], ["E123", "W234", "E206"]),
-    (["E123", "\n\tW234", "\n    E206"], ["E123", "W234", "E206"]),
-    (["E123", "\n\tW234", "\n    E206", "\n"], ["E123", "W234", "E206"]),
-    (["E123", "\n\tW234", "", "\n    E206", "\n"], ["E123", "W234", "E206"]),
-    (["E123", "\n\tW234", "", "\n    E206", ""], ["E123", "W234", "E206"]),
 ])
 def test_parse_comma_separated_list(value, expected):
     """Verify that similar inputs produce identical outputs."""

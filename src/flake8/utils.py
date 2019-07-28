@@ -24,11 +24,11 @@ string_types = (str, type(u""))
 
 
 def parse_comma_separated_list(value, regexp=COMMA_SEPARATED_LIST_RE):
-    # type: (Union[Sequence[str], str], Pattern[str]) -> List[str]
+    # type: (Optional[str], Pattern[str]) -> List[str]
     """Parse a comma-separated list.
 
     :param value:
-        String or list of strings to be parsed and normalized.
+        String to be parsed and normalized.
     :param regexp:
         Compiled regular expression used to split the value when it is a
         string.
@@ -46,10 +46,8 @@ def parse_comma_separated_list(value, regexp=COMMA_SEPARATED_LIST_RE):
     if not value:
         return []
 
-    if isinstance(value, string_types):
-        value = regexp.split(value)
-
-    item_gen = (item.strip() for item in value)
+    separated = regexp.split(value)
+    item_gen = (item.strip() for item in separated)
     return [item for item in item_gen if item]
 
 

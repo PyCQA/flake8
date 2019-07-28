@@ -25,13 +25,8 @@
 
     "E121,W123,F904"
     "E121,\nW123,\nF804"
-    "E121,\n\tW123,\n\tF804"
-
-Or it will take a list of strings (potentially with whitespace) such as
-
-.. code-block:: python
-
-    ["   E121\n", "\t\nW123   ", "\n\tF904\n    "]
+    " E121,\n\tW123,\n\tF804 "
+    " E121\n\tW123 \n\tF804"
 
 And converts it to a list that looks as follows
 

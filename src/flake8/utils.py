@@ -168,6 +168,7 @@ def normalize_paths(paths, parent=os.curdir):
     :rtype:
         [str]
     """
+    assert isinstance(paths, list), paths  # nosec (for bandit)
     return [
         normalize_path(p, parent) for p in parse_comma_separated_list(paths)
     ]

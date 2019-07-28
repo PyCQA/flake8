@@ -160,8 +160,8 @@ def parse_files_to_codes_mapping(value_):  # noqa: C901
 
 
 def normalize_paths(paths, parent=os.curdir):
-    # type: (Union[Sequence[str], str], str) -> List[str]
-    """Parse a comma-separated list of paths.
+    # type: (Sequence[str], str) -> List[str]
+    """Normalize a list of paths relative to a parent directory.
 
     :returns:
         The normalized paths.
@@ -169,9 +169,7 @@ def normalize_paths(paths, parent=os.curdir):
         [str]
     """
     assert isinstance(paths, list), paths  # nosec (for bandit)
-    return [
-        normalize_path(p, parent) for p in parse_comma_separated_list(paths)
-    ]
+    return [normalize_path(p, parent) for p in paths]
 
 
 def normalize_path(path, parent=os.curdir):

@@ -24,11 +24,11 @@ string_types = (str, type(u""))
 
 
 def parse_comma_separated_list(value, regexp=COMMA_SEPARATED_LIST_RE):
-    # type: (Union[Sequence[str], str], Pattern[str]) -> List[str]
+    # type: (str, Pattern[str]) -> List[str]
     """Parse a comma-separated list.
 
     :param value:
-        String or list of strings to be parsed and normalized.
+        String to be parsed and normalized.
     :param regexp:
         Compiled regular expression used to split the value when it is a
         string.
@@ -39,13 +39,10 @@ def parse_comma_separated_list(value, regexp=COMMA_SEPARATED_LIST_RE):
     :rtype:
         list
     """
-    if not value:
-        return []
+    assert isinstance(value, string_types), value  # nosec (for bandit)
 
-    if isinstance(value, string_types):
-        value = regexp.split(value)
-
-    item_gen = (item.strip() for item in value)
+    separated = regexp.split(value)
+    item_gen = (item.strip() for item in separated)
     return [item for item in item_gen if item]
 
 
@@ -158,17 +155,16 @@ def parse_files_to_codes_mapping(value_):  # noqa: C901
 
 
 def normalize_paths(paths, parent=os.curdir):
-    # type: (Union[Sequence[str], str], str) -> List[str]
-    """Parse a comma-separated list of paths.
+    # type: (Sequence[str], str) -> List[str]
+    """Normalize a list of paths relative to a parent directory.
 
     :returns:
         The normalized paths.
     :rtype:
         [str]
     """
-    return [
-        normalize_path(p, parent) for p in parse_comma_separated_list(paths)
-    ]
+    assert isinstance(paths, list), paths  # nosec (for bandit)
+    return [normalize_path(p, parent) for p in paths]
 
 
 def normalize_path(path, parent=os.curdir):

@@ -30,6 +30,11 @@ Configuration Locations
 
 - In your project in one of ``setup.cfg``, ``tox.ini``, or ``.flake8``.
 
+Values set at the command line have highest priority, then those in the
+project configuration file, then those in your user directory, and finally
+there are the defaults. However, there are additional command line options
+which can alter this.
+
 
 "User" Configuration
 --------------------

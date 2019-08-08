@@ -11,6 +11,7 @@ EXCLUDE = (
     ".tox",
     ".eggs",
     "*.egg",
+    "node_modules",
 )
 IGNORE = ("E121", "E123", "E126", "E226", "E24", "E704", "W503", "W504")
 SELECT = ("E", "F", "W", "C90")

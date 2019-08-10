@@ -65,19 +65,29 @@ def test_show_source_returns_nothing_when_there_is_source():
     ) == ''
 
 
-@pytest.mark.parametrize('line, column', [
-    ('x=1\n', 2),
-    ('    x=(1\n       +2)\n', 5),
-    # TODO(sigmavirus24): Add more examples
+@pytest.mark.parametrize(('line1', 'line2', 'column'), [
+    (
+        'x=1\n',
+        ' ^',
+        2,
+    ),
+    (
+        '    x=(1\n       +2)\n',
+        '    ^',
+        5,
+    ),
+    (
+        '\tx\t=\ty\n',
+        '\t \t \t^',
+        6,
+    ),
 ])
-def test_show_source_updates_physical_line_appropriately(line, column):
+def test_show_source_updates_physical_line_appropriately(line1, line2, column):
     """Ensure the error column is appropriately indicated."""
     formatter = base.BaseFormatter(options(show_source=True))
-    error = style_guide.Violation('A000', 'file.py', 1, column, 'error', line)
+    error = style_guide.Violation('A000', 'file.py', 1, column, 'error', line1)
     output = formatter.show_source(error)
-    assert output
-    _, pointer = output.rsplit('\n', 1)
-    assert pointer.count(' ') == (column - 1)
+    assert output == line1 + line2
 
 
 @pytest.mark.parametrize('tee', [False, True])

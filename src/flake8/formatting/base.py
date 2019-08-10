@@ -171,10 +171,13 @@ class BaseFormatter(object):
 
         # Because column numbers are 1-indexed, we need to remove one to get
         # the proper number of space characters.
-        pointer = (" " * (error.column_number - 1)) + "^"
+        indent = "".join(
+            c if c.isspace() else " "
+            for c in error.physical_line[: error.column_number - 1]
+        )
         # Physical lines have a newline at the end, no need to add an extra
         # one
-        return error.physical_line + pointer
+        return "{}{}^".format(error.physical_line, indent)
 
     def _write(self, output):  # type: (str) -> None
         """Handle logic of whether to use an output file or print()."""

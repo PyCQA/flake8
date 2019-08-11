@@ -354,10 +354,6 @@ max-bool-expr=5
 
 
 [IMPORTS]
-
-# Deprecated modules which should not be used, separated by a comma
-deprecated-modules=optparse
-
 # Create a graph of every (i.e. internal and external) dependencies in the
 # given file (report RP0402 must not be disabled)
 import-graph=

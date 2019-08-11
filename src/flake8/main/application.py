@@ -1,8 +1,8 @@
 """Module containing the application logic for Flake8."""
 from __future__ import print_function
 
+import argparse
 import logging
-import optparse
 import sys
 import time
 from typing import Dict, List, Optional, Set
@@ -52,8 +52,8 @@ class Application(object):
         )
         options.register_default_options(self.option_manager)
         #: The preliminary options parsed from CLI before plugins are loaded,
-        #: into a :class:`optparse.Values` instance
-        self.prelim_opts = None  # type: optparse.Values
+        #: into a :class:`argparse.Namespace` instance
+        self.prelim_opts = None  # type: argparse.Namespace
         #: The preliminary arguments parsed from CLI before plugins are loaded
         self.prelim_args = None  # type: List[str]
         #: The instance of :class:`flake8.options.config.ConfigFileFinder`
@@ -77,8 +77,8 @@ class Application(object):
         self.file_checker_manager = None  # type: checker.Manager
 
         #: The user-supplied options parsed into an instance of
-        #: :class:`optparse.Values`
-        self.options = None  # type: optparse.Values
+        #: :class:`argparse.Namespace`
+        self.options = None  # type: argparse.Namespace
         #: The left over arguments that were not parsed by
         #: :attr:`option_manager`
         self.args = None  # type: List[str]
@@ -117,7 +117,7 @@ class Application(object):
         # printing the version until we aggregate options from config files
         # and the command-line. First, let's clone our arguments on the CLI,
         # then we'll attempt to remove ``--version`` so that we can avoid
-        # triggering the "version" action in optparse. If it's not there, we
+        # triggering the "version" action in argparse. If it's not there, we
         # do not need to worry and we can continue. If it is, we successfully
         # defer printing the version until just a little bit later.
         # Similarly we have to defer printing the help text until later.

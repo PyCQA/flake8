@@ -1,4 +1,6 @@
 """Module containing some of the logic for our VCS installation logic."""
+import argparse
+
 from flake8 import exceptions as exc
 from flake8.main import git
 from flake8.main import mercurial
@@ -11,24 +13,23 @@ from flake8.main import mercurial
 _INSTALLERS = {"git": git.install, "mercurial": mercurial.install}
 
 
-def install(option, option_string, value, parser):
-    """Determine which version control hook to install.
+class InstallAction(argparse.Action):
+    """argparse action to run the hook installation."""
 
-    For more information about the callback signature, see:
-    https://docs.python.org/3/library/optparse.html#optparse-option-callbacks
-    """
-    installer = _INSTALLERS[value]
-    errored = False
-    successful = False
-    try:
-        successful = installer()
-    except exc.HookInstallationError as hook_error:
-        print(str(hook_error))
-        errored = True
+    def __call__(self, parser, namespace, value, option_string=None):
+        """Perform the argparse action for installing vcs hooks."""
+        installer = _INSTALLERS[value]
+        errored = False
+        successful = False
+        try:
+            successful = installer()
+        except exc.HookInstallationError as hook_error:
+            print(str(hook_error))
+            errored = True
 
-    if not successful:
-        print("Could not find the {0} directory".format(value))
-    raise SystemExit(not successful and errored)
+        if not successful:
+            print("Could not find the {0} directory".format(value))
+        raise SystemExit(not successful and errored)
 
 
 def choices():

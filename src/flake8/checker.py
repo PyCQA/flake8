@@ -367,7 +367,7 @@ class FileChecker(object):
         :param options:
             Parsed option values from config and command-line.
         :type options:
-            optparse.Values
+            argparse.Namespace
         """
         self.options = options
         self.filename = filename

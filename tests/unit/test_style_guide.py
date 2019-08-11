@@ -1,5 +1,5 @@
 """Tests for the flake8.style_guide.StyleGuide class."""
-import optparse
+import argparse
 
 import mock
 import pytest
@@ -11,7 +11,7 @@ from flake8.formatting import base
 
 
 def create_options(**kwargs):
-    """Create and return an instance of optparse.Values."""
+    """Create and return an instance of argparse.Namespace."""
     kwargs.setdefault('select', [])
     kwargs.setdefault('extended_default_select', [])
     kwargs.setdefault('ignore', [])
@@ -19,7 +19,7 @@ def create_options(**kwargs):
     kwargs.setdefault('disable_noqa', False)
     kwargs.setdefault('enable_extensions', [])
     kwargs.setdefault('per_file_ignores', [])
-    return optparse.Values(kwargs)
+    return argparse.Namespace(**kwargs)
 
 
 def test_handle_error_does_not_raise_type_errors():

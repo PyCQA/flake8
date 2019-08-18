@@ -1,5 +1,5 @@
 """Shared fixtures between unit tests."""
-import optparse
+import argparse
 
 import pytest
 
@@ -11,7 +11,7 @@ def options_from(**kwargs):
     kwargs.setdefault('max_doc_length', None)
     kwargs.setdefault('verbose', False)
     kwargs.setdefault('stdin_display_name', 'stdin')
-    return optparse.Values(kwargs)
+    return argparse.Namespace(**kwargs)
 
 
 @pytest.fixture

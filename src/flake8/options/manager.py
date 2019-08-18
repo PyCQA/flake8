@@ -1,55 +1,100 @@
 """Option handling and Option management logic."""
+import argparse
 import collections
+import functools
 import logging
-import optparse  # pylint: disable=deprecated-module
-from typing import Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set
 
 from flake8 import utils
 
 LOG = logging.getLogger(__name__)
 
+_NOARG = object()
+
+
+class _CallbackAction(argparse.Action):
+    """Shim for optparse-style callback actions."""
+
+    def __init__(self, *args, **kwargs):
+        self._callback = kwargs.pop("callback")
+        self._callback_args = kwargs.pop("callback_args", ())
+        self._callback_kwargs = kwargs.pop("callback_kwargs", {})
+        super(_CallbackAction, self).__init__(*args, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        if not values:
+            values = None
+        elif isinstance(values, list) and len(values) > 1:
+            values = tuple(values)
+        self._callback(
+            self,
+            option_string,
+            values,
+            parser,
+            *self._callback_args,
+            **self._callback_kwargs
+        )
+
+
+def _flake8_normalize(value, *args, **kwargs):
+    comma_separated_list = kwargs.pop("comma_separated_list", False)
+    normalize_paths = kwargs.pop("normalize_paths", False)
+    if kwargs:
+        raise TypeError("Unexpected keyword args: {}".format(kwargs))
+
+    if comma_separated_list and isinstance(value, utils.string_types):
+        value = utils.parse_comma_separated_list(value)
+
+    if normalize_paths:
+        if isinstance(value, list):
+            value = utils.normalize_paths(value, *args)
+        else:
+            value = utils.normalize_path(value, *args)
+
+    return value
+
 
 class Option(object):
-    """Our wrapper around an optparse.Option object to add features."""
+    """Our wrapper around an argparse argument parsers to add features."""
 
     def __init__(
         self,
-        short_option_name=None,
-        long_option_name=None,
+        short_option_name=_NOARG,
+        long_option_name=_NOARG,
         # Options below here are taken from the optparse.Option class
-        action=None,
-        default=None,
-        type=None,
-        dest=None,
-        nargs=None,
-        const=None,
-        choices=None,
-        callback=None,
-        callback_args=None,
-        callback_kwargs=None,
-        help=None,
-        metavar=None,
+        action=_NOARG,
+        default=_NOARG,
+        type=_NOARG,
+        dest=_NOARG,
+        nargs=_NOARG,
+        const=_NOARG,
+        choices=_NOARG,
+        help=_NOARG,
+        metavar=_NOARG,
+        # deprecated optparse-only options
+        callback=_NOARG,
+        callback_args=_NOARG,
+        callback_kwargs=_NOARG,
+        # Options below are taken from argparse.ArgumentParser.add_argument
+        required=_NOARG,
         # Options below here are specific to Flake8
         parse_from_config=False,
         comma_separated_list=False,
         normalize_paths=False,
     ):
-        """Initialize an Option instance wrapping optparse.Option.
+        """Initialize an Option instance.
 
-        The following are all passed directly through to optparse.
+        The following are all passed directly through to argparse.
 
         :param str short_option_name:
             The short name of the option (e.g., ``-x``). This will be the
-            first argument passed to :class:`~optparse.Option`.
+            first argument passed to ``ArgumentParser.add_argument``
         :param str long_option_name:
             The long name of the option (e.g., ``--xtra-long-option``). This
-            will be the second argument passed to :class:`~optparse.Option`.
-        :param str action:
-            Any action allowed by :mod:`optparse`.
+            will be the second argument passed to
+            ``ArgumentParser.add_argument``
         :param default:
             Default value of the option.
-        :param type:
-            Any type allowed by :mod:`optparse`.
         :param dest:
             Attribute name to store parsed option value as.
         :param nargs:
@@ -59,16 +104,33 @@ class Option(object):
             conjuntion with ``action="store_const"``.
         :param iterable choices:
             Possible values for the option.
-        :param callable callback:
-            Callback used if the action is ``"callback"``.
-        :param iterable callback_args:
-            Additional positional arguments to the callback callable.
-        :param dictionary callback_kwargs:
-            Keyword arguments to the callback callable.
         :param str help:
             Help text displayed in the usage information.
         :param str metavar:
             Name to use instead of the long option name for help text.
+        :param bool required:
+            Whether this option is required or not.
+
+        The following options may be passed directly through to :mod:`argparse`
+        but may need some massaging.
+
+        :param type:
+            A callable to normalize the type (as is the case in
+            :mod:`argparse`).  Deprecated: you can also pass through type
+            strings such as ``'int'`` which are handled by :mod:`optparse`.
+        :param str action:
+            Any action allowed by :mod:`argparse`.  Deprecated: this also
+            understands the ``action='callback'`` action from :mod:`optparse`.
+        :param callable callback:
+            Callback used if the action is ``"callback"``.  Deprecated: please
+            use ``action=`` instead.
+        :param iterable callback_args:
+            Additional positional arguments to the callback callable.
+            Deprecated: please use ``action=`` instead (probably with
+            ``functools.partial``).
+        :param dictionary callback_kwargs:
+            Keyword arguments to the callback callable. Deprecated: please
+            use ``action=`` instead (probably with ``functools.partial``).
 
         The following parameters are for Flake8's option handling alone.
 
@@ -81,16 +143,66 @@ class Option(object):
             Whether the option is expecting a path or list of paths and should
             attempt to normalize the paths to absolute paths.
         """
+        if long_option_name is _NOARG and short_option_name.startswith("--"):
+            short_option_name, long_option_name = _NOARG, short_option_name
+
+        # optparse -> argparse `%default` => `%(default)s`
+        if help is not _NOARG and "%default" in help:
+            LOG.warning(
+                "option %s: please update `help=` text to use %%(default)s "
+                "instead of %%default -- this will be an error in the future",
+                long_option_name,
+            )
+            help = help.replace("%default", "%(default)s")
+
+        # optparse -> argparse for `callback`
+        if action == "callback":
+            LOG.warning(
+                "option %s: please update from optparse `action='callback'` "
+                "to argparse action classes -- this will be an error in the "
+                "future",
+                long_option_name,
+            )
+            action = _CallbackAction
+            if type is _NOARG:
+                nargs = 0
+
+        # optparse -> argparse for `type`
+        if isinstance(type, utils.string_types):
+            LOG.warning(
+                "option %s: please update from optparse string `type=` to "
+                "argparse callable `type=` -- this will be an error in the "
+                "future"
+            )
+            type = {
+                "int": int,
+                "long": int,
+                "string": str,
+                "float": float,
+                "complex": complex,
+                "choice": _NOARG,
+            }[type]
+
+        # flake8 special type normalization
+        if comma_separated_list or normalize_paths:
+            type = functools.partial(
+                _flake8_normalize,
+                comma_separated_list=comma_separated_list,
+                normalize_paths=normalize_paths,
+            )
+
         self.short_option_name = short_option_name
         self.long_option_name = long_option_name
         self.option_args = [
-            x for x in (short_option_name, long_option_name) if x is not None
+            x
+            for x in (short_option_name, long_option_name)
+            if x is not _NOARG
         ]
         self.option_kwargs = {
             "action": action,
             "default": default,
             "type": type,
-            "dest": self._make_dest(dest),
+            "dest": dest,
             "nargs": nargs,
             "const": const,
             "choices": choices,
@@ -111,7 +223,7 @@ class Option(object):
 
         self.config_name = None  # type: Optional[str]
         if parse_from_config:
-            if not long_option_name:
+            if long_option_name is _NOARG:
                 raise ValueError(
                     "When specifying parse_from_config=True, "
                     "a long_option_name must also be specified."
@@ -120,25 +232,20 @@ class Option(object):
 
         self._opt = None
 
+    @property
+    def filtered_option_kwargs(self):  # type: () -> Dict[str, Any]
+        """Return any actually-specified arguments."""
+        return {
+            k: v for k, v in self.option_kwargs.items() if v is not _NOARG
+        }
+
     def __repr__(self):  # noqa: D105
-        return (
-            "Option({0}, {1}, action={action}, default={default}, "
-            "dest={dest}, type={type}, callback={callback}, help={help},"
-            " callback={callback}, callback_args={callback_args}, "
-            "callback_kwargs={callback_kwargs}, metavar={metavar})"
-        ).format(
-            self.short_option_name,
-            self.long_option_name,
-            **self.option_kwargs
-        )
-
-    def _make_dest(self, dest):
-        if dest:
-            return dest
-
-        if self.long_option_name:
-            return self.long_option_name[2:].replace("-", "_")
-        return self.short_option_name[1]
+        parts = []
+        for arg in self.option_args:
+            parts.append(arg)
+        for k, v in self.filtered_option_kwargs.items():
+            parts.append("{}={!r}".format(k, v))
+        return "Option({})".format(", ".join(parts))
 
     def normalize(self, value, *normalize_args):
         """Normalize the value based on the option configuration."""
@@ -158,11 +265,11 @@ class Option(object):
     def normalize_from_setuptools(self, value):
         """Normalize the value received from setuptools."""
         value = self.normalize(value)
-        if self.type == "int" or self.action == "count":
+        if self.type is int or self.action == "count":
             return int(value)
-        elif self.type == "float":
+        elif self.type is float:
             return float(value)
-        elif self.type == "complex":
+        elif self.type is complex:
             return complex(value)
         if self.action in ("store_true", "store_false"):
             value = str(value).upper()
@@ -172,13 +279,14 @@ class Option(object):
                 return False
         return value
 
+    def to_argparse(self):
+        """Convert a Flake8 Option to argparse ``add_argument`` arguments."""
+        return self.option_args, self.filtered_option_kwargs
+
+    @property
     def to_optparse(self):
-        """Convert a Flake8 Option to an optparse Option."""
-        if self._opt is None:
-            self._opt = optparse.Option(
-                *self.option_args, **self.option_kwargs
-            )
-        return self._opt
+        """No longer functional."""
+        raise AttributeError("to_optparse: flake8 now uses argparse")
 
 
 PluginVersion = collections.namedtuple(
@@ -190,7 +298,10 @@ class OptionManager(object):
     """Manage Options and OptionParser while adding post-processing."""
 
     def __init__(
-        self, prog=None, version=None, usage="%prog [options] file file ..."
+        self,
+        prog=None,
+        version=None,
+        usage="%(prog)s [options] file file ...",
     ):
         """Initialize an instance of an OptionManager.
 
@@ -201,9 +312,11 @@ class OptionManager(object):
         :param str usage:
             Basic usage string used by the OptionParser.
         """
-        self.parser = optparse.OptionParser(
-            prog=prog, version=version, usage=usage
+        self.parser = argparse.ArgumentParser(prog=prog, usage=usage)
+        self.version_action = self.parser.add_argument(
+            "--version", action="version", version=version
         )
+        self.parser.add_argument("filenames", nargs="*", metavar="filename")
         self.config_options_dict = {}  # type: Dict[str, Option]
         self.options = []  # type: List[Option]
         self.program_name = prog
@@ -226,12 +339,11 @@ class OptionManager(object):
         .. note::
 
             ``short_option_name`` and ``long_option_name`` may be specified
-            positionally as they are with optparse normally.
+            positionally as they are with argparse normally.
         """
-        if len(args) == 1 and args[0].startswith("--"):
-            args = (None, args[0])
         option = Option(*args, **kwargs)
-        self.parser.add_option(option.to_optparse())
+        option_args, option_kwargs = option.to_argparse()
+        self.parser.add_argument(*option_args, **option_kwargs)
         self.options.append(option)
         if option.parse_from_config:
             name = option.config_name
@@ -289,12 +401,8 @@ class OptionManager(object):
 
     def update_version_string(self):
         """Update the flake8 version string."""
-        self.parser.version = (
-            self.version
-            + " ("
-            + self.generate_versions()
-            + ") "
-            + utils.get_python_version()
+        self.version_action.version = "{} ({}) {}".format(
+            self.version, self.generate_versions(), utils.get_python_version()
         )
 
     def generate_epilog(self):
@@ -304,18 +412,13 @@ class OptionManager(object):
             plugin_version_format
         )
 
-    def _normalize(self, options):
-        for option in self.options:
-            old_value = getattr(options, option.dest)
-            setattr(options, option.dest, option.normalize(old_value))
-
     def parse_args(self, args=None, values=None):
         """Proxy to calling the OptionParser's parse_args method."""
         self.generate_epilog()
         self.update_version_string()
-        options, xargs = self.parser.parse_args(args, values)
-        self._normalize(options)
-        return options, xargs
+        args = self.parser.parse_args(args, values)
+        # TODO: refactor callers to not need this
+        return args, args.filenames
 
     def parse_known_args(self, args=None, values=None):
         """Parse only the known arguments from the argument values.
@@ -325,33 +428,8 @@ class OptionManager(object):
         """
         self.generate_epilog()
         self.update_version_string()
-        # Taken from optparse.OptionParser.parse_args
-        rargs = self.parser._get_args(args)
-        if values is None:
-            values = self.parser.get_default_values()
-
-        self.parser.rargs = rargs
-        largs = []  # type: List[str]
-        self.parser.values = values
-
-        while rargs:
-            # NOTE(sigmavirus24): If we only care about *known* options, then
-            # we should just shift the bad option over to the largs list and
-            # carry on.
-            # Unfortunately, we need to rely on a private method here.
-            try:
-                self.parser._process_args(largs, rargs, values)
-            except (
-                optparse.BadOptionError,
-                optparse.OptionValueError,
-            ) as err:
-                # TODO: https://gitlab.com/pycqa/flake8/issues/541
-                largs.append(err.opt_str)  # type: ignore
-
-        args = largs + rargs
-        options, xargs = self.parser.check_values(values, args)
-        self._normalize(options)
-        return options, xargs
+        args, rest = self.parser.parse_known_args(args, values)
+        return args, rest
 
     def register_plugin(self, name, version, local=False):
         """Register a plugin relying on the OptionManager.

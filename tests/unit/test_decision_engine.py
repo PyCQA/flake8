@@ -1,5 +1,5 @@
 """Tests for the flake8.style_guide.DecisionEngine class."""
-import optparse
+import argparse
 
 import pytest
 
@@ -8,14 +8,14 @@ from flake8 import style_guide
 
 
 def create_options(**kwargs):
-    """Create and return an instance of optparse.Values."""
+    """Create and return an instance of argparse.Namespace."""
     kwargs.setdefault('select', [])
     kwargs.setdefault('extended_default_select', [])
     kwargs.setdefault('ignore', [])
     kwargs.setdefault('extend_ignore', [])
     kwargs.setdefault('disable_noqa', False)
     kwargs.setdefault('enable_extensions', [])
-    return optparse.Values(kwargs)
+    return argparse.Namespace(**kwargs)
 
 
 @pytest.mark.parametrize('ignore_list,extend_ignore,error_code', [

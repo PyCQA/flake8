@@ -118,7 +118,6 @@ class FlakesChecker(pyflakes.checker.Checker):
             comma_separated_list=True,
             normalize_paths=True,
             help="Run doctests only on these files",
-            type="string",
         )
         parser.add_option(
             "--exclude-from-doctest",
@@ -128,7 +127,6 @@ class FlakesChecker(pyflakes.checker.Checker):
             comma_separated_list=True,
             normalize_paths=True,
             help="Skip these files when running doctests",
-            type="string",
         )
 
     @classmethod

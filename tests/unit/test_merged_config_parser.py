@@ -215,7 +215,7 @@ def test_parsed_hyphenated_and_underscored_names(
     max_line_length in our config files.
     """
     optmanager.add_option('--max-line-length', parse_from_config=True,
-                          type='int')
+                          type=int)
     optmanager.add_option('--enable-extensions', parse_from_config=True,
                           comma_separated_list=True)
     parser = config.MergedConfigParser(optmanager, config_finder)

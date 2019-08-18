@@ -1,5 +1,5 @@
 """Unit tests for flake.options.manager.OptionManager."""
-import optparse
+import argparse
 import os
 
 import mock
@@ -19,8 +19,7 @@ def optmanager():
 
 def test_option_manager_creates_option_parser(optmanager):
     """Verify that a new manager creates a new parser."""
-    assert optmanager.parser is not None
-    assert isinstance(optmanager.parser, optparse.OptionParser) is True
+    assert isinstance(optmanager.parser, argparse.ArgumentParser)
 
 
 def test_add_option_short_option_only(optmanager):
@@ -38,7 +37,7 @@ def test_add_option_long_option_only(optmanager):
     assert optmanager.config_options_dict == {}
 
     optmanager.add_option('--long', help='Test long opt')
-    assert optmanager.options[0].short_option_name is None
+    assert optmanager.options[0].short_option_name is manager._NOARG
     assert optmanager.options[0].long_option_name == '--long'
 
 
@@ -171,7 +170,7 @@ def test_generate_versions_with_format_string(optmanager):
 def test_update_version_string(optmanager):
     """Verify we update the version string idempotently."""
     assert optmanager.version == TEST_VERSION
-    assert optmanager.parser.version == TEST_VERSION
+    assert optmanager.version_action.version == TEST_VERSION
 
     optmanager.registered_plugins = [
         manager.PluginVersion('Testing 100', '0.0.0', False),
@@ -182,7 +181,7 @@ def test_update_version_string(optmanager):
     optmanager.update_version_string()
 
     assert optmanager.version == TEST_VERSION
-    assert (optmanager.parser.version == TEST_VERSION
+    assert (optmanager.version_action.version == TEST_VERSION
             + ' (Testing 100: 0.0.0, Testing 101: 0.0.0, Testing 300: 0.0.0) '
             + utils.get_python_version())
 
@@ -211,9 +210,7 @@ def test_extend_default_ignore(optmanager):
     assert optmanager.extended_default_ignore == set()
 
     optmanager.extend_default_ignore(['T100', 'T101', 'T102'])
-    assert optmanager.extended_default_ignore == {'T100',
-                                                  'T101',
-                                                  'T102'}
+    assert optmanager.extended_default_ignore == {'T100', 'T101', 'T102'}
 
 
 def test_parse_known_args(optmanager):
@@ -222,3 +219,91 @@ def test_parse_known_args(optmanager):
         optmanager.parse_known_args(['--max-complexity', '5'])
 
     assert sysexit.called is False
+
+
+def test_optparse_normalize_callback_option_legacy(optmanager):
+    """Test the optparse shim for `callback=`."""
+    callback_foo = mock.Mock()
+    optmanager.add_option(
+        '--foo',
+        action='callback',
+        callback=callback_foo,
+        callback_args=(1, 2),
+        callback_kwargs={'a': 'b'},
+    )
+    callback_bar = mock.Mock()
+    optmanager.add_option(
+        '--bar',
+        action='callback',
+        type='string',
+        callback=callback_bar,
+    )
+    callback_baz = mock.Mock()
+    optmanager.add_option(
+        '--baz',
+        action='callback',
+        type='string',
+        nargs=2,
+        callback=callback_baz,
+    )
+
+    optmanager.parse_args(['--foo', '--bar', 'bararg', '--baz', '1', '2'])
+
+    callback_foo.assert_called_once_with(
+        mock.ANY,  # the option / action instance
+        '--foo',
+        None,
+        mock.ANY,  # the OptionParser / ArgumentParser
+        1,
+        2,
+        a='b',
+    )
+    callback_bar.assert_called_once_with(
+        mock.ANY,  # the option / action instance
+        '--bar',
+        'bararg',
+        mock.ANY,  # the OptionParser / ArgumentParser
+    )
+    callback_baz.assert_called_once_with(
+        mock.ANY,  # the option / action instance
+        '--baz',
+        ('1', '2'),
+        mock.ANY,  # the OptionParser / ArgumentParser
+    )
+
+
+@pytest.mark.parametrize(
+    ('type_s', 'input_val', 'expected'),
+    (
+        ('int', '5', 5),
+        ('long', '6', 6),
+        ('string', 'foo', 'foo'),
+        ('float', '1.5', 1.5),
+        ('complex', '1+5j', 1 + 5j),
+    ),
+)
+def test_optparse_normalize_types(optmanager, type_s, input_val, expected):
+    """Test the optparse shim for type="typename"."""
+    optmanager.add_option('--foo', type=type_s)
+    opts, args = optmanager.parse_args(['--foo', input_val])
+    assert opts.foo == expected
+
+
+def test_optparse_normalize_choice_type(optmanager):
+    """Test the optparse shim for type="choice"."""
+    optmanager.add_option('--foo', type='choice', choices=('1', '2', '3'))
+    opts, args = optmanager.parse_args(['--foo', '1'])
+    assert opts.foo == '1'
+    # fails to parse
+    with pytest.raises(SystemExit):
+        optmanager.parse_args(['--foo', '4'])
+
+
+def test_optparse_normalize_help(optmanager, capsys):
+    """Test the optparse shim for %default in help text."""
+    optmanager.add_option('--foo', default='bar', help='default: %default')
+    with pytest.raises(SystemExit):
+        optmanager.parse_args(['--help'])
+    out, err = capsys.readouterr()
+    output = out + err
+    assert 'default: bar' in output

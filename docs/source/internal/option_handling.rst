@@ -28,7 +28,7 @@ undocumented attribute that pep8 looks for, |Flake8| 3 now accepts a parameter
 to ``add_option``, specifically ``parse_from_config`` which is a boolean
 value.
 
-|Flake8| does this by creating its own abstractions on top of :mod:`optparse`.
+|Flake8| does this by creating its own abstractions on top of :mod:`argparse`.
 The first abstraction is the :class:`flake8.options.manager.Option` class. The
 second is the :class:`flake8.options.manager.OptionManager`. In fact, we add
 three new parameters:
@@ -219,7 +219,7 @@ API Documentation
 .. autofunction:: flake8.options.aggregator.aggregate_options
 
 .. autoclass:: flake8.options.manager.Option
-    :members: __init__, normalize, to_optparse
+    :members: __init__, normalize, to_argparse
 
 .. autoclass:: flake8.options.manager.OptionManager
     :members:

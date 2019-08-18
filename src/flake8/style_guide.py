@@ -349,7 +349,7 @@ class StyleGuideManager(object):
         :param options:
             The original options parsed from the CLI and config file.
         :type options:
-            :class:`~optparse.Values`
+            :class:`~argparse.Namespace`
         :returns:
             A copy of the default style guide with overridden values.
         :rtype:

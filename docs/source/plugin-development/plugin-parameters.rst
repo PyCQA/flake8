@@ -72,7 +72,7 @@ Any plugin that has callable attributes ``add_options`` and
 Your ``add_options`` function should expect to receive an instance of
 |OptionManager|. An |OptionManager| instance behaves very similarly to
 :class:`optparse.OptionParser`. It, however, uses the layer that |Flake8| has
-developed on top of :mod:`optparse` to also handle configuration file parsing.
+developed on top of :mod:`argparse` to also handle configuration file parsing.
 :meth:`~flake8.options.manager.OptionManager.add_option` creates an |Option|
 which accepts the same parameters as :mod:`optparse` as well as three extra
 boolean parameters:
@@ -115,13 +115,13 @@ couple examples from |Flake8|. In each example, we will have
         '--max-line-length', type='int', metavar='n',
         default=defaults.MAX_LINE_LENGTH, parse_from_config=True,
         help='Maximum allowed line length for the entirety of this run. '
-             '(Default: %default)',
+             '(Default: %(default)s)',
     )
 
 Here we are adding the ``--max-line-length`` command-line option which is
 always an integer and will be parsed from the configuration file. Since we
-provide a default, we take advantage of :mod:`optparse`\ 's willingness to
-display that in the help text with ``%default``.
+provide a default, we take advantage of :mod:`argparse`\ 's willingness to
+display that in the help text with ``%(default)s``.
 
 .. code-block:: python
 
@@ -129,7 +129,7 @@ display that in the help text with ``%default``.
         '--select', metavar='errors', default='',
         parse_from_config=True, comma_separated_list=True,
         help='Comma-separated list of errors and warnings to enable.'
-             ' For example, ``--select=E4,E51,W234``. (Default: %default)',
+             ' For example, ``--select=E4,E51,W234``. (Default: %(default)s)',
     )
 
 In adding the ``--select`` command-line option, we're also indicating to the
@@ -143,7 +143,7 @@ as a comma-separated list.
         comma_separated_list=True, parse_from_config=True,
         normalize_paths=True,
         help='Comma-separated list of files or directories to exclude.'
-             '(Default: %default)',
+             '(Default: %(default)s)',
     )
 
 Finally, we show an option that uses all three extra flags. Values from
@@ -152,7 +152,7 @@ list, and then each item will be normalized.
 
 For information about other parameters to
 :meth:`~flake8.options.manager.OptionManager.add_option` refer to the
-documentation of :mod:`optparse`.
+documentation of :mod:`argparse`.
 
 
 Accessing Parsed Options
@@ -160,10 +160,10 @@ Accessing Parsed Options
 
 When a plugin has a callable ``parse_options`` attribute, |Flake8| will call
 it and attempt to provide the |OptionManager| instance, the parsed options
-which will be an instance of :class:`optparse.Values`, and the extra arguments
-that were not parsed by the |OptionManager|. If that fails, we will just pass
-the :class:`optparse.Values`. In other words, your ``parse_options``
-callable will have one of the following signatures:
+which will be an instance of :class:`argparse.Namespace`, and the extra
+arguments that were not parsed by the |OptionManager|. If that fails, we will
+just pass the :class:`argparse.Namespace`. In other words, your
+``parse_options`` callable will have one of the following signatures:
 
 .. code-block:: python
 

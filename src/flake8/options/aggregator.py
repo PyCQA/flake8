@@ -21,13 +21,13 @@ def aggregate_options(manager, config_finder, arglist=None, values=None):
         The list of arguments to pass to ``manager.parse_args``. In most cases
         this will be None so ``parse_args`` uses ``sys.argv``. This is mostly
         available to make testing easier.
-    :param optparse.Values values:
+    :param argparse.Namespace values:
         Previously parsed set of parsed options.
     :returns:
         Tuple of the parsed options and extra arguments returned by
         ``manager.parse_args``.
     :rtype:
-        tuple(optparse.Values, list)
+        tuple(argparse.Namespace, list)
     """
     # Get defaults from the option parser
     default_values, _ = manager.parse_args([], values=values)

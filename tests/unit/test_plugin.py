@@ -1,5 +1,5 @@
 """Tests for flake8.plugins.manager.Plugin."""
-import optparse
+import argparse
 
 import mock
 import pytest
@@ -124,7 +124,7 @@ def test_provide_options():
     entry_point = mock.Mock(spec=['load'])
     plugin_obj = mock.Mock(spec_set=['name', 'version', 'add_options',
                                      'parse_options'])
-    option_values = optparse.Values({'enable_extensions': []})
+    option_values = argparse.Namespace(enable_extensions=[])
     option_manager = mock.Mock()
     plugin = manager.Plugin('T000', entry_point)
     plugin._plugin = plugin_obj

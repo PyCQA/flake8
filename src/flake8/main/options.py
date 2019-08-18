@@ -1,4 +1,6 @@
 """Contains the logic for all of the default options for Flake8."""
+import functools
+
 from flake8 import defaults
 from flake8.main import debug
 from flake8.main import vcs
@@ -83,7 +85,7 @@ def register_default_options(option_manager):
         parse_from_config=True,
         normalize_paths=True,
         help="Comma-separated list of files or directories to exclude."
-        " (Default: %default)",
+        " (Default: %(default)s)",
     )
 
     add_option(
@@ -103,7 +105,7 @@ def register_default_options(option_manager):
         parse_from_config=True,
         comma_separated_list=True,
         help="Only check for filenames matching the patterns in this comma-"
-        "separated list. (Default: %default)",
+        "separated list. (Default: %(default)s)",
     )
 
     add_option(
@@ -111,7 +113,7 @@ def register_default_options(option_manager):
         default="stdin",
         help="The name used when reporting errors from code passed via stdin."
         " This is useful for editors piping the file contents to flake8."
-        " (Default: %default)",
+        " (Default: %(default)s)",
     )
 
     # TODO(sigmavirus24): Figure out --first/--repeat
@@ -142,7 +144,7 @@ def register_default_options(option_manager):
         parse_from_config=True,
         comma_separated_list=True,
         help="Comma-separated list of errors and warnings to ignore (or skip)."
-        " For example, ``--ignore=E4,E51,W234``. (Default: %default)",
+        " For example, ``--ignore=E4,E51,W234``. (Default: %(default)s)",
     )
 
     add_option(
@@ -168,22 +170,22 @@ def register_default_options(option_manager):
 
     add_option(
         "--max-line-length",
-        type="int",
+        type=int,
         metavar="n",
         default=defaults.MAX_LINE_LENGTH,
         parse_from_config=True,
         help="Maximum allowed line length for the entirety of this run. "
-        "(Default: %default)",
+        "(Default: %(default)s)",
     )
 
     add_option(
         "--max-doc-length",
-        type="int",
+        type=int,
         metavar="n",
         default=None,
         parse_from_config=True,
         help="Maximum allowed doc line length for the entirety of this run. "
-        "(Default: %default)",
+        "(Default: %(default)s)",
     )
 
     add_option(
@@ -193,7 +195,7 @@ def register_default_options(option_manager):
         parse_from_config=True,
         comma_separated_list=True,
         help="Comma-separated list of errors and warnings to enable."
-        " For example, ``--select=E4,E51,W234``. (Default: %default)",
+        " For example, ``--select=E4,E51,W234``. (Default: %(default)s)",
     )
 
     add_option(
@@ -227,7 +229,6 @@ def register_default_options(option_manager):
         default="",
         parse_from_config=True,
         comma_separated_list=True,
-        type="string",
         help="Enable plugins and extensions that are otherwise disabled "
         "by default",
     )
@@ -240,10 +241,8 @@ def register_default_options(option_manager):
 
     add_option(
         "--install-hook",
-        action="callback",
-        type="choice",
+        action=vcs.InstallAction,
         choices=vcs.choices(),
-        callback=vcs.install,
         help="Install a hook that is run prior to a commit for the supported "
         "version control system.",
     )
@@ -251,21 +250,18 @@ def register_default_options(option_manager):
     add_option(
         "-j",
         "--jobs",
-        type="string",
         default="auto",
         parse_from_config=True,
         help="Number of subprocesses to use to run checks in parallel. "
         'This is ignored on Windows. The default, "auto", will '
         "auto-detect the number of processors available to use."
-        " (Default: %default)",
+        " (Default: %(default)s)",
     )
 
     add_option(
         "--output-file",
         default=None,
-        type="string",
         parse_from_config=True,
-        # callback=callbacks.redirect_stdout,
         help="Redirect report to a file.",
     )
 
@@ -316,8 +312,9 @@ def register_default_options(option_manager):
 
     add_option(
         "--bug-report",
-        action="callback",
-        callback=debug.print_information,
-        callback_kwargs={"option_manager": option_manager},
+        action=functools.partial(
+            debug.DebugAction, option_manager=option_manager
+        ),
+        nargs=0,
         help="Print information necessary when preparing a bug report",
     )

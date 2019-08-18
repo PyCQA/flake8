@@ -1,5 +1,5 @@
 """Tests for the Application class."""
-import optparse
+import argparse
 import sys
 
 import mock
@@ -9,12 +9,12 @@ from flake8.main import application as app
 
 
 def options(**kwargs):
-    """Generate optparse.Values for our Application."""
+    """Generate argparse.Namespace for our Application."""
     kwargs.setdefault('verbose', 0)
     kwargs.setdefault('output_file', None)
     kwargs.setdefault('count', False)
     kwargs.setdefault('exit_zero', False)
-    return optparse.Values(kwargs)
+    return argparse.Namespace(**kwargs)
 
 
 @pytest.fixture

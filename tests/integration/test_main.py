@@ -1,10 +1,18 @@
 """Integration tests for the main entrypoint of flake8."""
+import json
 import os
 
 import mock
+import pytest
 
 from flake8 import utils
-from flake8.main import application
+from flake8.main import cli
+
+
+def _call_main(argv, retv=0):
+    with pytest.raises(SystemExit) as excinfo:
+        cli.main(argv)
+    assert excinfo.value.code == retv
 
 
 def test_diff_option(tmpdir, capsys):
@@ -36,9 +44,7 @@ index d64ac39..7d943de 100644
     with mock.patch.object(utils, 'stdin_get_value', return_value=diff):
         with tmpdir.as_cwd():
             tmpdir.join('t.py').write(t_py_contents)
-
-            app = application.Application()
-            app.run(['--diff'])
+            _call_main(['--diff'], retv=1)
 
     out, err = capsys.readouterr()
     assert out == "t.py:8:1: F821 undefined name 'y'\n"
@@ -49,9 +55,7 @@ def test_statistics_option(tmpdir, capsys):
     """Ensure that `flake8 --statistics` works."""
     with tmpdir.as_cwd():
         tmpdir.join('t.py').write('import os\nimport sys\n')
-
-        app = application.Application()
-        app.run(['--statistics', 't.py'])
+        _call_main(['--statistics', 't.py'], retv=1)
 
     out, err = capsys.readouterr()
     assert out == '''\
@@ -68,7 +72,7 @@ def test_extend_exclude(tmpdir, capsys):
         tmpdir.mkdir(d).join('t.py').write('import os\nimport sys\n')
 
     with tmpdir.as_cwd():
-        application.Application().run(['--extend-exclude=vendor,legacy'])
+        _call_main(['--extend-exclude=vendor,legacy'], retv=1)
 
     out, err = capsys.readouterr()
     expected_out = '''\
@@ -90,9 +94,7 @@ per-file-ignores =
 
     with tmpdir.as_cwd():
         tmpdir.join('setup.cfg').write(setup_cfg)
-
-        app = application.Application()
-        app.run(['.'])
+        _call_main(['.'], retv=1)
 
     out, err = capsys.readouterr()
     assert out == '''\
@@ -111,10 +113,16 @@ def test_tokenization_error_but_not_syntax_error(tmpdir, capsys):
     with tmpdir.as_cwd():
         # this is a crash in the tokenizer, but not in the ast
         tmpdir.join('t.py').write("b'foo' \\\n")
-
-        app = application.Application()
-        app.run(['t.py'])
+        _call_main(['t.py'], retv=1)
 
     out, err = capsys.readouterr()
     assert out == 't.py:1:1: E902 TokenError: EOF in multi-line statement\n'
+    assert err == ''
+
+
+def test_bug_report_successful(capsys):
+    """Test that --bug-report does not crash."""
+    _call_main(['--bug-report'])
+    out, err = capsys.readouterr()
+    assert json.loads(out)
     assert err == ''

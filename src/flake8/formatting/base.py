@@ -1,7 +1,7 @@
 """The base class and interface for all formatting plugins."""
 from __future__ import print_function
 
-import optparse
+import argparse
 from typing import IO, List, Optional, Tuple
 
 if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
@@ -32,15 +32,17 @@ class BaseFormatter(object):
     """
 
     def __init__(self, options):
-        # type: (optparse.Values) -> None
+        # type: (argparse.Namespace) -> None
         """Initialize with the options parsed from config and cli.
 
         This also calls a hook, :meth:`after_init`, so subclasses do not need
         to call super to call this method.
 
-        :param optparse.Values options:
+        :param options:
             User specified configuration parsed from both configuration files
             and the command-line interface.
+        :type options:
+            :class:`argparse.Namespace`
         """
         self.options = options
         self.filename = options.output_file

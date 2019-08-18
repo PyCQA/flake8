@@ -3,6 +3,7 @@
 Previously, users would import :func:`get_style_guide` from ``flake8.engine``.
 In 3.0 we no longer have an "engine" module but we maintain the API from it.
 """
+import argparse
 import logging
 import os.path
 
@@ -72,10 +73,10 @@ class StyleGuide(object):
         self._file_checker_manager = application.file_checker_manager
 
     @property
-    def options(self):
+    def options(self):  # type: () -> argparse.Namespace
         """Return application's options.
 
-        An instance of :class:`optparse.Values` containing parsed options.
+        An instance of :class:`argparse.Namespace` containing parsed options.
         """
         return self._application.options
 

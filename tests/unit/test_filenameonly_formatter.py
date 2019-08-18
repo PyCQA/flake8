@@ -1,15 +1,15 @@
 """Tests for the FilenameOnly formatter object."""
-import optparse
+import argparse
 
 from flake8 import style_guide
 from flake8.formatting import default
 
 
 def options(**kwargs):
-    """Create an optparse.Values instance."""
+    """Create an argparse.Namespace instance."""
     kwargs.setdefault('output_file', None)
     kwargs.setdefault('tee', False)
-    return optparse.Values(kwargs)
+    return argparse.Namespace(**kwargs)
 
 
 def test_caches_filenames_already_printed():

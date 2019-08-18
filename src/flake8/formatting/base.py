@@ -38,9 +38,11 @@ class BaseFormatter(object):
         This also calls a hook, :meth:`after_init`, so subclasses do not need
         to call super to call this method.
 
-        :param argparse.Namespace options:
+        :param options:
             User specified configuration parsed from both configuration files
             and the command-line interface.
+        :type options:
+            :class:`argparse.Namespace`
         """
         self.options = options
         self.filename = options.output_file

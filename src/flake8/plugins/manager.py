@@ -213,7 +213,8 @@ class Plugin(object):
                 self.name,
                 optmanager,
             )
-            add_options(optmanager)
+            with optmanager.group(self.plugin_name):
+                add_options(optmanager)
 
         if self.off_by_default:
             self.disable(optmanager)

@@ -5,6 +5,7 @@ import mock
 import pytest
 
 from flake8 import exceptions
+from flake8.options import manager as options_manager
 from flake8.plugins import manager
 
 
@@ -91,7 +92,7 @@ def test_register_options():
     entry_point = mock.Mock(spec=['load'])
     plugin_obj = mock.Mock(spec_set=['name', 'version', 'add_options',
                                      'parse_options'])
-    option_manager = mock.Mock(spec=['register_plugin'])
+    option_manager = mock.MagicMock(spec=options_manager.OptionManager)
     plugin = manager.Plugin('T000', entry_point)
     plugin._plugin = plugin_obj
 

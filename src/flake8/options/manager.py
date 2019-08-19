@@ -1,9 +1,10 @@
 """Option handling and Option management logic."""
 import argparse
 import collections
+import contextlib
 import functools
 import logging
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, Generator, List, Optional, Set, Union
 
 from flake8 import utils
 
@@ -312,7 +313,9 @@ class OptionManager(object):
         :param str usage:
             Basic usage string used by the OptionParser.
         """
-        self.parser = argparse.ArgumentParser(prog=prog, usage=usage)
+        self.parser = argparse.ArgumentParser(
+            prog=prog, usage=usage
+        )  # type: Union[argparse.ArgumentParser, argparse._ArgumentGroup]
         self.version_action = self.parser.add_argument(
             "--version", action="version", version=version
         )
@@ -329,6 +332,16 @@ class OptionManager(object):
     def format_plugin(plugin):
         """Convert a PluginVersion into a dictionary mapping name to value."""
         return {attr: getattr(plugin, attr) for attr in ["name", "version"]}
+
+    @contextlib.contextmanager
+    def group(self, name):  # type: (str) -> Generator[None, None, None]
+        """Attach options to an argparse group during this context."""
+        group = self.parser.add_argument_group(name)
+        self.parser, orig_parser = group, self.parser
+        try:
+            yield
+        finally:
+            self.parser = orig_parser
 
     def add_option(self, *args, **kwargs):
         """Create and register a new option.

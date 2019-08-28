@@ -1,9 +1,23 @@
 """Contains the logic for all of the default options for Flake8."""
+import argparse
 import functools
+from typing import List, Tuple
 
 from flake8 import defaults
+from flake8 import exceptions
+from flake8 import utils
 from flake8.main import debug
 from flake8.main import vcs
+
+
+def _convert_per_file_ignores(value):
+    # type: (str) -> List[Tuple[str, List[str]]]
+    try:
+        mappings = utils.parse_files_to_codes_mapping(value)
+    except exceptions.ExecutionError as e:
+        raise argparse.ArgumentTypeError(e)
+
+    return [(utils.normalize_path(path), codes) for path, codes in mappings]
 
 
 def register_default_options(option_manager):
@@ -159,6 +173,7 @@ def register_default_options(option_manager):
 
     add_option(
         "--per-file-ignores",
+        type=_convert_per_file_ignores,
         default="",
         parse_from_config=True,
         help="A pairing of filenames and violation codes that defines which "

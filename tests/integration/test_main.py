@@ -94,14 +94,14 @@ per-file-ignores =
 
     with tmpdir.as_cwd():
         tmpdir.join('setup.cfg').write(setup_cfg)
-        _call_main(['.'], retv=1)
+        _call_main(['.'], retv=2)
 
     out, err = capsys.readouterr()
-    assert out == '''\
-There was a critical error during execution of Flake8:
-Expected `per-file-ignores` to be a mapping from file exclude patterns to ignore codes.
+    assert err == '''\
+usage: flake8 [options] file file ...
+flake8: error: argument --per-file-ignores: Expected a mapping from file exclude patterns to ignore codes.
 
-Configured `per-file-ignores` setting:
+Found:
 
     incorrect/*
     values/*

@@ -97,8 +97,8 @@ class Application(object):
         #: The parsed diff information
         self.parsed_diff = {}  # type: Dict[str, Set[int]]
 
-    def parse_preliminary_options_and_args(self, argv):
-        # type: (List[str]) -> None
+    def parse_preliminary_options_and_args(self, argv=None):
+        # type: (Optional[List[str]]) -> None
         """Get preliminary options and args from CLI, pre-plugin-loading.
 
         We need to know the values of a few standard options and args now, so
@@ -121,7 +121,7 @@ class Application(object):
         # do not need to worry and we can continue. If it is, we successfully
         # defer printing the version until just a little bit later.
         # Similarly we have to defer printing the help text until later.
-        args = argv[:]
+        args = (argv if argv is not None else sys.argv)[:]
         try:
             args.remove("--version")
         except ValueError:
@@ -344,7 +344,7 @@ class Application(object):
         self.formatter.show_statistics(self.guide.stats)
 
     def initialize(self, argv):
-        # type: (List[str]) -> None
+        # type: (Optional[List[str]]) -> None
         """Initialize the application to be run.
 
         This finds the plugins, registers their options, and parses the
@@ -373,13 +373,13 @@ class Application(object):
         self.formatter.stop()
 
     def _run(self, argv):
-        # type: (List[str]) -> None
+        # type: (Optional[List[str]]) -> None
         self.initialize(argv)
         self.run_checks()
         self.report()
 
-    def run(self, argv):
-        # type: (List[str]) -> None
+    def run(self, argv=None):
+        # type: (Optional[List[str]]) -> None
         """Run our application.
 
         This method will also handle KeyboardInterrupt exceptions for the

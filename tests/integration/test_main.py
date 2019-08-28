@@ -126,13 +126,3 @@ def test_bug_report_successful(capsys):
     out, err = capsys.readouterr()
     assert json.loads(out)
     assert err == ''
-
-
-def test_obtaining_args_from_sys_argv_when_not_explicity_provided(capsys):
-    """Test that arguments are obtained from 'sys.argv'."""
-    with mock.patch('sys.argv', ['--help']):
-        _call_main(None)
-
-    out, err = capsys.readouterr()
-    assert out.startswith('usage: flake8 [options] file file ...\n')
-    assert err == ''

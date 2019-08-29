@@ -15,7 +15,7 @@ BROKEN_CONFIG_PATH = 'tests/fixtures/config_files/broken.ini'
 
 def test_uses_default_args():
     """Show that we default the args value."""
-    finder = config.ConfigFileFinder('flake8', None, [])
+    finder = config.ConfigFileFinder('flake8', [], [])
     assert finder.parent == os.path.abspath('.')
 
 
@@ -27,14 +27,14 @@ def test_uses_default_args():
 def test_windows_detection(platform, is_windows):
     """Verify we detect Windows to the best of our knowledge."""
     with mock.patch.object(sys, 'platform', platform):
-        finder = config.ConfigFileFinder('flake8', None, [])
+        finder = config.ConfigFileFinder('flake8', [], [])
     assert finder.is_windows is is_windows
 
 
 def test_cli_config():
     """Verify opening and reading the file specified via the cli."""
     cli_filepath = CLI_SPECIFIED_FILEPATH
-    finder = config.ConfigFileFinder('flake8', None, [])
+    finder = config.ConfigFileFinder('flake8', [], [])
 
     parsed_config = finder.cli_config(cli_filepath)
     assert parsed_config.has_section('flake8')
@@ -42,7 +42,7 @@ def test_cli_config():
 
 def test_cli_config_double_read():
     """Second request for CLI config is cached."""
-    finder = config.ConfigFileFinder('flake8', None, [])
+    finder = config.ConfigFileFinder('flake8', [], [])
 
     parsed_config = finder.cli_config(CLI_SPECIFIED_FILEPATH)
     boom = Exception("second request for CLI config not cached")
@@ -113,14 +113,14 @@ def test_local_config_files(args, extra_config_files, expected):
 
 def test_local_configs():
     """Verify we return a ConfigParser."""
-    finder = config.ConfigFileFinder('flake8', None, [])
+    finder = config.ConfigFileFinder('flake8', [], [])
 
     assert isinstance(finder.local_configs(), configparser.RawConfigParser)
 
 
 def test_local_configs_double_read():
     """Second request for local configs is cached."""
-    finder = config.ConfigFileFinder('flake8', None, [])
+    finder = config.ConfigFileFinder('flake8', [], [])
 
     first_read = finder.local_configs()
     boom = Exception("second request for local configs not cached")

@@ -17,6 +17,7 @@ class ConfigFileFinder(object):
     """Encapsulate the logic for finding and reading config files."""
 
     def __init__(self, program_name, args, extra_config_files):
+        # type: (str, List[str], List[str]) -> None
         """Initialize object to find config files.
 
         :param str program_name:

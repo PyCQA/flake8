@@ -433,7 +433,9 @@ class OptionManager(object):
         assert isinstance(  # nosec (for bandit)
             self.parser, argparse.ArgumentParser
         ), self.parser
-        parsed_args = self.parser.parse_args(args, values)
+        if values:
+            self.parser.set_defaults(**vars(values))
+        parsed_args = self.parser.parse_args(args)
         # TODO: refactor callers to not need this
         return parsed_args, parsed_args.filenames
 

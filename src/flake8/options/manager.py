@@ -4,7 +4,7 @@ import collections
 import contextlib
 import functools
 import logging
-from typing import Any, Dict, Generator, List, Optional, Set, Union
+from typing import Any, Dict, Generator, List, Optional, Set, Tuple, Union
 
 from flake8 import utils
 
@@ -434,6 +434,7 @@ class OptionManager(object):
         return args, args.filenames
 
     def parse_known_args(self, args=None):
+        # type: (Optional[List[str]]) -> Tuple[argparse.Namespace, List[str]]
         """Parse only the known arguments from the argument values.
 
         Replicate a little argparse behaviour while we're still on
@@ -441,8 +442,12 @@ class OptionManager(object):
         """
         self.generate_epilog()
         self.update_version_string()
-        args, rest = self.parser.parse_known_args(args)
-        return args, rest
+        # TODO: Re-evaluate `self.parser` swap happening in `group()` to
+        #       avoid needing to assert to satify static type checking.
+        assert isinstance(  # nosec (for bandit)
+            self.parser, argparse.ArgumentParser
+        ), self.parser
+        return self.parser.parse_known_args(args)
 
     def register_plugin(self, name, version, local=False):
         """Register a plugin relying on the OptionManager.

@@ -22,6 +22,21 @@ def test_option_manager_creates_option_parser(optmanager):
     assert isinstance(optmanager.parser, argparse.ArgumentParser)
 
 
+def test_parse_args_forwarding_default_values(optmanager):
+    """Verify default provided values are present in the final result."""
+    namespace = argparse.Namespace(foo='bar')
+    options, args = optmanager.parse_args([], namespace)
+    assert options.foo == 'bar'
+
+
+def test_parse_args_forwarding_type_coercion(optmanager):
+    """Verify default provided values are type converted from add_option."""
+    optmanager.add_option('--foo', type=int)
+    namespace = argparse.Namespace(foo='5')
+    options, args = optmanager.parse_args([], namespace)
+    assert options.foo == 5
+
+
 def test_add_option_short_option_only(optmanager):
     """Verify the behaviour of adding a short-option only."""
     assert optmanager.options == []

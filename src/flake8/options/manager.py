@@ -433,7 +433,7 @@ class OptionManager(object):
         # TODO: refactor callers to not need this
         return args, args.filenames
 
-    def parse_known_args(self, args=None, values=None):
+    def parse_known_args(self, args=None):
         """Parse only the known arguments from the argument values.
 
         Replicate a little argparse behaviour while we're still on
@@ -441,7 +441,7 @@ class OptionManager(object):
         """
         self.generate_epilog()
         self.update_version_string()
-        args, rest = self.parser.parse_known_args(args, values)
+        args, rest = self.parser.parse_known_args(args)
         return args, rest
 
     def register_plugin(self, name, version, local=False):

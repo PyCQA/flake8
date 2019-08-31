@@ -425,13 +425,23 @@ class OptionManager(object):
             plugin_version_format
         )
 
-    def parse_args(self, args=None, values=None):
+    def parse_args(
+        self,
+        args=None,  # type: Optional[List[str]]
+        values=None,  # type: Optional[argparse.Namespace]
+    ):
+        # type: (...) -> Tuple[argparse.Namespace, List[str]]
         """Proxy to calling the OptionParser's parse_args method."""
         self.generate_epilog()
         self.update_version_string()
-        args = self.parser.parse_args(args, values)
+        assert isinstance(  # nosec (for bandit)
+            self.parser, argparse.ArgumentParser
+        ), self.parser
+        if values:
+            self.parser.set_defaults(**vars(values))
+        parsed_args = self.parser.parse_args(args)
         # TODO: refactor callers to not need this
-        return args, args.filenames
+        return parsed_args, parsed_args.filenames
 
     def parse_known_args(self, args=None):
         # type: (Optional[List[str]]) -> Tuple[argparse.Namespace, List[str]]

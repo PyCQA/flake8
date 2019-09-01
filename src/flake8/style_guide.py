@@ -347,7 +347,7 @@ class StyleGuideManager(object):
         """Generate style guides from the per-file-ignores option.
 
         :param options:
-            The original options parsed from the CLI and config file.
+            The normalized options parsed from the CLI and config file.
         :type options:
             :class:`~argparse.Namespace`
         :returns:
@@ -355,10 +355,7 @@ class StyleGuideManager(object):
         :rtype:
             :class:`~flake8.style_guide.StyleGuide`
         """
-        per_file = utils.parse_files_to_codes_mapping(
-            options.per_file_ignores
-        )
-        for filename, violations in per_file:
+        for filename, violations in options.per_file_ignores:
             yield self.default_style_guide.copy(
                 filename=filename, extend_ignore_with=violations
             )

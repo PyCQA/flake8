@@ -45,11 +45,11 @@ def test_style_guide_manager():
     assert len(guide.style_guides) == 1
 
 
-PER_FILE_IGNORES_UNPARSED = [
-    "first_file.py:W9",
-    "second_file.py:F4,F9",
-    "third_file.py:E3",
-    "sub_dir/*:F4",
+PER_FILE_IGNORES_PARSED = [
+    ("first_file.py", ["W9"]),
+    ("second_file.py", ["F4", "F9"]),
+    ("third_file.py", ["E3"]),
+    ("sub_dir/*", ["F4"]),
 ]
 
 
@@ -75,7 +75,7 @@ def test_style_guide_applies_to(style_guide_file, filename, expected):
 def test_style_guide_manager_pre_file_ignores_parsing():
     """Verify how the StyleGuideManager creates a default style guide."""
     formatter = mock.create_autospec(base.BaseFormatter, instance=True)
-    options = create_options(per_file_ignores=PER_FILE_IGNORES_UNPARSED)
+    options = create_options(per_file_ignores=PER_FILE_IGNORES_PARSED)
     guide = style_guide.StyleGuideManager(options, formatter=formatter)
     assert len(guide.style_guides) == 5
     assert list(map(utils.normalize_path,
@@ -98,7 +98,7 @@ def test_style_guide_manager_pre_file_ignores(ignores, violation, filename,
     formatter = mock.create_autospec(base.BaseFormatter, instance=True)
     options = create_options(ignore=ignores,
                              select=['E', 'F', 'W'],
-                             per_file_ignores=PER_FILE_IGNORES_UNPARSED)
+                             per_file_ignores=PER_FILE_IGNORES_PARSED)
     guide = style_guide.StyleGuideManager(options, formatter=formatter)
     assert (guide.handle_error(violation, filename, 1, 1, "Fake text")
             == handle_error_return)
@@ -115,7 +115,7 @@ def test_style_guide_manager_pre_file_ignores(ignores, violation, filename,
 def test_style_guide_manager_style_guide_for(filename, expected):
     """Verify the style guide selection function."""
     formatter = mock.create_autospec(base.BaseFormatter, instance=True)
-    options = create_options(per_file_ignores=PER_FILE_IGNORES_UNPARSED)
+    options = create_options(per_file_ignores=PER_FILE_IGNORES_PARSED)
     guide = style_guide.StyleGuideManager(options, formatter=formatter)
 
     file_guide = guide.style_guide_for(filename)

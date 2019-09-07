@@ -1,6 +1,6 @@
 """Plugin loading and management logic and classes."""
 import logging
-from typing import Any, Dict, List, Set
+from typing import Any, Dict, List, Optional, Set
 
 import entrypoints
 
@@ -34,12 +34,12 @@ class Plugin(object):
         self.local = local
         self._plugin = None  # type: Any
         self._parameters = None
-        self._parameter_names = None
+        self._parameter_names = None  # type: Optional[List[str]]
         self._group = None
         self._plugin_name = None
         self._version = None
 
-    def __repr__(self):
+    def __repr__(self):  # type: () -> str
         """Provide an easy to read description of the current plugin."""
         return 'Plugin(name="{0}", entry_point="{1}")'.format(
             self.name, self.entry_point
@@ -85,7 +85,7 @@ class Plugin(object):
         return self._parameters
 
     @property
-    def parameter_names(self):
+    def parameter_names(self):  # type: () -> List[str]
         """List of argument names that need to be passed to the plugin."""
         if self._parameter_names is None:
             self._parameter_names = list(self.parameters)
@@ -101,15 +101,15 @@ class Plugin(object):
         return self._plugin
 
     @property
-    def version(self):
+    def version(self):  # type: () -> str
         """Return the version of the plugin."""
-        if self._version is None:
+        version = self._version
+        if version is None:
             if self.is_in_a_group():
-                self._version = version_for(self)
+                version = self._version = version_for(self)
             else:
-                self._version = self.plugin.version
-
-        return self._version
+                version = self._version = self.plugin.version
+        return version
 
     @property
     def plugin_name(self):

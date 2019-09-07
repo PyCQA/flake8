@@ -24,7 +24,6 @@ else:
     from functools import lru_cache
 
 
-# TODO(sigmavirus24): Determine if we need to use enum/enum34
 class Selected(enum.Enum):
     """Enum representing an explicitly or implicitly selected code."""
 
@@ -451,7 +450,7 @@ class StyleGuide(object):
             self.filename = utils.normalize_path(self.filename)
         self._parsed_diff = {}  # type: Dict[str, Set[int]]
 
-    def __repr__(self):
+    def __repr__(self):  # type: () -> str
         """Make it easier to debug which StyleGuide we're using."""
         return "<StyleGuide [{}]>".format(self.filename)
 

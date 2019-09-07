@@ -52,7 +52,7 @@ def test_add_option_long_option_only(optmanager):
     assert optmanager.config_options_dict == {}
 
     optmanager.add_option('--long', help='Test long opt')
-    assert optmanager.options[0].short_option_name is manager._NOARG
+    assert optmanager.options[0].short_option_name is manager._ARG.NO
     assert optmanager.options[0].long_option_name == '--long'
 
 
@@ -131,15 +131,6 @@ def test_parse_args_normalize_paths(optmanager):
         'tox.ini',
         os.path.abspath('flake8/some-other.cfg'),
     ]
-
-
-def test_format_plugin():
-    """Verify that format_plugin turns a tuple into a dictionary."""
-    plugin = manager.OptionManager.format_plugin(
-        manager.PluginVersion('Testing', '0.0.0', False)
-    )
-    assert plugin['name'] == 'Testing'
-    assert plugin['version'] == '0.0.0'
 
 
 def test_generate_versions(optmanager):

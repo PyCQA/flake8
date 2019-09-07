@@ -388,7 +388,7 @@ class FileChecker(object):
             self.should_process = not self.processor.should_ignore_file()
             self.statistics["physical lines"] = len(self.processor.lines)
 
-    def __repr__(self):
+    def __repr__(self):  # type: () -> str
         """Provide helpful debugging representation."""
         return "FileChecker for {}".format(self.filename)
 

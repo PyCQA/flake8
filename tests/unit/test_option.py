@@ -28,7 +28,7 @@ def test_to_argparse():
 def test_to_optparse():
     """Test that .to_optparse() produces a useful error message."""
     with pytest.raises(AttributeError) as excinfo:
-        manager.Option('--foo').to_optparse()
+        manager.Option('--foo').to_optparse
     msg, = excinfo.value.args
     assert msg == 'to_optparse: flake8 now uses argparse'
 
@@ -58,4 +58,4 @@ def test_config_name_needs_long_option_name():
 def test_dest_is_not_overridden():
     """Show that we do not override custom destinations."""
     opt = manager.Option('-s', '--short', dest='something_not_short')
-    assert opt.dest == 'something_not_short'  # type: ignore
+    assert opt.dest == 'something_not_short'

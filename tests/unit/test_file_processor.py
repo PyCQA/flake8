@@ -196,7 +196,7 @@ def test_keyword_arguments_for_does_not_handle_attribute_errors(
     ])
 
     with pytest.raises(AttributeError):
-        file_processor.keyword_arguments_for(['fake'])
+        file_processor.keyword_arguments_for({'fake': True})
 
 
 @pytest.mark.parametrize('unsplit_line, expected_lines', [
@@ -211,7 +211,8 @@ def test_split_line(unsplit_line, expected_lines, default_options):
         'Line 1',
     ])
 
-    actual_lines = list(file_processor.split_line((1, unsplit_line)))
+    token = (1, unsplit_line, (0, 0), (0, 0), '')
+    actual_lines = list(file_processor.split_line(token))
     assert expected_lines == actual_lines
 
     assert len(actual_lines) == file_processor.line_number

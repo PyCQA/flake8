@@ -39,7 +39,7 @@ def parse_comma_separated_list(value, regexp=COMMA_SEPARATED_LIST_RE):
     :rtype:
         list
     """
-    assert isinstance(value, string_types), value  # nosec (for bandit)
+    assert isinstance(value, string_types), value
 
     separated = regexp.split(value)
     item_gen = (item.strip() for item in separated)
@@ -163,7 +163,7 @@ def normalize_paths(paths, parent=os.curdir):
     :rtype:
         [str]
     """
-    assert isinstance(paths, list), paths  # nosec (for bandit)
+    assert isinstance(paths, list), paths
     return [normalize_path(p, parent) for p in paths]
 
 
@@ -276,7 +276,7 @@ def parse_unified_diff(diff=None):
                 1 if not group else int(group)
                 for group in hunk_match.groups()
             ]
-            assert current_path is not None  # nosec (for mypy)
+            assert current_path is not None
             parsed_paths[current_path].update(
                 range(row, row + number_of_rows)
             )

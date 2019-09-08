@@ -83,4 +83,3 @@ Features
     https://gitlab.com/pycqa/flake8/merge_requests/287
 .. _GitLab!288:
     https://gitlab.com/pycqa/flake8/merge_requests/288
-

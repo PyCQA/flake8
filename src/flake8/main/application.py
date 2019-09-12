@@ -394,8 +394,8 @@ class Application(object):
             LOG.exception(exc)
             self.catastrophic_failure = True
         except exceptions.ExecutionError as exc:
-            print("There was a critical error during execution of Flake8:")
-            print(exc)
+            print("There was a critical error during execution of Flake8:", file=sys.stderr)
+            print(exc, file=sys.stderr)
             LOG.exception(exc)
             self.catastrophic_failure = True
         except exceptions.EarlyQuit:

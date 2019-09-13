@@ -1,5 +1,8 @@
 """Tests for flake8.plugins.manager.PluginManager."""
-import mock
+try:
+    from unittest import mock
+except (ImportError, AttributeError):
+    import mock
 
 from flake8.plugins import manager
 

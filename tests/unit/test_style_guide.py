@@ -1,7 +1,10 @@
 """Tests for the flake8.style_guide.StyleGuide class."""
 import argparse
 
-import mock
+try:
+    from unittest import mock
+except (ImportError, AttributeError):
+    import mock
 import pytest
 
 from flake8 import statistics

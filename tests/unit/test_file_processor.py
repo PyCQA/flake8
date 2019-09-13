@@ -2,7 +2,10 @@
 import ast
 import tokenize
 
-import mock
+try:
+    from unittest import mock
+except (ImportError, AttributeError):
+    import mock
 import pytest
 
 from flake8 import processor

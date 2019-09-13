@@ -1,7 +1,10 @@
 """Unit tests for flake8.options.config.MergedConfigParser."""
 import os
 
-import mock
+try:
+    from unittest import mock
+except (ImportError, AttributeError):
+    import mock
 import pytest
 
 from flake8.options import config

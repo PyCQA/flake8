@@ -1,5 +1,8 @@
 """Tests for get_local_plugins."""
-import mock
+try:
+    from unittest import mock
+except (ImportError, AttributeError):
+    import mock
 
 from flake8.options import config
 

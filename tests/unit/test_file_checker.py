@@ -1,5 +1,8 @@
 """Unit tests for the FileChecker class."""
-import mock
+try:
+    from unittest import mock
+except (ImportError, AttributeError):
+    import mock
 import pytest
 
 import flake8

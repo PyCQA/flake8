@@ -1,6 +1,9 @@
 """Tests for our debugging module."""
 import entrypoints
-import mock
+try:
+    from unittest import mock
+except (ImportError, AttributeError):
+    import mock
 import pytest
 
 from flake8.main import debug

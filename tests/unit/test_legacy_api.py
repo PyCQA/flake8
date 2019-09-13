@@ -1,5 +1,8 @@
 """Tests for Flake8's legacy API."""
-import mock
+try:
+    from unittest import mock
+except (ImportError, AttributeError):
+    import mock
 import pytest
 
 from flake8.api import legacy as api

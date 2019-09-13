@@ -1,7 +1,10 @@
 """Tests for the Manager object for FileCheckers."""
 import errno
 
-import mock
+try:
+    from unittest import mock
+except (ImportError, AttributeError):
+    import mock
 import pytest
 
 from flake8 import checker

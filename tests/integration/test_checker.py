@@ -1,5 +1,8 @@
 """Integration tests for the checker submodule."""
-import mock
+try:
+    from unittest import mock
+except (ImportError, AttributeError):
+    import mock
 import pytest
 
 from flake8 import checker

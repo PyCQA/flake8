@@ -1,5 +1,8 @@
 """Tests for the flake8.style_guide.Violation class."""
-import mock
+try:
+    from unittest import mock
+except (ImportError, AttributeError):
+    import mock
 import pytest
 
 from flake8 import style_guide

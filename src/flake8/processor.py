@@ -261,12 +261,6 @@ class FileProcessor(object):
                     )
         return arguments
 
-    def check_physical_error(self, error_code, line):
-        # type: (str, str) -> None
-        """Update attributes based on error code and line."""
-        if error_code == "E101":
-            self.indent_char = line[0]
-
     def generate_tokens(self):  # type: () -> Generator[_Token, None, None]
         """Tokenize the file and yield the tokens.
 

@@ -146,24 +146,6 @@ def test_next_line(default_options):
         assert file_processor.line_number == i
 
 
-@pytest.mark.parametrize('error_code, line, expected_indent_char', [
-    ('E101', '\t\ta = 1', '\t'),
-    ('E101', '    a = 1', ' '),
-    ('W101', 'frobulate()', None),
-    ('F821', 'class FizBuz:', None),
-])
-def test_check_physical_error(
-        error_code, line, expected_indent_char, default_options,
-):
-    """Verify we update the indet char for the appropriate error code."""
-    file_processor = processor.FileProcessor('-', default_options, lines=[
-        'Line 1',
-    ])
-
-    file_processor.check_physical_error(error_code, line)
-    assert file_processor.indent_char == expected_indent_char
-
-
 @pytest.mark.parametrize('params, args, expected_kwargs', [
     ({'blank_before': True, 'blank_lines': True},
         None,

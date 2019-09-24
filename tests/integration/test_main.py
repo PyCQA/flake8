@@ -51,6 +51,25 @@ index d64ac39..7d943de 100644
     assert err == ''
 
 
+def test_e101_indent_char_does_not_reset(tmpdir, capsys):
+    """Ensure that E101 with an existing indent_char does not reset it."""
+    t_py_contents = """\
+if True:
+    print('space indented')
+
+s = '''\
+\ttab indented
+'''  # noqa: E101
+
+if True:
+    print('space indented')
+"""
+
+    with tmpdir.as_cwd():
+        tmpdir.join('t.py').write(t_py_contents)
+        _call_main(['t.py'])
+
+
 def test_statistics_option(tmpdir, capsys):
     """Ensure that `flake8 --statistics` works."""
     with tmpdir.as_cwd():

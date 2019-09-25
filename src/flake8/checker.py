@@ -558,15 +558,12 @@ class FileChecker(object):
 
                 for result_single in result:
                     column_offset, text = result_single
-                    error_code = self.report(
+                    self.report(
                         error_code=None,
                         line_number=self.processor.line_number,
                         column=column_offset,
                         text=text,
                         line=(override_error_line or physical_line),
-                    )
-                    self.processor.check_physical_error(
-                        error_code, physical_line
                     )
 
     def process_tokens(self):

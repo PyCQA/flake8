@@ -28,12 +28,12 @@ def get_style_guide(**kwargs):
         :class:`StyleGuide`
     """
     application = app.Application()
-    application.parse_preliminary_options_and_args([])
-    flake8.configure_logging(
-        application.prelim_opts.verbose, application.prelim_opts.output_file
+    prelim_opts, prelim_args = application.parse_preliminary_options_and_args(
+        []
     )
-    application.make_config_finder()
-    application.find_plugins()
+    flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
+    application.make_config_finder(prelim_opts.append_config, prelim_args)
+    application.find_plugins(prelim_opts.config, prelim_opts.isolated)
     application.register_plugin_options()
     application.parse_configuration_and_cli([])
     # We basically want application.initialize to be called but with these

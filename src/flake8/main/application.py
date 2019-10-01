@@ -5,7 +5,7 @@ import argparse
 import logging
 import sys
 import time
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Optional, Set, Tuple
 
 import flake8
 from flake8 import checker
@@ -51,13 +51,8 @@ class Application(object):
             prog="flake8", version=flake8.__version__
         )
         options.register_default_options(self.option_manager)
-        #: The preliminary options parsed from CLI before plugins are loaded,
-        #: into a :class:`argparse.Namespace` instance
-        self.prelim_opts = None  # type: argparse.Namespace
-        #: The preliminary arguments parsed from CLI before plugins are loaded
-        self.prelim_args = None  # type: List[str]
         #: The instance of :class:`flake8.options.config.ConfigFileFinder`
-        self.config_finder = None
+        self.config_finder = None  # type: config.ConfigFileFinder
 
         #: The :class:`flake8.options.config.LocalPlugins` found in config
         self.local_plugins = None  # type: config.LocalPlugins
@@ -98,7 +93,7 @@ class Application(object):
         self.parsed_diff = {}  # type: Dict[str, Set[int]]
 
     def parse_preliminary_options_and_args(self, argv):
-        # type: (List[str]) -> None
+        # type: (List[str]) -> Tuple[argparse.Namespace, List[str]]
         """Get preliminary options and args from CLI, pre-plugin-loading.
 
         We need to know the values of a few standard options and args now, so
@@ -108,10 +103,12 @@ class Application(object):
         options; we ignore those for now, they'll be parsed later when we do
         real option parsing.
 
-        Sets self.prelim_opts and self.prelim_args.
-
         :param list argv:
             Command-line arguments passed in directly.
+        :returns:
+            Populated namespace and list of remaining argument strings.
+        :rtype:
+            (argparse.Namespace, list)
         """
         # We haven't found or registered our plugins yet, so let's defer
         # printing the version until we aggregate options from config files
@@ -138,7 +135,7 @@ class Application(object):
         opts, args = self.option_manager.parse_known_args(args)
         # parse_known_args includes unknown options as args
         args = [a for a in args if not a.startswith("-")]
-        self.prelim_opts, self.prelim_args = opts, args
+        return opts, args
 
     def exit(self):
         # type: () -> None
@@ -155,17 +152,22 @@ class Application(object):
                 (self.result_count > 0) or self.catastrophic_failure
             )
 
-    def make_config_finder(self):
-        """Make our ConfigFileFinder based on preliminary opts and args."""
+    def make_config_finder(self, append_config, args):
+        # type: (List[str], List[str]) -> None
+        """Make our ConfigFileFinder based on preliminary opts and args.
+
+        :param list append_config:
+            List of configuration files to be parsed for configuration.
+        :param list args:
+            The list of file arguments passed from the CLI.
+        """
         if self.config_finder is None:
             self.config_finder = config.ConfigFileFinder(
-                self.option_manager.program_name,
-                self.prelim_args,
-                self.prelim_opts.append_config,
+                self.option_manager.program_name, args, append_config
             )
 
-    def find_plugins(self):
-        # type: () -> None
+    def find_plugins(self, config_file, ignore_config_files):
+        # type: (Optional[str], bool) -> None
         """Find and load the plugins for this application.
 
         If :attr:`check_plugins`, or :attr:`formatting_plugins` are ``None``
@@ -173,12 +175,17 @@ class Application(object):
         instance. Given the expense of finding plugins (via :mod:`entrypoints`)
         we want this to be idempotent and so only update those attributes if
         they are ``None``.
+
+        :param str config_file:
+            The optional configuraiton file to override all other configuration
+            files (i.e., the --config option).
+        :param bool ignore_config_files:
+            Determine whether to parse configuration files or not. (i.e., the
+            --isolated option).
         """
         if self.local_plugins is None:
             self.local_plugins = config.get_local_plugins(
-                self.config_finder,
-                self.prelim_opts.config,
-                self.prelim_opts.isolated,
+                self.config_finder, config_file, ignore_config_files
             )
 
         sys.path.extend(self.local_plugins.paths)
@@ -352,12 +359,12 @@ class Application(object):
         """
         # NOTE(sigmavirus24): When updating this, make sure you also update
         # our legacy API calls to these same methods.
-        self.parse_preliminary_options_and_args(argv)
-        flake8.configure_logging(
-            self.prelim_opts.verbose, self.prelim_opts.output_file
+        prelim_opts, prelim_args = self.parse_preliminary_options_and_args(
+            argv
         )
-        self.make_config_finder()
-        self.find_plugins()
+        flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
+        self.make_config_finder(prelim_opts.append_config, prelim_args)
+        self.find_plugins(prelim_opts.config, prelim_opts.isolated)
         self.register_plugin_options()
         self.parse_configuration_and_cli(argv)
         self.make_formatter()

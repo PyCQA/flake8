@@ -92,18 +92,22 @@ def test_returns_specified_plugin(application):
 
 def test_prelim_opts_args(application):
     """Verify we get sensible prelim opts and args."""
-    application.parse_preliminary_options_and_args(
+    opts, args = application.parse_preliminary_options_and_args(
         ['flake8', '--foo', '--verbose', 'src', 'setup.py', '--statistics'])
 
     assert application.prelim_opts.statistics
     assert application.prelim_opts.verbose
     assert application.prelim_args == ['src', 'setup.py']
+    assert opts.statistics is application.prelim_opts.statistics
+    assert opts.verbose is application.prelim_opts.verbose
+    assert args is application.prelim_args
 
 
 def test_prelim_opts_handles_empty(application):
     """Verify empty argv lists are handled correctly."""
     irrelevant_args = ['myexe', '/path/to/foo']
     with mock.patch.object(sys, 'argv', irrelevant_args):
-        application.parse_preliminary_options_and_args([])
+        opts, args = application.parse_preliminary_options_and_args([])
 
         assert application.prelim_args == []
+        assert args is application.prelim_args

@@ -5,7 +5,7 @@ import argparse
 import logging
 import sys
 import time
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Optional, Set, Tuple
 
 import flake8
 from flake8 import checker
@@ -98,7 +98,7 @@ class Application(object):
         self.parsed_diff = {}  # type: Dict[str, Set[int]]
 
     def parse_preliminary_options_and_args(self, argv):
-        # type: (List[str]) -> None
+        # type: (List[str]) -> Tuple[argparse.Namespace, List[str]]
         """Get preliminary options and args from CLI, pre-plugin-loading.
 
         We need to know the values of a few standard options and args now, so
@@ -112,6 +112,10 @@ class Application(object):
 
         :param list argv:
             Command-line arguments passed in directly.
+        :returns:
+            Populated namespace and list of remaining argument strings.
+        :rtype:
+            (argparse.Namespace, list)
         """
         # We haven't found or registered our plugins yet, so let's defer
         # printing the version until we aggregate options from config files
@@ -139,6 +143,7 @@ class Application(object):
         # parse_known_args includes unknown options as args
         args = [a for a in args if not a.startswith("-")]
         self.prelim_opts, self.prelim_args = opts, args
+        return opts, args
 
     def exit(self):
         # type: () -> None

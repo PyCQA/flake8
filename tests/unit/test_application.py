@@ -95,12 +95,9 @@ def test_prelim_opts_args(application):
     opts, args = application.parse_preliminary_options_and_args(
         ['flake8', '--foo', '--verbose', 'src', 'setup.py', '--statistics'])
 
-    assert application.prelim_opts.statistics
-    assert application.prelim_opts.verbose
-    assert application.prelim_args == ['src', 'setup.py']
-    assert opts.statistics is application.prelim_opts.statistics
-    assert opts.verbose is application.prelim_opts.verbose
-    assert args is application.prelim_args
+    assert opts.statistics
+    assert opts.verbose
+    assert args == ['src', 'setup.py']
 
 
 def test_prelim_opts_handles_empty(application):
@@ -109,5 +106,4 @@ def test_prelim_opts_handles_empty(application):
     with mock.patch.object(sys, 'argv', irrelevant_args):
         opts, args = application.parse_preliminary_options_and_args([])
 
-        assert application.prelim_args == []
-        assert args is application.prelim_args
+        assert args == []

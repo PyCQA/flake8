@@ -18,7 +18,6 @@ def test_get_style_guide():
         verbose=0,
     )
     mockedapp = mock.Mock()
-    mockedapp.prelim_opts = prelim_opts
     mockedapp.parse_preliminary_options_and_args.return_value = (
         prelim_opts,
         [],

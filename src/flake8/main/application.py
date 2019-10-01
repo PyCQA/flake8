@@ -51,11 +51,6 @@ class Application(object):
             prog="flake8", version=flake8.__version__
         )
         options.register_default_options(self.option_manager)
-        #: The preliminary options parsed from CLI before plugins are loaded,
-        #: into a :class:`argparse.Namespace` instance
-        self.prelim_opts = None  # type: argparse.Namespace
-        #: The preliminary arguments parsed from CLI before plugins are loaded
-        self.prelim_args = None  # type: List[str]
         #: The instance of :class:`flake8.options.config.ConfigFileFinder`
         self.config_finder = None  # type: config.ConfigFileFinder
 
@@ -108,8 +103,6 @@ class Application(object):
         options; we ignore those for now, they'll be parsed later when we do
         real option parsing.
 
-        Sets self.prelim_opts and self.prelim_args.
-
         :param list argv:
             Command-line arguments passed in directly.
         :returns:
@@ -142,7 +135,6 @@ class Application(object):
         opts, args = self.option_manager.parse_known_args(args)
         # parse_known_args includes unknown options as args
         args = [a for a in args if not a.startswith("-")]
-        self.prelim_opts, self.prelim_args = opts, args
         return opts, args
 
     def exit(self):

@@ -1,4 +1,6 @@
 """Tests for Flake8's legacy API."""
+import argparse
+
 import mock
 import pytest
 
@@ -8,17 +10,26 @@ from flake8.formatting import base as formatter
 
 def test_get_style_guide():
     """Verify the methods called on our internal Application."""
+    prelim_opts = argparse.Namespace(
+        append_config=[],
+        config=None,
+        isolated=False,
+        output_file=None,
+        verbose=0,
+    )
     mockedapp = mock.Mock()
-    mockedapp.prelim_opts.verbose = 0
-    mockedapp.prelim_opts.output_file = None
+    mockedapp.parse_preliminary_options_and_args.return_value = (
+        prelim_opts,
+        [],
+    )
     with mock.patch('flake8.main.application.Application') as application:
         application.return_value = mockedapp
         style_guide = api.get_style_guide()
 
     application.assert_called_once_with()
     mockedapp.parse_preliminary_options_and_args.assert_called_once_with([])
-    mockedapp.make_config_finder.assert_called_once_with()
-    mockedapp.find_plugins.assert_called_once_with()
+    mockedapp.make_config_finder.assert_called_once_with([], [])
+    mockedapp.find_plugins.assert_called_once_with(None, False)
     mockedapp.register_plugin_options.assert_called_once_with()
     mockedapp.parse_configuration_and_cli.assert_called_once_with([])
     mockedapp.make_formatter.assert_called_once_with()

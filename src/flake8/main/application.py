@@ -57,7 +57,7 @@ class Application(object):
         #: The preliminary arguments parsed from CLI before plugins are loaded
         self.prelim_args = None  # type: List[str]
         #: The instance of :class:`flake8.options.config.ConfigFileFinder`
-        self.config_finder = None
+        self.config_finder = None  # type: config.ConfigFileFinder
 
         #: The :class:`flake8.options.config.LocalPlugins` found in config
         self.local_plugins = None  # type: config.LocalPlugins
@@ -160,13 +160,18 @@ class Application(object):
                 (self.result_count > 0) or self.catastrophic_failure
             )
 
-    def make_config_finder(self):
-        """Make our ConfigFileFinder based on preliminary opts and args."""
+    def make_config_finder(self, append_config, args):
+        # type: (List[str], List[str]) -> None
+        """Make our ConfigFileFinder based on preliminary opts and args.
+
+        :param list append_config:
+            List of configuration files to be parsed for configuration.
+        :param list args:
+            The list of file arguments passed from the CLI.
+        """
         if self.config_finder is None:
             self.config_finder = config.ConfigFileFinder(
-                self.option_manager.program_name,
-                self.prelim_args,
-                self.prelim_opts.append_config,
+                self.option_manager.program_name, args, append_config
             )
 
     def find_plugins(self):
@@ -361,7 +366,7 @@ class Application(object):
             argv
         )
         flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
-        self.make_config_finder()
+        self.make_config_finder(prelim_opts.append_config, prelim_args)
         self.find_plugins()
         self.register_plugin_options()
         self.parse_configuration_and_cli(argv)

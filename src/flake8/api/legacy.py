@@ -32,7 +32,7 @@ def get_style_guide(**kwargs):
         []
     )
     flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
-    application.make_config_finder()
+    application.make_config_finder(prelim_opts.append_config, prelim_args)
     application.find_plugins()
     application.register_plugin_options()
     application.parse_configuration_and_cli([])

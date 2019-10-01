@@ -174,8 +174,8 @@ class Application(object):
                 self.option_manager.program_name, args, append_config
             )
 
-    def find_plugins(self):
-        # type: () -> None
+    def find_plugins(self, config_file, ignore_config_files):
+        # type: (Optional[str], bool) -> None
         """Find and load the plugins for this application.
 
         If :attr:`check_plugins`, or :attr:`formatting_plugins` are ``None``
@@ -183,12 +183,17 @@ class Application(object):
         instance. Given the expense of finding plugins (via :mod:`entrypoints`)
         we want this to be idempotent and so only update those attributes if
         they are ``None``.
+
+        :param str config_file:
+            The optional configuraiton file to override all other configuration
+            files (i.e., the --config option).
+        :param bool ignore_config_files:
+            Determine whether to parse configuration files or not. (i.e., the
+            --isolated option).
         """
         if self.local_plugins is None:
             self.local_plugins = config.get_local_plugins(
-                self.config_finder,
-                self.prelim_opts.config,
-                self.prelim_opts.isolated,
+                self.config_finder, config_file, ignore_config_files
             )
 
         sys.path.extend(self.local_plugins.paths)
@@ -367,7 +372,7 @@ class Application(object):
         )
         flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
         self.make_config_finder(prelim_opts.append_config, prelim_args)
-        self.find_plugins()
+        self.find_plugins(prelim_opts.config, prelim_opts.isolated)
         self.register_plugin_options()
         self.parse_configuration_and_cli(argv)
         self.make_formatter()

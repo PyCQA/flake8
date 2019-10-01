@@ -12,6 +12,8 @@ def test_get_style_guide():
     """Verify the methods called on our internal Application."""
     prelim_opts = argparse.Namespace(
         append_config=[],
+        config=None,
+        isolated=False,
         output_file=None,
         verbose=0,
     )
@@ -28,7 +30,7 @@ def test_get_style_guide():
     application.assert_called_once_with()
     mockedapp.parse_preliminary_options_and_args.assert_called_once_with([])
     mockedapp.make_config_finder.assert_called_once_with([], [])
-    mockedapp.find_plugins.assert_called_once_with()
+    mockedapp.find_plugins.assert_called_once_with(None, False)
     mockedapp.register_plugin_options.assert_called_once_with()
     mockedapp.parse_configuration_and_cli.assert_called_once_with([])
     mockedapp.make_formatter.assert_called_once_with()

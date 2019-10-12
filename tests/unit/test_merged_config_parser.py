@@ -27,8 +27,6 @@ def test_parse_cli_config(optmanager, config_finder):
                           normalize_paths=True)
     optmanager.add_option('--ignore', parse_from_config=True,
                           comma_separated_list=True)
-    optmanager.add_option('--verbose', parse_from_config=True,
-                          action='count')
     optmanager.add_option('--quiet', parse_from_config=True,
                           action='count')
     parser = config.MergedConfigParser(optmanager, config_finder)
@@ -43,7 +41,6 @@ def test_parse_cli_config(optmanager, config_finder):
             os.path.abspath('bar/'),
             os.path.abspath('bogus/'),
         ],
-        'verbose': 2,
         'quiet': 1,
     }
 
@@ -68,8 +65,6 @@ def test_parse_user_config(optmanager, config_finder):
                           normalize_paths=True)
     optmanager.add_option('--ignore', parse_from_config=True,
                           comma_separated_list=True)
-    optmanager.add_option('--verbose', parse_from_config=True,
-                          action='count')
     optmanager.add_option('--quiet', parse_from_config=True,
                           action='count')
     parser = config.MergedConfigParser(optmanager, config_finder)
@@ -85,7 +80,6 @@ def test_parse_user_config(optmanager, config_finder):
             os.path.abspath('bar/'),
             os.path.abspath('bogus/'),
         ],
-        'verbose': 2,
         'quiet': 1,
     }
 
@@ -97,8 +91,6 @@ def test_parse_local_config(optmanager, config_finder):
                           normalize_paths=True)
     optmanager.add_option('--ignore', parse_from_config=True,
                           comma_separated_list=True)
-    optmanager.add_option('--verbose', parse_from_config=True,
-                          action='count')
     optmanager.add_option('--quiet', parse_from_config=True,
                           action='count')
     parser = config.MergedConfigParser(optmanager, config_finder)
@@ -116,7 +108,6 @@ def test_parse_local_config(optmanager, config_finder):
             os.path.abspath('bar/'),
             os.path.abspath('bogus/'),
         ],
-        'verbose': 2,
         'quiet': 1,
     }
 

@@ -13,12 +13,6 @@ CLI_SPECIFIED_FILEPATH = 'tests/fixtures/config_files/cli-specified.ini'
 BROKEN_CONFIG_PATH = 'tests/fixtures/config_files/broken.ini'
 
 
-def test_uses_default_args():
-    """Show that we default the args value."""
-    finder = config.ConfigFileFinder('flake8', [])
-    assert finder.parent == os.path.abspath('.')
-
-
 @pytest.mark.parametrize('platform,is_windows', [
     ('win32', True),
     ('linux', False),
@@ -52,59 +46,42 @@ def test_cli_config_double_read():
     assert parsed_config is parsed_config_2
 
 
-@pytest.mark.parametrize('args,expected', [
-    # No arguments, common prefix of abspath('.')
-    ([],
+@pytest.mark.parametrize('cwd,expected', [
+    # Root directory of project
+    ('.',
         [os.path.abspath('setup.cfg'),
             os.path.abspath('tox.ini')]),
-    # Common prefix of "flake8/"
-    (['flake8/options', 'flake8/'],
+    # Subdirectory of project directory
+    ('src',
         [os.path.abspath('setup.cfg'),
             os.path.abspath('tox.ini')]),
-    # Common prefix of "flake8/options"
-    (['flake8/options', 'flake8/options/sub'],
-        [os.path.abspath('setup.cfg'),
-            os.path.abspath('tox.ini')]),
+    # Outside of project directory
+    ('/',
+        []),
 ])
-def test_generate_possible_local_files(args, expected):
+def test_generate_possible_local_files(cwd, expected):
     """Verify generation of all possible config paths."""
-    finder = config.ConfigFileFinder('flake8', [])
+    with mock.patch.object(os, 'getcwd', return_value=cwd):
+        finder = config.ConfigFileFinder('flake8', [])
 
     assert (list(finder.generate_possible_local_files())
             == expected)
 
 
-@pytest.mark.parametrize('args,extra_config_files,expected', [
-    # No arguments, common prefix of abspath('.')
-    ([],
-        [],
-        [os.path.abspath('setup.cfg'),
-            os.path.abspath('tox.ini')]),
-    # Common prefix of "flake8/"
-    (['flake8/options', 'flake8/'],
-        [],
-        [os.path.abspath('setup.cfg'),
-            os.path.abspath('tox.ini')]),
-    # Common prefix of "flake8/options"
-    (['flake8/options', 'flake8/options/sub'],
-        [],
-        [os.path.abspath('setup.cfg'),
-            os.path.abspath('tox.ini')]),
-    # Common prefix of "flake8/" with extra config files specified
-    (['flake8/'],
-        [CLI_SPECIFIED_FILEPATH],
+@pytest.mark.parametrize('extra_config_files,expected', [
+    # Extra config files specified
+    ([CLI_SPECIFIED_FILEPATH],
         [os.path.abspath('setup.cfg'),
             os.path.abspath('tox.ini'),
             os.path.abspath(CLI_SPECIFIED_FILEPATH)]),
-    # Common prefix of "flake8/" with missing extra config files specified
-    (['flake8/'],
-        [CLI_SPECIFIED_FILEPATH,
-            'tests/fixtures/config_files/missing.ini'],
+    # Missing extra config files specified
+    ([CLI_SPECIFIED_FILEPATH,
+        'tests/fixtures/config_files/missing.ini'],
         [os.path.abspath('setup.cfg'),
             os.path.abspath('tox.ini'),
             os.path.abspath(CLI_SPECIFIED_FILEPATH)]),
 ])
-def test_local_config_files(args, extra_config_files, expected):
+def test_local_config_files(extra_config_files, expected):
     """Verify discovery of local config files."""
     finder = config.ConfigFileFinder('flake8', extra_config_files)
 

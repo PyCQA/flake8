@@ -152,14 +152,12 @@ class Application(object):
                 (self.result_count > 0) or self.catastrophic_failure
             )
 
-    def make_config_finder(self, append_config, args):
-        # type: (List[str], List[str]) -> None
+    def make_config_finder(self, append_config):
+        # type: (List[str]) -> None
         """Make our ConfigFileFinder based on preliminary opts and args.
 
         :param list append_config:
             List of configuration files to be parsed for configuration.
-        :param list args:
-            The list of file arguments passed from the CLI.
         """
         if self.config_finder is None:
             self.config_finder = config.ConfigFileFinder(
@@ -363,7 +361,7 @@ class Application(object):
             argv
         )
         flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
-        self.make_config_finder(prelim_opts.append_config, prelim_args)
+        self.make_config_finder(prelim_opts.append_config)
         self.find_plugins(prelim_opts.config, prelim_opts.isolated)
         self.register_plugin_options()
         self.parse_configuration_and_cli(argv)

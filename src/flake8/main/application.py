@@ -163,7 +163,7 @@ class Application(object):
         """
         if self.config_finder is None:
             self.config_finder = config.ConfigFileFinder(
-                self.option_manager.program_name, args, append_config
+                self.option_manager.program_name, append_config
             )
 
     def find_plugins(self, config_file, ignore_config_files):

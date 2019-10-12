@@ -46,9 +46,7 @@ class ConfigFileFinder(object):
 
         self.local_directory = os.path.abspath(os.curdir)
 
-        if not args:
-            args = ["."]
-        self.parent = self.tail = os.path.abspath(os.path.commonprefix(args))
+        self.parent = self.tail = os.getcwd()
 
         # caches to avoid double-reading config files
         self._local_configs = None

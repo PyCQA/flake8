@@ -48,7 +48,6 @@ def register_default_options(option_manager):
         "--verbose",
         default=0,
         action="count",
-        parse_from_config=True,
         help="Print more information about what is happening in flake8."
         " This option is repeatable and will increase verbosity each "
         "time it is repeated.",

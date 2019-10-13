@@ -258,9 +258,7 @@ def register_default_options(option_manager):
     )
 
     add_option(
-        "--output-file",
-        default=None,
-        help="Redirect report to a file.",
+        "--output-file", default=None, help="Redirect report to a file."
     )
 
     add_option(

@@ -155,13 +155,7 @@ Options and their Descriptions
 
         flake8 -vv
 
-    This **can** be specified in config files.
-
-    Example config file usage:
-
-    .. code-block:: ini
-
-        verbose = 2
+    This **can not** be specified in config files.
 
 
 .. option:: -q, --quiet

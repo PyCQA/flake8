@@ -260,7 +260,6 @@ def register_default_options(option_manager):
     add_option(
         "--output-file",
         default=None,
-        parse_from_config=True,
         help="Redirect report to a file.",
     )
 

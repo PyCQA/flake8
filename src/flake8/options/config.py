@@ -16,14 +16,12 @@ __all__ = ("ConfigFileFinder", "MergedConfigParser")
 class ConfigFileFinder(object):
     """Encapsulate the logic for finding and reading config files."""
 
-    def __init__(self, program_name, args, extra_config_files):
-        # type: (str, List[str], List[str]) -> None
+    def __init__(self, program_name, extra_config_files):
+        # type: (str, List[str]) -> None
         """Initialize object to find config files.
 
         :param str program_name:
             Name of the current program (e.g., flake8).
-        :param list args:
-            The extra arguments passed on the command-line.
         :param list extra_config_files:
             Extra configuration files specified by the user to read.
         """
@@ -46,9 +44,7 @@ class ConfigFileFinder(object):
 
         self.local_directory = os.path.abspath(os.curdir)
 
-        if not args:
-            args = ["."]
-        self.parent = self.tail = os.path.abspath(os.path.commonprefix(args))
+        self.parent = self.tail = os.getcwd()
 
         # caches to avoid double-reading config files
         self._local_configs = None

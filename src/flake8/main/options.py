@@ -1,4 +1,5 @@
 """Contains the logic for all of the default options for Flake8."""
+import argparse
 import functools
 
 from flake8 import defaults
@@ -6,7 +7,8 @@ from flake8.main import debug
 from flake8.main import vcs
 
 
-def register_preliminary_options(option_manager):
+def register_preliminary_options(parser):
+    # type: (argparse.ArgumentParser) -> None
     """Register the preliminary options on our OptionManager.
 
     The preliminary options include:
@@ -17,9 +19,9 @@ def register_preliminary_options(option_manager):
     - ``--config``
     - ``--isolated``
     """
-    add_option = option_manager.add_option
+    add_argument = parser.add_argument
 
-    add_option(
+    add_argument(
         "-v",
         "--verbose",
         default=0,
@@ -29,13 +31,13 @@ def register_preliminary_options(option_manager):
         "time it is repeated.",
     )
 
-    add_option(
+    add_argument(
         "--output-file", default=None, help="Redirect report to a file."
     )
 
     # Config file options
 
-    add_option(
+    add_argument(
         "--append-config",
         action="append",
         help="Provide extra config files to parse in addition to the files "
@@ -44,7 +46,7 @@ def register_preliminary_options(option_manager):
         "provide the same option.",
     )
 
-    add_option(
+    add_argument(
         "--config",
         default=None,
         help="Path to the config file that will be the authoritative config "
@@ -52,7 +54,7 @@ def register_preliminary_options(option_manager):
         "configuration files.",
     )
 
-    add_option(
+    add_argument(
         "--isolated",
         default=False,
         action="store_true",

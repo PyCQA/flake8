@@ -45,12 +45,17 @@ class Application(object):
         self.program = program
         #: The version of the program being run
         self.version = version
+        #: The prelimary argument parser for handling options required for
+        #: obtaining and parsing the configuration file.
+        self.prelim_arg_parser = argparse.ArgumentParser(add_help=False)
+        options.register_preliminary_options(self.prelim_arg_parser)
         #: The instance of :class:`flake8.options.manager.OptionManager` used
         #: to parse and handle the options and arguments passed by the user
         self.option_manager = manager.OptionManager(
-            prog="flake8", version=flake8.__version__
+            prog="flake8",
+            version=flake8.__version__,
+            parents=[self.prelim_arg_parser],
         )
-        options.register_preliminary_options(self.option_manager)
         options.register_default_options(self.option_manager)
         #: The instance of :class:`flake8.options.config.ConfigFileFinder`
         self.config_finder = None  # type: config.ConfigFileFinder

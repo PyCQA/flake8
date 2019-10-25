@@ -1,4 +1,5 @@
 """Test aggregation of config files and command-line options."""
+import argparse
 import os
 
 import pytest
@@ -14,11 +15,13 @@ CLI_SPECIFIED_CONFIG = 'tests/fixtures/config_files/cli-specified.ini'
 @pytest.fixture
 def optmanager():
     """Create a new OptionManager."""
+    prelim_parser = argparse.ArgumentParser(add_help=False)
+    options.register_preliminary_options(prelim_parser)
     option_manager = manager.OptionManager(
         prog='flake8',
         version='3.0.0',
+        parents=[prelim_parser],
     )
-    options.register_preliminary_options(option_manager)
     options.register_default_options(option_manager)
     return option_manager
 

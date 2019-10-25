@@ -50,6 +50,7 @@ class Application(object):
         self.option_manager = manager.OptionManager(
             prog="flake8", version=flake8.__version__
         )
+        options.register_preliminary_options(self.option_manager)
         options.register_default_options(self.option_manager)
         #: The instance of :class:`flake8.options.config.ConfigFileFinder`
         self.config_finder = None  # type: config.ConfigFileFinder

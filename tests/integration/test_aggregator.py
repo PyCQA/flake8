@@ -18,6 +18,7 @@ def optmanager():
         prog='flake8',
         version='3.0.0',
     )
+    options.register_preliminary_options(option_manager)
     options.register_default_options(option_manager)
     return option_manager
 

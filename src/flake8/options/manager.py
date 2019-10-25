@@ -338,8 +338,12 @@ class OptionManager(object):
     """Manage Options and OptionParser while adding post-processing."""
 
     def __init__(
-        self, prog, version, usage="%(prog)s [options] file file ..."
-    ):  # type: (str, str, str) -> None
+        self,
+        prog,
+        version,
+        usage="%(prog)s [options] file file ...",
+        parents=None,
+    ):  # type: (str, str, str, Optional[List[argparse.ArgumentParser]]) -> None  # noqa: E501
         """Initialize an instance of an OptionManager.
 
         :param str prog:
@@ -348,9 +352,15 @@ class OptionManager(object):
             Version string for the program.
         :param str usage:
             Basic usage string used by the OptionParser.
+        :param argparse.ArgumentParser parents:
+            A list of ArgumentParser objects whose arguments should also be
+            included.
         """
+        if parents is None:
+            parents = []
+
         self.parser = argparse.ArgumentParser(
-            prog=prog, usage=usage
+            prog=prog, usage=usage, parents=parents
         )  # type: argparse.ArgumentParser
         self._current_group = None  # type: Optional[argparse._ArgumentGroup]
         self.version_action = cast(

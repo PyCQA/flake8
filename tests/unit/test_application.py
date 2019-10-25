@@ -95,10 +95,8 @@ def test_prelim_opts_args(application):
     opts, args = application.parse_preliminary_options_and_args(
         ['--foo', '--verbose', 'src', 'setup.py', '--statistics'])
 
-    assert not hasattr(opts, 'foo')
-    assert not hasattr(opts, 'statistics')
     assert opts.verbose
-    assert args == ['src', 'setup.py']
+    assert args == ['--foo', 'src', 'setup.py', '--statistics']
 
 
 def test_prelim_opts_handles_empty(application):

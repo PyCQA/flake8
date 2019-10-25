@@ -116,21 +116,7 @@ class Application(object):
         :rtype:
             (argparse.Namespace, list)
         """
-        # We haven't found or registered our plugins yet, so let's defer
-        # printing the version until we aggregate options from config files
-        # and the command-line. First, let's clone our arguments on the CLI,
-        # then we'll attempt to remove ``--version`` so that we can avoid
-        # triggering the "version" action in argparse. If it's not there, we
-        # do not need to worry and we can continue. If it is, we successfully
-        # defer printing the version until just a little bit later.
-        # Similarly we have to defer printing the help text until later.
-        args = argv[:]
-        try:
-            args.remove("--version")
-        except ValueError:
-            pass
-
-        return self.prelim_arg_parser.parse_known_args(args)
+        return self.prelim_arg_parser.parse_known_args(argv)
 
     def exit(self):
         # type: () -> None

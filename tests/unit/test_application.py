@@ -93,10 +93,10 @@ def test_returns_specified_plugin(application):
 def test_prelim_opts_args(application):
     """Verify we get sensible prelim opts and args."""
     opts, args = application.parse_preliminary_options_and_args(
-        ['--foo', '--verbose', 'src', 'setup.py', '--statistics'])
+        ['--foo', '--verbose', 'src', 'setup.py', '--statistics', '--version'])
 
     assert opts.verbose
-    assert args == ['--foo', 'src', 'setup.py', '--statistics']
+    assert args == ['--foo', 'src', 'setup.py', '--statistics', '--version']
 
 
 def test_prelim_opts_ignore_help(application):

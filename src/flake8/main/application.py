@@ -129,14 +129,6 @@ class Application(object):
             args.remove("--version")
         except ValueError:
             pass
-        try:
-            args.remove("--help")
-        except ValueError:
-            pass
-        try:
-            args.remove("-h")
-        except ValueError:
-            pass
 
         return self.prelim_arg_parser.parse_known_args(args)
 

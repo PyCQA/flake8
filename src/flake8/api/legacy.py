@@ -28,14 +28,14 @@ def get_style_guide(**kwargs):
         :class:`StyleGuide`
     """
     application = app.Application()
-    prelim_opts, prelim_args = application.parse_preliminary_options_and_args(
+    prelim_opts, remaining_args = application.parse_preliminary_options_and_args(  # noqa: E501
         []
     )
     flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
     application.make_config_finder(prelim_opts.append_config)
     application.find_plugins(prelim_opts.config, prelim_opts.isolated)
     application.register_plugin_options()
-    application.parse_configuration_and_cli([])
+    application.parse_configuration_and_cli(remaining_args)
     # We basically want application.initialize to be called but with these
     # options set instead before we make our formatter, notifier, internal
     # style guide and file checker manager.

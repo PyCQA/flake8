@@ -338,14 +338,14 @@ class Application(object):
         """
         # NOTE(sigmavirus24): When updating this, make sure you also update
         # our legacy API calls to these same methods.
-        prelim_opts, prelim_args = self.parse_preliminary_options_and_args(
+        prelim_opts, remaining_args = self.parse_preliminary_options_and_args(
             argv
         )
         flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
         self.make_config_finder(prelim_opts.append_config)
         self.find_plugins(prelim_opts.config, prelim_opts.isolated)
         self.register_plugin_options()
-        self.parse_configuration_and_cli(argv)
+        self.parse_configuration_and_cli(remaining_args)
         self.make_formatter()
         self.make_guide()
         self.make_file_checker_manager()

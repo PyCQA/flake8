@@ -138,7 +138,7 @@ class Application(object):
         except ValueError:
             pass
 
-        opts, args = self.option_manager.parse_known_args(args)
+        opts, args = self.prelim_arg_parser.parse_known_args(args)
         # parse_known_args includes unknown options as args
         args = [a for a in args if not a.startswith("-")]
         return opts, args

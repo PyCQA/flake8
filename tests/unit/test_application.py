@@ -93,9 +93,10 @@ def test_returns_specified_plugin(application):
 def test_prelim_opts_args(application):
     """Verify we get sensible prelim opts and args."""
     opts, args = application.parse_preliminary_options_and_args(
-        ['flake8', '--foo', '--verbose', 'src', 'setup.py', '--statistics'])
+        ['--foo', '--verbose', 'src', 'setup.py', '--statistics'])
 
-    assert opts.statistics
+    assert not hasattr(opts, 'foo')
+    assert not hasattr(opts, 'statistics')
     assert opts.verbose
     assert args == ['src', 'setup.py']
 

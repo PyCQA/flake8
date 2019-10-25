@@ -147,7 +147,7 @@ class AfterInitFormatter(base.BaseFormatter):
 def test_after_init_is_always_called():
     """Verify after_init is called."""
     formatter = AfterInitFormatter(options())
-    assert getattr(formatter, 'post_initialized') is True
+    assert formatter.post_initialized is True
 
 
 class FormatFormatter(base.BaseFormatter):

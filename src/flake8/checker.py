@@ -503,7 +503,7 @@ class FileChecker(object):
                 runner = checker.run()
             except AttributeError:
                 runner = checker
-            for (line_number, offset, text, check) in runner:
+            for (line_number, offset, text, _) in runner:
                 self.report(
                     error_code=None,
                     line_number=line_number,
@@ -668,11 +668,14 @@ def _run_checks(checker):
 
 
 def find_offset(offset, mapping):
+    # type: (int, processor._LogicalMapping) -> Tuple[int, int]
     """Find the offset tuple for a single offset."""
     if isinstance(offset, tuple):
         return offset
 
-    for token_offset, position in mapping:
+    for token in mapping:
+        token_offset = token[0]
         if offset <= token_offset:
+            position = token[1]
             break
     return (position[0], position[1] + offset - token_offset)

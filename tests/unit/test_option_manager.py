@@ -22,6 +22,23 @@ def test_option_manager_creates_option_parser(optmanager):
     assert isinstance(optmanager.parser, argparse.ArgumentParser)
 
 
+def test_option_manager_including_parent_options():
+    """Verify parent options are included in the parsed options."""
+    # GIVEN
+    parent_parser = argparse.ArgumentParser(add_help=False)
+    parent_parser.add_argument('--parent')
+
+    # WHEN
+    optmanager = manager.OptionManager(
+        prog='flake8',
+        version=TEST_VERSION,
+        parents=[parent_parser])
+    option, _ = optmanager.parse_args(['--parent', 'foo'])
+
+    # THEN
+    assert option.parent == 'foo'
+
+
 def test_parse_args_forwarding_default_values(optmanager):
     """Verify default provided values are present in the final result."""
     namespace = argparse.Namespace(foo='bar')

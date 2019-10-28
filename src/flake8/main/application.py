@@ -45,10 +45,16 @@ class Application(object):
         self.program = program
         #: The version of the program being run
         self.version = version
+        #: The prelimary argument parser for handling options required for
+        #: obtaining and parsing the configuration file.
+        self.prelim_arg_parser = argparse.ArgumentParser(add_help=False)
+        options.register_preliminary_options(self.prelim_arg_parser)
         #: The instance of :class:`flake8.options.manager.OptionManager` used
         #: to parse and handle the options and arguments passed by the user
         self.option_manager = manager.OptionManager(
-            prog="flake8", version=flake8.__version__
+            prog="flake8",
+            version=flake8.__version__,
+            parents=[self.prelim_arg_parser],
         )
         options.register_default_options(self.option_manager)
         #: The instance of :class:`flake8.options.config.ConfigFileFinder`
@@ -110,32 +116,7 @@ class Application(object):
         :rtype:
             (argparse.Namespace, list)
         """
-        # We haven't found or registered our plugins yet, so let's defer
-        # printing the version until we aggregate options from config files
-        # and the command-line. First, let's clone our arguments on the CLI,
-        # then we'll attempt to remove ``--version`` so that we can avoid
-        # triggering the "version" action in argparse. If it's not there, we
-        # do not need to worry and we can continue. If it is, we successfully
-        # defer printing the version until just a little bit later.
-        # Similarly we have to defer printing the help text until later.
-        args = argv[:]
-        try:
-            args.remove("--version")
-        except ValueError:
-            pass
-        try:
-            args.remove("--help")
-        except ValueError:
-            pass
-        try:
-            args.remove("-h")
-        except ValueError:
-            pass
-
-        opts, args = self.option_manager.parse_known_args(args)
-        # parse_known_args includes unknown options as args
-        args = [a for a in args if not a.startswith("-")]
-        return opts, args
+        return self.prelim_arg_parser.parse_known_args(argv)
 
     def exit(self):
         # type: () -> None
@@ -357,14 +338,14 @@ class Application(object):
         """
         # NOTE(sigmavirus24): When updating this, make sure you also update
         # our legacy API calls to these same methods.
-        prelim_opts, prelim_args = self.parse_preliminary_options_and_args(
+        prelim_opts, remaining_args = self.parse_preliminary_options_and_args(
             argv
         )
         flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
         self.make_config_finder(prelim_opts.append_config)
         self.find_plugins(prelim_opts.config, prelim_opts.isolated)
         self.register_plugin_options()
-        self.parse_configuration_and_cli(argv)
+        self.parse_configuration_and_cli(remaining_args)
         self.make_formatter()
         self.make_guide()
         self.make_file_checker_manager()

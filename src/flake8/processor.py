@@ -53,6 +53,9 @@ class FileProcessor(object):
     - :attr:`verbose`
     """
 
+    #: always ``False``, included for compatibility
+    noqa = False
+
     def __init__(self, filename, options, lines=None):
         # type: (str, argparse.Namespace, Optional[List[str]]) -> None
         """Initialice our file processor.
@@ -90,8 +93,6 @@ class FileProcessor(object):
         self.max_doc_length = options.max_doc_length
         #: Whether the current physical line is multiline
         self.multiline = False
-        #: Whether or not we're observing NoQA
-        self.noqa = False
         #: Previous level of indentation
         self.previous_indent_level = 0
         #: Previous logical line
@@ -177,7 +178,6 @@ class FileProcessor(object):
                 self.previous_unindented_logical_line = self.logical_line
         self.blank_lines = 0
         self.tokens = []
-        self.noqa = False
 
     def build_logical_line_tokens(self):  # type: () -> _Logical
         """Build the mapping, comments, and logical line lists."""
@@ -224,8 +224,6 @@ class FileProcessor(object):
         comments, logical, mapping_list = self.build_logical_line_tokens()
         joined_comments = "".join(comments)
         self.logical_line = "".join(logical)
-        if defaults.NOQA_INLINE_REGEXP.search(joined_comments):
-            self.noqa = True
         self.statistics["logical lines"] += 1
         return joined_comments, self.logical_line, mapping_list
 

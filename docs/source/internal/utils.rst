@@ -59,12 +59,6 @@ allows plugins to use this to retrieve ``stdin`` if necessary.
 This provides a convenient and explicitly named function that checks if we are
 currently running on a Windows (or ``nt``) operating system.
 
-.. autofunction:: flake8.utils.can_run_multiprocessing_on_windows
-
-This provides a separate and distinct check from
-:func:`~flake8.utils.is_windows` that allows us to check if the version of
-Python we're using can actually use multiprocessing on Windows.
-
 .. autofunction:: flake8.utils.is_using_stdin
 
 Another helpful function that is named only to be explicit given it is a very

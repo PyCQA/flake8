@@ -3,6 +3,7 @@ import collections
 import errno
 import logging
 import signal
+import sys
 import tokenize
 from typing import Dict, List, Optional, Tuple
 
@@ -32,6 +33,18 @@ SERIAL_RETRY_ERRNOS = {
     # code. Further, please always add a trailing `,` to reduce the visual
     # noise in diffs.
 }
+
+
+def _multiprocessing_is_fork():  # type () -> bool
+    """Class state is only preserved when using the `fork` strategy."""
+    if sys.version_info >= (3, 4):
+        return (
+            multiprocessing
+            # https://github.com/python/typeshed/pull/3415
+            and multiprocessing.get_start_method() == "fork"  # type: ignore
+        )
+    else:
+        return multiprocessing and not utils.is_windows()
 
 
 class Manager(object):
@@ -97,23 +110,10 @@ class Manager(object):
         # - we're processing a diff, which again does not work well with
         #   multiprocessing and which really shouldn't require multiprocessing
         # - the user provided some awful input
-        if not multiprocessing:
+        if not _multiprocessing_is_fork():
             LOG.warning(
                 "The multiprocessing module is not available. "
                 "Ignoring --jobs arguments."
-            )
-            return 0
-
-        if (
-            utils.is_windows()
-            and not utils.can_run_multiprocessing_on_windows()
-        ):
-            LOG.warning(
-                "The --jobs option is not available on Windows due to"
-                " a bug (https://bugs.python.org/issue27649) in "
-                "Python 2.7.11+ and 3.3+. We have detected that you "
-                "are running an unsupported version of Python on "
-                "Windows. Ignoring --jobs arguments."
             )
             return 0
 

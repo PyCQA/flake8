@@ -34,7 +34,7 @@ def test_oserrors_cause_serial_fall_back():
     assert serial.call_count == 1
 
 
-@mock.patch('flake8.utils.is_windows', return_value=False)
+@mock.patch('flake8.checker._multiprocessing_is_fork', return_value=True)
 def test_oserrors_are_reraised(is_windows):
     """Verify that unexpected OSErrors will cause the Manager to reraise."""
     err = OSError(errno.EAGAIN, 'Ominous message')

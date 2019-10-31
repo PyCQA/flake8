@@ -93,11 +93,24 @@ def test_returns_specified_plugin(application):
 def test_prelim_opts_args(application):
     """Verify we get sensible prelim opts and args."""
     opts, args = application.parse_preliminary_options_and_args(
-        ['flake8', '--foo', '--verbose', 'src', 'setup.py', '--statistics'])
+        ['--foo', '--verbose', 'src', 'setup.py', '--statistics', '--version'])
 
-    assert opts.statistics
     assert opts.verbose
-    assert args == ['src', 'setup.py']
+    assert args == ['--foo', 'src', 'setup.py', '--statistics', '--version']
+
+
+def test_prelim_opts_ignore_help(application):
+    """Verify -h/--help is not handled."""
+    # GIVEN
+
+    # WHEN
+    _, args = application.parse_preliminary_options_and_args([
+        '--help',
+        '-h',
+    ])
+
+    # THEN
+    assert args == ['--help', '-h']
 
 
 def test_prelim_opts_handles_empty(application):

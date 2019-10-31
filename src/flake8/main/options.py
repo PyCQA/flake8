@@ -1,4 +1,5 @@
 """Contains the logic for all of the default options for Flake8."""
+import argparse
 import functools
 
 from flake8 import defaults
@@ -6,12 +7,66 @@ from flake8.main import debug
 from flake8.main import vcs
 
 
+def register_preliminary_options(parser):
+    # type: (argparse.ArgumentParser) -> None
+    """Register the preliminary options on our OptionManager.
+
+    The preliminary options include:
+
+    - ``-v``/``--verbose``
+    - ``--output-file``
+    - ``--append-config``
+    - ``--config``
+    - ``--isolated``
+    """
+    add_argument = parser.add_argument
+
+    add_argument(
+        "-v",
+        "--verbose",
+        default=0,
+        action="count",
+        help="Print more information about what is happening in flake8."
+        " This option is repeatable and will increase verbosity each "
+        "time it is repeated.",
+    )
+
+    add_argument(
+        "--output-file", default=None, help="Redirect report to a file."
+    )
+
+    # Config file options
+
+    add_argument(
+        "--append-config",
+        action="append",
+        help="Provide extra config files to parse in addition to the files "
+        "found by Flake8 by default. These files are the last ones read "
+        "and so they take the highest precedence when multiple files "
+        "provide the same option.",
+    )
+
+    add_argument(
+        "--config",
+        default=None,
+        help="Path to the config file that will be the authoritative config "
+        "source. This will cause Flake8 to ignore all other "
+        "configuration files.",
+    )
+
+    add_argument(
+        "--isolated",
+        default=False,
+        action="store_true",
+        help="Ignore all configuration files.",
+    )
+
+
 def register_default_options(option_manager):
     """Register the default options on our OptionManager.
 
     The default options include:
 
-    - ``-v``/``--verbose``
     - ``-q``/``--quiet``
     - ``--count``
     - ``--diff``
@@ -32,26 +87,13 @@ def register_default_options(option_manager):
     - ``--enable-extensions``
     - ``--exit-zero``
     - ``-j``/``--jobs``
-    - ``--output-file``
     - ``--tee``
-    - ``--append-config``
-    - ``--config``
-    - ``--isolated``
     - ``--benchmark``
     - ``--bug-report``
     """
     add_option = option_manager.add_option
 
     # pep8 options
-    add_option(
-        "-v",
-        "--verbose",
-        default=0,
-        action="count",
-        help="Print more information about what is happening in flake8."
-        " This option is repeatable and will increase verbosity each "
-        "time it is repeated.",
-    )
     add_option(
         "-q",
         "--quiet",
@@ -258,41 +300,11 @@ def register_default_options(option_manager):
     )
 
     add_option(
-        "--output-file", default=None, help="Redirect report to a file."
-    )
-
-    add_option(
         "--tee",
         default=False,
         parse_from_config=True,
         action="store_true",
         help="Write to stdout and output-file.",
-    )
-
-    # Config file options
-
-    add_option(
-        "--append-config",
-        action="append",
-        help="Provide extra config files to parse in addition to the files "
-        "found by Flake8 by default. These files are the last ones read "
-        "and so they take the highest precedence when multiple files "
-        "provide the same option.",
-    )
-
-    add_option(
-        "--config",
-        default=None,
-        help="Path to the config file that will be the authoritative config "
-        "source. This will cause Flake8 to ignore all other "
-        "configuration files.",
-    )
-
-    add_option(
-        "--isolated",
-        default=False,
-        action="store_true",
-        help="Ignore all configuration files.",
     )
 
     # Benchmarking

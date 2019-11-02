@@ -28,9 +28,10 @@ def get_style_guide(**kwargs):
         :class:`StyleGuide`
     """
     application = app.Application()
-    prelim_opts, remaining_args = application.parse_preliminary_options_and_args(  # noqa: E501
-        []
-    )
+    (
+        prelim_opts,
+        remaining_args,
+    ) = application.parse_preliminary_options_and_args([])
     flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
     application.make_config_finder(prelim_opts.append_config)
     application.find_plugins(prelim_opts.config, prelim_opts.isolated)

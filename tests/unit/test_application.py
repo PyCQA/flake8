@@ -92,7 +92,7 @@ def test_returns_specified_plugin(application):
 
 def test_prelim_opts_args(application):
     """Verify we get sensible prelim opts and args."""
-    opts, args = application.parse_preliminary_options_and_args(
+    opts, args = application.parse_preliminary_options(
         ['--foo', '--verbose', 'src', 'setup.py', '--statistics', '--version'])
 
     assert opts.verbose
@@ -104,10 +104,7 @@ def test_prelim_opts_ignore_help(application):
     # GIVEN
 
     # WHEN
-    _, args = application.parse_preliminary_options_and_args([
-        '--help',
-        '-h',
-    ])
+    _, args = application.parse_preliminary_options(['--help', '-h'])
 
     # THEN
     assert args == ['--help', '-h']
@@ -117,6 +114,6 @@ def test_prelim_opts_handles_empty(application):
     """Verify empty argv lists are handled correctly."""
     irrelevant_args = ['myexe', '/path/to/foo']
     with mock.patch.object(sys, 'argv', irrelevant_args):
-        opts, args = application.parse_preliminary_options_and_args([])
+        opts, args = application.parse_preliminary_options([])
 
         assert args == []

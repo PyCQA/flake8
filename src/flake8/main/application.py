@@ -189,8 +189,8 @@ class Application(object):
         self.check_plugins.register_plugin_versions(self.option_manager)
         self.formatting_plugins.register_options(self.option_manager)
 
-    def parse_configuration_and_cli(self, argv=None):
-        # type: (Optional[List[str]]) -> None
+    def parse_configuration_and_cli(self, argv):
+        # type: (List[str]) -> None
         """Parse configuration files and the CLI options.
 
         :param list argv:

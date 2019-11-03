@@ -39,8 +39,13 @@ python37:
   stage: test
   script: tox -e py37
 
+python38:
+  image: python:3.8
+  stage: test
+  script: tox -e py38
+
 linters:
-  image: python:3.6
+  image: python:3.7
   stage: test
   script: tox -e linters
 

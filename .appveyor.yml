@@ -5,4 +5,4 @@ install:
 build: off
 
 test_script:
-  - python -m tox -e py27,py34,py35,dogfood
+  - python -m tox -e py27,py36,py37,dogfood

@@ -133,17 +133,17 @@ class Application(object):
                 (self.result_count > 0) or self.catastrophic_failure
             )
 
-    def make_config_finder(self, append_config):
+    def make_config_finder(self, extra_config_files):
         # type: (List[str]) -> None
-        """Make our ConfigFileFinder based on preliminary opts and args.
+        """Make our ConfigFileFinder based on preliminary options.
 
-        :param list append_config:
-            List of configuration files to be parsed for configuration.
+        :param list extra_config_files:
+            List of addtional configuration files to be parsed for
+            configuration.
         """
-        if self.config_finder is None:
-            self.config_finder = config.ConfigFileFinder(
-                self.option_manager.program_name, append_config
-            )
+        self.config_finder = config.ConfigFileFinder(
+            self.program, extra_config_files
+        )
 
     def find_plugins(self, config_file, ignore_config_files):
         # type: (Optional[str], bool) -> None

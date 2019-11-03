@@ -18,16 +18,13 @@ def test_get_style_guide():
         verbose=0,
     )
     mockedapp = mock.Mock()
-    mockedapp.parse_preliminary_options_and_args.return_value = (
-        prelim_opts,
-        [],
-    )
+    mockedapp.parse_preliminary_options.return_value = (prelim_opts, [])
     with mock.patch('flake8.main.application.Application') as application:
         application.return_value = mockedapp
         style_guide = api.get_style_guide()
 
     application.assert_called_once_with()
-    mockedapp.parse_preliminary_options_and_args.assert_called_once_with([])
+    mockedapp.parse_preliminary_options.assert_called_once_with([])
     mockedapp.make_config_finder.assert_called_once_with([])
     mockedapp.find_plugins.assert_called_once_with(None, False)
     mockedapp.register_plugin_options.assert_called_once_with()

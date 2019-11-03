@@ -98,12 +98,12 @@ class Application(object):
         #: The parsed diff information
         self.parsed_diff = {}  # type: Dict[str, Set[int]]
 
-    def parse_preliminary_options_and_args(self, argv):
+    def parse_preliminary_options(self, argv):
         # type: (List[str]) -> Tuple[argparse.Namespace, List[str]]
-        """Get preliminary options and args from CLI, pre-plugin-loading.
+        """Get preliminary options from the CLI, pre-plugin-loading.
 
-        We need to know the values of a few standard options and args now, so
-        that we can find config files and configure logging.
+        We need to know the values of a few standard options so that we can
+        locate configuration files and configure logging.
 
         Since plugins aren't loaded yet, there may be some as-yet-unknown
         options; we ignore those for now, they'll be parsed later when we do
@@ -338,9 +338,7 @@ class Application(object):
         """
         # NOTE(sigmavirus24): When updating this, make sure you also update
         # our legacy API calls to these same methods.
-        prelim_opts, remaining_args = self.parse_preliminary_options_and_args(
-            argv
-        )
+        prelim_opts, remaining_args = self.parse_preliminary_options(argv)
         flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
         self.make_config_finder(prelim_opts.append_config)
         self.find_plugins(prelim_opts.config, prelim_opts.isolated)

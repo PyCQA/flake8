@@ -133,17 +133,22 @@ class Application(object):
                 (self.result_count > 0) or self.catastrophic_failure
             )
 
-    def make_config_finder(self, extra_config_files):
-        # type: (List[str]) -> None
+    @staticmethod
+    def make_config_finder(program_name, extra_config_files):
+        # type: (str, List[str]) -> config.ConfigFileFinder
         """Make our ConfigFileFinder based on preliminary options.
 
+        :param str program_name:
+            Name of the current programin (e.g., flake8).
         :param list extra_config_files:
             List of addtional configuration files to be parsed for
             configuration.
+        :returns:
+            The configuration file finder
+        :rtype:
+            config.ConfigFileFinder
         """
-        self.config_finder = config.ConfigFileFinder(
-            self.program, extra_config_files
-        )
+        return config.ConfigFileFinder(program_name, extra_config_files)
 
     def find_plugins(self, config_file, ignore_config_files):
         # type: (Optional[str], bool) -> None
@@ -340,7 +345,9 @@ class Application(object):
         # our legacy API calls to these same methods.
         prelim_opts, remaining_args = self.parse_preliminary_options(argv)
         flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
-        self.make_config_finder(prelim_opts.append_config)
+        self.config_finder = self.make_config_finder(
+            self.program, prelim_opts.append_config
+        )
         self.find_plugins(prelim_opts.config, prelim_opts.isolated)
         self.register_plugin_options()
         self.parse_configuration_and_cli(remaining_args)

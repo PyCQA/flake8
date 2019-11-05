@@ -36,7 +36,6 @@ class FileProcessor(object):
     - :attr:`blank_before`
     - :attr:`blank_lines`
     - :attr:`checker_state`
-    - :attr:`disable_noqa`
     - :attr:`indent_char`
     - :attr:`indent_level`
     - :attr:`line_number`
@@ -78,8 +77,6 @@ class FileProcessor(object):
         self._checker_states = {}  # type: Dict[str, Dict[Any, Any]]
         #: Current checker state
         self.checker_state = {}  # type: Dict[Any, Any]
-        #: Disable all noqa comments
-        self.disable_noqa = options.disable_noqa  # type: bool
         #: User provided option for hang closing
         self.hang_closing = options.hang_closing
         #: Character used for indentation
@@ -349,8 +346,10 @@ class FileProcessor(object):
         :rtype:
             bool
         """
-        if not self.disable_noqa \
-                and any(defaults.NOQA_FILE.match(line) for line in self.lines):
+        if (
+            not self.options.disable_noqa
+            and any(defaults.NOQA_FILE.match(line) for line in self.lines)
+        ):
             return True
         elif any(defaults.NOQA_FILE.search(line) for line in self.lines):
             LOG.warning(

@@ -57,21 +57,28 @@ def test_strip_utf_bom(first_line, default_options):
     assert file_processor.lines[0] == '"""Module docstring."""\n'
 
 
-@pytest.mark.parametrize('lines, expected', [
-    (['\xEF\xBB\xBF"""Module docstring."""\n'], False),
-    ([u'\uFEFF"""Module docstring."""\n'], False),
-    (['#!/usr/bin/python', '# flake8 is great', 'a = 1'], False),
-    (['#!/usr/bin/python', '# flake8: noqa', 'a = 1'], True),
-    (['#!/usr/bin/python', '# flake8:noqa', 'a = 1'], True),
-    (['# flake8: noqa', '#!/usr/bin/python', 'a = 1'], True),
-    (['# flake8:noqa', '#!/usr/bin/python', 'a = 1'], True),
-    (['#!/usr/bin/python', 'a = 1', '# flake8: noqa'], True),
-    (['#!/usr/bin/python', 'a = 1', '# flake8:noqa'], True),
-    (['#!/usr/bin/python', 'a = 1  # flake8: noqa'], False),
-    (['#!/usr/bin/python', 'a = 1  # flake8:noqa'], False),
+@pytest.mark.parametrize('lines, expected, disable_noqa', [
+    (['\xEF\xBB\xBF"""Module docstring."""\n'], False, False),
+    ([u'\uFEFF"""Module docstring."""\n'], False, False),
+    (['#!/usr/bin/python', '# flake8 is great', 'a = 1'], False, False),
+    (['#!/usr/bin/python', '# flake8: noqa', 'a = 1'], True, False),
+    (['#!/usr/bin/python', '# flake8: noqa', 'a = 1'], False, True),
+    (['#!/usr/bin/python', '# flake8:noqa', 'a = 1'], True, False),
+    (['#!/usr/bin/python', '# flake8:noqa', 'a = 1'], False, True),
+    (['# flake8: noqa', '#!/usr/bin/python', 'a = 1'], True, False),
+    (['# flake8: noqa', '#!/usr/bin/python', 'a = 1'], False, True),
+    (['# flake8:noqa', '#!/usr/bin/python', 'a = 1'], True, False),
+    (['# flake8:noqa', '#!/usr/bin/python', 'a = 1'], False, True),
+    (['#!/usr/bin/python', 'a = 1', '# flake8: noqa'], True, False),
+    (['#!/usr/bin/python', 'a = 1', '# flake8: noqa'], False, True),
+    (['#!/usr/bin/python', 'a = 1', '# flake8:noqa'], True, False),
+    (['#!/usr/bin/python', 'a = 1', '# flake8:noqa'], False, True),
+    (['#!/usr/bin/python', 'a = 1  # flake8: noqa'], False, False),
+    (['#!/usr/bin/python', 'a = 1  # flake8:noqa'], False, False),
 ])
-def test_should_ignore_file(lines, expected, default_options):
+def test_should_ignore_file(lines, expected, disable_noqa, default_options):
     """Verify that we ignore a file if told to."""
+    default_options.disable_noqa = disable_noqa
     file_processor = processor.FileProcessor('-', default_options, lines)
     assert file_processor.should_ignore_file() is expected
 

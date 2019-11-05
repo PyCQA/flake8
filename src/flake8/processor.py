@@ -349,7 +349,7 @@ class FileProcessor(object):
         :rtype:
             bool
         """
-        if any(defaults.NOQA_FILE.match(line) for line in self.lines):
+        if not self.disable_noqa and any(defaults.NOQA_FILE.match(line) for line in self.lines):
             return True
         elif any(defaults.NOQA_FILE.search(line) for line in self.lines):
             LOG.warning(

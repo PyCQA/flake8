@@ -36,6 +36,7 @@ class FileProcessor(object):
     - :attr:`blank_before`
     - :attr:`blank_lines`
     - :attr:`checker_state`
+    - :attr:`disable_noqa`
     - :attr:`indent_char`
     - :attr:`indent_level`
     - :attr:`line_number`
@@ -77,6 +78,8 @@ class FileProcessor(object):
         self._checker_states = {}  # type: Dict[str, Dict[Any, Any]]
         #: Current checker state
         self.checker_state = {}  # type: Dict[Any, Any]
+        #: Disable all noqa comments
+        self.disable_noqa = options.disable_noqa  # type: bool
         #: User provided option for hang closing
         self.hang_closing = options.hang_closing
         #: Character used for indentation

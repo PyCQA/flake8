@@ -162,22 +162,19 @@ class Application(object):
             Determine whether to parse configuration files or not. (i.e., the
             --isolated option).
         """
-        if self.local_plugins is None:
-            self.local_plugins = config.get_local_plugins(
-                self.config_finder, config_file, ignore_config_files
-            )
+        self.local_plugins = config.get_local_plugins(
+            self.config_finder, config_file, ignore_config_files
+        )
 
         sys.path.extend(self.local_plugins.paths)
 
-        if self.check_plugins is None:
-            self.check_plugins = plugin_manager.Checkers(
-                self.local_plugins.extension
-            )
+        self.check_plugins = plugin_manager.Checkers(
+            self.local_plugins.extension
+        )
 
-        if self.formatting_plugins is None:
-            self.formatting_plugins = plugin_manager.ReportFormatters(
-                self.local_plugins.report
-            )
+        self.formatting_plugins = plugin_manager.ReportFormatters(
+            self.local_plugins.report
+        )
 
         self.check_plugins.load_plugins()
         self.formatting_plugins.load_plugins()
@@ -196,10 +193,9 @@ class Application(object):
         :param list argv:
             Command-line arguments passed in directly.
         """
-        if self.options is None and self.args is None:
-            self.options, self.args = aggregator.aggregate_options(
-                self.option_manager, self.config_finder, argv
-            )
+        self.options, self.args = aggregator.aggregate_options(
+            self.option_manager, self.config_finder, argv
+        )
 
         self.running_against_diff = self.options.diff
         if self.running_against_diff:
@@ -232,25 +228,23 @@ class Application(object):
     def make_formatter(self, formatter_class=None):
         # type: (Optional[Type[BaseFormatter]]) -> None
         """Initialize a formatter based on the parsed options."""
-        if self.formatter is None:
-            format_plugin = self.options.format
-            if 1 <= self.options.quiet < 2:
-                format_plugin = "quiet-filename"
-            elif 2 <= self.options.quiet:
-                format_plugin = "quiet-nothing"
+        format_plugin = self.options.format
+        if 1 <= self.options.quiet < 2:
+            format_plugin = "quiet-filename"
+        elif 2 <= self.options.quiet:
+            format_plugin = "quiet-nothing"
 
-            if formatter_class is None:
-                formatter_class = self.formatter_for(format_plugin)
+        if formatter_class is None:
+            formatter_class = self.formatter_for(format_plugin)
 
-            self.formatter = formatter_class(self.options)
+        self.formatter = formatter_class(self.options)
 
     def make_guide(self):
         # type: () -> None
         """Initialize our StyleGuide."""
-        if self.guide is None:
-            self.guide = style_guide.StyleGuideManager(
-                self.options, self.formatter
-            )
+        self.guide = style_guide.StyleGuideManager(
+            self.options, self.formatter
+        )
 
         if self.running_against_diff:
             self.guide.add_diff_ranges(self.parsed_diff)
@@ -258,12 +252,11 @@ class Application(object):
     def make_file_checker_manager(self):
         # type: () -> None
         """Initialize our FileChecker Manager."""
-        if self.file_checker_manager is None:
-            self.file_checker_manager = checker.Manager(
-                style_guide=self.guide,
-                arguments=self.args,
-                checker_plugins=self.check_plugins,
-            )
+        self.file_checker_manager = checker.Manager(
+            style_guide=self.guide,
+            arguments=self.args,
+            checker_plugins=self.check_plugins,
+        )
 
     def run_checks(self, files=None):
         # type: (Optional[List[str]]) -> None

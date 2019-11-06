@@ -30,7 +30,9 @@ def get_style_guide(**kwargs):
     application = app.Application()
     prelim_opts, remaining_args = application.parse_preliminary_options([])
     flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
-    application.make_config_finder(prelim_opts.append_config)
+    application.config_finder = application.make_config_finder(
+        application.program, prelim_opts.append_config
+    )
     application.find_plugins(prelim_opts.config, prelim_opts.isolated)
     application.register_plugin_options()
     application.parse_configuration_and_cli(remaining_args)

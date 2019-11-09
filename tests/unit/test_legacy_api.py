@@ -6,6 +6,7 @@ import pytest
 
 from flake8.api import legacy as api
 from flake8.formatting import base as formatter
+from flake8.options.config import ConfigFileFinder
 
 
 def test_get_style_guide():
@@ -20,6 +21,8 @@ def test_get_style_guide():
     mockedapp = mock.Mock()
     mockedapp.parse_preliminary_options.return_value = (prelim_opts, [])
     mockedapp.program = 'flake8'
+    config_finder = ConfigFileFinder(mockedapp.program, [])
+    mockedapp.make_config_finder.return_value = config_finder
     with mock.patch('flake8.main.application.Application') as application:
         application.return_value = mockedapp
         style_guide = api.get_style_guide()
@@ -27,9 +30,10 @@ def test_get_style_guide():
     application.assert_called_once_with()
     mockedapp.parse_preliminary_options.assert_called_once_with([])
     mockedapp.make_config_finder.assert_called_once_with(mockedapp.program, [])
-    mockedapp.find_plugins.assert_called_once_with(None, False)
+    mockedapp.find_plugins.assert_called_once_with(config_finder, None, False)
     mockedapp.register_plugin_options.assert_called_once_with()
-    mockedapp.parse_configuration_and_cli.assert_called_once_with([])
+    mockedapp.parse_configuration_and_cli.assert_called_once_with(
+        config_finder, [])
     mockedapp.make_formatter.assert_called_once_with()
     mockedapp.make_guide.assert_called_once_with()
     mockedapp.make_file_checker_manager.assert_called_once_with()

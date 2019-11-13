@@ -76,16 +76,9 @@ def test_should_ignore_file(lines, expected, default_options):
     assert file_processor.should_ignore_file() is expected
 
 
-@pytest.mark.parametrize('lines', [
-    ['#!/usr/bin/python', '# flake8: noqa', 'a = 1'],
-    ['#!/usr/bin/python', '# flake8:noqa', 'a = 1'],
-    ['# flake8: noqa', '#!/usr/bin/python', 'a = 1'],
-    ['# flake8:noqa', '#!/usr/bin/python', 'a = 1'],
-    ['#!/usr/bin/python', 'a = 1', '# flake8: noqa'],
-    ['#!/usr/bin/python', 'a = 1', '# flake8:noqa'],
-])
-def test_should_ignore_file_to_handle_disable_noqa(lines, default_options):
+def test_should_ignore_file_to_handle_disable_noqa(default_options):
     """Verify that we ignore a file if told to."""
+    lines = ['# flake8: noqa']
     file_processor = processor.FileProcessor('-', default_options, lines)
     assert file_processor.should_ignore_file() is True
     default_options.disable_noqa = True

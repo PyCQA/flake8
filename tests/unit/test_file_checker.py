@@ -7,13 +7,13 @@ from flake8 import checker
 
 
 @mock.patch('flake8.processor.FileProcessor')
-def test_run_ast_checks_handles_SyntaxErrors(FileProcessor):  # noqa: N802,N803
+def test_run_ast_checks_handles_syntax_errors(file_processor):
     """Stress our SyntaxError handling.
 
     Related to: https://gitlab.com/pycqa/flake8/issues/237
     """
     processor = mock.Mock(lines=[])
-    FileProcessor.return_value = processor
+    file_processor.return_value = processor
     processor.build_ast.side_effect = SyntaxError('Failed to build ast',
                                                   ('', 1, 5, 'foo(\n'))
     file_checker = checker.FileChecker(__file__, checks={}, options=object())

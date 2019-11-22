@@ -57,8 +57,6 @@ class Application(object):
             parents=[self.prelim_arg_parser],
         )
         options.register_default_options(self.option_manager)
-        #: The instance of :class:`flake8.options.config.ConfigFileFinder`
-        self.config_finder = None  # type: config.ConfigFileFinder
 
         #: The :class:`flake8.options.config.LocalPlugins` found in config
         self.local_plugins = None  # type: config.LocalPlugins
@@ -150,8 +148,8 @@ class Application(object):
         """
         return config.ConfigFileFinder(program_name, extra_config_files)
 
-    def find_plugins(self, config_file, ignore_config_files):
-        # type: (Optional[str], bool) -> None
+    def find_plugins(self, config_finder, config_file, ignore_config_files):
+        # type: (config.ConfigFileFinder, Optional[str], bool) -> None
         """Find and load the plugins for this application.
 
         If :attr:`check_plugins`, or :attr:`formatting_plugins` are ``None``
@@ -160,6 +158,8 @@ class Application(object):
         we want this to be idempotent and so only update those attributes if
         they are ``None``.
 
+        :param config.ConfigFileFinder config_finder:
+            The finder for finding and reading configuration files.
         :param str config_file:
             The optional configuraiton file to override all other configuration
             files (i.e., the --config option).
@@ -168,7 +168,7 @@ class Application(object):
             --isolated option).
         """
         self.local_plugins = config.get_local_plugins(
-            self.config_finder, config_file, ignore_config_files
+            config_finder, config_file, ignore_config_files
         )
 
         sys.path.extend(self.local_plugins.paths)
@@ -191,15 +191,17 @@ class Application(object):
         self.check_plugins.register_plugin_versions(self.option_manager)
         self.formatting_plugins.register_options(self.option_manager)
 
-    def parse_configuration_and_cli(self, argv):
-        # type: (List[str]) -> None
+    def parse_configuration_and_cli(self, config_finder, argv):
+        # type: (config.ConfigFileFinder, List[str]) -> None
         """Parse configuration files and the CLI options.
 
+        :param config.ConfigFileFinder config_finder:
+            The finder for finding and reading configuration files.
         :param list argv:
             Command-line arguments passed in directly.
         """
         self.options, self.args = aggregator.aggregate_options(
-            self.option_manager, self.config_finder, argv
+            self.option_manager, config_finder, argv
         )
 
         self.running_against_diff = self.options.diff
@@ -338,12 +340,14 @@ class Application(object):
         # our legacy API calls to these same methods.
         prelim_opts, remaining_args = self.parse_preliminary_options(argv)
         flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
-        self.config_finder = self.make_config_finder(
+        config_finder = self.make_config_finder(
             self.program, prelim_opts.append_config
         )
-        self.find_plugins(prelim_opts.config, prelim_opts.isolated)
+        self.find_plugins(
+            config_finder, prelim_opts.config, prelim_opts.isolated
+        )
         self.register_plugin_options()
-        self.parse_configuration_and_cli(remaining_args)
+        self.parse_configuration_and_cli(config_finder, remaining_args)
         self.make_formatter()
         self.make_guide()
         self.make_file_checker_manager()

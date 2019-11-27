@@ -58,8 +58,6 @@ class Application(object):
         )
         options.register_default_options(self.option_manager)
 
-        #: The :class:`flake8.options.config.LocalPlugins` found in config
-        self.local_plugins = None  # type: config.LocalPlugins
         #: The instance of :class:`flake8.plugins.manager.Checkers`
         self.check_plugins = None  # type: plugin_manager.Checkers
         # fmt: off
@@ -167,18 +165,18 @@ class Application(object):
             Determine whether to parse configuration files or not. (i.e., the
             --isolated option).
         """
-        self.local_plugins = config.get_local_plugins(
+        local_plugins = config.get_local_plugins(
             config_finder, config_file, ignore_config_files
         )
 
-        sys.path.extend(self.local_plugins.paths)
+        sys.path.extend(local_plugins.paths)
 
         self.check_plugins = plugin_manager.Checkers(
-            self.local_plugins.extension
+            local_plugins.extension
         )
 
         self.formatting_plugins = plugin_manager.ReportFormatters(
-            self.local_plugins.report
+            local_plugins.report
         )
 
         self.check_plugins.load_plugins()

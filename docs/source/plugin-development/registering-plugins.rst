@@ -132,7 +132,8 @@ cause plugins to be deactivated without warning!
 
 **Please Note:** Your entry point does not need to be exactly 4 characters
 as of |Flake8| 3.0. *Consider using an entry point with 3 letters followed
-by 3 numbers (i.e.* ``ABC123`` *).*
+by 3 numbers (i.e.* ``ABC123`` *) or indeed any set of strings with a common
+prefix easy to type on a CLI: ``example-plugin-off``, ``example-plugin-on``*
 
 
 .. _Entry Points:

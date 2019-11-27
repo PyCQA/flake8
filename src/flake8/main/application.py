@@ -152,11 +152,8 @@ class Application(object):
         # type: (config.ConfigFileFinder, Optional[str], bool) -> None
         """Find and load the plugins for this application.
 
-        If :attr:`check_plugins`, or :attr:`formatting_plugins` are ``None``
-        then this method will update them with the appropriate plugin manager
-        instance. Given the expense of finding plugins (via :mod:`entrypoints`)
-        we want this to be idempotent and so only update those attributes if
-        they are ``None``.
+        Set the :attr:`check_plugins` and :attr:`formatting_plugins` attributes
+        based on the discovered plugins found.
 
         :param config.ConfigFileFinder config_finder:
             The finder for finding and reading configuration files.

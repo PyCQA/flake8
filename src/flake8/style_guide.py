@@ -7,24 +7,18 @@ import enum
 import itertools
 import linecache
 import logging
-import sys
 from typing import Dict, Generator, List, Match, Optional, Sequence, Set
 from typing import Tuple, Union
 
 from flake8 import defaults
 from flake8 import statistics
 from flake8 import utils
+from flake8._compat import lru_cache
 from flake8.formatting import base as base_formatter
 
 __all__ = ("StyleGuide",)
 
 LOG = logging.getLogger(__name__)
-
-
-if sys.version_info < (3, 2):
-    from functools32 import lru_cache
-else:
-    from functools import lru_cache
 
 
 class Selected(enum.Enum):

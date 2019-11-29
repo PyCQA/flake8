@@ -13,7 +13,7 @@ def create_plugin_mock(raise_exception=False):
     plugin = mock.create_autospec(manager.Plugin, instance=True)
     if raise_exception:
         plugin.load_plugin.side_effect = exceptions.FailedToLoadPlugin(
-            plugin=mock.Mock(name='T101'),
+            plugin_name='T101',
             exception=ValueError('Test failure'),
         )
     return plugin

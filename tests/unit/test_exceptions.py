@@ -1,10 +1,7 @@
 """Tests for the flake8.exceptions module."""
 import pickle
 
-import entrypoints
-
 from flake8 import exceptions
-from flake8.plugins import manager as plugins_manager
 
 
 class _ExceptionTest:
@@ -22,10 +19,7 @@ class TestFailedToLoadPlugin(_ExceptionTest):
     """Tests for the FailedToLoadPlugin exception."""
 
     err = exceptions.FailedToLoadPlugin(
-        plugin=plugins_manager.Plugin(
-            'plugin_name',
-            entrypoints.EntryPoint('plugin_name', 'os.path', None),
-        ),
+        plugin_name='plugin_name',
         exception=ValueError('boom!'),
     )
 

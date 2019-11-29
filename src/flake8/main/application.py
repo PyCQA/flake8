@@ -168,9 +168,7 @@ class Application(object):
 
         sys.path.extend(local_plugins.paths)
 
-        self.check_plugins = plugin_manager.Checkers(
-            local_plugins.extension
-        )
+        self.check_plugins = plugin_manager.Checkers(local_plugins.extension)
 
         self.formatting_plugins = plugin_manager.ReportFormatters(
             local_plugins.report

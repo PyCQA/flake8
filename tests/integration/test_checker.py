@@ -3,6 +3,7 @@ import mock
 import pytest
 
 from flake8 import checker
+from flake8._compat import importlib_metadata
 from flake8.plugins import manager
 
 PHYSICAL_LINE = "# Physical line content"
@@ -100,7 +101,11 @@ def mock_file_checker_with_plugin(plugin_target):
     entry_point.load.return_value = plugin_target
 
     # Load the checker plugins using the entry point mock
-    with mock.patch('entrypoints.get_group_all', return_value=[entry_point]):
+    with mock.patch.object(
+            importlib_metadata,
+            'entry_points',
+            return_value={'flake8.extension': [entry_point]},
+    ):
         checks = manager.Checkers()
 
     # Prevent it from reading lines from stdin or somewhere else

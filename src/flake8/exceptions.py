@@ -1,9 +1,5 @@
 """Exception classes for all of Flake8."""
-
 from typing import Dict
-
-if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
-    from flake8.plugins.manager import Plugin
 
 
 class Flake8Exception(Exception):
@@ -23,18 +19,17 @@ class FailedToLoadPlugin(Flake8Exception):
 
     FORMAT = 'Flake8 failed to load plugin "%(name)s" due to %(exc)s.'
 
-    def __init__(self, plugin, exception):
-        # type: (Plugin, Exception) -> None
+    def __init__(self, plugin_name, exception):
+        # type: (str, Exception) -> None
         """Initialize our FailedToLoadPlugin exception."""
-        self.plugin = plugin
-        self.ep_name = self.plugin.name
+        self.plugin_name = plugin_name
         self.original_exception = exception
-        super(FailedToLoadPlugin, self).__init__(plugin, exception)
+        super(FailedToLoadPlugin, self).__init__(plugin_name, exception)
 
     def __str__(self):  # type: () -> str
         """Format our exception message."""
         return self.FORMAT % {
-            "name": self.ep_name,
+            "name": self.plugin_name,
             "exc": self.original_exception,
         }
 

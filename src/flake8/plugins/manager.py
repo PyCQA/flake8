@@ -2,10 +2,9 @@
 import logging
 from typing import Any, Dict, List, Optional, Set
 
-import entrypoints
-
 from flake8 import exceptions
 from flake8 import utils
+from flake8._compat import importlib_metadata
 
 LOG = logging.getLogger(__name__)
 
@@ -159,7 +158,7 @@ class Plugin(object):
             except Exception as load_exception:
                 LOG.exception(load_exception)
                 failed_to_load = exceptions.FailedToLoadPlugin(
-                    plugin=self, exception=load_exception
+                    plugin_name=self.name, exception=load_exception
                 )
                 LOG.critical(str(failed_to_load))
                 raise failed_to_load
@@ -224,6 +223,7 @@ class PluginManager(object):  # pylint: disable=too-few-public-methods
     """Find and manage plugins consistently."""
 
     def __init__(self, namespace, local_plugins=None):
+        # type: (str, Optional[List[str]]) -> None
         """Initialize the manager.
 
         :param str namespace:
@@ -246,12 +246,16 @@ class PluginManager(object):  # pylint: disable=too-few-public-methods
         for plugin_str in local_plugins:
             name, _, entry_str = plugin_str.partition("=")
             name, entry_str = name.strip(), entry_str.strip()
-            entry_point = entrypoints.EntryPoint.from_string(entry_str, name)
+            entry_point = importlib_metadata.EntryPoint(name, entry_str, None)
             self._load_plugin_from_entrypoint(entry_point, local=True)
 
     def _load_entrypoint_plugins(self):
         LOG.info('Loading entry-points for "%s".', self.namespace)
-        for entry_point in entrypoints.get_group_all(self.namespace):
+        eps = importlib_metadata.entry_points().get(self.namespace, ())
+        # python2.7 occasionally gives duplicate results due to redundant
+        # `local/lib` -> `../lib` symlink on linux in virtualenvs so we
+        # eliminate duplicates here
+        for entry_point in sorted(frozenset(eps)):
             if entry_point.name == "per-file-ignores":
                 LOG.warning(
                     "flake8-per-file-ignores plugin is incompatible with "

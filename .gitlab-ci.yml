@@ -14,6 +14,16 @@ after_script:
 - pip install codecov
 - codecov --token=7d117e6b-aab6-4283-ab19-166dafc38cf5
 
+pypy2:
+  image: pypy:2.7-7.2.0
+  stage: test
+  script: tox -e pypy
+
+pypy3:
+  image: pypy:3.6-7.2.0
+  stage: test
+  script: tox -e pypy3
+
 python2:
   image: python:2.7
   stage: test

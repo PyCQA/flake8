@@ -1,5 +1,4 @@
 """Tests for our debugging module."""
-import entrypoints
 import mock
 import pytest
 
@@ -9,9 +8,7 @@ from flake8.options import manager
 
 def test_dependencies():
     """Verify that we format our dependencies appropriately."""
-    expected = [{'dependency': 'entrypoints',
-                 'version': entrypoints.__version__}]
-    assert expected == debug.dependencies()
+    assert [] == debug.dependencies()
 
 
 @pytest.mark.parametrize('plugins, expected', [
@@ -46,8 +43,7 @@ def test_information(system, pyversion, pyimpl):
                      'is_local': False},
                     {'plugin': 'pycodestyle', 'version': '2.0.0',
                      'is_local': False}],
-        'dependencies': [{'dependency': 'entrypoints',
-                          'version': entrypoints.__version__}],
+        'dependencies': [],
         'platform': {
             'python_implementation': 'CPython',
             'python_version': '3.5.3',

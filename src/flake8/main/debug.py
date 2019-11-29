@@ -4,8 +4,7 @@ from __future__ import print_function
 import argparse
 import json
 import platform
-
-import entrypoints
+from typing import Dict, List
 
 
 class DebugAction(argparse.Action):
@@ -61,6 +60,6 @@ def plugins_from(option_manager):
     ]
 
 
-def dependencies():
+def dependencies():  # type: () -> List[Dict[str, str]]
     """Generate the list of dependencies we care about."""
-    return [{"dependency": "entrypoints", "version": entrypoints.__version__}]
+    return []

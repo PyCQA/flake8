@@ -124,7 +124,9 @@ class Application(object):
         if self.options.count:
             print(self.result_count)
 
-        if not self.options.exit_zero:
+        if self.options.exit_zero:
+            raise SystemExit(self.catastrophic_failure)
+        else:
             raise SystemExit(
                 (self.result_count > 0) or self.catastrophic_failure
             )

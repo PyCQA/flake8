@@ -24,28 +24,15 @@ def application():
 
 
 @pytest.mark.parametrize(
-    'result_count, catastrophic, exit_zero', [
-        (0, True, True),
-        (2, False, True),
-        (2, True, True),
-    ]
-)
-def test_exit_does_not_raise(result_count, catastrophic, exit_zero,
-                             application):
-    """Verify Application.exit doesn't raise SystemExit."""
-    application.result_count = result_count
-    application.catastrophic_failure = catastrophic
-    application.options = options(exit_zero=exit_zero)
-
-    assert application.exit() is None
-
-
-@pytest.mark.parametrize(
     'result_count, catastrophic, exit_zero, value', [
         (0, False, False, False),
         (0, True, False, True),
         (2, False, False, True),
         (2, True, False, True),
+
+        (0, True, True, True),
+        (2, False, True, False),
+        (2, True, True, True),
     ]
 )
 def test_exit_does_raise(result_count, catastrophic, exit_zero, value,

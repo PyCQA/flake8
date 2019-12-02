@@ -137,9 +137,9 @@ class Application(object):
         """Make our ConfigFileFinder based on preliminary options.
 
         :param str program_name:
-            Name of the current programin (e.g., flake8).
+            Name of the current program (e.g., flake8).
         :param list extra_config_files:
-            List of addtional configuration files to be parsed for
+            List of additional configuration files to be parsed for
             configuration.
         :returns:
             The configuration file finder

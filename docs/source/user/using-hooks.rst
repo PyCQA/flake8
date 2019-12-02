@@ -21,7 +21,7 @@ Checked-in python files will be passed as positional arguments.  ``flake8``
 will always lint explicitly passed arguments (:option:`flake8 --exclude` has
 no effect).  Instead use ``pre-commit``'s ``exclude: ...`` regex to exclude
 files.  ``pre-commit`` won't ever pass untracked files to ``flake8`` so
-excluding ``.git`` / ``.tox`` / etc. is unnecesary.
+excluding ``.git`` / ``.tox`` / etc. is unnecessary.
 
 .. code-block:: yaml
 

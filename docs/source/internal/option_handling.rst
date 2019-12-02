@@ -67,7 +67,7 @@ example, let's consider a user's list of ignored error codes for a project:
         E251
 
 It makes sense here to allow users to specify the value this way, but, the
-standard libary's :class:`configparser.RawConfigParser` class does returns a
+standard library's :class:`configparser.RawConfigParser` class does returns a
 string that looks like
 
 .. code-block:: python

@@ -10,6 +10,7 @@ import os.path
 import flake8
 from flake8.formatting import base as formatter
 from flake8.main import application as app
+from flake8.options import config
 
 LOG = logging.getLogger(__name__)
 
@@ -30,9 +31,10 @@ def get_style_guide(**kwargs):
     application = app.Application()
     prelim_opts, remaining_args = application.parse_preliminary_options([])
     flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
-    config_finder = application.make_config_finder(
+    config_finder = config.ConfigFileFinder(
         application.program, prelim_opts.append_config
     )
+
     application.find_plugins(
         config_finder, prelim_opts.config, prelim_opts.isolated
     )

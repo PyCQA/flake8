@@ -11,6 +11,7 @@ def options_from(**kwargs):
     kwargs.setdefault('max_doc_length', None)
     kwargs.setdefault('verbose', False)
     kwargs.setdefault('stdin_display_name', 'stdin')
+    kwargs.setdefault('disable_noqa', False)
     return argparse.Namespace(**kwargs)
 
 

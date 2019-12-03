@@ -76,6 +76,16 @@ def test_should_ignore_file(lines, expected, default_options):
     assert file_processor.should_ignore_file() is expected
 
 
+def test_should_ignore_file_to_handle_disable_noqa(default_options):
+    """Verify that we ignore a file if told to."""
+    lines = ['# flake8: noqa']
+    file_processor = processor.FileProcessor('-', default_options, lines)
+    assert file_processor.should_ignore_file() is True
+    default_options.disable_noqa = True
+    file_processor = processor.FileProcessor('-', default_options, lines)
+    assert file_processor.should_ignore_file() is False
+
+
 @mock.patch('flake8.utils.stdin_get_value')
 def test_read_lines_from_stdin(stdin_get_value, default_options):
     """Verify that we use our own utility function to retrieve stdin."""

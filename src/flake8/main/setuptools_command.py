@@ -54,7 +54,7 @@ class Flake8(setuptools.Command):
         empty_directory_exists = "" in directories
         packages = self.distribution.packages or []
         for package in packages:
-            package_directory = package
+            package_directory = os.path.join(*package.split("."))
             if package in directories:
                 package_directory = directories[package]
             elif empty_directory_exists:
@@ -71,7 +71,7 @@ class Flake8(setuptools.Command):
             if package_directory.startswith(seen_package_directories):
                 continue
 
-            seen_package_directories += (package_directory + ".",)
+            seen_package_directories += (os.path.join(package_directory, ""),)
             yield package_directory
 
     def module_files(self):

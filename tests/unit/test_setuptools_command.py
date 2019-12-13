@@ -14,6 +14,7 @@ def distribution():
             'foo',
             'foo.bar',
             'foo_biz',
+            'namespace.bar',
         ],
     })
 
@@ -30,4 +31,5 @@ def test_package_files_removes_submodules(command):
     assert sorted(package_files) == [
         'foo',
         'foo_biz',
+        'namespace/bar',
     ]

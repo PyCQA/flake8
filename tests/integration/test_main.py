@@ -167,3 +167,31 @@ def test_obtaining_args_from_sys_argv_when_not_explicity_provided(capsys):
     out, err = capsys.readouterr()
     assert out.startswith('usage: flake8 [options] file file ...\n')
     assert err == ''
+
+
+def test_cli_config_option_respected(tmp_path):
+    """Test --config is used."""
+    config = tmp_path / "flake8.ini"
+    config.write_text(u"""\
+[flake8]
+ignore = F401
+""")
+
+    py_file = tmp_path / "t.py"
+    py_file.write_text(u"import os\n")
+
+    _call_main(["--config", str(config), str(py_file)])
+
+
+def test_cli_isolated_overrides_config_option(tmp_path):
+    """Test --isolated overrides --config."""
+    config = tmp_path / "flake8.ini"
+    config.write_text(u"""\
+[flake8]
+ignore = F401
+""")
+
+    py_file = tmp_path / "t.py"
+    py_file.write_text(u"import os\n")
+
+    _call_main(["--isolated", "--config", str(config), str(py_file)], retv=1)

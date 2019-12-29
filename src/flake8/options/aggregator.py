@@ -5,7 +5,7 @@ applies the user-specified command-line configuration on top of it.
 """
 import argparse
 import logging
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 from flake8.options import config
 from flake8.options.manager import OptionManager
@@ -16,6 +16,8 @@ LOG = logging.getLogger(__name__)
 def aggregate_options(
     manager,  # type: OptionManager
     config_finder,  # type: config.ConfigFileFinder
+    cli_config,  # type: Optional[str]
+    isolated,  # type: bool
     argv,  # type: List[str]
 ):  # type: (...) -> Tuple[argparse.Namespace, List[str]]
     """Aggregate and merge CLI and config file options.
@@ -24,6 +26,12 @@ def aggregate_options(
         The instance of the OptionManager that we're presently using.
     :param flake8.options.config.ConfigFileFinder config_finder:
         The config file finder to use.
+    :param str cli_config:
+        Value of --config when specified at the command-line. Overrides
+        all other config files.
+    :param bool isolated:
+        Determines if we should parse configuration files at all or not.
+        If running in isolated mode, we ignore all configuration files
     :param list argv:
         The list of remaining command-line argumentsthat were unknown during
         preliminary option parsing to pass to ``manager.parse_args``.
@@ -35,9 +43,6 @@ def aggregate_options(
     """
     # Get defaults from the option parser
     default_values, _ = manager.parse_args([])
-    # Get original CLI values so we can find additional config file paths and
-    # see if --config was specified.
-    original_values, _ = manager.parse_args(argv)
 
     # Make our new configuration file mergerator
     config_parser = config.MergedConfigParser(
@@ -45,9 +50,7 @@ def aggregate_options(
     )
 
     # Get the parsed config
-    parsed_config = config_parser.parse(
-        original_values.config, original_values.isolated
-    )
+    parsed_config = config_parser.parse(cli_config, isolated)
 
     # Extend the default ignore value with the extended default ignore list,
     # registered by plugins.

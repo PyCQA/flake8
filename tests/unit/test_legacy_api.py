@@ -34,7 +34,7 @@ def test_get_style_guide():
     mockedapp.find_plugins.assert_called_once_with(config_finder, None, False)
     mockedapp.register_plugin_options.assert_called_once_with()
     mockedapp.parse_configuration_and_cli.assert_called_once_with(
-        config_finder, [])
+        config_finder, None, False, [])
     mockedapp.make_formatter.assert_called_once_with()
     mockedapp.make_guide.assert_called_once_with()
     mockedapp.make_file_checker_manager.assert_called_once_with()

@@ -169,17 +169,33 @@ class Application(object):
         self.check_plugins.register_plugin_versions(self.option_manager)
         self.formatting_plugins.register_options(self.option_manager)
 
-    def parse_configuration_and_cli(self, config_finder, argv):
-        # type: (config.ConfigFileFinder, List[str]) -> None
+    def parse_configuration_and_cli(
+        self,
+        config_finder,  # type: config.ConfigFileFinder
+        config_file,  # type: Optional[str]
+        ignore_config_files,  # type: bool
+        argv,  # type: List[str]
+    ):
+        # type: (...) -> None
         """Parse configuration files and the CLI options.
 
         :param config.ConfigFileFinder config_finder:
             The finder for finding and reading configuration files.
+        :param str config_file:
+            The optional configuraiton file to override all other configuration
+            files (i.e., the --config option).
+        :param bool ignore_config_files:
+            Determine whether to parse configuration files or not. (i.e., the
+            --isolated option).
         :param list argv:
             Command-line arguments passed in directly.
         """
         self.options, self.args = aggregator.aggregate_options(
-            self.option_manager, config_finder, argv
+            self.option_manager,
+            config_finder,
+            config_file,
+            ignore_config_files,
+            argv,
         )
 
         self.running_against_diff = self.options.diff
@@ -325,7 +341,12 @@ class Application(object):
             config_finder, prelim_opts.config, prelim_opts.isolated
         )
         self.register_plugin_options()
-        self.parse_configuration_and_cli(config_finder, remaining_args)
+        self.parse_configuration_and_cli(
+            config_finder,
+            prelim_opts.config,
+            prelim_opts.isolated,
+            remaining_args,
+        )
         self.make_formatter()
         self.make_guide()
         self.make_file_checker_manager()

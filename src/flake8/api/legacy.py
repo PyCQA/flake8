@@ -39,7 +39,12 @@ def get_style_guide(**kwargs):
         config_finder, prelim_opts.config, prelim_opts.isolated
     )
     application.register_plugin_options()
-    application.parse_configuration_and_cli(config_finder, remaining_args)
+    application.parse_configuration_and_cli(
+        config_finder,
+        prelim_opts.config,
+        prelim_opts.isolated,
+        remaining_args,
+    )
     # We basically want application.initialize to be called but with these
     # options set instead before we make our formatter, notifier, internal
     # style guide and file checker manager.

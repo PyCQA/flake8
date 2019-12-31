@@ -69,6 +69,23 @@ Alternatively, if you want to *ignore* only one specific warning or error:
 Please read our user guide for more information about how to use and configure
 |Flake8|.
 
+Flake8 Project Badge
+--------------------
+If you'd like to add a |Flake8| badge to your project to show off your use of
+|Flake8|, add the following to your README.rst:
+
+::
+
+  .. image:: docs/source/img/linter-flake8-green.svg
+      :target: https://gitlab.com/pycqa/flake8
+
+or README.md:
+
+::
+
+  [![linter: flake8](docs/source/img/linter-flake8-green.svg)](https://gitlab.com/pycqa/flake8)
+
+
 FAQ and Glossary
 ================
 

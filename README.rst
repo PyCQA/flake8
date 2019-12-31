@@ -2,6 +2,9 @@
  Flake8
 ========
 
+.. image:: docs/source/img/linter-flake8-green.svg
+    :target: https://gitlab.com/pycqa/flake8
+
 Flake8 is a wrapper around these tools:
 
 - PyFlakes

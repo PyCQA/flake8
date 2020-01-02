@@ -183,7 +183,7 @@ def test_parsed_configs_are_equivalent(
         localcfs.return_value = [config_fixture_path]
         with mock.patch.object(config_finder,
                                'user_config_file') as usercf:
-            usercf.return_value = []
+            usercf.return_value = ''
             parsed_config = parser.merge_user_and_local_config()
 
     assert parsed_config['ignore'] == ['E123', 'W234', 'E111']
@@ -215,7 +215,7 @@ def test_parsed_hyphenated_and_underscored_names(
         localcfs.return_value = [config_file]
         with mock.patch.object(config_finder,
                                'user_config_file') as usercf:
-            usercf.return_value = []
+            usercf.return_value = ''
             parsed_config = parser.merge_user_and_local_config()
 
     assert parsed_config['max_line_length'] == 110

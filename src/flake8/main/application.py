@@ -335,7 +335,9 @@ class Application(object):
         prelim_opts, remaining_args = self.parse_preliminary_options(argv)
         flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
         config_finder = config.ConfigFileFinder(
-            self.program, prelim_opts.append_config
+            self.program,
+            prelim_opts.append_config,
+            ignore_config_files=prelim_opts.isolated,
         )
         self.find_plugins(
             config_finder, prelim_opts.config, prelim_opts.isolated

@@ -16,18 +16,25 @@ __all__ = ("ConfigFileFinder", "MergedConfigParser")
 class ConfigFileFinder(object):
     """Encapsulate the logic for finding and reading config files."""
 
-    def __init__(self, program_name, extra_config_files):
-        # type: (str, List[str]) -> None
+    def __init__(
+        self, program_name, extra_config_files, ignore_config_files=False
+    ):
+        # type: (str, List[str], bool) -> None
         """Initialize object to find config files.
 
         :param str program_name:
             Name of the current program (e.g., flake8).
         :param list extra_config_files:
             Extra configuration files specified by the user to read.
+        :param bool ignore_config_files:
+            Determine whether to ignore configuration files or not.
         """
         # The values of --append-config from the CLI
         extra_config_files = extra_config_files or []
         self.extra_config_files = utils.normalize_paths(extra_config_files)
+
+        # The value of --isolated from the CLI.
+        self.ignore_config_files = ignore_config_files
 
         # Platform specific settings
         self.is_windows = sys.platform == "win32"

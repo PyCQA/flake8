@@ -17,7 +17,6 @@ def aggregate_options(
     manager,  # type: OptionManager
     config_finder,  # type: config.ConfigFileFinder
     cli_config,  # type: Optional[str]
-    isolated,  # type: bool
     argv,  # type: List[str]
 ):  # type: (...) -> Tuple[argparse.Namespace, List[str]]
     """Aggregate and merge CLI and config file options.
@@ -29,9 +28,6 @@ def aggregate_options(
     :param str cli_config:
         Value of --config when specified at the command-line. Overrides
         all other config files.
-    :param bool isolated:
-        Determines if we should parse configuration files at all or not.
-        If running in isolated mode, we ignore all configuration files
     :param list argv:
         The list of remaining command-line argumentsthat were unknown during
         preliminary option parsing to pass to ``manager.parse_args``.
@@ -50,7 +46,7 @@ def aggregate_options(
     )
 
     # Get the parsed config
-    parsed_config = config_parser.parse(cli_config, isolated)
+    parsed_config = config_parser.parse(cli_config)
 
     # Extend the default ignore value with the extended default ignore list,
     # registered by plugins.

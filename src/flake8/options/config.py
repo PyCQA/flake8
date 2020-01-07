@@ -4,7 +4,7 @@ import configparser
 import logging
 import os.path
 import sys
-from typing import Dict, List, Sequence, Tuple, Union
+from typing import Dict, List, Tuple
 
 from flake8 import utils
 
@@ -55,11 +55,9 @@ class ConfigFileFinder(object):
         # fmt: on
 
     @staticmethod
-    def _read_config(files):
-        # type: (Union[Sequence[str], str]) -> Tuple[configparser.RawConfigParser, List[str]]  # noqa: E501
+    def _read_config(*files):
+        # type: (*str) -> Tuple[configparser.RawConfigParser, List[str]]
         config = configparser.RawConfigParser()
-        if isinstance(files, (str, type(u""))):
-            files = [files]
 
         found_files = []
         for filename in files:
@@ -129,7 +127,9 @@ class ConfigFileFinder(object):
         Return (config, found_config_files) tuple.
         """
         if self._local_configs is None:
-            config, found_files = self._read_config(self.local_config_files())
+            config, found_files = self._read_config(
+                *self.local_config_files()
+            )
             if found_files:
                 LOG.debug("Found local configuration files: %s", found_files)
             self._local_configs = config

@@ -113,7 +113,7 @@ def test_local_configs_double_read():
 ])
 def test_read_config_catches_broken_config_files(files):
     """Verify that we do not allow the exception to bubble up."""
-    _, parsed = config.ConfigFileFinder._read_config(files)
+    _, parsed = config.ConfigFileFinder._read_config(*files)
     assert BROKEN_CONFIG_PATH not in parsed
 
 

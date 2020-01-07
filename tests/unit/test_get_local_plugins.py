@@ -21,6 +21,7 @@ def test_get_local_plugins_uses_cli_config():
     config_obj = mock.Mock()
     config_finder = mock.MagicMock()
     config_finder.cli_config.return_value = config_obj
+    config_finder.ignore_config_files = False
     config_obj.get.return_value = ''
 
     config.get_local_plugins(config_finder, cli_config='foo.ini')

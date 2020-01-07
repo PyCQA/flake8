@@ -155,6 +155,7 @@ def test_parse_isolates_config(optmanager):
 def test_parse_uses_cli_config(optmanager):
     """Verify behaviour of the parse method with a specified config."""
     config_finder = mock.MagicMock()
+    config_finder.ignore_config_files = False
     parser = config.MergedConfigParser(optmanager, config_finder)
 
     parser.parse(cli_config='foo.ini')

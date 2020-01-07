@@ -307,7 +307,7 @@ class MergedConfigParser(object):
         :rtype:
             dict
         """
-        if isolated:
+        if self.config_finder.ignore_config_files:
             LOG.debug(
                 "Refusing to parse configuration files due to user-"
                 "requested isolation"
@@ -344,7 +344,7 @@ def get_local_plugins(config_finder, cli_config=None, isolated=False):
         flake8.options.config.LocalPlugins
     """
     local_plugins = LocalPlugins(extension=[], report=[], paths=[])
-    if isolated:
+    if config_finder.ignore_config_files:
         LOG.debug(
             "Refusing to look for local plugins in configuration"
             "files due to user-requested isolation"

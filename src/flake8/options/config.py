@@ -289,7 +289,7 @@ class MergedConfigParser(object):
 
         return config
 
-    def parse(self, cli_config=None, isolated=False):
+    def parse(self, cli_config=None):
         """Parse and return the local and user config files.
 
         First this copies over the parsed local configuration and then
@@ -299,9 +299,6 @@ class MergedConfigParser(object):
         :param str cli_config:
             Value of --config when specified at the command-line. Overrides
             all other config files.
-        :param bool isolated:
-            Determines if we should parse configuration files at all or not.
-            If running in isolated mode, we ignore all configuration files
         :returns:
             Dictionary of parsed configuration options
         :rtype:
@@ -326,7 +323,7 @@ class MergedConfigParser(object):
         return self.merge_user_and_local_config()
 
 
-def get_local_plugins(config_finder, cli_config=None, isolated=False):
+def get_local_plugins(config_finder, cli_config=None):
     """Get local plugins lists from config files.
 
     :param flake8.options.config.ConfigFileFinder config_finder:
@@ -334,9 +331,6 @@ def get_local_plugins(config_finder, cli_config=None, isolated=False):
     :param str cli_config:
         Value of --config when specified at the command-line. Overrides
         all other config files.
-    :param bool isolated:
-        Determines if we should parse configuration files at all or not.
-        If running in isolated mode, we ignore all configuration files
     :returns:
         LocalPlugins namedtuple containing two lists of plugin strings,
         one for extension (checker) plugins and one for report plugins.

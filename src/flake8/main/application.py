@@ -131,8 +131,8 @@ class Application(object):
                 (self.result_count > 0) or self.catastrophic_failure
             )
 
-    def find_plugins(self, config_finder, config_file, ignore_config_files):
-        # type: (config.ConfigFileFinder, Optional[str], bool) -> None
+    def find_plugins(self, config_finder, config_file):
+        # type: (config.ConfigFileFinder, Optional[str]) -> None
         """Find and load the plugins for this application.
 
         Set the :attr:`check_plugins` and :attr:`formatting_plugins` attributes
@@ -147,9 +147,7 @@ class Application(object):
             Determine whether to parse configuration files or not. (i.e., the
             --isolated option).
         """
-        local_plugins = config.get_local_plugins(
-            config_finder, config_file, ignore_config_files
-        )
+        local_plugins = config.get_local_plugins(config_finder, config_file)
 
         sys.path.extend(local_plugins.paths)
 
@@ -173,7 +171,6 @@ class Application(object):
         self,
         config_finder,  # type: config.ConfigFileFinder
         config_file,  # type: Optional[str]
-        ignore_config_files,  # type: bool
         argv,  # type: List[str]
     ):
         # type: (...) -> None
@@ -184,18 +181,11 @@ class Application(object):
         :param str config_file:
             The optional configuraiton file to override all other configuration
             files (i.e., the --config option).
-        :param bool ignore_config_files:
-            Determine whether to parse configuration files or not. (i.e., the
-            --isolated option).
         :param list argv:
             Command-line arguments passed in directly.
         """
         self.options, self.args = aggregator.aggregate_options(
-            self.option_manager,
-            config_finder,
-            config_file,
-            ignore_config_files,
-            argv,
+            self.option_manager, config_finder, config_file, argv,
         )
 
         self.running_against_diff = self.options.diff
@@ -339,15 +329,10 @@ class Application(object):
             prelim_opts.append_config,
             ignore_config_files=prelim_opts.isolated,
         )
-        self.find_plugins(
-            config_finder, prelim_opts.config, prelim_opts.isolated
-        )
+        self.find_plugins(config_finder, prelim_opts.config)
         self.register_plugin_options()
         self.parse_configuration_and_cli(
-            config_finder,
-            prelim_opts.config,
-            prelim_opts.isolated,
-            remaining_args,
+            config_finder, prelim_opts.config, remaining_args,
         )
         self.make_formatter()
         self.make_guide()

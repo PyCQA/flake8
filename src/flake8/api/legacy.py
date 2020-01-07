@@ -32,18 +32,15 @@ def get_style_guide(**kwargs):
     prelim_opts, remaining_args = application.parse_preliminary_options([])
     flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
     config_finder = config.ConfigFileFinder(
-        application.program, prelim_opts.append_config
+        application.program,
+        prelim_opts.append_config,
+        ignore_config_files=prelim_opts.isolated,
     )
 
-    application.find_plugins(
-        config_finder, prelim_opts.config, prelim_opts.isolated
-    )
+    application.find_plugins(config_finder, prelim_opts.config)
     application.register_plugin_options()
     application.parse_configuration_and_cli(
-        config_finder,
-        prelim_opts.config,
-        prelim_opts.isolated,
-        remaining_args,
+        config_finder, prelim_opts.config, remaining_args,
     )
     # We basically want application.initialize to be called but with these
     # options set instead before we make our formatter, notifier, internal

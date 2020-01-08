@@ -124,3 +124,23 @@ def test_read_config_catches_decoding_errors(tmpdir):
     setup_cfg.write_binary(b'[x]\ny = \x81\x8d\x90\x9d')
     _, parsed = config.ConfigFileFinder._read_config(setup_cfg.strpath)
     assert parsed == []
+
+
+def test_ignore_config_files_default_value():
+    """Verify the default 'ignore_config_files' attribute value."""
+    finder = config.ConfigFileFinder('flake8', [])
+    assert finder.ignore_config_files is False
+
+
+@pytest.mark.parametrize('ignore_config_files_arg', [
+    False,
+    True,
+])
+def test_setting_ignore_config_files_value(ignore_config_files_arg):
+    """Verify the 'ignore_config_files' attribute matches constructed value."""
+    finder = config.ConfigFileFinder(
+        'flake8',
+        [],
+        ignore_config_files=ignore_config_files_arg
+    )
+    assert finder.ignore_config_files is ignore_config_files_arg

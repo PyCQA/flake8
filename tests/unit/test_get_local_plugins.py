@@ -7,8 +7,9 @@ from flake8.options import config
 def test_get_local_plugins_respects_isolated():
     """Verify behaviour of get_local_plugins with isolated=True."""
     config_finder = mock.MagicMock()
+    config_finder.ignore_config_files = True
 
-    local_plugins = config.get_local_plugins(config_finder, isolated=True)
+    local_plugins = config.get_local_plugins(config_finder)
 
     assert local_plugins.extension == []
     assert local_plugins.report == []
@@ -21,6 +22,7 @@ def test_get_local_plugins_uses_cli_config():
     config_obj = mock.Mock()
     config_finder = mock.MagicMock()
     config_finder.cli_config.return_value = config_obj
+    config_finder.ignore_config_files = False
     config_obj.get.return_value = ''
 
     config.get_local_plugins(config_finder, cli_config='foo.ini')

@@ -16,18 +16,25 @@ __all__ = ("ConfigFileFinder", "MergedConfigParser")
 class ConfigFileFinder(object):
     """Encapsulate the logic for finding and reading config files."""
 
-    def __init__(self, program_name, extra_config_files):
-        # type: (str, List[str]) -> None
+    def __init__(
+        self, program_name, extra_config_files, ignore_config_files=False
+    ):
+        # type: (str, List[str], bool) -> None
         """Initialize object to find config files.
 
         :param str program_name:
             Name of the current program (e.g., flake8).
         :param list extra_config_files:
             Extra configuration files specified by the user to read.
+        :param bool ignore_config_files:
+            Determine whether to ignore configuration files or not.
         """
         # The values of --append-config from the CLI
         extra_config_files = extra_config_files or []
         self.extra_config_files = utils.normalize_paths(extra_config_files)
+
+        # The value of --isolated from the CLI.
+        self.ignore_config_files = ignore_config_files
 
         # Platform specific settings
         self.is_windows = sys.platform == "win32"
@@ -282,7 +289,7 @@ class MergedConfigParser(object):
 
         return config
 
-    def parse(self, cli_config=None, isolated=False):
+    def parse(self, cli_config=None):
         """Parse and return the local and user config files.
 
         First this copies over the parsed local configuration and then
@@ -292,15 +299,12 @@ class MergedConfigParser(object):
         :param str cli_config:
             Value of --config when specified at the command-line. Overrides
             all other config files.
-        :param bool isolated:
-            Determines if we should parse configuration files at all or not.
-            If running in isolated mode, we ignore all configuration files
         :returns:
             Dictionary of parsed configuration options
         :rtype:
             dict
         """
-        if isolated:
+        if self.config_finder.ignore_config_files:
             LOG.debug(
                 "Refusing to parse configuration files due to user-"
                 "requested isolation"
@@ -319,7 +323,7 @@ class MergedConfigParser(object):
         return self.merge_user_and_local_config()
 
 
-def get_local_plugins(config_finder, cli_config=None, isolated=False):
+def get_local_plugins(config_finder, cli_config=None):
     """Get local plugins lists from config files.
 
     :param flake8.options.config.ConfigFileFinder config_finder:
@@ -327,9 +331,6 @@ def get_local_plugins(config_finder, cli_config=None, isolated=False):
     :param str cli_config:
         Value of --config when specified at the command-line. Overrides
         all other config files.
-    :param bool isolated:
-        Determines if we should parse configuration files at all or not.
-        If running in isolated mode, we ignore all configuration files
     :returns:
         LocalPlugins namedtuple containing two lists of plugin strings,
         one for extension (checker) plugins and one for report plugins.
@@ -337,7 +338,7 @@ def get_local_plugins(config_finder, cli_config=None, isolated=False):
         flake8.options.config.LocalPlugins
     """
     local_plugins = LocalPlugins(extension=[], report=[], paths=[])
-    if isolated:
+    if config_finder.ignore_config_files:
         LOG.debug(
             "Refusing to look for local plugins in configuration"
             "files due to user-requested isolation"

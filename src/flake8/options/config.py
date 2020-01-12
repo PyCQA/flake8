@@ -317,14 +317,14 @@ class MergedConfigParser(object):
             )
             return {}
 
-        if cli_config:
+        if self.config_finder.config_file:
             LOG.debug(
                 "Ignoring user and locally found configuration files. "
                 'Reading only configuration from "%s" specified via '
                 "--config by the user",
-                cli_config,
+                self.config_finder.config_file,
             )
-            return self.parse_cli_config(cli_config)
+            return self.parse_cli_config(self.config_finder.config_file)
 
         return self.merge_user_and_local_config()
 
@@ -351,14 +351,14 @@ def get_local_plugins(config_finder, cli_config=None):
         )
         return local_plugins
 
-    if cli_config:
+    if config_finder.config_file:
         LOG.debug(
             'Reading local plugins only from "%s" specified via '
             "--config by the user",
-            cli_config,
+            config_finder.config_file,
         )
-        config = config_finder.cli_config(cli_config)
-        config_files = [cli_config]
+        config = config_finder.cli_config(config_finder.config_file)
+        config_files = [config_finder.config_file]
     else:
         config, config_files = config_finder.local_configs_with_files()
 

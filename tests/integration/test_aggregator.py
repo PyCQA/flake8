@@ -30,7 +30,10 @@ def test_aggregate_options_with_config(optmanager):
     """Verify we aggregate options and config values appropriately."""
     arguments = ['flake8', '--select',
                  'E11,E34,E402,W,F', '--exclude', 'tests/*']
-    config_finder = config.ConfigFileFinder('flake8', [])
+    config_finder = config.ConfigFileFinder(
+        'flake8',
+        [],
+        config_file=CLI_SPECIFIED_CONFIG)
     options, args = aggregator.aggregate_options(
         optmanager, config_finder, CLI_SPECIFIED_CONFIG, arguments)
 

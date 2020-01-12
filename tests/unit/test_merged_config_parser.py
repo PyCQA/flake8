@@ -161,7 +161,7 @@ def test_parse_uses_cli_config(optmanager):
     config_finder.ignore_config_files = False
     parser = config.MergedConfigParser(optmanager, config_finder)
 
-    parser.parse(cli_config=config_file_value)
+    parser.parse()
     config_finder.cli_config.assert_called_once_with(config_file_value)
 
 

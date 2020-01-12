@@ -27,7 +27,7 @@ def test_get_local_plugins_uses_cli_config():
     config_file_value = 'foo.ini'
     config_finder.config_file = config_file_value
 
-    config.get_local_plugins(config_finder, cli_config=config_file_value)
+    config.get_local_plugins(config_finder)
 
     config_finder.cli_config.assert_called_once_with(config_file_value)
 

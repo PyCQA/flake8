@@ -324,6 +324,7 @@ class Application(object):
         config_finder = config.ConfigFileFinder(
             self.program,
             prelim_opts.append_config,
+            config_file=prelim_opts.config,
             ignore_config_files=prelim_opts.isolated,
         )
         self.find_plugins(config_finder, prelim_opts.config)

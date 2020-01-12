@@ -4,7 +4,7 @@ import configparser
 import logging
 import os.path
 import sys
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from flake8 import utils
 
@@ -17,21 +17,30 @@ class ConfigFileFinder(object):
     """Encapsulate the logic for finding and reading config files."""
 
     def __init__(
-        self, program_name, extra_config_files, ignore_config_files=False
+        self,
+        program_name,
+        extra_config_files,
+        config_file=None,
+        ignore_config_files=False,
     ):
-        # type: (str, List[str], bool) -> None
+        # type: (str, List[str], Optional[str], bool) -> None
         """Initialize object to find config files.
 
         :param str program_name:
             Name of the current program (e.g., flake8).
         :param list extra_config_files:
             Extra configuration files specified by the user to read.
+        :param str config_file:
+            Configuration file override to only read configuraiton from.
         :param bool ignore_config_files:
             Determine whether to ignore configuration files or not.
         """
         # The values of --append-config from the CLI
         extra_config_files = extra_config_files or []
         self.extra_config_files = utils.normalize_paths(extra_config_files)
+
+        # The value of --config from the CLI.
+        self.config_file = config_file
 
         # The value of --isolated from the CLI.
         self.ignore_config_files = ignore_config_files

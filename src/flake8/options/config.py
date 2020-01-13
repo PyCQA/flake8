@@ -51,8 +51,6 @@ class ConfigFileFinder(object):
 
         self.local_directory = os.path.abspath(os.curdir)
 
-        self.parent = self.tail = os.getcwd()
-
         # caches to avoid double-reading config files
         self._local_configs = None
         self._local_found_files = []  # type: List[str]
@@ -96,8 +94,7 @@ class ConfigFileFinder(object):
 
     def generate_possible_local_files(self):
         """Find and generate all local config files."""
-        tail = self.tail
-        parent = self.parent
+        parent = tail = os.getcwd()
         found_config_files = False
         while tail and not found_config_files:
             for project_filename in self.project_filenames:

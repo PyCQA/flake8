@@ -143,9 +143,6 @@ class Application(object):
         :param str config_file:
             The optional configuraiton file to override all other configuration
             files (i.e., the --config option).
-        :param bool ignore_config_files:
-            Determine whether to parse configuration files or not. (i.e., the
-            --isolated option).
         """
         local_plugins = config.get_local_plugins(config_finder, config_file)
 

@@ -61,11 +61,12 @@ def test_cli_config_double_read():
 ])
 def test_generate_possible_local_files(cwd, expected):
     """Verify generation of all possible config paths."""
-    with mock.patch.object(os, 'getcwd', return_value=cwd):
-        finder = config.ConfigFileFinder('flake8', [])
+    finder = config.ConfigFileFinder('flake8', [])
 
-    assert (list(finder.generate_possible_local_files())
-            == expected)
+    with mock.patch.object(os, 'getcwd', return_value=cwd):
+        config_files = list(finder.generate_possible_local_files())
+
+    assert config_files == expected
 
 
 @pytest.mark.parametrize('extra_config_files,expected', [

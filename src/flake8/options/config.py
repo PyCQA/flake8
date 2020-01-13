@@ -19,11 +19,11 @@ class ConfigFileFinder(object):
     def __init__(
         self,
         program_name,
-        extra_config_files,
+        extra_config_files=None,
         config_file=None,
         ignore_config_files=False,
     ):
-        # type: (str, List[str], Optional[str], bool) -> None
+        # type: (str, Optional[List[str]], Optional[str], bool) -> None
         """Initialize object to find config files.
 
         :param str program_name:
@@ -36,7 +36,8 @@ class ConfigFileFinder(object):
             Determine whether to ignore configuration files or not.
         """
         # The values of --append-config from the CLI
-        extra_config_files = extra_config_files or []
+        if extra_config_files is None:
+            extra_config_files = []
         self.extra_config_files = utils.normalize_paths(extra_config_files)
 
         # The value of --config from the CLI.

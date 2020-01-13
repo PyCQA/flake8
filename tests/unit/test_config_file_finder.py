@@ -127,6 +127,23 @@ def test_read_config_catches_decoding_errors(tmpdir):
     assert parsed == []
 
 
+def test_config_file_default_value():
+    """Verify the default 'config_file' attribute value."""
+    finder = config.ConfigFileFinder('flake8', [])
+    assert finder.config_file is None
+
+
+def test_setting_config_file_value():
+    """Verify the 'config_file' attribute matches constructed value."""
+    config_file_value = 'flake8.ini'
+    finder = config.ConfigFileFinder(
+        'flake8',
+        [],
+        config_file=config_file_value,
+    )
+    assert finder.config_file == config_file_value
+
+
 def test_ignore_config_files_default_value():
     """Verify the default 'ignore_config_files' attribute value."""
     finder = config.ConfigFileFinder('flake8', [])

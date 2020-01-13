@@ -131,8 +131,8 @@ class Application(object):
                 (self.result_count > 0) or self.catastrophic_failure
             )
 
-    def find_plugins(self, config_finder, config_file):
-        # type: (config.ConfigFileFinder, Optional[str]) -> None
+    def find_plugins(self, config_finder):
+        # type: (config.ConfigFileFinder) -> None
         """Find and load the plugins for this application.
 
         Set the :attr:`check_plugins` and :attr:`formatting_plugins` attributes
@@ -140,11 +140,8 @@ class Application(object):
 
         :param config.ConfigFileFinder config_finder:
             The finder for finding and reading configuration files.
-        :param str config_file:
-            The optional configuraiton file to override all other configuration
-            files (i.e., the --config option).
         """
-        local_plugins = config.get_local_plugins(config_finder, config_file)
+        local_plugins = config.get_local_plugins(config_finder)
 
         sys.path.extend(local_plugins.paths)
 
@@ -167,7 +164,6 @@ class Application(object):
     def parse_configuration_and_cli(
         self,
         config_finder,  # type: config.ConfigFileFinder
-        config_file,  # type: Optional[str]
         argv,  # type: List[str]
     ):
         # type: (...) -> None
@@ -175,14 +171,11 @@ class Application(object):
 
         :param config.ConfigFileFinder config_finder:
             The finder for finding and reading configuration files.
-        :param str config_file:
-            The optional configuraiton file to override all other configuration
-            files (i.e., the --config option).
         :param list argv:
             Command-line arguments passed in directly.
         """
         self.options, self.args = aggregator.aggregate_options(
-            self.option_manager, config_finder, config_file, argv,
+            self.option_manager, config_finder, argv,
         )
 
         self.running_against_diff = self.options.diff
@@ -324,12 +317,13 @@ class Application(object):
         config_finder = config.ConfigFileFinder(
             self.program,
             prelim_opts.append_config,
+            config_file=prelim_opts.config,
             ignore_config_files=prelim_opts.isolated,
         )
-        self.find_plugins(config_finder, prelim_opts.config)
+        self.find_plugins(config_finder)
         self.register_plugin_options()
         self.parse_configuration_and_cli(
-            config_finder, prelim_opts.config, remaining_args,
+            config_finder, remaining_args,
         )
         self.make_formatter()
         self.make_guide()

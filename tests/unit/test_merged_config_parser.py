@@ -155,12 +155,14 @@ def test_parse_isolates_config(optmanager):
 
 def test_parse_uses_cli_config(optmanager):
     """Verify behaviour of the parse method with a specified config."""
+    config_file_value = 'foo.ini'
     config_finder = mock.MagicMock()
+    config_finder.config_file = config_file_value
     config_finder.ignore_config_files = False
     parser = config.MergedConfigParser(optmanager, config_finder)
 
-    parser.parse(cli_config='foo.ini')
-    config_finder.cli_config.assert_called_once_with('foo.ini')
+    parser.parse()
+    config_finder.cli_config.assert_called_once_with(config_file_value)
 
 
 @pytest.mark.parametrize('config_fixture_path', [

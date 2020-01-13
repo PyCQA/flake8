@@ -4,7 +4,7 @@ import configparser
 import logging
 import os.path
 import sys
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from flake8 import utils
 
@@ -17,21 +17,30 @@ class ConfigFileFinder(object):
     """Encapsulate the logic for finding and reading config files."""
 
     def __init__(
-        self, program_name, extra_config_files, ignore_config_files=False
+        self,
+        program_name,
+        extra_config_files,
+        config_file=None,
+        ignore_config_files=False,
     ):
-        # type: (str, List[str], bool) -> None
+        # type: (str, List[str], Optional[str], bool) -> None
         """Initialize object to find config files.
 
         :param str program_name:
             Name of the current program (e.g., flake8).
         :param list extra_config_files:
             Extra configuration files specified by the user to read.
+        :param str config_file:
+            Configuration file override to only read configuraiton from.
         :param bool ignore_config_files:
             Determine whether to ignore configuration files or not.
         """
         # The values of --append-config from the CLI
         extra_config_files = extra_config_files or []
         self.extra_config_files = utils.normalize_paths(extra_config_files)
+
+        # The value of --config from the CLI.
+        self.config_file = config_file
 
         # The value of --isolated from the CLI.
         self.ignore_config_files = ignore_config_files
@@ -286,16 +295,13 @@ class MergedConfigParser(object):
 
         return config
 
-    def parse(self, cli_config=None):
+    def parse(self):
         """Parse and return the local and user config files.
 
         First this copies over the parsed local configuration and then
         iterates over the options in the user configuration and sets them if
         they were not set by the local configuration file.
 
-        :param str cli_config:
-            Value of --config when specified at the command-line. Overrides
-            all other config files.
         :returns:
             Dictionary of parsed configuration options
         :rtype:
@@ -308,26 +314,23 @@ class MergedConfigParser(object):
             )
             return {}
 
-        if cli_config:
+        if self.config_finder.config_file:
             LOG.debug(
                 "Ignoring user and locally found configuration files. "
                 'Reading only configuration from "%s" specified via '
                 "--config by the user",
-                cli_config,
+                self.config_finder.config_file,
             )
-            return self.parse_cli_config(cli_config)
+            return self.parse_cli_config(self.config_finder.config_file)
 
         return self.merge_user_and_local_config()
 
 
-def get_local_plugins(config_finder, cli_config=None):
+def get_local_plugins(config_finder):
     """Get local plugins lists from config files.
 
     :param flake8.options.config.ConfigFileFinder config_finder:
         The config file finder to use.
-    :param str cli_config:
-        Value of --config when specified at the command-line. Overrides
-        all other config files.
     :returns:
         LocalPlugins namedtuple containing two lists of plugin strings,
         one for extension (checker) plugins and one for report plugins.
@@ -342,14 +345,14 @@ def get_local_plugins(config_finder, cli_config=None):
         )
         return local_plugins
 
-    if cli_config:
+    if config_finder.config_file:
         LOG.debug(
             'Reading local plugins only from "%s" specified via '
             "--config by the user",
-            cli_config,
+            config_finder.config_file,
         )
-        config = config_finder.cli_config(cli_config)
-        config_files = [cli_config]
+        config = config_finder.cli_config(config_finder.config_file)
+        config_files = [config_finder.config_file]
     else:
         config, config_files = config_finder.local_configs_with_files()
 

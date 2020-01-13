@@ -21,14 +21,14 @@ BROKEN_CONFIG_PATH = 'tests/fixtures/config_files/broken.ini'
 def test_windows_detection(platform, is_windows):
     """Verify we detect Windows to the best of our knowledge."""
     with mock.patch.object(sys, 'platform', platform):
-        finder = config.ConfigFileFinder('flake8', [])
+        finder = config.ConfigFileFinder('flake8')
     assert finder.is_windows is is_windows
 
 
 def test_cli_config():
     """Verify opening and reading the file specified via the cli."""
     cli_filepath = CLI_SPECIFIED_FILEPATH
-    finder = config.ConfigFileFinder('flake8', [])
+    finder = config.ConfigFileFinder('flake8')
 
     parsed_config = finder.cli_config(cli_filepath)
     assert parsed_config.has_section('flake8')
@@ -36,7 +36,7 @@ def test_cli_config():
 
 def test_cli_config_double_read():
     """Second request for CLI config is cached."""
-    finder = config.ConfigFileFinder('flake8', [])
+    finder = config.ConfigFileFinder('flake8')
 
     parsed_config = finder.cli_config(CLI_SPECIFIED_FILEPATH)
     boom = Exception("second request for CLI config not cached")
@@ -61,7 +61,7 @@ def test_cli_config_double_read():
 ])
 def test_generate_possible_local_files(cwd, expected):
     """Verify generation of all possible config paths."""
-    finder = config.ConfigFileFinder('flake8', [])
+    finder = config.ConfigFileFinder('flake8')
 
     with mock.patch.object(os, 'getcwd', return_value=cwd):
         config_files = list(finder.generate_possible_local_files())
@@ -91,14 +91,14 @@ def test_local_config_files(extra_config_files, expected):
 
 def test_local_configs():
     """Verify we return a ConfigParser."""
-    finder = config.ConfigFileFinder('flake8', [])
+    finder = config.ConfigFileFinder('flake8')
 
     assert isinstance(finder.local_configs(), configparser.RawConfigParser)
 
 
 def test_local_configs_double_read():
     """Second request for local configs is cached."""
-    finder = config.ConfigFileFinder('flake8', [])
+    finder = config.ConfigFileFinder('flake8')
 
     first_read = finder.local_configs()
     boom = Exception("second request for local configs not cached")
@@ -129,24 +129,20 @@ def test_read_config_catches_decoding_errors(tmpdir):
 
 def test_config_file_default_value():
     """Verify the default 'config_file' attribute value."""
-    finder = config.ConfigFileFinder('flake8', [])
+    finder = config.ConfigFileFinder('flake8')
     assert finder.config_file is None
 
 
 def test_setting_config_file_value():
     """Verify the 'config_file' attribute matches constructed value."""
     config_file_value = 'flake8.ini'
-    finder = config.ConfigFileFinder(
-        'flake8',
-        [],
-        config_file=config_file_value,
-    )
+    finder = config.ConfigFileFinder('flake8', config_file=config_file_value)
     assert finder.config_file == config_file_value
 
 
 def test_ignore_config_files_default_value():
     """Verify the default 'ignore_config_files' attribute value."""
-    finder = config.ConfigFileFinder('flake8', [])
+    finder = config.ConfigFileFinder('flake8')
     assert finder.ignore_config_files is False
 
 
@@ -158,7 +154,6 @@ def test_setting_ignore_config_files_value(ignore_config_files_arg):
     """Verify the 'ignore_config_files' attribute matches constructed value."""
     finder = config.ConfigFileFinder(
         'flake8',
-        [],
         ignore_config_files=ignore_config_files_arg
     )
     assert finder.ignore_config_files is ignore_config_files_arg

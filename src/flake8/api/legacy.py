@@ -34,13 +34,14 @@ def get_style_guide(**kwargs):
     config_finder = config.ConfigFileFinder(
         application.program,
         prelim_opts.append_config,
+        config_file=prelim_opts.config,
         ignore_config_files=prelim_opts.isolated,
     )
 
-    application.find_plugins(config_finder, prelim_opts.config)
+    application.find_plugins(config_finder)
     application.register_plugin_options()
     application.parse_configuration_and_cli(
-        config_finder, prelim_opts.config, remaining_args,
+        config_finder, remaining_args,
     )
     # We basically want application.initialize to be called but with these
     # options set instead before we make our formatter, notifier, internal

@@ -31,10 +31,10 @@ def test_get_style_guide():
 
     application.assert_called_once_with()
     mockedapp.parse_preliminary_options.assert_called_once_with([])
-    mockedapp.find_plugins.assert_called_once_with(config_finder, None)
+    mockedapp.find_plugins.assert_called_once_with(config_finder)
     mockedapp.register_plugin_options.assert_called_once_with()
     mockedapp.parse_configuration_and_cli.assert_called_once_with(
-        config_finder, None, [])
+        config_finder, [])
     mockedapp.make_formatter.assert_called_once_with()
     mockedapp.make_guide.assert_called_once_with()
     mockedapp.make_file_checker_manager.assert_called_once_with()

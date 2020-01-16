@@ -103,6 +103,17 @@ list all of the errors with commas separating them:
 Finally, if we have a particularly bad line of code, we can ignore every error
 using simply ``# noqa`` with nothing after it.
 
+Contents before and after the ``# noqa: ...`` portion are ignored so multiple
+comments may appear on one line.  Here are several examples:
+
+.. code-block:: python
+
+    # mypy requires `# type: ignore` to appear first
+    x = 5  # type: ignore  # noqa: ABC123
+
+    # can use to add useful user information to a noqa comment
+    y = 6  # noqa: ABC456  # TODO: will fix this later
+
 
 Ignoring Entire Files
 ---------------------

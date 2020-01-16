@@ -205,7 +205,8 @@ class Option(object):
             LOG.warning(
                 "option %s: please update from optparse string `type=` to "
                 "argparse callable `type=` -- this will be an error in the "
-                "future"
+                "future",
+                long_option_name,
             )
             type = _optparse_callable_map[type]
 

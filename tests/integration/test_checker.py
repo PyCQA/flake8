@@ -216,7 +216,7 @@ def test_report_order(results, expected_order):
     # Create a placeholder manager without arguments or plugins
     # Just add one custom file checker which just provides the results
     manager = checker.Manager(style_guide, [], [])
-    manager.checkers = [file_checker]
+    manager.checkers = manager._all_checkers = [file_checker]
 
     # _handle_results is the first place which gets the sorted result
     # Should something non-private be mocked instead?

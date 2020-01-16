@@ -45,7 +45,7 @@ Built-in Hook Integration
     It is strongly suggested to use |Flake8| via `pre-commit`_ over the
     built-in hook mechanisms.  ``pre-commit`` smooths out many of the rough
     edges of ``git`` and is much more battle-tested than the |Flake8|
-    hook impementation.
+    hook implementation.
 
 |Flake8| can be integrated into your development workflow in many ways. A
 default installation of |Flake8| can install pre-commit hooks for both
@@ -91,7 +91,7 @@ Checking All Modified Files Currently Tracked
 |Flake8| aims to make smart choices that keep things fast for users where
 possible. As a result, the |Flake8| Git pre-commit will default to only
 checking files that have been staged (i.e., added to the index). If, however,
-you are keen to be lazy and not independenty add files to your git index, you
+you are keen to be lazy and not independently add files to your git index, you
 can set ``flake8.lazy`` to ``true`` (similar to how you would set
 ``flake8.strict`` above) and this will check all tracked files.
 

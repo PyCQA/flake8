@@ -51,6 +51,29 @@ index d64ac39..7d943de 100644
     assert err == ''
 
 
+def test_form_feed_line_split(tmpdir, capsys):
+    """Test that form feed is treated the same for stdin."""
+    src = 'x=1\n\f\ny=1\n'
+    expected_out = '''\
+t.py:1:2: E225 missing whitespace around operator
+t.py:3:2: E225 missing whitespace around operator
+'''
+
+    with tmpdir.as_cwd():
+        tmpdir.join('t.py').write(src)
+
+        with mock.patch.object(utils, 'stdin_get_value', return_value=src):
+            _call_main(['-', '--stdin-display-name=t.py'], retv=1)
+            out, err = capsys.readouterr()
+            assert out == expected_out
+            assert err == ''
+
+        _call_main(['t.py'], retv=1)
+        out, err = capsys.readouterr()
+        assert out == expected_out
+        assert err == ''
+
+
 def test_e101_indent_char_does_not_reset(tmpdir, capsys):
     """Ensure that E101 with an existing indent_char does not reset it."""
     t_py_contents = """\

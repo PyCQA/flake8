@@ -195,3 +195,12 @@ ignore = F401
     py_file.write_text(u"import os\n")
 
     _call_main(["--isolated", "--config", str(config), str(py_file)], retv=1)
+
+
+def test_file_not_found(tmpdir, capsys):
+    """Ensure that a not-found file / directory is an error."""
+    with tmpdir.as_cwd():
+        _call_main(["i-do-not-exist"], retv=1)
+    out, err = capsys.readouterr()
+    assert out.startswith("i-do-not-exist:0:1: E902")
+    assert err == ""

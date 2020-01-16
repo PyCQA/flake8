@@ -334,7 +334,7 @@ class FileProcessor(object):
     def read_lines_from_stdin(self):
         # type: () -> List[str]
         """Read the lines from standard in."""
-        return utils.stdin_get_value().splitlines(True)
+        return utils.stdin_get_lines()
 
     def should_ignore_file(self):
         # type: () -> bool

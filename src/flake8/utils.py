@@ -13,6 +13,7 @@ from typing import Callable, Dict, Generator, List, Optional, Pattern
 from typing import Sequence, Set, Tuple, Union
 
 from flake8 import exceptions
+from flake8._compat import lru_cache
 
 if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
     from flake8.plugins.manager import Plugin
@@ -189,28 +190,31 @@ def normalize_path(path, parent=os.curdir):
     return path.rstrip(separator + alternate_separator)
 
 
-def _stdin_get_value_py3():  # type: () -> io.StringIO
+def _stdin_get_value_py3():  # type: () -> str
     stdin_value = sys.stdin.buffer.read()
     fd = io.BytesIO(stdin_value)
     try:
-        (coding, lines) = tokenize.detect_encoding(fd.readline)
-        return io.StringIO(stdin_value.decode(coding))
+        coding, _ = tokenize.detect_encoding(fd.readline)
+        return stdin_value.decode(coding)
     except (LookupError, SyntaxError, UnicodeError):
-        return io.StringIO(stdin_value.decode("utf-8"))
+        return stdin_value.decode("utf-8")
 
 
-def stdin_get_value():
-    # type: () -> str
+@lru_cache(maxsize=1)
+def stdin_get_value():  # type: () -> str
     """Get and cache it so plugins can use it."""
-    cached_value = getattr(stdin_get_value, "cached_stdin", None)
-    if cached_value is None:
-        if sys.version_info < (3, 0):
-            stdin_value = io.BytesIO(sys.stdin.read())
-        else:
-            stdin_value = _stdin_get_value_py3()
-        stdin_get_value.cached_stdin = stdin_value  # type: ignore
-        cached_value = stdin_get_value.cached_stdin  # type: ignore
-    return cached_value.getvalue()
+    if sys.version_info < (3,):
+        return sys.stdin.read()
+    else:
+        return _stdin_get_value_py3()
+
+
+def stdin_get_lines():  # type: () -> List[str]
+    """Return lines of stdin split according to file splitting."""
+    if sys.version_info < (3,):
+        return list(io.BytesIO(stdin_get_value()))
+    else:
+        return list(io.StringIO(stdin_get_value()))
 
 
 def parse_unified_diff(diff=None):

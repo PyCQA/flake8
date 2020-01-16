@@ -89,20 +89,15 @@ def test_should_ignore_file_to_handle_disable_noqa(default_options):
 @mock.patch('flake8.utils.stdin_get_value')
 def test_read_lines_from_stdin(stdin_get_value, default_options):
     """Verify that we use our own utility function to retrieve stdin."""
-    stdin_value = mock.Mock()
-    stdin_value.splitlines.return_value = []
-    stdin_get_value.return_value = stdin_value
+    stdin_get_value.return_value = ''
     processor.FileProcessor('-', default_options)
     stdin_get_value.assert_called_once_with()
-    stdin_value.splitlines.assert_called_once_with(True)
 
 
 @mock.patch('flake8.utils.stdin_get_value')
 def test_stdin_filename_attribute(stdin_get_value, default_options):
     """Verify that we update the filename attribute."""
-    stdin_value = mock.Mock()
-    stdin_value.splitlines.return_value = []
-    stdin_get_value.return_value = stdin_value
+    stdin_get_value.return_value = ''
     file_processor = processor.FileProcessor('-', default_options)
     assert file_processor.filename == 'stdin'
 
@@ -111,9 +106,7 @@ def test_stdin_filename_attribute(stdin_get_value, default_options):
 def test_read_lines_uses_display_name(stdin_get_value, default_options):
     """Verify that when processing stdin we use a display name if present."""
     default_options.stdin_display_name = 'display_name.py'
-    stdin_value = mock.Mock()
-    stdin_value.splitlines.return_value = []
-    stdin_get_value.return_value = stdin_value
+    stdin_get_value.return_value = ''
     file_processor = processor.FileProcessor('-', default_options)
     assert file_processor.filename == 'display_name.py'
 
@@ -123,9 +116,7 @@ def test_read_lines_ignores_empty_display_name(
         stdin_get_value, default_options,
 ):
     """Verify that when processing stdin we use a display name if present."""
-    stdin_value = mock.Mock()
-    stdin_value.splitlines.return_value = []
-    stdin_get_value.return_value = stdin_value
+    stdin_get_value.return_value = ''
     default_options.stdin_display_name = ''
     file_processor = processor.FileProcessor('-', default_options)
     assert file_processor.filename == 'stdin'

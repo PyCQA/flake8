@@ -86,6 +86,7 @@ class Manager(object):
         self.options = style_guide.options
         self.checks = checker_plugins
         self.jobs = self._job_count()
+        self._all_checkers = []  # type: List[FileChecker]
         self.checkers = []  # type: List[FileChecker]
         self.statistics = {
             "files": 0,
@@ -234,17 +235,15 @@ class Manager(object):
             ) or is_stdin
 
         checks = self.checks.to_dictionary()
-        checkers = (
+        self._all_checkers = [
             FileChecker(filename, checks, self.options)
             for argument in paths
             for filename in utils.filenames_from(
                 argument, self.is_path_excluded
             )
             if should_create_file_checker(filename, argument)
-        )
-        self.checkers = [
-            checker for checker in checkers if checker.should_process
         ]
+        self.checkers = [c for c in self._all_checkers if c.should_process]
         LOG.info("Checking %d files", len(self.checkers))
 
     def report(self):
@@ -260,7 +259,7 @@ class Manager(object):
             tuple(int, int)
         """
         results_reported = results_found = 0
-        for checker in self.checkers:
+        for checker in self._all_checkers:
             results = sorted(
                 checker.results, key=lambda tup: (tup[1], tup[2])
             )

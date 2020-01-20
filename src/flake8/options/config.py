@@ -4,7 +4,7 @@ import configparser
 import logging
 import os.path
 import sys
-from typing import Dict, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 from flake8 import utils
 
@@ -61,14 +61,6 @@ class ConfigFileFinder(object):
 
         self.local_directory = os.path.abspath(os.curdir)
 
-        # caches to avoid double-reading config files
-        self._local_configs = None
-        self._local_found_files = []  # type: List[str]
-        self._user_config = None
-        # fmt: off
-        self._cli_configs = {}  # type: Dict[str, configparser.RawConfigParser]
-        # fmt: on
-
     @staticmethod
     def _read_config(*files):
         # type: (*str) -> Tuple[configparser.RawConfigParser, List[str]]
@@ -95,12 +87,10 @@ class ConfigFileFinder(object):
     def cli_config(self, files):
         # type: (str) -> configparser.RawConfigParser
         """Read and parse the config file specified on the command-line."""
-        if files not in self._cli_configs:
-            config, found_files = self._read_config(files)
-            if found_files:
-                LOG.debug("Found cli configuration files: %s", found_files)
-            self._cli_configs[files] = config
-        return self._cli_configs[files]
+        config, found_files = self._read_config(files)
+        if found_files:
+            LOG.debug("Found cli configuration files: %s", found_files)
+        return config
 
     def generate_possible_local_files(self):
         """Find and generate all local config files."""
@@ -140,15 +130,10 @@ class ConfigFileFinder(object):
 
         Return (config, found_config_files) tuple.
         """
-        if self._local_configs is None:
-            config, found_files = self._read_config(
-                *self.local_config_files()
-            )
-            if found_files:
-                LOG.debug("Found local configuration files: %s", found_files)
-            self._local_configs = config
-            self._local_found_files = found_files
-        return (self._local_configs, self._local_found_files)
+        config, found_files = self._read_config(*self.local_config_files())
+        if found_files:
+            LOG.debug("Found local configuration files: %s", found_files)
+        return (config, found_files)
 
     def local_configs(self):
         """Parse all local config files into one config object."""
@@ -162,12 +147,10 @@ class ConfigFileFinder(object):
 
     def user_config(self):
         """Parse the user config file into a config object."""
-        if self._user_config is None:
-            config, found_files = self._read_config(self.user_config_file())
-            if found_files:
-                LOG.debug("Found user configuration files: %s", found_files)
-            self._user_config = config
-        return self._user_config
+        config, found_files = self._read_config(self.user_config_file())
+        if found_files:
+            LOG.debug("Found user configuration files: %s", found_files)
+        return config
 
 
 class MergedConfigParser(object):

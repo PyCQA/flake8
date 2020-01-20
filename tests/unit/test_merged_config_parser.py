@@ -69,9 +69,9 @@ def test_parse_user_config(optmanager, config_finder):
                           action='count')
     parser = config.MergedConfigParser(optmanager, config_finder)
 
-    with mock.patch.object(parser.config_finder, 'user_config_file') as usercf:
-        usercf.return_value = 'tests/fixtures/config_files/cli-specified.ini'
-        parsed_config = parser.parse_user_config()
+    config_finder.user_config_file = ('tests/fixtures/config_files/'
+                                      'cli-specified.ini')
+    parsed_config = parser.parse_user_config()
 
     assert parsed_config == {
         'ignore': ['E123', 'W234', 'E111'],
@@ -127,11 +127,9 @@ def test_merge_user_and_local_config(optmanager, config_finder):
         localcfs.return_value = [
             'tests/fixtures/config_files/local-config.ini'
         ]
-        with mock.patch.object(config_finder,
-                               'user_config_file') as usercf:
-            usercf.return_value = ('tests/fixtures/config_files/'
-                                   'user-config.ini')
-            parsed_config = parser.merge_user_and_local_config()
+        config_finder.user_config_file = ('tests/fixtures/config_files/'
+                                          'user-config.ini')
+        parsed_config = parser.merge_user_and_local_config()
 
     assert parsed_config == {
         'exclude': [

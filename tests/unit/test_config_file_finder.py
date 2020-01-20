@@ -2,7 +2,6 @@
 """Tests for the ConfigFileFinder."""
 import configparser
 import os
-import sys
 
 import mock
 import pytest
@@ -11,18 +10,6 @@ from flake8.options import config
 
 CLI_SPECIFIED_FILEPATH = 'tests/fixtures/config_files/cli-specified.ini'
 BROKEN_CONFIG_PATH = 'tests/fixtures/config_files/broken.ini'
-
-
-@pytest.mark.parametrize('platform,is_windows', [
-    ('win32', True),
-    ('linux', False),
-    ('darwin', False),
-])
-def test_windows_detection(platform, is_windows):
-    """Verify we detect Windows to the best of our knowledge."""
-    with mock.patch.object(sys, 'platform', platform):
-        finder = config.ConfigFileFinder('flake8')
-    assert finder.is_windows is is_windows
 
 
 def test_cli_config():

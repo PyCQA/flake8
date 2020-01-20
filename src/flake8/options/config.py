@@ -3,7 +3,6 @@ import collections
 import configparser
 import logging
 import os.path
-import sys
 from typing import List, Optional, Tuple
 
 from flake8 import utils
@@ -46,20 +45,28 @@ class ConfigFileFinder(object):
         # The value of --isolated from the CLI.
         self.ignore_config_files = ignore_config_files
 
-        # Platform specific settings
-        self.is_windows = sys.platform == "win32"
-        self.xdg_home = os.environ.get(
-            "XDG_CONFIG_HOME", os.path.expanduser("~/.config")
-        )
-
-        # Look for '.<program_name>' files
-        self.program_config = "." + program_name
+        # User configuration file.
         self.program_name = program_name
+        self.user_config_file = self._user_config_file(program_name)
 
         # List of filenames to find in the local/project directory
-        self.project_filenames = ("setup.cfg", "tox.ini", self.program_config)
+        self.project_filenames = ("setup.cfg", "tox.ini", "." + program_name)
 
         self.local_directory = os.path.abspath(os.curdir)
+
+    @staticmethod
+    def _user_config_file(program_name):
+        # type: (str) -> str
+        if utils.is_windows():
+            home_dir = os.path.expanduser("~")
+            config_file_basename = "." + program_name
+        else:
+            home_dir = os.environ.get(
+                "XDG_CONFIG_HOME", os.path.expanduser("~/.config")
+            )
+            config_file_basename = program_name
+
+        return os.path.join(home_dir, config_file_basename)
 
     @staticmethod
     def _read_config(*files):
@@ -139,15 +146,9 @@ class ConfigFileFinder(object):
         """Parse all local config files into one config object."""
         return self.local_configs_with_files()[0]
 
-    def user_config_file(self):
-        """Find the user-level config file."""
-        if self.is_windows:
-            return os.path.expanduser("~\\" + self.program_config)
-        return os.path.join(self.xdg_home, self.program_name)
-
     def user_config(self):
         """Parse the user config file into a config object."""
-        config, found_files = self._read_config(self.user_config_file())
+        config, found_files = self._read_config(self.user_config_file)
         if found_files:
             LOG.debug("Found user configuration files: %s", found_files)
         return config

@@ -40,4 +40,5 @@ NOQA_INLINE_REGEXP = re.compile(
     re.IGNORECASE,
 )
 
-NOQA_FILE = re.compile(r"\s*# flake8[:=]\s*noqa", re.I)
+NOQA_FILE = re.compile(
+    r"\s*# flake8[:=]\s*noqa(?P<codes>\s*([A-Z]+[0-9]+(?:[,\s]+)?)+)?", re.I)

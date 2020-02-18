@@ -61,6 +61,8 @@ def test_strip_utf_bom(first_line, default_options):
     (['\xEF\xBB\xBF"""Module docstring."""\n'], False),
     ([u'\uFEFF"""Module docstring."""\n'], False),
     (['#!/usr/bin/python', '# flake8 is great', 'a = 1'], False),
+    (['#!/usr/bin/python', '# flake8: noqa E221'], ["E221"]),
+    (['#!/usr/bin/python', '# flake8: noqa E220,E221'], ["E220", "E221"]),
     (['#!/usr/bin/python', '# flake8: noqa', 'a = 1'], True),
     (['#!/usr/bin/python', '# flake8:noqa', 'a = 1'], True),
     (['# flake8: noqa', '#!/usr/bin/python', 'a = 1'], True),
@@ -73,14 +75,24 @@ def test_strip_utf_bom(first_line, default_options):
 def test_should_ignore_file(lines, expected, default_options):
     """Verify that we ignore a file if told to."""
     file_processor = processor.FileProcessor('-', default_options, lines)
-    assert file_processor.should_ignore_file() is expected
+    assert file_processor.should_ignore_file() == expected
 
 
 def test_should_ignore_file_to_handle_disable_noqa(default_options):
     """Verify that we ignore a file if told to."""
     lines = ['# flake8: noqa']
     file_processor = processor.FileProcessor('-', default_options, lines)
-    assert file_processor.should_ignore_file() is True
+    assert file_processor.should_ignore_file()
+    default_options.disable_noqa = True
+    file_processor = processor.FileProcessor('-', default_options, lines)
+    assert file_processor.should_ignore_file() is False
+
+
+def test_should_ignore_file_to_handle_disable_noqa_opts(default_options):
+    """Verify that we ignore a file if told to."""
+    lines = ['# flake8: noqa E220,E221']
+    file_processor = processor.FileProcessor('-', default_options, lines)
+    assert file_processor.should_ignore_file() == ["E220", "E221"]
     default_options.disable_noqa = True
     file_processor = processor.FileProcessor('-', default_options, lines)
     assert file_processor.should_ignore_file() is False

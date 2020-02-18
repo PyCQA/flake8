@@ -338,18 +338,26 @@ class FileProcessor(object):
 
     def should_ignore_file(self):
         # type: () -> bool
-        """Check if ``flake8: noqa`` is in the file to be ignored.
+        """Check if ``flake8: noqa [Codes]`` is in the file to be ignored.
 
         :returns:
             True if a line matches :attr:`defaults.NOQA_FILE`,
+            or a list of codes to ignore if specified,
             otherwise False
         :rtype:
             bool
         """
-        if not self.options.disable_noqa and any(
-            defaults.NOQA_FILE.match(line) for line in self.lines
-        ):
-            return True
+        if not self.options.disable_noqa:
+            found_flake_noqa_line = False
+            ignore_codes = []
+            for line in self.lines:
+                matchobj = defaults.NOQA_FILE.match(line)
+                if matchobj:
+                    found_flake_noqa_line = True
+                    codes = matchobj.groupdict(default="")["codes"].split(",")
+                    codes = (code.strip() for code in codes)
+                    ignore_codes.extend(code for code in codes if code)
+            return ignore_codes or found_flake_noqa_line
         elif any(defaults.NOQA_FILE.search(line) for line in self.lines):
             LOG.warning(
                 "Detected `flake8: noqa` on line with code. To ignore an "

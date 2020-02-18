@@ -136,6 +136,13 @@ the errors in that file will show up without having to modify our
 configuration. Both exist so we can choose which is better for us.
 
 
+Ignoring Specific Errors within a File
+--------------------------------------
+
+.. code-block:: python
+
+    # flake8: noqa E221,E222
+
 
 Selecting Violations with Flake8
 ================================

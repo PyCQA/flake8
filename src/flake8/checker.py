@@ -1,5 +1,6 @@
 """Checker Manager and Checker classes."""
 import collections
+import copy
 import errno
 import itertools
 import logging
@@ -368,7 +369,7 @@ class FileChecker(object):
         :type options:
             argparse.Namespace
         """
-        self.options = options
+        self.options = copy.copy(options)
         self.filename = filename
         self.checks = checks
         # fmt: off
@@ -384,7 +385,13 @@ class FileChecker(object):
         self.should_process = False
         if self.processor is not None:
             self.display_name = self.processor.filename
-            self.should_process = not self.processor.should_ignore_file()
+            should_ignore = self.processor.should_ignore_file()
+            if isinstance(should_ignore, list):
+                self.options.ignore += should_ignore
+                self.should_process = True
+            else:
+                self.should_process = not should_ignore
+
             self.statistics["physical lines"] = len(self.processor.lines)
 
     def __repr__(self):  # type: () -> str

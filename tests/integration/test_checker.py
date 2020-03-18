@@ -15,7 +15,7 @@ EXPECTED_RESULT_PHYSICAL_LINE = (
     0,
     1,
     'Expected Message',
-    PHYSICAL_LINE,
+    None,
 )
 
 
@@ -153,11 +153,10 @@ def test_line_check_results(plugin_target, len_results):
     """Test the FileChecker class handling results from line checks."""
     file_checker = mock_file_checker_with_plugin(plugin_target)
 
-    # Results will be store in an internal array
+    # Results will be stored in an internal array
     file_checker.run_physical_checks(PHYSICAL_LINE)
-    assert file_checker.results == [
-        EXPECTED_RESULT_PHYSICAL_LINE
-    ] * len_results
+    expected = [EXPECTED_RESULT_PHYSICAL_LINE] * len_results
+    assert file_checker.results == expected
 
 
 PLACEHOLDER_CODE = 'some_line = "of" * code'

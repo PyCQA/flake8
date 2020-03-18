@@ -108,6 +108,8 @@ class FileProcessor(object):
         #: Statistics dictionary
         self.statistics = {"logical lines": 0}
         self._file_tokens = None  # type: Optional[List[_Token]]
+        # map from line number to the line we'll search for `noqa` in
+        self._noqa_line_mapping = None  # type: Optional[Dict[int, str]]
 
     @property
     def file_tokens(self):  # type: () -> List[_Token]
@@ -275,16 +277,51 @@ class FileProcessor(object):
         except (tokenize.TokenError, SyntaxError) as exc:
             raise exceptions.InvalidSyntax(exception=exc)
 
-    def line_for(self, line_number):
-        # type: (int) -> Optional[str]
-        """Retrieve the physical line at the specified line number."""
-        adjusted_line_number = line_number - 1
+    def _noqa_line_range(self, min_line, max_line):
+        # type: (int, int) -> Dict[int, str]
+        line_range = range(min_line, max_line + 1)
+        joined = "".join(self.lines[min_line - 1 : max_line])
+        return dict.fromkeys(line_range, joined)
+
+    def noqa_line_for(self, line_number):  # type: (int) -> Optional[str]
+        """Retrieve the line which will be used to determine noqa."""
+        if self._noqa_line_mapping is None:
+            try:
+                file_tokens = self.file_tokens
+            except exceptions.InvalidSyntax:
+                # if we failed to parse the file tokens, we'll always fail in
+                # the future, so set this so the code does not try again
+                self._noqa_line_mapping = {}
+            else:
+                ret = {}
+
+                min_line = len(self.lines) + 2
+                max_line = -1
+                for tp, _, (s_line, _), (e_line, _), _ in file_tokens:
+                    if tp == tokenize.ENDMARKER:
+                        break
+
+                    min_line = min(min_line, s_line)
+                    max_line = max(max_line, e_line)
+
+                    if tp in (tokenize.NL, tokenize.NEWLINE):
+                        ret.update(self._noqa_line_range(min_line, max_line))
+
+                        min_line = len(self.lines) + 2
+                        max_line = -1
+
+                # in newer versions of python, a `NEWLINE` token is inserted
+                # at the end of the file even if it doesn't have one.
+                # on old pythons, they will not have hit a `NEWLINE`
+                if max_line != -1:
+                    ret.update(self._noqa_line_range(min_line, max_line))
+
+                self._noqa_line_mapping = ret
+
         # NOTE(sigmavirus24): Some plugins choose to report errors for empty
         # files on Line 1. In those cases, we shouldn't bother trying to
         # retrieve a physical line (since none exist).
-        if 0 <= adjusted_line_number < len(self.lines):
-            return self.lines[adjusted_line_number]
-        return None
+        return self._noqa_line_mapping.get(line_number)
 
     def next_line(self):  # type: () -> str
         """Get the next line from the list."""

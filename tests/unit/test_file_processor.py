@@ -122,16 +122,56 @@ def test_read_lines_ignores_empty_display_name(
     assert file_processor.filename == 'stdin'
 
 
-def test_line_for(default_options):
+def test_noqa_line_for(default_options):
     """Verify we grab the correct line from the cached lines."""
     file_processor = processor.FileProcessor('-', default_options, lines=[
-        'Line 1',
-        'Line 2',
-        'Line 3',
+        'Line 1\n',
+        'Line 2\n',
+        'Line 3\n',
     ])
 
     for i in range(1, 4):
-        assert file_processor.line_for(i) == 'Line {0}'.format(i)
+        assert file_processor.noqa_line_for(i) == 'Line {0}\n'.format(i)
+
+
+def test_noqa_line_for_continuation(default_options):
+    """Verify that the correct "line" is retrieved for continuation."""
+    src = '''\
+from foo \\
+    import bar  # 2
+
+x = """
+hello
+world
+"""  # 7
+'''
+    lines = src.splitlines(True)
+    file_processor = processor.FileProcessor('-', default_options, lines=lines)
+
+    assert file_processor.noqa_line_for(0) is None
+
+    l_1_2 = 'from foo \\\n    import bar  # 2\n'
+    assert file_processor.noqa_line_for(1) == l_1_2
+    assert file_processor.noqa_line_for(2) == l_1_2
+
+    assert file_processor.noqa_line_for(3) == '\n'
+
+    l_4_7 = 'x = """\nhello\nworld\n"""  # 7\n'
+    for i in (4, 5, 6, 7):
+        assert file_processor.noqa_line_for(i) == l_4_7
+
+    assert file_processor.noqa_line_for(8) is None
+
+
+def test_noqa_line_for_no_eol_at_end_of_file(default_options):
+    """Verify that we properly handle noqa line at the end of the file."""
+    src = 'from foo \\\nimport bar'  # no end of file newline
+    lines = src.splitlines(True)
+    file_processor = processor.FileProcessor('-', default_options, lines=lines)
+
+    l_1_2 = 'from foo \\\nimport bar'
+    assert file_processor.noqa_line_for(1) == l_1_2
+    assert file_processor.noqa_line_for(2) == l_1_2
 
 
 def test_next_line(default_options):

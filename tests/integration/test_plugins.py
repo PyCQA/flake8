@@ -14,11 +14,9 @@ class ExtensionTestPlugin(object):
 
     def __init__(self, tree):
         """Construct an instance of test plugin."""
-        pass
 
     def run(self):
         """Do nothing."""
-        pass
 
     @classmethod
     def add_options(cls, parser):
@@ -34,11 +32,9 @@ class ReportTestPlugin(object):
 
     def __init__(self, tree):
         """Construct an instance of test plugin."""
-        pass
 
     def run(self):
         """Do nothing."""
-        pass
 
 
 def test_enable_local_plugin_from_config():

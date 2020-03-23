@@ -182,6 +182,25 @@ t.py:1:15: E711 comparison to None should be 'if cond is None:'
 '''
 
 
+def test_specific_noqa_on_line_with_continuation(tmpdir, capsys):
+    """See https://gitlab.com/pycqa/flake8/issues/375."""
+    t_py_src = '''\
+from os \\
+    import path  # noqa: F401
+
+x = """
+    trailing whitespace: \n
+"""  # noqa: W291
+'''
+
+    with tmpdir.as_cwd():
+        tmpdir.join('t.py').write(t_py_src)
+        _call_main(['t.py'], retv=0)
+
+    out, err = capsys.readouterr()
+    assert out == err == ''
+
+
 def test_obtaining_args_from_sys_argv_when_not_explicity_provided(capsys):
     """Test that arguments are obtained from 'sys.argv'."""
     with mock.patch('sys.argv', ['flake8', '--help']):

@@ -406,20 +406,20 @@ class FileChecker(object):
             self.report("E902", 0, 0, message)
             return None
 
-    def report(self, error_code, line_number, column, text, line=None):
-        # type: (str, int, int, str, Optional[str]) -> str
+    def report(self, error_code, line_number, column, text):
+        # type: (Optional[str], int, int, str) -> str
         """Report an error by storing it in the results list."""
         if error_code is None:
             error_code, text = text.split(" ", 1)
 
-        physical_line = line
         # If we're recovering from a problem in _make_processor, we will not
         # have this attribute.
-        if not physical_line and getattr(self, "processor", None):
-            physical_line = self.processor.line_for(line_number)
+        if hasattr(self, "processor"):
+            line = self.processor.noqa_line_for(line_number)
+        else:
+            line = None
 
-        error = (error_code, line_number, column, text, physical_line)
-        self.results.append(error)
+        self.results.append((error_code, line_number, column, text, line))
         return error_code
 
     def run_check(self, plugin, **arguments):
@@ -483,7 +483,7 @@ class FileChecker(object):
             column -= column_offset
         return row, column
 
-    def run_ast_checks(self):
+    def run_ast_checks(self):  # type: () -> None
         """Run all checks expecting an abstract syntax tree."""
         try:
             ast = self.processor.build_ast()
@@ -534,7 +534,7 @@ class FileChecker(object):
 
         self.processor.next_logical_line()
 
-    def run_physical_checks(self, physical_line, override_error_line=None):
+    def run_physical_checks(self, physical_line):
         """Run all checks for a given physical line.
 
         A single physical check may return multiple errors.
@@ -562,7 +562,6 @@ class FileChecker(object):
                         line_number=self.processor.line_number,
                         column=column_offset,
                         text=text,
-                        line=(override_error_line or physical_line),
                     )
 
     def process_tokens(self):
@@ -640,9 +639,7 @@ class FileChecker(object):
             line_no = token[2][0]
             with self.processor.inside_multiline(line_number=line_no):
                 for line in self.processor.split_line(token):
-                    self.run_physical_checks(
-                        line + "\n", override_error_line=token[4]
-                    )
+                    self.run_physical_checks(line + "\n")
 
 
 def _pool_init():

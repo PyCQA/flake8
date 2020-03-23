@@ -241,7 +241,7 @@ def test_parameters_for_class_plugin():
     """Verify that we can retrieve the parameters for a class plugin."""
     class FakeCheck(object):
         def __init__(self, tree):
-            pass
+            raise NotImplementedError
 
     plugin = plugin_manager.Plugin('plugin-name', object())
     plugin._plugin = FakeCheck
@@ -251,7 +251,7 @@ def test_parameters_for_class_plugin():
 def test_parameters_for_function_plugin():
     """Verify that we retrieve the parameters for a function plugin."""
     def fake_plugin(physical_line, self, tree, optional=None):
-        pass
+        raise NotImplementedError
 
     plugin = plugin_manager.Plugin('plugin-name', object())
     plugin._plugin = fake_plugin

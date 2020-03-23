@@ -78,10 +78,12 @@ def test_style_guide_manager_pre_file_ignores_parsing():
     options = create_options(per_file_ignores=PER_FILE_IGNORES_UNPARSED)
     guide = style_guide.StyleGuideManager(options, formatter=formatter)
     assert len(guide.style_guides) == 5
-    assert list(map(utils.normalize_path,
-                    ["first_file.py", "second_file.py", "third_file.py",
-                        "sub_dir/*"])
-                ) == [g.filename for g in guide.style_guides[1:]]
+    expected = [
+        utils.normalize_path(p) for p in [
+            "first_file.py", "second_file.py", "third_file.py", "sub_dir/*",
+        ]
+    ]
+    assert expected == [g.filename for g in guide.style_guides[1:]]
 
 
 @pytest.mark.parametrize('ignores,violation,filename,handle_error_return', [

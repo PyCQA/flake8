@@ -126,7 +126,7 @@ def test_styleguide_init_report():
 
     class FakeFormatter(formatter.BaseFormatter):
         def format(self, *args):
-            pass
+            raise NotImplementedError
 
     style_guide.init_report(FakeFormatter)
     app.make_formatter.assert_called_once_with(FakeFormatter)

@@ -73,5 +73,7 @@ def test_make_checkers():
             with mock.patch('flake8.processor.FileProcessor'):
                 manager.make_checkers()
 
-    for file_checker in manager.checkers:
+    assert manager._all_checkers
+    for file_checker in manager._all_checkers:
         assert file_checker.filename in files
+    assert not manager.checkers  # the files don't exist

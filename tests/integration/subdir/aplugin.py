@@ -9,8 +9,6 @@ class ExtensionTestPlugin2(object):
 
     def __init__(self, tree):
         """Construct an instance of test plugin."""
-        pass
 
     def run(self):
         """Do nothing."""
-        pass

@@ -13,8 +13,7 @@ def test_read_lines_splits_lines(default_options):
     file_processor = processor.FileProcessor(__file__, default_options)
     lines = file_processor.lines
     assert len(lines) > 5
-    assert any('"""Tests for the FileProcessor class."""' in line.rstrip()
-               for line in lines)
+    assert lines[0].strip() == '"""Tests for the FileProcessor class."""'
 
 
 def _lines_from_file(tmpdir, contents, options):

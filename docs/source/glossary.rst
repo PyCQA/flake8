@@ -54,4 +54,4 @@
     mccabe
         The project |Flake8| depends on to calculate the McCabe complexity
         of a unit of code (e.g., a function). This uses the ``C``
-        :term:`class` of :term`error code`\ s.
+        :term:`class` of :term:`error code`\ s.

@@ -4,7 +4,7 @@
  Error / Violation Codes
 =========================
 
-Flake8 and its plugins assign a code to each message that we refer to as a
+Flake8 and its plugins assign a code to each message that we refer to as an
 :term:`error code` (or :term:`violation`). Most plugins will list their error
 codes in their documentation or README.
 

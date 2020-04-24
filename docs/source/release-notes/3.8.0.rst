@@ -1,4 +1,15 @@
-3.8.0a1 -- 2020-04-23
+3.8.0a2 -- 2020-04-24
+---------------------
+
+You can view the `3.8.0 milestone`_ on GitLab for more details.
+
+Bugs Fixed
+~~~~~~~~~~
+
+- Fix ``type="str"`` optparse options (See also `GitLab!419`_)
+
+
+3.8.0a1 -- 2020-04-24
 ---------------------
 
 You can view the `3.8.0 milestone`_ on GitLab for more details.
@@ -177,3 +188,5 @@ Deprecations
    https://gitlab.com/pycqa/flake8/-/merge_requests/417
 .. _GitLab!418:
    https://gitlab.com/pycqa/flake8/-/merge_requests/418
+.. _GitLab!419:
+   https://gitlab.com/pycqa/flake8/-/merge_requests/419

@@ -28,6 +28,8 @@ _optparse_callable_map = {
     "float": float,
     "complex": complex,
     "choice": _ARG.NO,
+    # optparse allows this but does not document it
+    "str": str,
 }  # type: Dict[str, Union[Type[Any], _ARG]]
 
 

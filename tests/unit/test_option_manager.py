@@ -303,6 +303,8 @@ def test_optparse_normalize_callback_option_legacy(optmanager):
         ('string', 'foo', 'foo'),
         ('float', '1.5', 1.5),
         ('complex', '1+5j', 1 + 5j),
+        # optparse allows this but does not document it
+        ('str', 'foo', 'foo'),
     ),
 )
 def test_optparse_normalize_types(optmanager, type_s, input_val, expected):

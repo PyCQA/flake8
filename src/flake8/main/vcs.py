@@ -1,5 +1,8 @@
 """Module containing some of the logic for our VCS installation logic."""
+from __future__ import print_function
+
 import argparse
+import sys
 
 from flake8 import exceptions as exc
 from flake8.main import git
@@ -29,6 +32,14 @@ class InstallAction(argparse.Action):
 
         if not successful:
             print("Could not find the {0} directory".format(value))
+
+        print(
+            "\nWARNING: flake8 vcs hooks integration is deprecated and "
+            "scheduled for removal in 4.x.  For more information, see "
+            "https://gitlab.com/pycqa/flake8/issues/568",
+            file=sys.stderr,
+        )
+
         raise SystemExit(not successful and errored)
 
 

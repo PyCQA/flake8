@@ -523,8 +523,9 @@ class FileChecker(object):
             self.processor.update_checker_state_for(plugin)
             results = self.run_check(plugin, logical_line=logical_line) or ()
             for offset, text in results:
-                offset = find_offset(offset, mapping)
-                line_number, column_offset = offset
+                line_number, column_offset = find_offset(offset, mapping)
+                if line_number == column_offset == 0:
+                    LOG.warning("position of error out of bounds: %s", plugin)
                 self.report(
                     error_code=None,
                     line_number=line_number,
@@ -674,4 +675,7 @@ def find_offset(offset, mapping):
         if offset <= token_offset:
             position = token[1]
             break
+    else:
+        position = (0, 0)
+        offset = token_offset = 0
     return (position[0], position[1] + offset - token_offset)

@@ -448,7 +448,7 @@ def matches_filename(path, patterns, log_message, logger):
     if not patterns:
         return False
     basename = os.path.basename(path)
-    if fnmatch(basename, patterns):
+    if basename not in {".", ".."} and fnmatch(basename, patterns):
         logger.debug(log_message, {"path": basename, "whether": ""})
         return True
 

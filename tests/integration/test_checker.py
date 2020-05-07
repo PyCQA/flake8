@@ -5,6 +5,7 @@ import pytest
 from flake8 import checker
 from flake8._compat import importlib_metadata
 from flake8.plugins import manager
+from flake8.processor import FileProcessor
 
 PHYSICAL_LINE = "# Physical line content"
 
@@ -157,6 +158,27 @@ def test_line_check_results(plugin_target, len_results):
     file_checker.run_physical_checks(PHYSICAL_LINE)
     expected = [EXPECTED_RESULT_PHYSICAL_LINE] * len_results
     assert file_checker.results == expected
+
+
+def test_logical_line_offset_out_of_bounds():
+    """Ensure that logical line offsets that are out of bounds do not crash."""
+
+    @plugin_func
+    def _logical_line_out_of_bounds(logical_line):
+        yield 10000, 'L100 test'
+
+    file_checker = mock_file_checker_with_plugin(_logical_line_out_of_bounds)
+
+    logical_ret = (
+        '',
+        'print("xxxxxxxxxxx")',
+        [(0, (1, 0)), (5, (1, 5)), (6, (1, 6)), (19, (1, 19)), (20, (1, 20))],
+    )
+    with mock.patch.object(
+        FileProcessor, 'build_logical_line', return_value=logical_ret,
+    ):
+        file_checker.run_logical_checks()
+        assert file_checker.results == [('L100', 0, 0, 'test', None)]
 
 
 PLACEHOLDER_CODE = 'some_line = "of" * code'

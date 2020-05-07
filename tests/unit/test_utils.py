@@ -1,4 +1,5 @@
 """Tests for flake8's utils module."""
+import logging
 import os
 
 import mock
@@ -296,3 +297,10 @@ MULTI_FILE_INFO = {
 def test_parse_unified_diff(diff, parsed_diff):
     """Verify that what we parse from a diff matches expectations."""
     assert utils.parse_unified_diff(diff) == parsed_diff
+
+
+def test_matches_filename_for_excluding_dotfiles():
+    """Verify that `.` and `..` are not matched by `.*`."""
+    logger = logging.Logger(__name__)
+    assert not utils.matches_filename('.', ('.*',), '', logger)
+    assert not utils.matches_filename('..', ('.*',), '', logger)

@@ -68,6 +68,7 @@ docs:
   script: tox -e docs
 
 dogfood:
+  image: python:3.7
   stage: test
   script: tox -e dogfood
 

@@ -1,9 +1,13 @@
 """Integration tests for plugin loading."""
+import pytest
+
 from flake8.main import application
+from flake8 import exceptions
 
 
 LOCAL_PLUGIN_CONFIG = 'tests/fixtures/config_files/local-plugin.ini'
 LOCAL_PLUGIN_PATH_CONFIG = 'tests/fixtures/config_files/local-plugin-path.ini'
+LOCAL_PLUGIN_DUPLICATE_CONFIG = 'tests/fixtures/config_files/local-plugin-duplicate-entry-point.ini'
 
 
 class ExtensionTestPlugin(object):
@@ -61,3 +65,10 @@ def test_enable_local_plugin_at_non_installed_path():
     app.initialize(['flake8', '--config', LOCAL_PLUGIN_PATH_CONFIG])
 
     assert app.check_plugins['XE'].plugin.name == 'ExtensionTestPlugin2'
+
+
+def test_reject_local_plugins_with_duplicate_entry_point():
+    """Reject duplicate entry points in local-plugins config section."""
+    with pytest.raises(exceptions.DuplicatePluginEntryPoint):
+        app = application.Application()
+        app.initialize(['flake8', '--config', LOCAL_PLUGIN_DUPLICATE_CONFIG])

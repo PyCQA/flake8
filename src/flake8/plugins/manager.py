@@ -273,6 +273,12 @@ class PluginManager(object):  # pylint: disable=too-few-public-methods
             Is this a repo-local plugin?
         """
         name = entry_point.name
+
+        if name in self.plugins:
+            raise exceptions.DuplicatePluginEntryPoint(
+                entry_point, self.plugins[name],
+            )
+
         self.plugins[name] = Plugin(name, entry_point, local=local)
         self.names.append(name)
         LOG.debug('Loaded %r for plugin "%s".', self.plugins[name], name)

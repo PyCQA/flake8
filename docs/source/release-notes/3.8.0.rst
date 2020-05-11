@@ -1,3 +1,24 @@
+3.8.0 -- 2020-05-11
+-------------------
+
+You can view the `3.8.0 milestone`_ on GitLab for more details.
+
+Bugs Fixed
+~~~~~~~~~~
+
+- Fix logical checks which report positions out of bounds (See also
+  `GitLab!422`_, `GitLab#635`_)
+
+- Fix ``--exclude=.*`` accidentally matching ``.`` and ``..`` (See also
+  `GitLab!424`_, `GitLab#632`_)
+
+Deprecations
+~~~~~~~~~~~~
+
+- Add deprecation message for vcs hooks (See also `GitLab!420`_,
+  `GitLab#568`_)
+
+
 3.8.0a2 -- 2020-04-24
 ---------------------
 
@@ -134,6 +155,8 @@ Deprecations
    https://gitlab.com/pycqa/flake8/-/issues/563
 .. _GitLab#565:
    https://gitlab.com/pycqa/flake8/-/issues/565
+.. _GitLab#568:
+   https://gitlab.com/pycqa/flake8/-/issues/568
 .. _GitLab#569:
    https://gitlab.com/pycqa/flake8/-/issues/569
 .. _GitLab#587:
@@ -142,6 +165,10 @@ Deprecations
    https://gitlab.com/pycqa/flake8/-/issues/590
 .. _GitLab#600:
    https://gitlab.com/pycqa/flake8/-/issues/600
+.. _GitLab#632:
+   https://gitlab.com/pycqa/flake8/-/issues/632
+.. _GitLab#635:
+   https://gitlab.com/pycqa/flake8/-/issues/635
 .. _pycodestyle#886:
    https://github.com/PyCQA/pycodestyle/issues/886
 
@@ -190,3 +217,9 @@ Deprecations
    https://gitlab.com/pycqa/flake8/-/merge_requests/418
 .. _GitLab!419:
    https://gitlab.com/pycqa/flake8/-/merge_requests/419
+.. _GitLab!420:
+   https://gitlab.com/pycqa/flake8/-/merge_requests/420
+.. _GitLab!422:
+   https://gitlab.com/pycqa/flake8/-/merge_requests/422
+.. _GitLab!424:
+   https://gitlab.com/pycqa/flake8/-/merge_requests/424

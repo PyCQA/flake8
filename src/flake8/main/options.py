@@ -62,6 +62,27 @@ def register_preliminary_options(parser):
     )
 
 
+class JobsArgument:
+    """Type callback for the --jobs argument."""
+
+    def __init__(self, arg):  # type: (str) -> None
+        """Parse and validate the --jobs argument.
+
+        :param str arg:
+            The argument passed by argparse for validation
+        """
+        self.is_auto = False
+        self.n_jobs = -1
+        if arg == "auto":
+            self.is_auto = True
+        elif arg.isdigit():
+            self.n_jobs = int(arg)
+        else:
+            raise argparse.ArgumentTypeError(
+                "{!r} must be 'auto' or an integer.".format(arg),
+            )
+
+
 def register_default_options(option_manager):
     """Register the default options on our OptionManager.
 
@@ -293,6 +314,7 @@ def register_default_options(option_manager):
         "--jobs",
         default="auto",
         parse_from_config=True,
+        type=JobsArgument,
         help="Number of subprocesses to use to run checks in parallel. "
         'This is ignored on Windows. The default, "auto", will '
         "auto-detect the number of processors available to use."

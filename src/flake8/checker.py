@@ -137,19 +137,12 @@ class Manager(object):
             return 0
 
         jobs = self.options.jobs
-        if jobs != "auto" and not jobs.isdigit():
-            LOG.warning(
-                '"%s" is not a valid parameter to --jobs. Must be one '
-                'of "auto" or a numerical value, e.g., 4.',
-                jobs,
-            )
-            return 0
 
         # If the value is "auto", we want to let the multiprocessing library
         # decide the number based on the number of CPUs. However, if that
         # function is not implemented for this particular value of Python we
         # default to 1
-        if jobs == "auto":
+        if jobs.is_auto:
             try:
                 return multiprocessing.cpu_count()
             except NotImplementedError:
@@ -157,7 +150,7 @@ class Manager(object):
 
         # Otherwise, we know jobs should be an integer and we can just convert
         # it to an integer
-        return int(jobs)
+        return jobs.n_jobs
 
     def _handle_results(self, filename, results):
         style_guide = self.style_guide

@@ -19,7 +19,7 @@ def test_get_style_guide():
         verbose=0,
     )
     mockedapp = mock.Mock()
-    mockedapp.parse_preliminary_options.return_value = (prelim_opts, [])
+    mockedapp.parse_preliminary_options.return_value = prelim_opts
     mockedapp.program = 'flake8'
     with mock.patch('flake8.api.legacy.config.ConfigFileFinder') as mock_config_finder:  # noqa: E501
         config_finder = ConfigFileFinder(mockedapp.program)

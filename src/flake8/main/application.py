@@ -112,7 +112,12 @@ class Application(object):
         :rtype:
             (argparse.Namespace, list)
         """
-        return self.prelim_arg_parser.parse_known_args(argv)
+        args, rest = self.prelim_arg_parser.parse_known_args(argv)
+        # XXX (ericvw): Special case "forwarding" the output file option so
+        # that it can be reparsed again for the BaseFormatter.filename.
+        if args.output_file:
+            rest.extend(("--output-file", args.output_file))
+        return args, rest
 
     def exit(self):
         # type: () -> None

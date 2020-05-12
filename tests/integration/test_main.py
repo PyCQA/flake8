@@ -246,3 +246,17 @@ def test_file_not_found(tmpdir, capsys):
     out, err = capsys.readouterr()
     assert out.startswith("i-do-not-exist:0:1: E902")
     assert err == ""
+
+
+def test_output_file(tmpdir, capsys):
+    """Ensure that --output-file is honored."""
+    tmpdir.join('t.py').write('import os\n')
+
+    with tmpdir.as_cwd():
+        _call_main(['t.py', '--output-file=f'], retv=1)
+
+    out, err = capsys.readouterr()
+    assert out == err == ""
+
+    expected = "t.py:1:1: F401 'os' imported but unused\n"
+    assert tmpdir.join('f').read() == expected

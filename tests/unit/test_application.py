@@ -79,28 +79,22 @@ def test_returns_specified_plugin(application):
 
 def test_prelim_opts_args(application):
     """Verify we get sensible prelim opts and args."""
-    opts, args = application.parse_preliminary_options(
+    opts = application.parse_preliminary_options(
         ['--foo', '--verbose', 'src', 'setup.py', '--statistics', '--version'])
 
     assert opts.verbose
-    assert args == ['--foo', 'src', 'setup.py', '--statistics', '--version']
 
 
 def test_prelim_opts_ignore_help(application):
     """Verify -h/--help is not handled."""
-    # GIVEN
-
-    # WHEN
-    _, args = application.parse_preliminary_options(['--help', '-h'])
-
-    # THEN
-    assert args == ['--help', '-h']
+    # normally argparse would `SystemExit` on `--help`
+    application.parse_preliminary_options(['--help', '-h'])
 
 
 def test_prelim_opts_handles_empty(application):
     """Verify empty argv lists are handled correctly."""
-    irrelevant_args = ['myexe', '/path/to/foo']
+    # this would set `.verbose` but we validate that it does not
+    irrelevant_args = ['--verbose']
     with mock.patch.object(sys, 'argv', irrelevant_args):
-        opts, args = application.parse_preliminary_options([])
-
-        assert args == []
+        opts = application.parse_preliminary_options([])
+        assert not opts.verbose

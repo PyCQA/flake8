@@ -5,7 +5,7 @@ import argparse
 import logging
 import sys
 import time
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Set
 
 import flake8
 from flake8 import checker
@@ -95,7 +95,7 @@ class Application(object):
         self.parsed_diff = {}  # type: Dict[str, Set[int]]
 
     def parse_preliminary_options(self, argv):
-        # type: (List[str]) -> Tuple[argparse.Namespace, List[str]]
+        # type: (List[str]) -> argparse.Namespace
         """Get preliminary options from the CLI, pre-plugin-loading.
 
         We need to know the values of a few standard options so that we can
@@ -112,7 +112,7 @@ class Application(object):
         :rtype:
             (argparse.Namespace, list)
         """
-        return self.prelim_arg_parser.parse_known_args(argv)
+        return self.prelim_arg_parser.parse_known_args(argv)[0]
 
     def exit(self):
         # type: () -> None
@@ -312,7 +312,7 @@ class Application(object):
         """
         # NOTE(sigmavirus24): When updating this, make sure you also update
         # our legacy API calls to these same methods.
-        prelim_opts, remaining_args = self.parse_preliminary_options(argv)
+        prelim_opts = self.parse_preliminary_options(argv)
         flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
         config_finder = config.ConfigFileFinder(
             self.program,
@@ -322,9 +322,7 @@ class Application(object):
         )
         self.find_plugins(config_finder)
         self.register_plugin_options()
-        self.parse_configuration_and_cli(
-            config_finder, remaining_args,
-        )
+        self.parse_configuration_and_cli(config_finder, argv)
         self.make_formatter()
         self.make_guide()
         self.make_file_checker_manager()

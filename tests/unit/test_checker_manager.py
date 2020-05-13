@@ -5,13 +5,14 @@ import mock
 import pytest
 
 from flake8 import checker
+from flake8.main.options import JobsArgument
 
 
 def style_guide_mock():
     """Create a mock StyleGuide object."""
     return mock.MagicMock(**{
         'options.diff': False,
-        'options.jobs': '4',
+        'options.jobs': JobsArgument("4"),
     })
 
 

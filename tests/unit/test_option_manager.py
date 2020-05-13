@@ -6,6 +6,7 @@ import mock
 import pytest
 
 from flake8 import utils
+from flake8.main.options import JobsArgument
 from flake8.options import manager
 
 TEST_VERSION = '3.0.0b1'
@@ -343,3 +344,32 @@ def test_optmanager_group(optmanager, capsys):
     out, err = capsys.readouterr()
     output = out + err
     assert '\ngroupname:\n' in output
+
+
+@pytest.mark.parametrize(
+    ("s", "is_auto", "n_jobs"),
+    (
+        ("auto", True, -1),
+        ("4", False, 4),
+    ),
+)
+def test_parse_valid_jobs_argument(s, is_auto, n_jobs):
+    """Test that --jobs properly parses valid arguments."""
+    jobs_opt = JobsArgument(s)
+    assert is_auto == jobs_opt.is_auto
+    assert n_jobs == jobs_opt.n_jobs
+
+
+def test_parse_invalid_jobs_argument(optmanager, capsys):
+    """Test that --jobs properly rejects invalid arguments."""
+    namespace = argparse.Namespace()
+    optmanager.add_option("--jobs", type=JobsArgument)
+    with pytest.raises(SystemExit):
+        optmanager.parse_args(["--jobs=foo"], namespace)
+    out, err = capsys.readouterr()
+    output = out + err
+    expected = (
+        "\nflake8: error: argument --jobs: "
+        "'foo' must be 'auto' or an integer.\n"
+    )
+    assert expected in output

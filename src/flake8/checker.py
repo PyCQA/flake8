@@ -422,11 +422,11 @@ class FileChecker(object):
         self.results.append((error_code, line_number, column, text, line))
         return error_code
 
-    def run_check(self, plugin, **arguments):
+    def run_check(self, plugin):
         """Run the check in a single plugin."""
         try:
-            self.processor.keyword_arguments_for(
-                plugin["parameters"], arguments
+            arguments = self.processor.keyword_arguments_for(
+                plugin["parameters"]
             )
         except AttributeError as ae:
             LOG.error("Plugin requested unknown parameters.")
@@ -493,8 +493,10 @@ class FileChecker(object):
             )
             return
 
+        self.processor.tree = ast
+
         for plugin in self.checks["ast_plugins"]:
-            checker = self.run_check(plugin, tree=ast)
+            checker = self.run_check(plugin)
             # If the plugin uses a class, call the run method of it, otherwise
             # the call should return something iterable itself
             try:
@@ -509,6 +511,8 @@ class FileChecker(object):
                     text=text,
                 )
 
+        del self.processor.tree
+
     def run_logical_checks(self):
         """Run all checks expecting a logical line."""
         comments, logical_line, mapping = self.processor.build_logical_line()
@@ -520,7 +524,7 @@ class FileChecker(object):
 
         for plugin in self.checks["logical_line_plugins"]:
             self.processor.update_checker_state_for(plugin)
-            results = self.run_check(plugin, logical_line=logical_line) or ()
+            results = self.run_check(plugin) or ()
             for offset, text in results:
                 line_number, column_offset = find_offset(offset, mapping)
                 if line_number == column_offset == 0:
@@ -539,9 +543,11 @@ class FileChecker(object):
 
         A single physical check may return multiple errors.
         """
+        self.processor.physical_line = physical_line
+
         for plugin in self.checks["physical_line_plugins"]:
             self.processor.update_checker_state_for(plugin)
-            result = self.run_check(plugin, physical_line=physical_line)
+            result = self.run_check(plugin)
 
             if result is not None:
                 # This is a single result if first element is an int
@@ -563,6 +569,8 @@ class FileChecker(object):
                         column=column_offset,
                         text=text,
                     )
+
+        del self.processor.physical_line
 
     def process_tokens(self):
         """Process tokens and trigger checks.

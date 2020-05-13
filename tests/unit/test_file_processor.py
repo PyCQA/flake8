@@ -188,7 +188,7 @@ def test_next_line(default_options):
 
 @pytest.mark.parametrize('params, args, expected_kwargs', [
     ({'blank_before': True, 'blank_lines': True},
-        None,
+        {},
         {'blank_before': 0, 'blank_lines': 0}),
     ({'noqa': True, 'fake': True},
         {'fake': 'foo'},
@@ -196,8 +196,8 @@ def test_next_line(default_options):
     ({'blank_before': True, 'blank_lines': True, 'noqa': True},
         {'blank_before': 10, 'blank_lines': 5, 'noqa': True},
         {'blank_before': 10, 'blank_lines': 5, 'noqa': True}),
-    ({}, {'fake': 'foo'}, {'fake': 'foo'}),
-    ({'non-existent': False}, {'fake': 'foo'}, {'fake': 'foo'}),
+    ({'fake': False}, {'fake': 'foo'}, {'fake': 'foo'}),
+    ({'fake': False, 'non-existent': False}, {'fake': 'foo'}, {'fake': 'foo'}),
 ])
 def test_keyword_arguments_for(params, args, expected_kwargs, default_options):
     """Verify the keyword args are generated properly."""
@@ -206,7 +206,9 @@ def test_keyword_arguments_for(params, args, expected_kwargs, default_options):
     ])
     kwargs_for = file_processor.keyword_arguments_for
 
-    assert kwargs_for(params, args) == expected_kwargs
+    for k, v in args.items():
+        setattr(file_processor, k, v)
+    assert kwargs_for(params) == expected_kwargs
 
 
 def test_keyword_arguments_for_does_not_handle_attribute_errors(

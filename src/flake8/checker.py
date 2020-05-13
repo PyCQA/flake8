@@ -424,7 +424,6 @@ class FileChecker(object):
 
     def run_check(self, plugin, **arguments):
         """Run the check in a single plugin."""
-        LOG.debug("Running %r with %r", plugin, arguments)
         try:
             self.processor.keyword_arguments_for(
                 plugin["parameters"], arguments

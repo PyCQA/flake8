@@ -307,9 +307,7 @@ class Manager(object):
 
         for checker in self.checkers:
             filename = checker.display_name
-            checker.results = sorted(
-                final_results[filename], key=lambda tup: (tup[2], tup[2])
-            )
+            checker.results = final_results[filename]
             checker.statistics = final_statistics[filename]
 
     def run_serial(self):

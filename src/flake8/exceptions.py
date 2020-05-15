@@ -18,7 +18,7 @@ class ExecutionError(Flake8Exception):
     """Exception raised during execution of Flake8."""
 
 
-class DuplicatePluginEntryPoint(Flake8Exception):
+class DuplicatePluginEntryPoint(ExecutionError):
     """Exception raised when a plugin entry point is already taken."""
 
     FORMAT = (

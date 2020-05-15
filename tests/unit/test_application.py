@@ -48,6 +48,18 @@ def test_exit_does_raise(result_count, catastrophic, exit_zero, value,
     assert excinfo.value.args[0] is value
 
 
+def test_exit_raises(application):
+    """Verify Application.exit raises SystemExit under configuration failure."""
+    application.catastrophic_failure = True
+    # Note: no application.options set -- configuration issues can lead to
+    # errors before it's assigned.
+
+    with pytest.raises(SystemExit) as excinfo:
+        application.exit()
+
+    assert excinfo.value.args[0] is True
+
+
 def test_warns_on_unknown_formatter_plugin_name(application):
     """Verify we log a warning with an unfound plugin."""
     default = mock.Mock()

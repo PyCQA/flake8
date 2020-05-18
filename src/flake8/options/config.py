@@ -184,9 +184,12 @@ class MergedConfigParser(object):
         #: Our instance of our :class:`~ConfigFileFinder`
         self.config_finder = config_finder
 
-    def _normalize_value(self, option, value):
+    def _normalize_value(self, option, value, parent=None):
+        if parent is None:
+            parent = self.config_finder.local_directory
+
         final_value = option.normalize(
-            value, self.config_finder.local_directory
+            value, parent
         )
         LOG.debug(
             '%r has been normalized to %r for option "%s"',
@@ -196,7 +199,7 @@ class MergedConfigParser(object):
         )
         return final_value
 
-    def _parse_config(self, config_parser):
+    def _parse_config(self, config_parser, parent=None):
         config_dict = {}
         for option_name in config_parser.options(self.program_name):
             if option_name not in self.config_options:
@@ -216,7 +219,7 @@ class MergedConfigParser(object):
             value = method(self.program_name, option_name)
             LOG.debug('Option "%s" returned value: %r', option_name, value)
 
-            final_value = self._normalize_value(option, value)
+            final_value = self._normalize_value(option, value, parent)
             config_dict[option.config_name] = final_value
 
         return config_dict
@@ -262,7 +265,7 @@ class MergedConfigParser(object):
             return {}
 
         LOG.debug("Parsing CLI configuration files.")
-        return self._parse_config(config)
+        return self._parse_config(config, os.path.dirname(config_path))
 
     def merge_user_and_local_config(self):
         """Merge the parsed user and local configuration files.

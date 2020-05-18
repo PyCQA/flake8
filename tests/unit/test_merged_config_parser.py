@@ -31,15 +31,16 @@ def test_parse_cli_config(optmanager, config_finder):
                           action='count')
     parser = config.MergedConfigParser(optmanager, config_finder)
 
-    parsed_config = parser.parse_cli_config(
-        'tests/fixtures/config_files/cli-specified.ini'
-    )
+    config_file = 'tests/fixtures/config_files/cli-specified.ini'
+    parsed_config = parser.parse_cli_config(config_file)
+
+    config_dir = os.path.dirname(config_file)
     assert parsed_config == {
         'ignore': ['E123', 'W234', 'E111'],
         'exclude': [
-            os.path.abspath('foo/'),
-            os.path.abspath('bar/'),
-            os.path.abspath('bogus/'),
+            os.path.abspath(os.path.join(config_dir, 'foo/')),
+            os.path.abspath(os.path.join(config_dir, 'bar/')),
+            os.path.abspath(os.path.join(config_dir, 'bogus/')),
         ],
         'quiet': 1,
     }

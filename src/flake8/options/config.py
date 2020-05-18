@@ -265,7 +265,7 @@ class MergedConfigParser(object):
             return {}
 
         LOG.debug("Parsing CLI configuration files.")
-        return self._parse_config(config)
+        return self._parse_config(config, os.path.dirname(config_path))
 
     def merge_user_and_local_config(self):
         """Merge the parsed user and local configuration files.

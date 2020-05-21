@@ -156,6 +156,7 @@ def register_default_options(option_manager):
         default="",
         parse_from_config=True,
         comma_separated_list=True,
+        normalize_paths=True,
         help="Comma-separated list of files or directories to add to the list"
         " of excluded ones.",
     )

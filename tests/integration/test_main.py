@@ -114,7 +114,7 @@ def test_extend_exclude(tmpdir, capsys):
         tmpdir.mkdir(d).join('t.py').write('import os\nimport sys\n')
 
     with tmpdir.as_cwd():
-        _call_main(['--extend-exclude=vendor,legacy'], retv=1)
+        _call_main(['--extend-exclude=vendor,legacy/'], retv=1)
 
     out, err = capsys.readouterr()
     expected_out = '''\

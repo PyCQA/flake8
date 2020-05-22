@@ -188,9 +188,7 @@ class MergedConfigParser(object):
         if parent is None:
             parent = self.config_finder.local_directory
 
-        final_value = option.normalize(
-            value, parent
-        )
+        final_value = option.normalize(value, parent)
         LOG.debug(
             '%r has been normalized to %r for option "%s"',
             value,

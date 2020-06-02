@@ -162,6 +162,17 @@ def test_tokenization_error_but_not_syntax_error(tmpdir, capsys):
     assert err == ''
 
 
+def test_tokenization_error_is_a_syntax_error(tmpdir, capsys):
+    """Test when tokenize raises a SyntaxError."""
+    with tmpdir.as_cwd():
+        tmpdir.join('t.py').write('if True:\n    pass\n pass\n')
+        _call_main(['t.py'], retv=1)
+
+    out, err = capsys.readouterr()
+    assert out == 't.py:1:1: E902 IndentationError: unindent does not match any outer indentation level\n'  # noqa: E501
+    assert err == ''
+
+
 def test_bug_report_successful(capsys):
     """Test that --bug-report does not crash."""
     _call_main(['--bug-report'])

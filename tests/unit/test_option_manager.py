@@ -373,3 +373,9 @@ def test_parse_invalid_jobs_argument(optmanager, capsys):
         "'foo' must be 'auto' or an integer.\n"
     )
     assert expected in output
+
+
+def test_jobs_argument_str():
+    """Test that JobsArgument has a correct __str__."""
+    assert str(JobsArgument("auto")) == "auto"
+    assert str(JobsArgument("123")) == "123"

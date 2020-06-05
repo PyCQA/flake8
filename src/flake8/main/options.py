@@ -82,6 +82,10 @@ class JobsArgument:
                 "{!r} must be 'auto' or an integer.".format(arg),
             )
 
+    def __str__(self):
+        """Format our JobsArgument class."""
+        return "auto" if self.is_auto else str(self.n_jobs)
+
 
 def register_default_options(option_manager):
     """Register the default options on our OptionManager.

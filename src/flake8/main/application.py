@@ -183,6 +183,21 @@ class Application(object):
             self.option_manager, config_finder, argv,
         )
 
+        # NOTE(plinss): post-process disable-noqa
+        # allow bool or comma_separated_list
+        if self.options.disable_noqa is None:
+            # NOTE(plinss): option is present without value, treat as flag
+            self.options.disable_noqa = True
+        elif isinstance(self.options.disable_noqa, utils.string_types):
+            if self.options.disable_noqa.lower() == "true":
+                self.options.disable_noqa = True
+            elif self.options.disable_noqa.lower() == "false":
+                self.options.disable_noqa = False
+            else:
+                self.options.disable_noqa = utils.parse_comma_separated_list(
+                    self.options.disable_noqa
+                )
+
         self.running_against_diff = self.options.diff
         if self.running_against_diff:
             self.parsed_diff = utils.parse_unified_diff()

@@ -64,10 +64,10 @@ class Violation(_Violation):
     """Class representing a violation reported by Flake8."""
 
     def is_inline_ignored(self, disable_noqa):
-        # type: (bool) -> bool
+        # type: (Union[bool, List[str]]) -> bool
         """Determine if a comment has been added to ignore this line.
 
-        :param bool disable_noqa:
+        :param Uniol[bool, List[str]] disable_noqa:
             Whether or not users have provided ``--disable-noqa``.
         :returns:
             True if error is ignored in-line, False otherwise.
@@ -76,7 +76,13 @@ class Violation(_Violation):
         """
         physical_line = self.physical_line
         # TODO(sigmavirus24): Determine how to handle stdin with linecache
-        if disable_noqa:
+        if (disable_noqa is True) or (
+            isinstance(disable_noqa, list)
+            and (
+                (self.code in disable_noqa)
+                or (self.code.startswith(tuple(disable_noqa)))
+            )
+        ):
             return False
 
         if physical_line is None:

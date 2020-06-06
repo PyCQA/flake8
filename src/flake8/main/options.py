@@ -269,7 +269,8 @@ def register_default_options(option_manager):
         "--disable-noqa",
         default=False,
         parse_from_config=True,
-        action="store_true",
+        action="store",
+        nargs="?",
         help='Disable the effect of "# noqa". This will report errors on '
         'lines with "# noqa" at the end.',
     )

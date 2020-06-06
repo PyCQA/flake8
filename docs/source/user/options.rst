@@ -621,11 +621,16 @@ Options and their Descriptions
     file. This option allows you to see all the warnings, errors, etc.
     reported.
 
+    In addition to a bare flag, this option also accepts a boolean value
+    or a comma-separated list of codes to disable ``# NOQA`` for.
+
     Command-line example:
 
     .. prompt:: bash
 
         flake8 --disable-noqa dir/
+        flake8 --disable-noqa=true dir/
+        flake8 --disable-noqa=E432,E5,W dir/
 
     This **can** be specified in config files.
 
@@ -635,6 +640,10 @@ Options and their Descriptions
 
         disable_noqa = True
         disable-noqa = True
+        disable_noqa =
+            E432,
+            E5,
+            W
 
 
 .. option:: --show-source

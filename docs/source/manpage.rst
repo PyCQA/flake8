@@ -64,6 +64,11 @@ All options available as of Flake8 3.1.0::
                           E,F,W,C90)
     --disable-noqa        Disable the effect of "# noqa". This will report
                           errors on lines with "# noqa" at the end.
+                          May be a bare flag, a boolean value, or a
+                          comma-separated list of errors to disable "# noqa"
+                          for.
+                          A bare flag or a boolean true will disable all
+                          "# noqa"s.
     --show-source         Show the source generate each error or warning.
     --statistics          Count errors and warnings.
     --enable-extensions=ENABLE_EXTENSIONS

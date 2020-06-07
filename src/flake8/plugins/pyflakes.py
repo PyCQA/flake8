@@ -124,7 +124,7 @@ class FlakesChecker(pyflakes.checker.Checker):
             default=False,
             action="store_true",
             parse_from_config=True,
-            help="check syntax of the doctests",
+            help="also check syntax of the doctests",
         )
         parser.add_option(
             "--include-in-doctest",

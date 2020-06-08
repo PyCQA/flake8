@@ -1,0 +1,29 @@
+3.8.3 -- 2020-06-08
+-------------------
+
+You can view the `3.8.3 milestone`_ on GitLab for more details.
+
+Bugs Fixed
+~~~~~~~~~~
+
+- Also catch ``SyntaxError`` when tokenizing (See also `GitLab!433`_,
+  `GitLab#662`_)
+
+- Fix ``--jobs`` default display in ``flake8 --help`` (See also `GitLab!434`_,
+  `GitLab#665`_)
+
+.. all links
+.. _3.8.3 milestone:
+    https://gitlab.com/pycqa/flake8/-/milestones/36
+
+.. issue links
+.. _GitLab#662:
+    https://gitlab.com/pycqa/flake8/issues/662
+.. _GitLab#665:
+    https://gitlab.com/pycqa/flake8/issues/665
+
+.. merge request links
+.. _GitLab!433:
+    https://gitlab.com/pycqa/flake8/merge_requests/433
+.. _GitLab!434:
+    https://gitlab.com/pycqa/flake8/merge_requests/434

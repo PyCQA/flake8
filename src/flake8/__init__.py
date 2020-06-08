@@ -18,7 +18,7 @@ if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
 LOG = logging.getLogger(__name__)
 LOG.addHandler(logging.NullHandler())
 
-__version__ = "3.8.2"
+__version__ = "3.8.3"
 __version_info__ = tuple(
     int(i) for i in __version__.split(".") if i.isdigit()
 )

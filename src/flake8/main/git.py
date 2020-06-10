@@ -152,6 +152,7 @@ def copy_file_to(destination_directory, filepath, contents):
     temporary_filepath = os.path.join(temporary_directory, filename)
     with open(temporary_filepath, "wb") as fd:
         fd.write(contents)
+    shutil.copystat(filepath, temporary_filepath)
     return temporary_filepath
 
 

@@ -21,7 +21,7 @@ def handle_option_data(data):
 
 
 def handle_toml_data(config, section, data):
-    # type: (configparse.RawConfgParser, Any, Any) -> None
+    # type: (configparser.RawConfigParser, Any, Any) -> None
     if isinstance(data, dict):
         for option_or_section, nested_data in data.items():
             if isinstance(nested_data, dict):
@@ -42,7 +42,7 @@ def handle_toml_data(config, section, data):
 
 
 def toml_shim(config, toml_file):
-    # type: (configparse.RawConfgParser, str) -> List[str]
+    # type: (configparser.RawConfigParser, str) -> List[str]
     """Reads a toml version of flake8's configuration file.
 
     This method only supports flake8 nested configs of max depth 2.

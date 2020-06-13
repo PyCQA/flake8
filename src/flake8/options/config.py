@@ -3,13 +3,71 @@ import collections
 import configparser
 import logging
 import os.path
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Any
 
 from flake8 import utils
 
 LOG = logging.getLogger(__name__)
 
 __all__ = ("ConfigFileFinder", "MergedConfigParser")
+
+
+def handle_option_data(data):
+    # type: (Any) -> str
+    if isinstance(data, list):
+        return '\n' + '\n'.join([str(item) + ',' for item in data])[:-1]
+    else:
+        return str(data)
+
+
+def handle_toml_data(config, section, data):
+    # type: (configparser.RawConfigParser, Any, Any) -> None
+    if isinstance(data, dict):
+        for option_or_section, nested_data in data.items():
+            if isinstance(nested_data, dict):
+                new_section = ":".join([section, option_or_section])
+                handle_toml_data(config, new_section, nested_data)
+            else:
+                # print(f"[{section}] {option_or_section}={nested_data}")
+                if not config.has_section(section):
+                    config.add_section(section)
+                config.set(
+                    section, option_or_section, handle_option_data(nested_data)
+                )
+    else:
+        LOG.debug(
+            'Encountered un-ini like data when parsing toml file: %s',
+            data
+        )
+
+
+def toml_shim(config, toml_file):
+    # type: (configparser.RawConfigParser, str) -> List[str]
+    """Reads a toml version of flake8's configuration file.
+
+    This method only supports flake8 nested configs of max depth 2.
+
+    """
+    try:
+        import toml
+        from toml.decoder import TomlDecodeError
+    except ImportError:
+        LOG.info(
+            'Found %s but could not parse since toml is not installed',
+            toml_file
+        )
+        return ['']
+
+    try:
+        toml_data = toml.load(toml_file)
+    except (ValueError, TomlDecodeError):
+        return ['']
+
+    for section, data in toml_data.items():
+        if isinstance(section, str):
+            handle_toml_data(config, section, data)
+
+    return [toml_file]
 
 
 class ConfigFileFinder(object):
@@ -30,7 +88,7 @@ class ConfigFileFinder(object):
         :param list extra_config_files:
             Extra configuration files specified by the user to read.
         :param str config_file:
-            Configuration file override to only read configuraiton from.
+            Configuration file override to only read configuration from.
         :param bool ignore_config_files:
             Determine whether to ignore configuration files or not.
         """
@@ -50,7 +108,9 @@ class ConfigFileFinder(object):
         self.user_config_file = self._user_config_file(program_name)
 
         # List of filenames to find in the local/project directory
-        self.project_filenames = ("setup.cfg", "tox.ini", "." + program_name)
+        self.project_filenames = (
+            "setup.cfg", "tox.ini", "pyproject.toml", "." + program_name
+        )
 
         self.local_directory = os.path.abspath(os.curdir)
 
@@ -72,11 +132,17 @@ class ConfigFileFinder(object):
     def _read_config(*files):
         # type: (*str) -> Tuple[configparser.RawConfigParser, List[str]]
         config = configparser.RawConfigParser()
-
         found_files = []
+        LOG.debug(
+            "List of filenames found: %s",
+            files
+        )
         for filename in files:
             try:
-                found_files.extend(config.read(filename))
+                if 'toml' in filename:
+                    found_files.extend(toml_shim(config, filename))
+                else:
+                    found_files.extend(config.read(filename))
             except UnicodeDecodeError:
                 LOG.exception(
                     "There was an error decoding a config file."

@@ -282,6 +282,13 @@ def register_default_options(option_manager):
         parse_from_config=True,
         help="Show the source generate each error or warning.",
     )
+    add_option(
+        "--no-show-source",
+        action="store_false",
+        dest="show_source",
+        parse_from_config=False,
+        help="Negate --show-source",
+    )
 
     add_option(
         "--statistics",

@@ -108,6 +108,31 @@ t.py:2:1: F401 'sys' imported but unused
     assert err == ''
 
 
+def test_show_source_option(tmpdir, capsys):
+    """Ensure that --show-source and --no-show-source work."""
+    with tmpdir.as_cwd():
+        tmpdir.join('tox.ini').write('[flake8]\nshow_source = true\n')
+        tmpdir.join('t.py').write('import os\n')
+        _call_main(['t.py'], retv=1)
+
+    out, err = capsys.readouterr()
+    assert out == '''\
+t.py:1:1: F401 'os' imported but unused
+import os
+^
+'''
+    assert err == ''
+
+    with tmpdir.as_cwd():
+        _call_main(['t.py', '--no-show-source'], retv=1)
+
+    out, err = capsys.readouterr()
+    assert out == '''\
+t.py:1:1: F401 'os' imported but unused
+'''
+    assert err == ''
+
+
 def test_extend_exclude(tmpdir, capsys):
     """Ensure that `flake8 --extend-exclude` works."""
     for d in ['project', 'vendor', 'legacy', '.git', '.tox', '.hg']:

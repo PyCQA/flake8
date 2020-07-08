@@ -44,7 +44,7 @@ The user configuration file is expected to be stored somewhere in the user's
 "home" directory.
 
 - On Windows the "home" directory will be something like
-  ``C:\\Users\sigmavirus24``, a.k.a, ``~\``.
+  ``C:\Users\sigmavirus24``, a.k.a, ``~\``.
 
 - On Linux and other Unix like systems (including OS X) we will look in
   ``~/``.

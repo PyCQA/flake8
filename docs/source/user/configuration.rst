@@ -288,7 +288,7 @@ the ``local-plugins`` section of your config:
     paths =
       ./path/to
 
-Relative paths will be interpreted relative to the config file. Multiple paths
+Relative paths will be interpreted relative to all config files. Multiple paths
 can be listed (comma separated just like ``exclude``) as needed. If your local
 plugins have any dependencies, it's up to you to ensure they are installed in
 whatever Python environment |Flake8| runs in.

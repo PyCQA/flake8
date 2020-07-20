@@ -100,6 +100,7 @@ def mock_file_checker_with_plugin(plugin_target):
     entry_point = mock.Mock(spec=['load'])
     entry_point.name = plugin_target.name
     entry_point.load.return_value = plugin_target
+    entry_point.value = 'mocked:value'
 
     # Load the checker plugins using the entry point mock
     with mock.patch.object(

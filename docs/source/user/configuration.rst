@@ -8,13 +8,13 @@ Once you have learned how to :ref:`invoke <invocation>` |Flake8|, you will soon
 want to learn how to configure it so you do not have to specify the same
 options every time you use it.
 
-This section will show you how to make
+This section will show you how to make...
 
 .. prompt:: bash
 
     flake8
 
-Remember that you want to specify certain options without writing
+\.\.\.remember that you want to specify certain options without writing...
 
 .. prompt:: bash
 

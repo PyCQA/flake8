@@ -82,7 +82,7 @@ Note specifically these lines:
 We tell setuptools to register our entry point ``X`` inside the specific
 grouping of entry-points that flake8 should look in.
 
-|Flake8| presently looks at three groups:
+|Flake8| presently looks at two groups:
 
 - ``flake8.extension``
 

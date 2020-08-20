@@ -141,7 +141,7 @@ In our case, if we wanted to, we could also do
         dist
     max-complexity = 10
 
-This would allow us to add comments for why we're excluding items, e.g.,
+This allows us to add comments for why we're excluding items, e.g.
 
 .. code-block:: ini
 
@@ -161,6 +161,26 @@ This would allow us to add comments for why we're excluding items, e.g.,
         # This contains builds of flake8 that we don't want to check
         dist
     max-complexity = 10
+
+.. note::
+
+    Following the recommended settings for `Python's ``configparser`` <https://docs.python.org/3/library/configparser.html#customizing-parser-behaviour>`__, |Flake8| does not support inline comments for any of the keys. So while this is fine:
+
+    .. code-block:: ini
+
+        [flake8]
+        per-file-ignores =
+            # imported but unused
+            __init__.py: F401
+
+    this is not:
+
+    .. code-block:: ini
+
+        [flake8]
+        per-file-ignores =
+            __init__.py: F401 # imported but unused
+
 
 .. note::
 

@@ -164,7 +164,10 @@ This allows us to add comments for why we're excluding items, e.g.
 
 .. note::
 
-    Following the recommended settings for `Python's ``configparser`` <https://docs.python.org/3/library/configparser.html#customizing-parser-behaviour>`__, |Flake8| does not support inline comments for any of the keys. So while this is fine:
+    Following the recommended settings for
+    `Python's configparser <https://docs.python.org/3/library/configparser.html#customizing-parser-behaviour>`_,
+    |Flake8| does not support inline comments for any of the keys. So while
+    this is fine:
 
     .. code-block:: ini
 

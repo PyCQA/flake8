@@ -41,7 +41,8 @@ def get_style_guide(**kwargs):
     application.find_plugins(config_finder)
     application.register_plugin_options()
     application.parse_configuration_and_cli(
-        config_finder, remaining_args,
+        config_finder,
+        remaining_args,
     )
     # We basically want application.initialize to be called but with these
     # options set instead before we make our formatter, notifier, internal

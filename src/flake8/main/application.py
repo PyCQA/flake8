@@ -180,7 +180,9 @@ class Application(object):
             Command-line arguments passed in directly.
         """
         self.options, self.args = aggregator.aggregate_options(
-            self.option_manager, config_finder, argv,
+            self.option_manager,
+            config_finder,
+            argv,
         )
 
         self.running_against_diff = self.options.diff
@@ -328,7 +330,8 @@ class Application(object):
         self.find_plugins(config_finder)
         self.register_plugin_options()
         self.parse_configuration_and_cli(
-            config_finder, remaining_args,
+            config_finder,
+            remaining_args,
         )
         self.make_formatter()
         self.make_guide()

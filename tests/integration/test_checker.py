@@ -246,3 +246,38 @@ def test_report_order(results, expected_order):
     with mock.patch.object(manager, '_handle_results', handler):
         assert manager.report() == (len(results), len(results))
         handler.assert_called_once_with('placeholder', expected_results)
+
+
+def test_acquire_when_multiprocessing_pool_can_initialize():
+    """Verify successful importing of hardware semaphore support.
+
+    Mock the behaviour of a platform that has a hardware sem_open
+    implementation, and then attempt to initialize a multiprocessing
+    Pool object.
+
+    This simulates the behaviour on most common platforms.
+    """
+    with mock.patch("multiprocessing.Pool") as pool:
+        result = checker._try_initialize_processpool(2)
+
+    pool.assert_called_once_with(2, checker._pool_init)
+    assert result is pool.return_value
+
+
+def test_acquire_when_multiprocessing_pool_can_not_initialize():
+    """Verify unsuccessful importing of hardware semaphore support.
+
+    Mock the behaviour of a platform that has not got a hardware sem_open
+    implementation, and then attempt to initialize a multiprocessing
+    Pool object.
+
+    This scenario will occur on platforms such as Termux and on some
+    more exotic devices.
+
+    https://github.com/python/cpython/blob/4e02981de0952f54bf87967f8e10d169d6946b40/Lib/multiprocessing/synchronize.py#L30-L33
+    """
+    with mock.patch("multiprocessing.Pool", side_effect=ImportError) as pool:
+        result = checker._try_initialize_processpool(2)
+
+    pool.assert_called_once_with(2, checker._pool_init)
+    assert result is None

@@ -223,7 +223,7 @@ Options and their Descriptions
 
     Provide a comma-separated list of glob patterns to exclude from checks.
 
-    This defaults to: ``.svn,CVS,.bzr,.hg,.git,__pycache__,.tox``
+    This defaults to: ``.svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg``
 
     Example patterns:
 
@@ -532,7 +532,7 @@ Options and their Descriptions
             'http://...'
         )
 
-    This defaults to: 79
+    This defaults to: ``79``
 
     Command-line example:
 
@@ -580,7 +580,7 @@ Options and their Descriptions
     that start with that string. For example, you can use ``E``, ``E4``,
     ``E43``, and ``E431``.
 
-    This defaults to: E,F,W,C
+    This defaults to: ``E,F,W,C90``
 
     Command-line example:
 

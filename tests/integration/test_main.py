@@ -212,6 +212,37 @@ x = """
     assert out == err == ''
 
 
+def test_physical_line_file_not_ending_in_newline(tmpdir, capsys):
+    """See https://github.com/PyCQA/pycodestyle/issues/960."""
+    t_py_src = 'def f():\n\tpass'
+
+    with tmpdir.as_cwd():
+        tmpdir.join('t.py').write(t_py_src)
+        _call_main(['t.py'], retv=1)
+
+    out, err = capsys.readouterr()
+    assert out == '''\
+t.py:2:1: W191 indentation contains tabs
+t.py:2:6: W292 no newline at end of file
+'''
+
+
+@pytest.mark.xfail(strict=True)  # currently awaiting fix in pycodestyle
+def test_physical_line_file_not_ending_in_newline_trailing_ws(tmpdir, capsys):
+    """See https://github.com/PyCQA/pycodestyle/issues/960."""
+    t_py_src = 'x = 1   '
+
+    with tmpdir.as_cwd():
+        tmpdir.join('t.py').write(t_py_src)
+        _call_main(['t.py'], retv=1)
+
+    out, err = capsys.readouterr()
+    assert out == '''\
+t.py:1:6: W291 trailing whitespace
+t.py:1:10: W292 no newline at end of file
+'''
+
+
 def test_obtaining_args_from_sys_argv_when_not_explicity_provided(capsys):
     """Test that arguments are obtained from 'sys.argv'."""
     with mock.patch('sys.argv', ['flake8', '--help']):

@@ -564,9 +564,10 @@ class FileChecker(object):
         parens = 0
         statistics = self.statistics
         file_processor = self.processor
+        prev_physical = ""
         for token in file_processor.generate_tokens():
             statistics["tokens"] += 1
-            self.check_physical_eol(token)
+            self.check_physical_eol(token, prev_physical)
             token_type, text = token[0:2]
             processor.log_token(LOG, token)
             if token_type == tokenize.OP:
@@ -574,6 +575,7 @@ class FileChecker(object):
             elif parens == 0:
                 if processor.token_is_newline(token):
                     self.handle_newline(token_type)
+            prev_physical = token[4]
 
         if file_processor.tokens:
             # If any tokens are left over, process them
@@ -609,11 +611,18 @@ class FileChecker(object):
         else:
             self.run_logical_checks()
 
-    def check_physical_eol(self, token):
+    def check_physical_eol(self, token, prev_physical):
+        # type: (processor._Token, str) -> None
         """Run physical checks if and only if it is at the end of the line."""
+        # a newline token ends a single physical line.
         if processor.is_eol_token(token):
-            # Obviously, a newline token ends a single physical line.
-            self.run_physical_checks(token[4])
+            # if the file does not end with a newline, the NEWLINE
+            # token is inserted by the parser, but it does not contain
+            # the previous physical line in `token[4]`
+            if token[4] == "":
+                self.run_physical_checks(prev_physical)
+            else:
+                self.run_physical_checks(token[4])
         elif processor.is_multiline_string(token):
             # Less obviously, a string that contains newlines is a
             # multiline string, either triple-quoted or with internal

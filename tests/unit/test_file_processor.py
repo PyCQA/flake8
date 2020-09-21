@@ -228,7 +228,7 @@ def test_keyword_arguments_for_does_not_handle_attribute_errors(
     ('line 1\n\nline 2\n', ['line 1', '', 'line 2']),
 ])
 def test_split_line(unsplit_line, expected_lines, default_options):
-    """Verify the token line spliting."""
+    """Verify the token line splitting."""
     file_processor = processor.FileProcessor('-', default_options, lines=[
         'Line 1',
     ])

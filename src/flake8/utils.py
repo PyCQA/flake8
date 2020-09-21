@@ -79,7 +79,7 @@ def _tokenize_files_to_codes_mapping(value):
 
 def parse_files_to_codes_mapping(value_):  # noqa: C901
     # type: (Union[Sequence[str], str]) -> List[Tuple[str, List[str]]]
-    """Parse a files-to-codes maping.
+    """Parse a files-to-codes mapping.
 
     A files-to-codes mapping a sequence of values specified as
     `filenames list:codes list ...`.  Each of the lists may be separated by

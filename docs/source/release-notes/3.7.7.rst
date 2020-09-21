@@ -6,8 +6,8 @@ You can view the `3.7.7 milestone`_ on GitLab for more details.
 Bugs Fixed
 ~~~~~~~~~~
 
-- Fix crahes in plugins causing ``flake8`` to hang while unpickling errors (See
-  also `GitLab!308`_, `GitLab#505`_)
+- Fix crashes in plugins causing ``flake8`` to hang while unpickling errors
+  (See also `GitLab!308`_, `GitLab#505`_)
 
 
 .. all links

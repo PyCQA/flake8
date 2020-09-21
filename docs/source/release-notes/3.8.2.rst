@@ -6,7 +6,7 @@ You can view the `3.8.2 milestone`_ on GitLab for more details.
 Bugs Fixed
 ~~~~~~~~~~
 
-- Improve performance by eliminating unncessary sort (See also `GitLab!429`_)
+- Improve performance by eliminating unnecessary sort (See also `GitLab!429`_)
 
 - Improve messaging of ``--jobs`` argument by utilizing ``argparse`` (See also
   `GitLab!428`_, `GitLab#567`_)

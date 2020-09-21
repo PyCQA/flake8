@@ -21,7 +21,7 @@ def hook(ui, repo, **kwargs):
     around Hooks: https://www.mercurial-scm.org/wiki/Hook.
 
     We avoid using the ``ui`` attribute because it can cause issues with
-    the GPL license tha Mercurial is under. We don't import it, but we
+    the GPL license that Mercurial is under. We don't import it, but we
     avoid using it all the same.
     """
     from flake8.main import application

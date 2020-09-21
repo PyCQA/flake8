@@ -12,7 +12,7 @@ from flake8.main import mercurial
 # NOTE(sigmavirus24): In the future, we may allow for VCS hooks to be defined
 # as plugins, e.g., adding a flake8.vcs entry-point. In that case, this
 # dictionary should disappear, and this module might contain more code for
-# managing those bits (in conjuntion with flake8.plugins.manager).
+# managing those bits (in conjunction with flake8.plugins.manager).
 _INSTALLERS = {"git": git.install, "mercurial": mercurial.install}
 
 

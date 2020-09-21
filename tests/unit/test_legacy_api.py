@@ -42,7 +42,7 @@ def test_get_style_guide():
 
 
 def test_styleguide_options():
-    """Show tha we proxy the StyleGuide.options attribute."""
+    """Show that we proxy the StyleGuide.options attribute."""
     app = mock.Mock()
     app.options = 'options'
     style_guide = api.StyleGuide(app)
@@ -50,7 +50,7 @@ def test_styleguide_options():
 
 
 def test_styleguide_paths():
-    """Show tha we proxy the StyleGuide.paths attribute."""
+    """Show that we proxy the StyleGuide.paths attribute."""
     app = mock.Mock()
     app.paths = 'paths'
     style_guide = api.StyleGuide(app)

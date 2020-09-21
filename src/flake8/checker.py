@@ -109,7 +109,7 @@ class Manager(object):
         # First we walk through all of our error cases:
         # - multiprocessing library is not present
         # - we're running on windows in which case we know we have significant
-        #   implemenation issues
+        #   implementation issues
         # - the user provided stdin and that's not something we can handle
         #   well
         # - we're processing a diff, which again does not work well with

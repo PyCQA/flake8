@@ -196,7 +196,7 @@ Now let's select all ``E`` class violations:
     example.py:4:9: E131 continuation line unaligned for hanging indent
     example.py:5:9: E121 continuation line under-indented for hanging indent
 
-Suddenly we now have far more erors that are reported to us. Using
+Suddenly we now have far more errors that are reported to us. Using
 ``--select`` alone will override the default ``--ignore`` list. In these cases,
 the user is telling us that they want all ``E`` violations and so we ignore
 our list of violations that we ignore by default.

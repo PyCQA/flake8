@@ -30,7 +30,7 @@ class ConfigFileFinder(object):
         :param list extra_config_files:
             Extra configuration files specified by the user to read.
         :param str config_file:
-            Configuration file override to only read configuraiton from.
+            Configuration file override to only read configuration from.
         :param bool ignore_config_files:
             Determine whether to ignore configuration files or not.
         """

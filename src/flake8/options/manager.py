@@ -132,7 +132,7 @@ class Option(object):
             Number of arguments to parse for this option.
         :param const:
             Constant value to store on a common destination. Usually used in
-            conjuntion with ``action="store_const"``.
+            conjunction with ``action="store_const"``.
         :param iterable choices:
             Possible values for the option.
         :param str help:

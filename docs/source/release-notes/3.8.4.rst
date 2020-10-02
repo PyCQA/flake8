@@ -1,0 +1,23 @@
+3.8.4 -- 2020-10-02
+-------------------
+
+You can view the `3.8.4 milestone`_ on GitLab for more details.
+
+Bugs Fixed
+~~~~~~~~~~
+
+- Fix multiprocessing errors on platforms without ``sem_open`` syscall.  (See
+  also `GitLab!448`_)
+
+- Fix skipping of physical checks on the last line of a file which does not
+  end in a newline (See also `GitLab!451`_)
+
+.. all links
+.. _3.8.4 milestone:
+    https://gitlab.com/pycqa/flake8/-/milestones/37
+
+.. merge request links
+.. _GitLab!448:
+    https://gitlab.com/pycqa/flake8/merge_requests/448
+.. _GitLab!451:
+    https://gitlab.com/pycqa/flake8/merge_requests/451

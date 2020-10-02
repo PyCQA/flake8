@@ -28,11 +28,6 @@ python2:
   stage: test
   script: tox -e py27
 
-python34:
-  image: python:3.4
-  stage: test
-  script: tox -e py34
-
 python35:
   image: python:3.5
   stage: test

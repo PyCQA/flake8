@@ -1,3 +1,1 @@
-# https://github.com/pypa/virtualenv/issues/1963
-virtualenv!=20.0.32;python_version=="3.4"
 tox

@@ -973,7 +973,7 @@ Options and their Descriptions
 
     .. prompt:: bash
 
-        flake8 --exclude-in-doctest=dir/subdir/file.py,dir/other/file.py dir/
+        flake8 --exclude-from-doctest=dir/subdir/file.py,dir/other/file.py dir/
 
     This **can** be specified in config files.
 
@@ -981,10 +981,10 @@ Options and their Descriptions
 
     .. code-block:: ini
 
-        exclude-in-doctest =
+        exclude-from-doctest =
             dir/subdir/file.py,
             dir/other/file.py
-        exclude_in_doctest =
+        exclude_from_doctest =
             dir/subdir/file.py,
             dir/other/file.py
 

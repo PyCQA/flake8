@@ -795,15 +795,6 @@ Options and their Descriptions
         flake8 --output-file=output.txt dir/
         flake8 -vv --output-file=output.txt dir/
 
-    This **can** be specified in config files.
-
-    Example config file usage:
-
-    .. code-block:: ini
-
-        output-file = output.txt
-        output_file = output.txt
-
 
 .. option:: --tee
 

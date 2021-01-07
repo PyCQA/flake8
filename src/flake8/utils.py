@@ -195,7 +195,8 @@ def _stdin_get_value_py3():  # type: () -> str
     fd = io.BytesIO(stdin_value)
     try:
         coding, _ = tokenize.detect_encoding(fd.readline)
-        return stdin_value.decode(coding)
+        fd.seek(0)
+        return io.TextIOWrapper(fd, coding).read()
     except (LookupError, SyntaxError, UnicodeError):
         return stdin_value.decode("utf-8")
 

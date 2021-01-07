@@ -1,5 +1,6 @@
 """Tests for Flake8's legacy API."""
 import argparse
+import os.path
 
 import mock
 import pytest
@@ -91,12 +92,13 @@ def test_styleguide_excluded_with_parent():
     """
     app = mock.Mock()
     file_checker_manager = app.file_checker_manager = mock.Mock()
+    file_checker_manager.is_path_excluded.return_value = False
     style_guide = api.StyleGuide(app)
 
     style_guide.excluded('file.py', 'parent')
-    file_checker_manager.is_path_excluded.call_args == [
-        ('file.py',),
-        ('parent/file.py',),
+    assert file_checker_manager.is_path_excluded.call_args_list == [
+        mock.call('file.py'),
+        mock.call(os.path.join('parent', 'file.py')),
     ]
 
 

@@ -1,6 +1,8 @@
 """Tests for flake8's utils module."""
+import io
 import logging
 import os
+import sys
 
 import mock
 import pytest
@@ -304,3 +306,11 @@ def test_matches_filename_for_excluding_dotfiles():
     logger = logging.Logger(__name__)
     assert not utils.matches_filename('.', ('.*',), '', logger)
     assert not utils.matches_filename('..', ('.*',), '', logger)
+
+
+@pytest.mark.xfail(sys.version_info < (3,), reason='py3+ only behaviour')
+def test_stdin_get_value_crlf():
+    """Ensure that stdin is normalized from crlf to lf."""
+    stdin = io.TextIOWrapper(io.BytesIO(b'1\r\n2\r\n'), 'UTF-8')
+    with mock.patch.object(sys, 'stdin', stdin):
+        assert utils.stdin_get_value.__wrapped__() == '1\n2\n'

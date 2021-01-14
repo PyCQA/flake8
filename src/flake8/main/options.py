@@ -299,6 +299,21 @@ def register_default_options(option_manager):
 
     # Flake8 options
     add_option(
+        "--cache",
+        default=False,
+        parse_from_config=False,
+        action="store_true",
+        help="Cache flake8 results on consecutive runs.",
+    )
+
+    add_option(
+        "--cache-location",
+        default=".cache/flake8",
+        parse_from_config=True,
+        help="Location to store cached results.",
+    )
+
+    add_option(
         "--enable-extensions",
         default="",
         parse_from_config=True,

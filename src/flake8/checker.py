@@ -14,6 +14,7 @@ except ImportError:
     multiprocessing = None  # type: ignore
 
 from flake8 import defaults
+from flake8 import cacher
 from flake8 import exceptions
 from flake8 import processor
 from flake8 import utils
@@ -360,6 +361,7 @@ class FileChecker(object):
         self.options = options
         self.filename = filename
         self.checks = checks
+        self.cacher = cacher.Cacher(filename, self.options.cache_location)
         # fmt: off
         self.results = []  # type: List[Tuple[str, int, int, str, Optional[str]]]  # noqa: E501
         # fmt: on
@@ -583,6 +585,22 @@ class FileChecker(object):
             self.run_logical_checks()
 
     def run_checks(self):
+        """cached wrapper of self.run_checks"""
+        # handle both cases where cache is enabled/disabled or invalid
+        cache_available = False
+        if self.options.cache:
+            saved = self.cacher.get()
+            if saved is not None:
+                self.filename, self.results, self.statistics = saved
+                cache_available = True
+
+        if cache_available is False:
+            result = self._run_checks()
+            if self.options.cache:
+                self.cacher.save(result)
+        return self.filename, self.results, self.statistics
+
+    def _run_checks(self):
         """Run checks against the file."""
         try:
             self.process_tokens()

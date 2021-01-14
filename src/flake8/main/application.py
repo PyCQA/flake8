@@ -3,6 +3,7 @@ from __future__ import print_function
 
 import argparse
 import logging
+import os
 import sys
 import time
 from typing import Dict, List, Optional, Set, Tuple
@@ -336,6 +337,9 @@ class Application(object):
         self.make_formatter()
         self.make_guide()
         self.make_file_checker_manager()
+        if self.options.cache:
+            if not os.path.exists(self.options.cache_location):
+                os.makedirs(self.options.cache_location)
 
     def report(self):
         """Report errors, statistics, and benchmarks."""

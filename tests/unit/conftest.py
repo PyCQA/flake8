@@ -12,6 +12,7 @@ def options_from(**kwargs):
     kwargs.setdefault('verbose', False)
     kwargs.setdefault('stdin_display_name', 'stdin')
     kwargs.setdefault('disable_noqa', False)
+    kwargs.setdefault('cache_location', ".cache/flake8")
     return argparse.Namespace(**kwargs)
 
 

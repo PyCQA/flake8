@@ -13,8 +13,8 @@ try:
 except ImportError:
     multiprocessing = None  # type: ignore
 
-from flake8 import defaults
 from flake8 import cacher
+from flake8 import defaults
 from flake8 import exceptions
 from flake8 import processor
 from flake8 import utils
@@ -585,7 +585,7 @@ class FileChecker(object):
             self.run_logical_checks()
 
     def run_checks(self):
-        """cached wrapper of self.run_checks"""
+        """Cache wrapper of self.run_checks."""
         # handle both cases where cache is enabled/disabled or invalid
         cache_available = False
         if self.options.cache:

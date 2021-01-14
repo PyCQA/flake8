@@ -1,9 +1,17 @@
 """Unit tests for the FileChecker class."""
+import argparse
+
 import mock
 import pytest
 
 import flake8
 from flake8 import checker
+
+
+def options(**kwargs):
+    """Generate argparse.Namespace for our Application."""
+    kwargs.setdefault('cache_location', ".cache/flake8")
+    return argparse.Namespace(**kwargs)
 
 
 @mock.patch('flake8.processor.FileProcessor')
@@ -16,7 +24,7 @@ def test_run_ast_checks_handles_SyntaxErrors(FileProcessor):  # noqa: N802,N803
     FileProcessor.return_value = processor
     processor.build_ast.side_effect = SyntaxError('Failed to build ast',
                                                   ('', 1, 5, 'foo(\n'))
-    file_checker = checker.FileChecker(__file__, checks={}, options=object())
+    file_checker = checker.FileChecker(__file__, checks={}, options=options())
 
     with mock.patch.object(file_checker, 'report') as report:
         file_checker.run_ast_checks()
@@ -31,14 +39,14 @@ def test_run_ast_checks_handles_SyntaxErrors(FileProcessor):  # noqa: N802,N803
 def test_repr(*args):
     """Verify we generate a correct repr."""
     file_checker = checker.FileChecker(
-        'example.py', checks={}, options=object(),
+        'example.py', checks={}, options=options(),
     )
     assert repr(file_checker) == 'FileChecker for example.py'
 
 
 def test_nonexistent_file():
     """Verify that checking non-existent file results in an error."""
-    c = checker.FileChecker("foobar.py", checks={}, options=object())
+    c = checker.FileChecker("foobar.py", checks={}, options=options())
 
     assert c.processor is None
     assert not c.should_process

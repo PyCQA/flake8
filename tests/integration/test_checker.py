@@ -106,7 +106,7 @@ def mock_file_checker_with_plugin(plugin_target):
     with mock.patch.object(
             importlib_metadata,
             'entry_points',
-            return_value={'flake8.extension': [entry_point]},
+            return_value=[entry_point],
     ):
         checks = manager.Checkers()
 

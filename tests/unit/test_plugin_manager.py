@@ -1,7 +1,7 @@
 """Tests for flake8.plugins.manager.PluginManager."""
 import mock
+import importlib_metadata
 
-from flake8._compat import importlib_metadata
 from flake8.plugins import manager
 
 

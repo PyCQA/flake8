@@ -2,9 +2,10 @@
 import logging
 from typing import Any, Dict, List, Optional, Set
 
+import importlib_metadata
+
 from flake8 import exceptions
 from flake8 import utils
-from flake8._compat import importlib_metadata
 
 LOG = logging.getLogger(__name__)
 

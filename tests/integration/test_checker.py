@@ -1,9 +1,9 @@
 """Integration tests for the checker submodule."""
 import mock
 import pytest
+import importlib_metadata
 
 from flake8 import checker
-from flake8._compat import importlib_metadata
 from flake8.plugins import manager
 from flake8.processor import FileProcessor
 

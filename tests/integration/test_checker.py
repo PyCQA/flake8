@@ -1,9 +1,9 @@
 """Integration tests for the checker submodule."""
 import mock
 import pytest
+import importlib_metadata
 
 from flake8 import checker
-from flake8._compat import importlib_metadata
 from flake8.plugins import manager
 from flake8.processor import FileProcessor
 
@@ -106,7 +106,7 @@ def mock_file_checker_with_plugin(plugin_target):
     with mock.patch.object(
             importlib_metadata,
             'entry_points',
-            return_value={'flake8.extension': [entry_point]},
+            return_value=[entry_point],
     ):
         checks = manager.Checkers()
 

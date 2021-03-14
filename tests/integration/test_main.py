@@ -252,7 +252,6 @@ t.py:2:6: W292 no newline at end of file
 '''
 
 
-@pytest.mark.xfail(strict=True)  # currently awaiting fix in pycodestyle
 def test_physical_line_file_not_ending_in_newline_trailing_ws(tmpdir, capsys):
     """See https://github.com/PyCQA/pycodestyle/issues/960."""
     t_py_src = 'x = 1   '
@@ -264,7 +263,7 @@ def test_physical_line_file_not_ending_in_newline_trailing_ws(tmpdir, capsys):
     out, err = capsys.readouterr()
     assert out == '''\
 t.py:1:6: W291 trailing whitespace
-t.py:1:10: W292 no newline at end of file
+t.py:1:9: W292 no newline at end of file
 '''
 
 

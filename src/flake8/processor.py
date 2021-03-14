@@ -85,6 +85,8 @@ class FileProcessor(object):
         self.indent_level = 0
         #: Number of spaces used for indentation
         self.indent_size = options.indent_size
+        #: String representing the space indentation
+        self.indent_size_str = self.indent_size * " "
         #: Line number in the file
         self.line_number = 0
         #: Current logical line

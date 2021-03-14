@@ -74,8 +74,8 @@ we can do to help you in those cases.
 Process
 =======
 
-To prepare a release, we create a file in :file:`docs/source/releases/` named:
-``{{ release_number }}.rst`` (e.g., ``3.0.0.rst``). We note bug fixes,
+To prepare a release, we create a file in :file:`docs/source/release-notes/`
+named: ``{{ release_number }}.rst`` (e.g., ``3.0.0.rst``). We note bug fixes,
 improvements, and dependency version changes as well as other items of note
 for users.
 

@@ -1,0 +1,45 @@
+3.9.0 -- 2021-03-14
+-------------------
+
+You can view the `3.9.0 milestone`_ on GitLab for more details.
+
+New Dependency Information
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Pyflakes has been updated to >= 2.3.0, < 2.4.0 (See also `GitLab!466`_)
+
+- pycodestyle has been updated to >= 2.7.0, < 2.8.0 (See also `GitLab!467`_)
+
+Deprecations
+~~~~~~~~~~~~
+
+- Drop support for python 3.4 (See also `GitLab!457`_)
+
+Features
+~~~~~~~~
+
+- Add ``--no-show-source`` option to disable ``--show-source`` (See also
+  `GitLab!441`_)
+
+Bugs Fixed
+~~~~~~~~~~
+
+- Fix handling of ``crlf`` line endings when linting stdin (See also
+  `GitLab!461`_)
+
+
+.. all links
+.. _3.9.0 milestone:
+    https://gitlab.com/pycqa/flake8/-/milestones/38
+
+.. merge request links
+.. _GitLab!441:
+   https://gitlab.com/pycqa/flake8/-/merge_requests/441
+.. _GitLab!457:
+   https://gitlab.com/pycqa/flake8/-/merge_requests/457
+.. _GitLab!461:
+   https://gitlab.com/pycqa/flake8/-/merge_requests/461
+.. _GitLab!466:
+   https://gitlab.com/pycqa/flake8/-/merge_requests/466
+.. _GitLab!467:
+   https://gitlab.com/pycqa/flake8/-/merge_requests/467

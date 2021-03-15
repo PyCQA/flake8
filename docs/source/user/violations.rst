@@ -120,8 +120,11 @@ Ignoring Entire Files
 
 Imagine a situation where we are adding |Flake8| to a codebase. Let's further
 imagine that with the exception of a few particularly bad files, we can add
-|Flake8| easily and move on with our lives. There are two ways to ignore the
-file:
+|Flake8| easily and move on with our lives. There are several ways to ignore
+the file or only rules:
+
+#. Add file patterns and rules to ignore via
+   :ref:`per-file-ignores <per-file-ignores>` option
 
 #. By explicitly adding it to our list of excluded paths (see: :option:`flake8
    --exclude`)

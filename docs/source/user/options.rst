@@ -482,6 +482,7 @@ Options and their Descriptions
             W234
         extend-ignore = E4,E51,W234
 
+.. _per-file-ignores:
 
 .. option:: --per-file-ignores=<filename:errors>[ <filename:errors>]
 

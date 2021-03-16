@@ -1,6 +1,10 @@
 """Exception classes for all of Flake8."""
 from typing import Dict
 
+if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
+    from flake8.plugins.manager import Plugin
+    from flake8._compat import importlib_metadata
+
 
 class Flake8Exception(Exception):
     """Plain Flake8 exception."""
@@ -12,6 +16,33 @@ class EarlyQuit(Flake8Exception):
 
 class ExecutionError(Flake8Exception):
     """Exception raised during execution of Flake8."""
+
+
+class DuplicatePluginEntryPoint(ExecutionError):
+    """Exception raised when a plugin entry point is already taken."""
+
+    FORMAT = (
+        'Plugin entry point "%(entry_point)s" for "%(new)s" already taken by '
+        '"%(existing)s"'
+    )
+
+    def __init__(self, entry_point, existing_plugin):
+        # type: (importlib_metadata.EntryPoint, Plugin) -> None
+        """Initialize our DuplicatePluginEntryPoint exception."""
+        self.entry_point = entry_point
+        self.existing_plugin = existing_plugin
+        super(DuplicatePluginEntryPoint, self).__init__(
+            entry_point,
+            existing_plugin,
+        )
+
+    def __str__(self):  # type: () -> str
+        """Format our exception message."""
+        return self.FORMAT % {
+            "entry_point": self.entry_point.name,
+            "new": self.entry_point.value,
+            "existing": self.existing_plugin.entry_point.value,
+        }
 
 
 class FailedToLoadPlugin(Flake8Exception):

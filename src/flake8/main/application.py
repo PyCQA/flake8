@@ -126,15 +126,18 @@ class Application(object):
         This should be the last thing called on the application instance. It
         will check certain options and exit appropriately.
         """
+        if self.catastrophic_failure:
+            # Don't rely on any attributes being set if things failued
+            # catastrophically
+            raise SystemExit(True)
+
         if self.options.count:
             print(self.result_count)
 
         if self.options.exit_zero:
-            raise SystemExit(self.catastrophic_failure)
+            raise SystemExit(False)
         else:
-            raise SystemExit(
-                (self.result_count > 0) or self.catastrophic_failure
-            )
+            raise SystemExit(self.result_count > 0)
 
     def find_plugins(self, config_finder):
         # type: (config.ConfigFileFinder) -> None

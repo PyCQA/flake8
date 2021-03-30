@@ -121,13 +121,7 @@ class BaseFormatter:
             statistic = next(stats_for_error_code)
             count = statistic.count
             count += sum(stat.count for stat in stats_for_error_code)
-            self._write(
-                "{count:<5} {error_code} {message}".format(
-                    count=count,
-                    error_code=error_code,
-                    message=statistic.message,
-                )
-            )
+            self._write(f"{count:<5} {error_code} {statistic.message}")
 
     def show_benchmarks(self, benchmarks: List[Tuple[str, float]]) -> None:
         """Format and print the benchmarks."""

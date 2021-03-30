@@ -380,8 +380,7 @@ class FileChecker:
             # NOTE(sigmavirus24): Historically, pep8 has always reported this
             # as an E902. We probably *want* a better error code for this
             # going forward.
-            message = "{}: {}".format(type(e).__name__, e)
-            self.report("E902", 0, 0, message)
+            self.report("E902", 0, 0, f"{type(e).__name__}: {e}")
             return None
 
     def report(
@@ -473,10 +472,7 @@ class FileChecker:
         except (ValueError, SyntaxError, TypeError) as e:
             row, column = self._extract_syntax_information(e)
             self.report(
-                "E999",
-                row,
-                column,
-                "{}: {}".format(type(e).__name__, e.args[0]),
+                "E999", row, column, f"{type(e).__name__}: {e.args[0]}"
             )
             return
 

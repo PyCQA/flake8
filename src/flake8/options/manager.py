@@ -295,7 +295,7 @@ class Option:
             parts.append(arg)
         for k, v in self.filtered_option_kwargs.items():
             parts.append(f"{k}={v!r}")
-        return "Option({})".format(", ".join(parts))
+        return f"Option({', '.join(parts)})"
 
     def normalize(self, value: Any, *normalize_args: str) -> Any:
         """Normalize the value based on the option configuration."""

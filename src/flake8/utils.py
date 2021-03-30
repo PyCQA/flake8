@@ -126,11 +126,9 @@ def parse_files_to_codes_mapping(  # noqa: C901
             return "    " + s.strip().replace("\n", "\n    ")
 
         return exceptions.ExecutionError(
-            "Expected `per-file-ignores` to be a mapping from file exclude "
-            "patterns to ignore codes.\n\n"
-            "Configured `per-file-ignores` setting:\n\n{}".format(
-                _indent(value)
-            )
+            f"Expected `per-file-ignores` to be a mapping from file exclude "
+            f"patterns to ignore codes.\n\n"
+            f"Configured `per-file-ignores` setting:\n\n{_indent(value)}"
         )
 
     for token in _tokenize_files_to_codes_mapping(value):

@@ -1,10 +1,11 @@
 """Default formatting class for Flake8."""
 from typing import Optional
 from typing import Set
+from typing import TYPE_CHECKING
 
 from flake8.formatting import base
 
-if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
+if TYPE_CHECKING:
     from flake8.style_guide import Violation
 
 

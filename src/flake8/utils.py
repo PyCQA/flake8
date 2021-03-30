@@ -19,11 +19,12 @@ from typing import Pattern
 from typing import Sequence
 from typing import Set
 from typing import Tuple
+from typing import TYPE_CHECKING
 from typing import Union
 
 from flake8 import exceptions
 
-if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
+if TYPE_CHECKING:
     from flake8.plugins.manager import Plugin
 
 DIFF_HUNK_REGEXP = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@.*$")

@@ -4,8 +4,9 @@ from typing import IO
 from typing import List
 from typing import Optional
 from typing import Tuple
+from typing import TYPE_CHECKING
 
-if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
+if TYPE_CHECKING:
     from flake8.statistics import Statistics
     from flake8.style_guide import Violation
 

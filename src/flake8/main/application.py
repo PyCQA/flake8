@@ -8,6 +8,8 @@ from typing import List
 from typing import Optional
 from typing import Set
 from typing import Tuple
+from typing import Type
+from typing import TYPE_CHECKING
 
 import flake8
 from flake8 import checker
@@ -21,9 +23,7 @@ from flake8.options import config
 from flake8.options import manager
 from flake8.plugins import manager as plugin_manager
 
-if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
-    from typing import Type  # `typing.Type` was introduced in 3.5.2
-
+if TYPE_CHECKING:
     from flake8.formatting.base import BaseFormatter
 
 

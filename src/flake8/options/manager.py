@@ -16,12 +16,14 @@ from typing import Optional
 from typing import Sequence
 from typing import Set
 from typing import Tuple
+from typing import Type
+from typing import TYPE_CHECKING
 from typing import Union
 
 from flake8 import utils
 
-if False:  # TYPE_CHECKING
-    from typing import NoReturn, Type
+if TYPE_CHECKING:
+    from typing import NoReturn
 
 LOG = logging.getLogger(__name__)
 

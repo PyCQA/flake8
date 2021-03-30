@@ -11,9 +11,7 @@ This module
 """
 import logging
 import sys
-
-if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
-    from typing import Type  # `typing.Type` was introduced in 3.5.2
+from typing import Type
 
 LOG = logging.getLogger(__name__)
 LOG.addHandler(logging.NullHandler())

@@ -1,5 +1,6 @@
 """Default formatting class for Flake8."""
-from typing import Optional, Set
+from typing import Optional
+from typing import Set
 
 from flake8.formatting import base
 
@@ -77,7 +78,7 @@ class FilenameOnly(SimpleFormatter):
         """Ensure we only print each error once."""
         if error.filename not in self.filenames_already_printed:
             self.filenames_already_printed.add(error.filename)
-            return super(FilenameOnly, self).format(error)
+            return super().format(error)
         else:
             return None
 

@@ -9,8 +9,16 @@ import platform
 import re
 import sys
 import tokenize
-from typing import Callable, Dict, Generator, List, Optional, Pattern
-from typing import Sequence, Set, Tuple, Union
+from typing import Callable
+from typing import Dict
+from typing import Generator
+from typing import List
+from typing import Optional
+from typing import Pattern
+from typing import Sequence
+from typing import Set
+from typing import Tuple
+from typing import Union
 
 from flake8 import exceptions
 from flake8._compat import lru_cache
@@ -21,7 +29,7 @@ if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
 DIFF_HUNK_REGEXP = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@.*$")
 COMMA_SEPARATED_LIST_RE = re.compile(r"[,\s]")
 LOCAL_PLUGIN_LIST_RE = re.compile(r"[,\t\n\r\f\v]")
-string_types = (str, type(u""))
+string_types = (str, type(""))
 
 
 def parse_comma_separated_list(value, regexp=COMMA_SEPARATED_LIST_RE):
@@ -204,18 +212,12 @@ def _stdin_get_value_py3():  # type: () -> str
 @lru_cache(maxsize=1)
 def stdin_get_value():  # type: () -> str
     """Get and cache it so plugins can use it."""
-    if sys.version_info < (3,):
-        return sys.stdin.read()
-    else:
-        return _stdin_get_value_py3()
+    return _stdin_get_value_py3()
 
 
 def stdin_get_lines():  # type: () -> List[str]
     """Return lines of stdin split according to file splitting."""
-    if sys.version_info < (3,):
-        return list(io.BytesIO(stdin_get_value()))
-    else:
-        return list(io.StringIO(stdin_get_value()))
+    return list(io.StringIO(stdin_get_value()))
 
 
 def parse_unified_diff(diff=None):

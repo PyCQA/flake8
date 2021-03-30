@@ -3,7 +3,9 @@ import collections
 import configparser
 import logging
 import os.path
-from typing import List, Optional, Tuple
+from typing import List
+from typing import Optional
+from typing import Tuple
 
 from flake8 import utils
 
@@ -12,7 +14,7 @@ LOG = logging.getLogger(__name__)
 __all__ = ("ConfigFileFinder", "MergedConfigParser")
 
 
-class ConfigFileFinder(object):
+class ConfigFileFinder:
     """Encapsulate the logic for finding and reading config files."""
 
     def __init__(
@@ -154,7 +156,7 @@ class ConfigFileFinder(object):
         return config
 
 
-class MergedConfigParser(object):
+class MergedConfigParser:
     """Encapsulate merging different types of configuration files.
 
     This parses out the options registered that were specified in the

@@ -6,17 +6,20 @@ import logging
 import signal
 import sys
 import tokenize
-from typing import Dict, List, Optional, Tuple
-
-try:
-    import multiprocessing.pool
-except ImportError:
-    multiprocessing = None  # type: ignore
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Tuple
 
 from flake8 import defaults
 from flake8 import exceptions
 from flake8 import processor
 from flake8 import utils
+
+try:
+    import multiprocessing.pool
+except ImportError:
+    multiprocessing = None  # type: ignore
 
 LOG = logging.getLogger(__name__)
 
@@ -48,7 +51,7 @@ def _multiprocessing_is_fork():  # type () -> bool
         return multiprocessing and not utils.is_windows()
 
 
-class Manager(object):
+class Manager:
     """Manage the parallelism and checker instances for each plugin and file.
 
     This class will be responsible for the following:
@@ -337,7 +340,7 @@ class Manager(object):
         self._process_statistics()
 
 
-class FileChecker(object):
+class FileChecker:
     """Manage running checks for a file and aggregate the results."""
 
     def __init__(self, filename, checks, options):
@@ -375,13 +378,13 @@ class FileChecker(object):
 
     def __repr__(self):  # type: () -> str
         """Provide helpful debugging representation."""
-        return "FileChecker for {}".format(self.filename)
+        return f"FileChecker for {self.filename}"
 
     def _make_processor(self):
         # type: () -> Optional[processor.FileProcessor]
         try:
             return processor.FileProcessor(self.filename, self.options)
-        except IOError as e:
+        except OSError as e:
             # If we can not read the file due to an IOError (e.g., the file
             # does not exist or we do not have the permissions to open it)
             # then we need to format that exception for the user.

@@ -1,7 +1,7 @@
 """Tests for flake8.plugins.manager.Plugin."""
 import argparse
+from unittest import mock
 
-import mock
 import pytest
 
 from flake8 import exceptions

@@ -1,6 +1,7 @@
 """Command-line implementation of flake8."""
 import sys
-from typing import List, Optional
+from typing import List
+from typing import Optional
 
 from flake8.main import application
 

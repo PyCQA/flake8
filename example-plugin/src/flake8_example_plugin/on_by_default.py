@@ -1,7 +1,7 @@
 """Our first example plugin."""
 
 
-class ExampleOne(object):
+class ExampleOne:
     """First Example Plugin."""
     name = 'on-by-default-example-plugin'
     version = '1.0.0'
@@ -11,5 +11,4 @@ class ExampleOne(object):
 
     def run(self):
         """Do nothing."""
-        for message in []:
-            yield message
+        yield from []

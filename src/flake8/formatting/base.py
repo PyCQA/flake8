@@ -1,15 +1,16 @@
 """The base class and interface for all formatting plugins."""
-from __future__ import print_function
-
 import argparse
-from typing import IO, List, Optional, Tuple
+from typing import IO
+from typing import List
+from typing import Optional
+from typing import Tuple
 
 if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
     from flake8.statistics import Statistics
     from flake8.style_guide import Violation
 
 
-class BaseFormatter(object):
+class BaseFormatter:
     """Class defining the formatter interface.
 
     .. attribute:: options
@@ -179,7 +180,7 @@ class BaseFormatter(object):
         )
         # Physical lines have a newline at the end, no need to add an extra
         # one
-        return "{}{}^".format(error.physical_line, indent)
+        return f"{error.physical_line}{indent}^"
 
     def _write(self, output):  # type: (str) -> None
         """Handle logic of whether to use an output file or print()."""

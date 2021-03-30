@@ -1,7 +1,7 @@
 """Module that is off sys.path by default, for testing local-plugin-paths."""
 
 
-class ExtensionTestPlugin2(object):
+class ExtensionTestPlugin2:
     """Extension test plugin in its own directory."""
 
     name = 'ExtensionTestPlugin2'

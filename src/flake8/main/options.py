@@ -78,7 +78,7 @@ class JobsArgument:
             self.n_jobs = int(arg)
         else:
             raise argparse.ArgumentTypeError(
-                "{!r} must be 'auto' or an integer.".format(arg),
+                f"{arg!r} must be 'auto' or an integer.",
             )
 
     def __str__(self):

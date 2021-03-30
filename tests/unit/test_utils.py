@@ -3,8 +3,8 @@ import io
 import logging
 import os
 import sys
+from unittest import mock
 
-import mock
 import pytest
 
 from flake8 import exceptions
@@ -242,7 +242,7 @@ def test_filenames_from_exclude_doesnt_exclude_directory_names(tmpdir):
 
 def test_parameters_for_class_plugin():
     """Verify that we can retrieve the parameters for a class plugin."""
-    class FakeCheck(object):
+    class FakeCheck:
         def __init__(self, tree):
             raise NotImplementedError
 
@@ -268,7 +268,7 @@ def test_parameters_for_function_plugin():
 
 def read_diff_file(filename):
     """Read the diff file in its entirety."""
-    with open(filename, 'r') as fd:
+    with open(filename) as fd:
         content = fd.read()
     return content
 

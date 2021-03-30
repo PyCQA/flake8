@@ -5,14 +5,23 @@ import contextlib
 import enum
 import functools
 import logging
-from typing import Any, Callable, cast, Dict, Generator, List, Mapping
-from typing import Optional, Sequence, Set, Tuple, Union
+from typing import Any
+from typing import Callable
+from typing import cast
+from typing import Dict
+from typing import Generator
+from typing import List
+from typing import Mapping
+from typing import Optional
+from typing import Sequence
+from typing import Set
+from typing import Tuple
+from typing import Union
 
 from flake8 import utils
 
 if False:  # TYPE_CHECKING
-    from typing import NoReturn
-    from typing import Type
+    from typing import NoReturn, Type
 
 LOG = logging.getLogger(__name__)
 
@@ -41,7 +50,7 @@ class _CallbackAction(argparse.Action):
         self._callback = kwargs.pop("callback")
         self._callback_args = kwargs.pop("callback_args", ())
         self._callback_kwargs = kwargs.pop("callback_kwargs", {})
-        super(_CallbackAction, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def __call__(
         self,
@@ -61,7 +70,7 @@ class _CallbackAction(argparse.Action):
             values,
             parser,
             *self._callback_args,
-            **self._callback_kwargs
+            **self._callback_kwargs,
         )
 
 
@@ -70,7 +79,7 @@ def _flake8_normalize(value, *args, **kwargs):
     comma_separated_list = kwargs.pop("comma_separated_list", False)
     normalize_paths = kwargs.pop("normalize_paths", False)
     if kwargs:
-        raise TypeError("Unexpected keyword args: {}".format(kwargs))
+        raise TypeError(f"Unexpected keyword args: {kwargs}")
 
     ret = value  # type: Union[str, List[str]]
     if comma_separated_list and isinstance(ret, utils.string_types):
@@ -85,7 +94,7 @@ def _flake8_normalize(value, *args, **kwargs):
     return ret
 
 
-class Option(object):
+class Option:
     """Our wrapper around an argparse argument parsers to add features."""
 
     def __init__(
@@ -284,7 +293,7 @@ class Option(object):
         for arg in self.option_args:
             parts.append(arg)
         for k, v in self.filtered_option_kwargs.items():
-            parts.append("{}={!r}".format(k, v))
+            parts.append(f"{k}={v!r}")
         return "Option({})".format(", ".join(parts))
 
     def normalize(self, value, *normalize_args):
@@ -337,7 +346,7 @@ PluginVersion = collections.namedtuple(
 )
 
 
-class OptionManager(object):
+class OptionManager:
     """Manage Options and OptionParser while adding post-processing."""
 
     def __init__(

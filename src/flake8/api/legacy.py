@@ -60,7 +60,7 @@ def get_style_guide(**kwargs):
     return StyleGuide(application)
 
 
-class StyleGuide(object):
+class StyleGuide:
     """Public facing object that mimic's Flake8 2.0's StyleGuide.
 
     .. note::
@@ -170,7 +170,7 @@ class StyleGuide(object):
         return self.check_files([filename])
 
 
-class Report(object):
+class Report:
     """Public facing object that mimic's Flake8 2.0's API.
 
     .. note::
@@ -210,6 +210,6 @@ class Report(object):
             list
         """
         return [
-            "{} {} {}".format(s.count, s.error_code, s.message)
+            f"{s.count} {s.error_code} {s.message}"
             for s in self._stats.statistics_for(violation)
         ]

@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 """Tests for the ConfigFileFinder."""
 import configparser
 import os
+from unittest import mock
 
-import mock
 import pytest
 
 from flake8.options import config

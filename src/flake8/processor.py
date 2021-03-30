@@ -5,7 +5,12 @@ import contextlib
 import logging
 import sys
 import tokenize
-from typing import Any, Dict, Generator, List, Optional, Tuple
+from typing import Any
+from typing import Dict
+from typing import Generator
+from typing import List
+from typing import Optional
+from typing import Tuple
 
 import flake8
 from flake8 import defaults
@@ -25,7 +30,7 @@ _LogicalMapping = List[Tuple[int, Tuple[int, int]]]
 _Logical = Tuple[List[str], List[str], _LogicalMapping]
 
 
-class FileProcessor(object):
+class FileProcessor:
     """Processes a file and holdes state.
 
     This processes a file by generating tokens, logical and physical lines,
@@ -349,7 +354,7 @@ class FileProcessor(object):
 
     def _readlines_py2(self):
         # type: () -> List[str]
-        with open(self.filename, "rU") as fd:
+        with open(self.filename) as fd:
             return fd.readlines()
 
     def _readlines_py3(self):

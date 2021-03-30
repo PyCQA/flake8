@@ -24,7 +24,7 @@ class FailedToLoadPlugin(Flake8Exception):
         """Initialize our FailedToLoadPlugin exception."""
         self.plugin_name = plugin_name
         self.original_exception = exception
-        super(FailedToLoadPlugin, self).__init__(plugin_name, exception)
+        super().__init__(plugin_name, exception)
 
     def __str__(self):  # type: () -> str
         """Format our exception message."""
@@ -46,7 +46,7 @@ class InvalidSyntax(Flake8Exception):
         self.error_code = "E902"
         self.line_number = 1
         self.column_number = 0
-        super(InvalidSyntax, self).__init__(exception)
+        super().__init__(exception)
 
     def __str__(self):  # type: () -> str
         """Format our exception message."""
@@ -63,9 +63,7 @@ class PluginRequestedUnknownParameters(Flake8Exception):
         """Pop certain keyword arguments for initialization."""
         self.plugin = plugin
         self.original_exception = exception
-        super(PluginRequestedUnknownParameters, self).__init__(
-            plugin, exception
-        )
+        super().__init__(plugin, exception)
 
     def __str__(self):  # type: () -> str
         """Format our exception message."""
@@ -85,7 +83,7 @@ class PluginExecutionFailed(Flake8Exception):
         """Utilize keyword arguments for message generation."""
         self.plugin = plugin
         self.original_exception = exception
-        super(PluginExecutionFailed, self).__init__(plugin, exception)
+        super().__init__(plugin, exception)
 
     def __str__(self):  # type: () -> str
         """Format our exception message."""

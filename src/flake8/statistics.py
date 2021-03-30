@@ -1,12 +1,15 @@
 """Statistic collection logic for Flake8."""
 import collections
-from typing import Dict, Generator, List, Optional
+from typing import Dict
+from typing import Generator
+from typing import List
+from typing import Optional
 
 if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
     from flake8.style_guide import Violation
 
 
-class Statistics(object):
+class Statistics:
     """Manager of aggregated statistics for a run of Flake8."""
 
     def __init__(self):  # type: () -> None
@@ -102,7 +105,7 @@ class Key(collections.namedtuple("Key", ["filename", "code"])):
         )
 
 
-class Statistic(object):
+class Statistic:
     """Simple wrapper around the logic of each statistic.
 
     Instead of maintaining a simple but potentially hard to reason about

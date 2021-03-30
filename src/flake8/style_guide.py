@@ -7,8 +7,15 @@ import enum
 import itertools
 import linecache
 import logging
-from typing import Dict, Generator, List, Match, Optional, Sequence, Set
-from typing import Tuple, Union
+from typing import Dict
+from typing import Generator
+from typing import List
+from typing import Match
+from typing import Optional
+from typing import Sequence
+from typing import Set
+from typing import Tuple
+from typing import Union
 
 from flake8 import defaults
 from flake8 import statistics
@@ -142,7 +149,7 @@ class Violation(_Violation):
         return self.line_number in line_numbers
 
 
-class DecisionEngine(object):
+class DecisionEngine:
     """A class for managing the decision process around violations.
 
     This contains the logic for whether a violation should be reported or
@@ -318,7 +325,7 @@ class DecisionEngine(object):
         return decision
 
 
-class StyleGuideManager(object):
+class StyleGuideManager:
     """Manage multiple style guides for a single run."""
 
     def __init__(
@@ -437,7 +444,7 @@ class StyleGuideManager(object):
             guide.add_diff_ranges(diffinfo)
 
 
-class StyleGuide(object):
+class StyleGuide:
     """Manage a Flake8 user's style guide."""
 
     def __init__(
@@ -463,7 +470,7 @@ class StyleGuide(object):
 
     def __repr__(self):  # type: () -> str
         """Make it easier to debug which StyleGuide we're using."""
-        return "<StyleGuide [{}]>".format(self.filename)
+        return f"<StyleGuide [{self.filename}]>"
 
     def copy(self, filename=None, extend_ignore_with=None):
         # type: (Optional[str], Optional[Sequence[str]]) -> StyleGuide
@@ -499,7 +506,7 @@ class StyleGuide(object):
         return utils.matches_filename(
             filename,
             patterns=[self.filename],
-            log_message='{!r} does %(whether)smatch "%(path)s"'.format(self),
+            log_message=f'{self!r} does %(whether)smatch "%(path)s"',
             logger=LOG,
         )
 

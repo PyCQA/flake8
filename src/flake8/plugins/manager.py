@@ -1,6 +1,10 @@
 """Plugin loading and management logic and classes."""
 import logging
-from typing import Any, Dict, List, Optional, Set
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Set
 
 from flake8 import exceptions
 from flake8 import utils
@@ -13,7 +17,7 @@ __all__ = ("Checkers", "Plugin", "PluginManager", "ReportFormatters")
 NO_GROUP_FOUND = object()
 
 
-class Plugin(object):
+class Plugin:
     """Wrap an EntryPoint from setuptools and other logic."""
 
     def __init__(self, name, entry_point, local=False):
@@ -219,7 +223,7 @@ class Plugin(object):
             self.disable(optmanager)
 
 
-class PluginManager(object):  # pylint: disable=too-few-public-methods
+class PluginManager:  # pylint: disable=too-few-public-methods
     """Find and manage plugins consistently."""
 
     def __init__(self, namespace, local_plugins=None):
@@ -342,7 +346,7 @@ def version_for(plugin):
     return getattr(module, "__version__", None)
 
 
-class PluginTypeManager(object):
+class PluginTypeManager:
     """Parent class for most of the specific plugin types."""
 
     namespace = None  # type: str

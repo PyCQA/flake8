@@ -1,5 +1,6 @@
 """Tests for flake8.plugins.manager.PluginTypeManager."""
-import mock
+from unittest import mock
+
 import pytest
 
 from flake8 import exceptions

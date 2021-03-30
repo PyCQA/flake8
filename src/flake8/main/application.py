@@ -1,11 +1,13 @@
 """Module containing the application logic for Flake8."""
-from __future__ import print_function
-
 import argparse
 import logging
 import sys
 import time
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Set
+from typing import Tuple
 
 import flake8
 from flake8 import checker
@@ -14,19 +16,21 @@ from flake8 import exceptions
 from flake8 import style_guide
 from flake8 import utils
 from flake8.main import options
-from flake8.options import aggregator, config
+from flake8.options import aggregator
+from flake8.options import config
 from flake8.options import manager
 from flake8.plugins import manager as plugin_manager
 
 if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
     from typing import Type  # `typing.Type` was introduced in 3.5.2
+
     from flake8.formatting.base import BaseFormatter
 
 
 LOG = logging.getLogger(__name__)
 
 
-class Application(object):
+class Application:
     """Abstract our application into a class."""
 
     def __init__(self, program="flake8", version=flake8.__version__):

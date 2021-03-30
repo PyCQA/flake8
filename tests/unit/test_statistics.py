@@ -111,8 +111,8 @@ def test_statistic_for_retrieves_more_than_one_value():
     """Show this works for more than a couple statistic values."""
     aggregator = stats.Statistics()
     for i in range(50):
-        aggregator.record(make_error(code='E1{:02d}'.format(i)))
-        aggregator.record(make_error(code='W2{:02d}'.format(i)))
+        aggregator.record(make_error(code=f'E1{i:02d}'))
+        aggregator.record(make_error(code=f'W2{i:02d}'))
 
     statistics = list(aggregator.statistics_for('E'))
     assert len(statistics) == 50

@@ -1,10 +1,9 @@
 """Module containing the logic for our debugging logic."""
-from __future__ import print_function
-
 import argparse
 import json
 import platform
-from typing import Dict, List
+from typing import Dict
+from typing import List
 
 
 class DebugAction(argparse.Action):
@@ -17,7 +16,7 @@ class DebugAction(argparse.Action):
         used to delay response.
         """
         self._option_manager = kwargs.pop("option_manager")
-        super(DebugAction, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
         """Perform the argparse action for printing debug information."""

@@ -5,7 +5,8 @@ applies the user-specified command-line configuration on top of it.
 """
 import argparse
 import logging
-from typing import List, Tuple
+from typing import List
+from typing import Tuple
 
 from flake8.options import config
 from flake8.options.manager import OptionManager

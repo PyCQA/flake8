@@ -1,6 +1,4 @@
 """Plugin built-in to Flake8 to treat pyflakes as a plugin."""
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
 
 import os
 from typing import List
@@ -9,7 +7,6 @@ import pyflakes
 import pyflakes.checker
 
 from flake8 import utils
-
 
 FLAKE8_PYFLAKES_CODES = {
     "UnusedImport": "F401",
@@ -96,7 +93,7 @@ class FlakesChecker(pyflakes.checker.Checker):
                 if overlaped_by:
                     with_doctest = True
 
-        super(FlakesChecker, self).__init__(
+        super().__init__(
             tree,
             filename=filename,
             withDoctest=with_doctest,

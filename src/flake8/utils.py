@@ -1,6 +1,7 @@
 """Utility methods for flake8."""
 import collections
 import fnmatch as _fnmatch
+import functools
 import inspect
 import io
 import logging
@@ -21,7 +22,6 @@ from typing import Tuple
 from typing import Union
 
 from flake8 import exceptions
-from flake8._compat import lru_cache
 
 if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
     from flake8.plugins.manager import Plugin
@@ -209,7 +209,7 @@ def _stdin_get_value_py3():  # type: () -> str
         return stdin_value.decode("utf-8")
 
 
-@lru_cache(maxsize=1)
+@functools.lru_cache(maxsize=1)
 def stdin_get_value():  # type: () -> str
     """Get and cache it so plugins can use it."""
     return _stdin_get_value_py3()

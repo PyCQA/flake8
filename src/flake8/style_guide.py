@@ -4,6 +4,7 @@ import collections
 import contextlib
 import copy
 import enum
+import functools
 import itertools
 import linecache
 import logging
@@ -20,7 +21,6 @@ from typing import Union
 from flake8 import defaults
 from flake8 import statistics
 from flake8 import utils
-from flake8._compat import lru_cache
 from flake8.formatting import base as base_formatter
 
 __all__ = ("StyleGuide",)
@@ -49,7 +49,7 @@ class Decision(enum.Enum):
     Selected = "selected error"
 
 
-@lru_cache(maxsize=512)
+@functools.lru_cache(maxsize=512)
 def find_noqa(physical_line):  # type: (str) -> Optional[Match[str]]
     return defaults.NOQA_INLINE_REGEXP.search(physical_line)
 
@@ -374,7 +374,7 @@ class StyleGuideManager:
                 filename=filename, extend_ignore_with=violations
             )
 
-    @lru_cache(maxsize=None)
+    @functools.lru_cache(maxsize=None)
     def style_guide_for(self, filename):  # type: (str) -> StyleGuide
         """Find the StyleGuide for the filename in particular."""
         guides = sorted(

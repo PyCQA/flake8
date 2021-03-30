@@ -191,8 +191,6 @@ class Application(object):
             if not self.parsed_diff:
                 self.exit()
 
-        self.options._running_from_vcs = False
-
         self.check_plugins.provide_options(
             self.option_manager, self.options, self.args
         )

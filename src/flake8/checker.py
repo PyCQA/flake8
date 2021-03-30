@@ -200,7 +200,6 @@ class Manager(object):
             paths = ["."]
 
         filename_patterns = self.options.filename
-        running_from_vcs = self.options._running_from_vcs
         running_from_diff = self.options.diff
 
         # NOTE(sigmavirus24): Yes this is a little unsightly, but it's our
@@ -218,10 +217,8 @@ class Manager(object):
             # the event that the argument and the filename are identical.
             # If it was specified explicitly, the user intended for it to be
             # checked.
-            explicitly_provided = (
-                not running_from_vcs
-                and not running_from_diff
-                and (argument == filename)
+            explicitly_provided = not running_from_diff and (
+                argument == filename
             )
             return (
                 explicitly_provided or matches_filename_patterns

@@ -8,8 +8,6 @@
 
 - invoked via Python
 
-- called by Git or Mercurial on or around committing
-
 This guide will cover all of these and the nuances for using |Flake8|.
 
 .. note::

@@ -2,6 +2,8 @@
 import logging
 from typing import Any, Dict, List, Optional, Set
 
+from backports.entry_points_selectable import entry_points
+
 from flake8 import exceptions
 from flake8 import utils
 from flake8._compat import importlib_metadata
@@ -251,7 +253,7 @@ class PluginManager(object):  # pylint: disable=too-few-public-methods
 
     def _load_entrypoint_plugins(self):
         LOG.info('Loading entry-points for "%s".', self.namespace)
-        eps = importlib_metadata.entry_points().get(self.namespace, ())
+        eps = entry_points(group=self.namespace)
         # python2.7 occasionally gives duplicate results due to redundant
         # `local/lib` -> `../lib` symlink on linux in virtualenvs so we
         # eliminate duplicates here

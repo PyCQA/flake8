@@ -243,18 +243,15 @@ class FileProcessor(object):
             yield line
             self.line_number += 1
 
-    def keyword_arguments_for(self, parameters, arguments=None):
-        # type: (Dict[str, bool], Optional[Dict[str, Any]]) -> Dict[str, Any]
+    def keyword_arguments_for(self, parameters):
+        # type: (Dict[str, bool]) -> Dict[str, Any]
         """Generate the keyword arguments for a list of parameters."""
-        if arguments is None:
-            arguments = {}
-        for param, required in parameters.items():
-            if param in arguments:
-                continue
+        arguments = {}
+        for param in parameters:
             try:
                 arguments[param] = getattr(self, param)
             except AttributeError as exc:
-                if required:
+                if parameters[param]:
                     LOG.exception(exc)
                     raise
                 else:

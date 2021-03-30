@@ -78,8 +78,6 @@ Index of Options
 
 - :option:`flake8 --exit-zero`
 
-- :option:`flake8 --install-hook`
-
 - :option:`flake8 --jobs`
 
 - :option:`flake8 --output-file`
@@ -747,28 +745,6 @@ Options and their Descriptions
     .. prompt:: bash
 
         flake8 --exit-zero dir/
-
-    This **can not** be specified in config files.
-
-
-.. option:: --install-hook=VERSION_CONTROL_SYSTEM
-
-    :ref:`Go back to index <top>`
-
-    Install a hook for your version control system that is executed before
-    or during commit.
-
-    The available options are:
-
-    - git
-    - mercurial
-
-    Command-line usage:
-
-    .. prompt:: bash
-
-        flake8 --install-hook=git
-        flake8 --install-hook=mercurial
 
     This **can not** be specified in config files.
 

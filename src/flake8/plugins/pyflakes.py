@@ -2,13 +2,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-try:
-    # The 'demandimport' breaks pyflakes and flake8.plugins.pyflakes
-    from mercurial import demandimport
-except ImportError:
-    pass
-else:
-    demandimport.disable()
 import os
 from typing import List
 

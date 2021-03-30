@@ -1,8 +1,8 @@
 # To activate, change the Appveyor settings to use `.appveyor.yml`.
 install:
-  - python -m pip install --upgrade setuptools tox virtualenv
+  - C:\Python38-x64\python.exe -m pip install --upgrade setuptools tox virtualenv
 
 build: off
 
 test_script:
-  - python -m tox -e py27,py36,py37,dogfood
+  - C:\Python38-x64\python.exe -m tox -e py36,py37,dogfood

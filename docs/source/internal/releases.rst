@@ -81,13 +81,11 @@ for users.
 
 Before releasing, the following tox test environments must pass:
 
-- Python 2.7 (a.k.a., ``tox -e py27``)
-
 - Python 3.6 (a.k.a., ``tox -e py36``)
 
 - Python 3.7 (a.k.a., ``tox -e py37``)
 
-- PyPy (a.k.a., ``tox -e pypy``)
+- PyPy 3 (a.k.a., ``tox -e pypy3``)
 
 - Linters (a.k.a., ``tox -e linters``)
 

@@ -4,7 +4,6 @@ import functools
 
 from flake8 import defaults
 from flake8.main import debug
-from flake8.main import vcs
 
 
 def register_preliminary_options(parser):
@@ -320,14 +319,6 @@ def register_default_options(option_manager):
         "--exit-zero",
         action="store_true",
         help='Exit with status code "0" even if there are errors.',
-    )
-
-    add_option(
-        "--install-hook",
-        action=vcs.InstallAction,
-        choices=vcs.choices(),
-        help="Install a hook that is run prior to a commit for the supported "
-        "version control system.",
     )
 
     add_option(

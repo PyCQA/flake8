@@ -82,11 +82,11 @@ def _flake8_normalize(value, *args, **kwargs):
         raise TypeError(f"Unexpected keyword args: {kwargs}")
 
     ret = value  # type: Union[str, List[str]]
-    if comma_separated_list and isinstance(ret, utils.string_types):
+    if comma_separated_list and isinstance(ret, str):
         ret = utils.parse_comma_separated_list(value)
 
     if normalize_paths:
-        if isinstance(ret, utils.string_types):
+        if isinstance(ret, str):
             ret = utils.normalize_path(ret, *args)
         else:
             ret = utils.normalize_paths(ret, *args)
@@ -212,7 +212,7 @@ class Option:
                 nargs = 0
 
         # optparse -> argparse for `type`
-        if isinstance(type, utils.string_types):
+        if isinstance(type, str):
             LOG.warning(
                 "option %s: please update from optparse string `type=` to "
                 "argparse callable `type=` -- this will be an error in the "
@@ -299,9 +299,7 @@ class Option:
     def normalize(self, value, *normalize_args):
         # type: (Any, *str) -> Any
         """Normalize the value based on the option configuration."""
-        if self.comma_separated_list and isinstance(
-            value, utils.string_types
-        ):
+        if self.comma_separated_list and isinstance(value, str):
             value = utils.parse_comma_separated_list(value)
 
         if self.normalize_paths:

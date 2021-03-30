@@ -29,7 +29,6 @@ if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
 DIFF_HUNK_REGEXP = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@.*$")
 COMMA_SEPARATED_LIST_RE = re.compile(r"[,\s]")
 LOCAL_PLUGIN_LIST_RE = re.compile(r"[,\t\n\r\f\v]")
-string_types = (str, type(""))
 
 
 def parse_comma_separated_list(value, regexp=COMMA_SEPARATED_LIST_RE):
@@ -48,7 +47,7 @@ def parse_comma_separated_list(value, regexp=COMMA_SEPARATED_LIST_RE):
     :rtype:
         list
     """
-    assert isinstance(value, string_types), value
+    assert isinstance(value, str), value
 
     separated = regexp.split(value)
     item_gen = (item.strip() for item in separated)
@@ -96,7 +95,7 @@ def parse_files_to_codes_mapping(value_):  # noqa: C901
     :param value: String to be parsed and normalized.
     :type value: str
     """
-    if not isinstance(value_, string_types):
+    if not isinstance(value_, str):
         value = "\n".join(value_)
     else:
         value = value_

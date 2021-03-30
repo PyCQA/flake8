@@ -40,7 +40,7 @@ class InvalidSyntax(Flake8Exception):
     def __init__(self, exception):  # type: (Exception) -> None
         """Initialize our InvalidSyntax exception."""
         self.original_exception = exception
-        self.error_message = "{0}: {1}".format(
+        self.error_message = "{}: {}".format(
             exception.__class__.__name__, exception.args[0]
         )
         self.error_code = "E902"

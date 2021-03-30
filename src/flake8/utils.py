@@ -470,7 +470,7 @@ def get_python_version():  # type: () -> str
     :rtype:
         str
     """
-    return "%s %s on %s" % (
+    return "{} {} on {}".format(
         platform.python_implementation(),
         platform.python_version(),
         platform.system(),

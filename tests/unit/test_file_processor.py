@@ -130,7 +130,7 @@ def test_noqa_line_for(default_options):
     ])
 
     for i in range(1, 4):
-        assert file_processor.noqa_line_for(i) == 'Line {0}\n'.format(i)
+        assert file_processor.noqa_line_for(i) == 'Line {}\n'.format(i)
 
 
 def test_noqa_line_for_continuation(default_options):

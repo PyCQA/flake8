@@ -40,7 +40,7 @@ class Plugin(object):
 
     def __repr__(self):  # type: () -> str
         """Provide an easy to read description of the current plugin."""
-        return 'Plugin(name="{0}", entry_point="{1}")'.format(
+        return 'Plugin(name="{}", entry_point="{}")'.format(
             self.name, self.entry_point.value
         )
 

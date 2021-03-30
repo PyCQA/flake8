@@ -446,7 +446,7 @@ def count_parentheses(current_parentheses_count, token_text):
 def log_token(log, token):  # type: (logging.Logger, _Token) -> None
     """Log a token to a provided logging object."""
     if token[2][0] == token[3][0]:
-        pos = "[%s:%s]" % (token[2][1] or "", token[3][1])
+        pos = "[{}:{}]".format(token[2][1] or "", token[3][1])
     else:
         pos = "l.%s" % token[3][0]
     log.log(

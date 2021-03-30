@@ -13,6 +13,10 @@ repos:
     -   id: black
         args: [--line-length=78]
         files: ^src/
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v2.11.0
+    hooks:
+    -   id: pyupgrade
 -   repo: https://github.com/pre-commit/mirrors-mypy
     rev: v0.720
     hooks:

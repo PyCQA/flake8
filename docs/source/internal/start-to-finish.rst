@@ -47,21 +47,6 @@ both cases, however, you end up in :func:`flake8.main.cli.main`. This is the
 primary way that users will end up starting Flake8. This function creates an
 instance of |Application|.
 
-via Setuptools
---------------
-
-If you're invoking |Flake8| from your ``setup.py`` then you actually end up in
-:meth:`flake8.main.setuptools_command.Flake8.run`. This then collects the
-files that are included in the package information and creates an instance of
-|Application|.
-
-via Git or Mercurial
---------------------
-
-In both cases, they call their respective ``hook`` functions which create
-instances of |Application|.
-
-
 Application Logic
 =================
 

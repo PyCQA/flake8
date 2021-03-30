@@ -59,6 +59,6 @@ def plugins_from(option_manager):
     ]
 
 
-def dependencies():  # type: () -> List[Dict[str, str]]
+def dependencies() -> List[Dict[str, str]]:
     """Generate the list of dependencies we care about."""
     return []

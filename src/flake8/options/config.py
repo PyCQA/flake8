@@ -19,12 +19,11 @@ class ConfigFileFinder:
 
     def __init__(
         self,
-        program_name,
-        extra_config_files=None,
-        config_file=None,
-        ignore_config_files=False,
-    ):
-        # type: (str, Optional[List[str]], Optional[str], bool) -> None
+        program_name: str,
+        extra_config_files: Optional[List[str]] = None,
+        config_file: Optional[str] = None,
+        ignore_config_files: bool = False,
+    ) -> None:
         """Initialize object to find config files.
 
         :param str program_name:
@@ -57,8 +56,7 @@ class ConfigFileFinder:
         self.local_directory = os.path.abspath(os.curdir)
 
     @staticmethod
-    def _user_config_file(program_name):
-        # type: (str) -> str
+    def _user_config_file(program_name: str) -> str:
         if utils.is_windows():
             home_dir = os.path.expanduser("~")
             config_file_basename = "." + program_name
@@ -71,8 +69,9 @@ class ConfigFileFinder:
         return os.path.join(home_dir, config_file_basename)
 
     @staticmethod
-    def _read_config(*files):
-        # type: (*str) -> Tuple[configparser.RawConfigParser, List[str]]
+    def _read_config(
+        *files: str,
+    ) -> Tuple[configparser.RawConfigParser, List[str]]:
         config = configparser.RawConfigParser()
 
         found_files = []
@@ -93,8 +92,7 @@ class ConfigFileFinder:
                 )
         return (config, found_files)
 
-    def cli_config(self, files):
-        # type: (str) -> configparser.RawConfigParser
+    def cli_config(self, files: str) -> configparser.RawConfigParser:
         """Read and parse the config file specified on the command-line."""
         config, found_files = self._read_config(files)
         if found_files:
@@ -360,7 +358,7 @@ def get_local_plugins(config_finder):
         raw_paths = utils.parse_comma_separated_list(
             config.get(section, "paths").strip()
         )
-        norm_paths = []  # type: List[str]
+        norm_paths: List[str] = []
         for base_dir in base_dirs:
             norm_paths.extend(
                 path

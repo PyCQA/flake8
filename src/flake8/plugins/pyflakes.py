@@ -1,9 +1,7 @@
 """Plugin built-in to Flake8 to treat pyflakes as a plugin."""
-
 import os
 from typing import List
 
-import pyflakes
 import pyflakes.checker
 
 from flake8 import utils
@@ -66,8 +64,8 @@ class FlakesChecker(pyflakes.checker.Checker):
     name = "pyflakes"
     version = pyflakes.__version__
     with_doctest = False
-    include_in_doctest = []  # type: List[str]
-    exclude_from_doctest = []  # type: List[str]
+    include_in_doctest: List[str] = []
+    exclude_from_doctest: List[str] = []
 
     def __init__(self, tree, file_tokens, filename):
         """Initialize the PyFlakes plugin with an AST tree and filename."""

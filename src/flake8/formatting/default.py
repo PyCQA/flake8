@@ -25,9 +25,9 @@ class SimpleFormatter(base.BaseFormatter):
 
     """
 
-    error_format = None  # type: str
+    error_format: str
 
-    def format(self, error):  # type: (Violation) -> Optional[str]
+    def format(self, error: "Violation") -> Optional[str]:
         """Format and write error out.
 
         If an output filename is specified, write formatted errors to that
@@ -51,7 +51,7 @@ class Default(SimpleFormatter):
 
     error_format = "%(path)s:%(row)d:%(col)d: %(code)s %(text)s"
 
-    def after_init(self):  # type: () -> None
+    def after_init(self) -> None:
         """Check for a custom format string."""
         if self.options.format.lower() != "default":
             self.error_format = self.options.format
@@ -68,14 +68,14 @@ class FilenameOnly(SimpleFormatter):
 
     error_format = "%(path)s"
 
-    def after_init(self):  # type: () -> None
+    def after_init(self) -> None:
         """Initialize our set of filenames."""
-        self.filenames_already_printed = set()  # type: Set[str]
+        self.filenames_already_printed: Set[str] = set()
 
-    def show_source(self, error):  # type: (Violation) -> Optional[str]
+    def show_source(self, error: "Violation") -> Optional[str]:
         """Do not include the source code."""
 
-    def format(self, error):  # type: (Violation) -> Optional[str]
+    def format(self, error: "Violation") -> Optional[str]:
         """Ensure we only print each error once."""
         if error.filename not in self.filenames_already_printed:
             self.filenames_already_printed.add(error.filename)
@@ -87,8 +87,8 @@ class FilenameOnly(SimpleFormatter):
 class Nothing(base.BaseFormatter):
     """Print absolutely nothing."""
 
-    def format(self, error):  # type: (Violation) -> Optional[str]
+    def format(self, error: "Violation") -> Optional[str]:
         """Do nothing."""
 
-    def show_source(self, error):  # type: (Violation) -> Optional[str]
+    def show_source(self, error: "Violation") -> Optional[str]:
         """Do not print the source."""

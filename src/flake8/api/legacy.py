@@ -81,7 +81,7 @@ class StyleGuide:
         self._file_checker_manager = application.file_checker_manager
 
     @property
-    def options(self):  # type: () -> argparse.Namespace
+    def options(self) -> argparse.Namespace:
         """Return application's options.
 
         An instance of :class:`argparse.Namespace` containing parsed options.

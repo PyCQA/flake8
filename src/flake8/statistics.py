@@ -13,11 +13,11 @@ if TYPE_CHECKING:
 class Statistics:
     """Manager of aggregated statistics for a run of Flake8."""
 
-    def __init__(self):  # type: () -> None
+    def __init__(self) -> None:
         """Initialize the underlying dictionary for our statistics."""
-        self._store = {}  # type: Dict[Key, Statistic]
+        self._store: Dict[Key, "Statistic"] = {}
 
-    def error_codes(self):  # type: () -> List[str]
+    def error_codes(self) -> List[str]:
         """Return all unique error codes stored.
 
         :returns:
@@ -27,7 +27,7 @@ class Statistics:
         """
         return sorted({key.code for key in self._store})
 
-    def record(self, error):  # type: (Violation) -> None
+    def record(self, error: "Violation") -> None:
         """Add the fact that the error was seen in the file.
 
         :param error:
@@ -41,8 +41,9 @@ class Statistics:
             self._store[key] = Statistic.create_from(error)
         self._store[key].increment()
 
-    def statistics_for(self, prefix, filename=None):
-        # type: (str, Optional[str]) -> Generator[Statistic, None, None]
+    def statistics_for(
+        self, prefix: str, filename: Optional[str] = None
+    ) -> Generator["Statistic", None, None]:
         """Generate statistics for the prefix and filename.
 
         If you have a :class:`Statistics` object that has recorded errors,
@@ -83,11 +84,11 @@ class Key(collections.namedtuple("Key", ["filename", "code"])):
     __slots__ = ()
 
     @classmethod
-    def create_from(cls, error):  # type: (Violation) -> Key
+    def create_from(cls, error: "Violation") -> "Key":
         """Create a Key from :class:`flake8.style_guide.Violation`."""
         return cls(filename=error.filename, code=error.code)
 
-    def matches(self, prefix, filename):  # type: (str, Optional[str]) -> bool
+    def matches(self, prefix: str, filename: Optional[str]) -> bool:
         """Determine if this key matches some constraints.
 
         :param str prefix:
@@ -114,8 +115,9 @@ class Statistic:
     convenience methods on it.
     """
 
-    def __init__(self, error_code, filename, message, count):
-        # type: (str, str, str, int) -> None
+    def __init__(
+        self, error_code: str, filename: str, message: str, count: int
+    ) -> None:
         """Initialize our Statistic."""
         self.error_code = error_code
         self.filename = filename
@@ -123,7 +125,7 @@ class Statistic:
         self.count = count
 
     @classmethod
-    def create_from(cls, error):  # type: (Violation) -> Statistic
+    def create_from(cls, error: "Violation") -> "Statistic":
         """Create a Statistic from a :class:`flake8.style_guide.Violation`."""
         return cls(
             error_code=error.code,
@@ -132,6 +134,6 @@ class Statistic:
             count=0,
         )
 
-    def increment(self):  # type: () -> None
+    def increment(self) -> None:
         """Increment the number of times we've seen this error in this file."""
         self.count += 1

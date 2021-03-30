@@ -44,7 +44,7 @@ class Application:
         #: The timestamp when the Application instance was instantiated.
         self.start_time = time.time()
         #: The timestamp when the Application finished reported errors.
-        self.end_time = None  # type: float
+        self.end_time: float = None
         #: The name of the program being run
         self.program = program
         #: The version of the program being run
@@ -63,26 +63,24 @@ class Application:
         options.register_default_options(self.option_manager)
 
         #: The instance of :class:`flake8.plugins.manager.Checkers`
-        self.check_plugins = None  # type: plugin_manager.Checkers
-        # fmt: off
+        self.check_plugins: plugin_manager.Checkers = None
         #: The instance of :class:`flake8.plugins.manager.ReportFormatters`
-        self.formatting_plugins = None  # type: plugin_manager.ReportFormatters
-        # fmt: on
+        self.formatting_plugins: plugin_manager.ReportFormatters = None
         #: The user-selected formatter from :attr:`formatting_plugins`
-        self.formatter = None  # type: BaseFormatter
+        self.formatter: BaseFormatter = None
         #: The :class:`flake8.style_guide.StyleGuideManager` built from the
         #: user's options
-        self.guide = None  # type: style_guide.StyleGuideManager
+        self.guide: style_guide.StyleGuideManager = None
         #: The :class:`flake8.checker.Manager` that will handle running all of
         #: the checks selected by the user.
-        self.file_checker_manager = None  # type: checker.Manager
+        self.file_checker_manager: checker.Manager = None
 
         #: The user-supplied options parsed into an instance of
         #: :class:`argparse.Namespace`
-        self.options = None  # type: argparse.Namespace
+        self.options: argparse.Namespace = None
         #: The left over arguments that were not parsed by
         #: :attr:`option_manager`
-        self.args = None  # type: List[str]
+        self.args: List[str] = None
         #: The number of errors, warnings, and other messages after running
         #: flake8 and taking into account ignored errors and lines.
         self.result_count = 0
@@ -96,10 +94,11 @@ class Application:
         #: Whether the program is processing a diff or not
         self.running_against_diff = False
         #: The parsed diff information
-        self.parsed_diff = {}  # type: Dict[str, Set[int]]
+        self.parsed_diff: Dict[str, Set[int]] = {}
 
-    def parse_preliminary_options(self, argv):
-        # type: (List[str]) -> Tuple[argparse.Namespace, List[str]]
+    def parse_preliminary_options(
+        self, argv: List[str]
+    ) -> Tuple[argparse.Namespace, List[str]]:
         """Get preliminary options from the CLI, pre-plugin-loading.
 
         We need to know the values of a few standard options so that we can
@@ -123,8 +122,7 @@ class Application:
             rest.extend(("--output-file", args.output_file))
         return args, rest
 
-    def exit(self):
-        # type: () -> None
+    def exit(self) -> None:
         """Handle finalization and exiting the program.
 
         This should be the last thing called on the application instance. It
@@ -140,8 +138,7 @@ class Application:
                 (self.result_count > 0) or self.catastrophic_failure
             )
 
-    def find_plugins(self, config_finder):
-        # type: (config.ConfigFileFinder) -> None
+    def find_plugins(self, config_finder: config.ConfigFileFinder) -> None:
         """Find and load the plugins for this application.
 
         Set the :attr:`check_plugins` and :attr:`formatting_plugins` attributes
@@ -163,8 +160,7 @@ class Application:
         self.check_plugins.load_plugins()
         self.formatting_plugins.load_plugins()
 
-    def register_plugin_options(self):
-        # type: () -> None
+    def register_plugin_options(self) -> None:
         """Register options provided by plugins to our option manager."""
         self.check_plugins.register_options(self.option_manager)
         self.check_plugins.register_plugin_versions(self.option_manager)
@@ -172,10 +168,9 @@ class Application:
 
     def parse_configuration_and_cli(
         self,
-        config_finder,  # type: config.ConfigFileFinder
-        argv,  # type: List[str]
-    ):
-        # type: (...) -> None
+        config_finder: config.ConfigFileFinder,
+        argv: List[str],
+    ) -> None:
         """Parse configuration files and the CLI options.
 
         :param config.ConfigFileFinder config_finder:
@@ -215,8 +210,9 @@ class Application:
 
         return formatter_plugin.execute
 
-    def make_formatter(self, formatter_class=None):
-        # type: (Optional[Type[BaseFormatter]]) -> None
+    def make_formatter(
+        self, formatter_class: Optional[Type["BaseFormatter"]] = None
+    ) -> None:
         """Initialize a formatter based on the parsed options."""
         format_plugin = self.options.format
         if 1 <= self.options.quiet < 2:
@@ -229,8 +225,7 @@ class Application:
 
         self.formatter = formatter_class(self.options)
 
-    def make_guide(self):
-        # type: () -> None
+    def make_guide(self) -> None:
         """Initialize our StyleGuide."""
         self.guide = style_guide.StyleGuideManager(
             self.options, self.formatter
@@ -239,8 +234,7 @@ class Application:
         if self.running_against_diff:
             self.guide.add_diff_ranges(self.parsed_diff)
 
-    def make_file_checker_manager(self):
-        # type: () -> None
+    def make_file_checker_manager(self) -> None:
         """Initialize our FileChecker Manager."""
         self.file_checker_manager = checker.Manager(
             style_guide=self.guide,
@@ -248,8 +242,7 @@ class Application:
             checker_plugins=self.check_plugins,
         )
 
-    def run_checks(self, files=None):
-        # type: (Optional[List[str]]) -> None
+    def run_checks(self, files: Optional[List[str]] = None) -> None:
         """Run the actual checks with the FileChecker Manager.
 
         This method encapsulates the logic to make a
@@ -289,8 +282,7 @@ class Application:
 
         self.formatter.show_benchmarks(statistics)
 
-    def report_errors(self):
-        # type: () -> None
+    def report_errors(self) -> None:
         """Report all the errors found by flake8 3.0.
 
         This also updates the :attr:`result_count` attribute with the total
@@ -312,8 +304,7 @@ class Application:
 
         self.formatter.show_statistics(self.guide.stats)
 
-    def initialize(self, argv):
-        # type: (List[str]) -> None
+    def initialize(self, argv: List[str]) -> None:
         """Initialize the application to be run.
 
         This finds the plugins, registers their options, and parses the
@@ -347,14 +338,12 @@ class Application:
         self.report_benchmarks()
         self.formatter.stop()
 
-    def _run(self, argv):
-        # type: (List[str]) -> None
+    def _run(self, argv: List[str]) -> None:
         self.initialize(argv)
         self.run_checks()
         self.report()
 
-    def run(self, argv):
-        # type: (List[str]) -> None
+    def run(self, argv: List[str]) -> None:
         """Run our application.
 
         This method will also handle KeyboardInterrupt exceptions for the

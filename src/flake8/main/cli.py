@@ -6,8 +6,7 @@ from typing import Optional
 from flake8.main import application
 
 
-def main(argv=None):
-    # type: (Optional[List[str]]) -> None
+def main(argv: Optional[List[str]] = None) -> None:
     """Execute the main bit of the application.
 
     This handles the creation of an instance of :class:`Application`, runs it,

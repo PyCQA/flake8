@@ -15,10 +15,10 @@ LOG = logging.getLogger(__name__)
 
 
 def aggregate_options(
-    manager,  # type: OptionManager
-    config_finder,  # type: config.ConfigFileFinder
-    argv,  # type: List[str]
-):  # type: (...) -> Tuple[argparse.Namespace, List[str]]
+    manager: OptionManager,
+    config_finder: config.ConfigFileFinder,
+    argv: List[str],
+) -> Tuple[argparse.Namespace, List[str]]:
     """Aggregate and merge CLI and config file options.
 
     :param flake8.options.manager.OptionManager manager:

@@ -62,7 +62,7 @@ def configure_logging(verbosity, filename=None, logformat=LOG_FORMAT):
 
     if not filename or filename in ("stderr", "stdout"):
         fileobj = getattr(sys, filename or "stderr")
-        handler_cls = logging.StreamHandler  # type: Type[logging.Handler]
+        handler_cls: Type[logging.Handler] = logging.StreamHandler
     else:
         fileobj = filename
         handler_cls = logging.FileHandler

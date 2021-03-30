@@ -197,7 +197,9 @@ def normalize_path(path, parent=os.curdir):
     return path.rstrip(separator + alternate_separator)
 
 
-def _stdin_get_value_py3():  # type: () -> str
+@functools.lru_cache(maxsize=1)
+def stdin_get_value():  # type: () -> str
+    """Get and cache it so plugins can use it."""
     stdin_value = sys.stdin.buffer.read()
     fd = io.BytesIO(stdin_value)
     try:
@@ -206,12 +208,6 @@ def _stdin_get_value_py3():  # type: () -> str
         return io.TextIOWrapper(fd, coding).read()
     except (LookupError, SyntaxError, UnicodeError):
         return stdin_value.decode("utf-8")
-
-
-@functools.lru_cache(maxsize=1)
-def stdin_get_value():  # type: () -> str
-    """Get and cache it so plugins can use it."""
-    return _stdin_get_value_py3()
 
 
 def stdin_get_lines():  # type: () -> List[str]

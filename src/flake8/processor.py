@@ -3,7 +3,6 @@ import argparse
 import ast
 import contextlib
 import logging
-import sys
 import tokenize
 from typing import Any
 from typing import Dict
@@ -352,13 +351,9 @@ class FileProcessor:
             lines = self.read_lines_from_filename()
         return lines
 
-    def _readlines_py2(self):
+    def read_lines_from_filename(self):
         # type: () -> List[str]
-        with open(self.filename) as fd:
-            return fd.readlines()
-
-    def _readlines_py3(self):
-        # type: () -> List[str]
+        """Read the lines for a file."""
         try:
             with tokenize.open(self.filename) as fd:
                 return fd.readlines()
@@ -367,15 +362,6 @@ class FileProcessor:
             # the detected encoding is incorrect, just fallback to latin-1.
             with open(self.filename, encoding="latin-1") as fd:
                 return fd.readlines()
-
-    def read_lines_from_filename(self):
-        # type: () -> List[str]
-        """Read the lines for a file."""
-        if (2, 6) <= sys.version_info < (3, 0):
-            readlines = self._readlines_py2
-        elif (3, 0) <= sys.version_info < (4, 0):
-            readlines = self._readlines_py3
-        return readlines()
 
     def read_lines_from_stdin(self):
         # type: () -> List[str]

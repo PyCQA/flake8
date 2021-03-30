@@ -401,24 +401,13 @@ def parameters_for(plugin):
     if is_class:  # The plugin is a class
         func = plugin.plugin.__init__
 
-    if sys.version_info < (3, 3):
-        argspec = inspect.getargspec(func)
-        start_of_optional_args = len(argspec[0]) - len(argspec[-1] or [])
-        parameter_names = argspec[0]
-        parameters = collections.OrderedDict(
-            [
-                (name, position < start_of_optional_args)
-                for position, name in enumerate(parameter_names)
-            ]
-        )
-    else:
-        parameters = collections.OrderedDict(
-            [
-                (parameter.name, parameter.default is parameter.empty)
-                for parameter in inspect.signature(func).parameters.values()
-                if parameter.kind == parameter.POSITIONAL_OR_KEYWORD
-            ]
-        )
+    parameters = collections.OrderedDict(
+        [
+            (parameter.name, parameter.default is parameter.empty)
+            for parameter in inspect.signature(func).parameters.values()
+            if parameter.kind == parameter.POSITIONAL_OR_KEYWORD
+        ]
+    )
 
     if is_class:
         parameters.pop("self", None)

@@ -308,7 +308,6 @@ def test_matches_filename_for_excluding_dotfiles():
     assert not utils.matches_filename('..', ('.*',), '', logger)
 
 
-@pytest.mark.xfail(sys.version_info < (3,), reason='py3+ only behaviour')
 def test_stdin_get_value_crlf():
     """Ensure that stdin is normalized from crlf to lf."""
     stdin = io.TextIOWrapper(io.BytesIO(b'1\r\n2\r\n'), 'UTF-8')

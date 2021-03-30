@@ -4,7 +4,6 @@ import errno
 import itertools
 import logging
 import signal
-import sys
 import tokenize
 from typing import Dict
 from typing import List
@@ -41,14 +40,11 @@ SERIAL_RETRY_ERRNOS = {
 
 def _multiprocessing_is_fork():  # type () -> bool
     """Class state is only preserved when using the `fork` strategy."""
-    if sys.version_info >= (3, 4):
-        return (
-            multiprocessing
-            # https://github.com/python/typeshed/pull/3415
-            and multiprocessing.get_start_method() == "fork"  # type: ignore
-        )
-    else:
-        return multiprocessing and not utils.is_windows()
+    return (
+        multiprocessing
+        # https://github.com/python/typeshed/pull/3415
+        and multiprocessing.get_start_method() == "fork"  # type: ignore
+    )
 
 
 class Manager:

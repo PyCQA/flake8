@@ -165,10 +165,10 @@ class FlakesChecker(pyflakes.checker.Checker):
         )
         if inc_exc:
             raise ValueError(
-                '"%s" was specified in both the '
-                "include-in-doctest and exclude-from-doctest "
-                "options. You are not allowed to specify it in "
-                "both for doctesting." % inc_exc
+                f"{inc_exc!r} was specified in both the "
+                f"include-in-doctest and exclude-from-doctest "
+                f"options. You are not allowed to specify it in "
+                f"both for doctesting."
             )
 
     def run(self):

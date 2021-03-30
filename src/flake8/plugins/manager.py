@@ -138,9 +138,9 @@ class Plugin:
         self._plugin = self.entry_point.load()
         if not callable(self._plugin):
             msg = (
-                "Plugin %r is not a callable. It might be written for an"
-                " older version of flake8 and might not work with this"
-                " version" % self._plugin
+                f"Plugin {self._plugin!r} is not a callable. It might be "
+                f"written for an older version of flake8 and might not work "
+                f"with this version"
             )
             LOG.critical(msg)
             raise TypeError(msg)

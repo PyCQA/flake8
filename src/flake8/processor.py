@@ -438,7 +438,7 @@ def log_token(log: logging.Logger, token: _Token) -> None:
     if token[2][0] == token[3][0]:
         pos = "[{}:{}]".format(token[2][1] or "", token[3][1])
     else:
-        pos = "l.%s" % token[3][0]
+        pos = f"l.{token[3][0]}"
     log.log(
         flake8._EXTRA_VERBOSE,
         "l.%s\t%s\t%s\t%r"

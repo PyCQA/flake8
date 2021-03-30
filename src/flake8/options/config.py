@@ -344,7 +344,7 @@ def get_local_plugins(config_finder):
 
     base_dirs = {os.path.dirname(cf) for cf in config_files}
 
-    section = "%s:local-plugins" % config_finder.program_name
+    section = f"{config_finder.program_name}:local-plugins"
     for plugin_type in ["extension", "report"]:
         if config.has_option(section, plugin_type):
             local_plugins_string = config.get(section, plugin_type).strip()

@@ -275,9 +275,9 @@ class Application:
         add_statistic = statistics.append
         for statistic in defaults.STATISTIC_NAMES + ("files",):
             value = self.file_checker_manager.statistics[statistic]
-            total_description = "total " + statistic + " processed"
+            total_description = f"total {statistic} processed"
             add_statistic((total_description, value))
-            per_second_description = statistic + " processed per second"
+            per_second_description = f"{statistic} processed per second"
             add_statistic((per_second_description, int(value / time_elapsed)))
 
         self.formatter.show_benchmarks(statistics)

@@ -134,7 +134,7 @@ def test_normalize_path(value, expected):
     (["flake8", "pep8", "pyflakes", "mccabe"],
         ["flake8", "pep8", "pyflakes", "mccabe"]),
     (["../flake8", "../pep8", "../pyflakes", "../mccabe"],
-        [os.path.abspath("../" + p) for p in RELATIVE_PATHS]),
+        [os.path.abspath(f"../{p}") for p in RELATIVE_PATHS]),
 ])
 def test_normalize_paths(value, expected):
     """Verify we normalizes a sequence of paths provided to the tool."""

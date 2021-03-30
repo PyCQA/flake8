@@ -9,6 +9,7 @@ import os
 import platform
 import re
 import sys
+import textwrap
 import tokenize
 from typing import Callable
 from typing import Dict
@@ -122,13 +123,11 @@ def parse_files_to_codes_mapping(  # noqa: C901
         State.codes = []
 
     def _unexpected_token() -> exceptions.ExecutionError:
-        def _indent(s: str) -> str:
-            return "    " + s.strip().replace("\n", "\n    ")
-
         return exceptions.ExecutionError(
             f"Expected `per-file-ignores` to be a mapping from file exclude "
             f"patterns to ignore codes.\n\n"
-            f"Configured `per-file-ignores` setting:\n\n{_indent(value)}"
+            f"Configured `per-file-ignores` setting:\n\n"
+            f"{textwrap.indent(value.strip(), '    ')}"
         )
 
     for token in _tokenize_files_to_codes_mapping(value):

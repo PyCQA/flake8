@@ -51,7 +51,7 @@ class ConfigFileFinder:
         self.user_config_file = self._user_config_file(program_name)
 
         # List of filenames to find in the local/project directory
-        self.project_filenames = ("setup.cfg", "tox.ini", "." + program_name)
+        self.project_filenames = ("setup.cfg", "tox.ini", f".{program_name}")
 
         self.local_directory = os.path.abspath(os.curdir)
 
@@ -59,7 +59,7 @@ class ConfigFileFinder:
     def _user_config_file(program_name: str) -> str:
         if utils.is_windows():
             home_dir = os.path.expanduser("~")
-            config_file_basename = "." + program_name
+            config_file_basename = f".{program_name}"
         else:
             home_dir = os.environ.get(
                 "XDG_CONFIG_HOME", os.path.expanduser("~/.config")

@@ -218,7 +218,7 @@ class FileProcessor:
                     if previous_text == "," or (
                         previous_text not in "{[(" and text not in "}])"
                     ):
-                        text = " " + text
+                        text = f" {text}"
                 elif previous_column != start_column:
                     text = line[previous_column:start_column] + text
             logical.append(text)

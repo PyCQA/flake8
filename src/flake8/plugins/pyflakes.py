@@ -145,7 +145,7 @@ class FlakesChecker(pyflakes.checker.Checker):
             if included_file == "":
                 continue
             if not included_file.startswith((os.sep, "./", "~/")):
-                included_files.append("./" + included_file)
+                included_files.append(f"./{included_file}")
             else:
                 included_files.append(included_file)
         cls.include_in_doctest = utils.normalize_paths(included_files)
@@ -155,7 +155,7 @@ class FlakesChecker(pyflakes.checker.Checker):
             if excluded_file == "":
                 continue
             if not excluded_file.startswith((os.sep, "./", "~/")):
-                excluded_files.append("./" + excluded_file)
+                excluded_files.append(f"./{excluded_file}")
             else:
                 excluded_files.append(excluded_file)
         cls.exclude_from_doctest = utils.normalize_paths(excluded_files)

@@ -401,13 +401,11 @@ def parameters_for(plugin):
     if is_class:  # The plugin is a class
         func = plugin.plugin.__init__
 
-    parameters = collections.OrderedDict(
-        [
-            (parameter.name, parameter.default is parameter.empty)
-            for parameter in inspect.signature(func).parameters.values()
-            if parameter.kind == parameter.POSITIONAL_OR_KEYWORD
-        ]
-    )
+    parameters = {
+        parameter.name: parameter.default is parameter.empty
+        for parameter in inspect.signature(func).parameters.values()
+        if parameter.kind == parameter.POSITIONAL_OR_KEYWORD
+    }
 
     if is_class:
         parameters.pop("self", None)

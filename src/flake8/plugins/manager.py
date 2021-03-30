@@ -396,7 +396,7 @@ class PluginTypeManager(object):
 
     @staticmethod
     def _generate_call_function(method_name, optmanager, *args, **kwargs):
-        def generated_function(plugin):  # noqa: D105
+        def generated_function(plugin):
             method = getattr(plugin, method_name, None)
             if method is not None and callable(method):
                 return method(optmanager, *args, **kwargs)

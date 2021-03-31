@@ -1,6 +1,10 @@
 """Plugin loading and management logic and classes."""
 import logging
-from typing import Any, Dict, List, Optional, Set
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Set
 
 from flake8 import exceptions
 from flake8 import utils
@@ -13,7 +17,7 @@ __all__ = ("Checkers", "Plugin", "PluginManager", "ReportFormatters")
 NO_GROUP_FOUND = object()
 
 
-class Plugin(object):
+class Plugin:
     """Wrap an EntryPoint from setuptools and other logic."""
 
     def __init__(self, name, entry_point, local=False):
@@ -31,16 +35,16 @@ class Plugin(object):
         self.name = name
         self.entry_point = entry_point
         self.local = local
-        self._plugin = None  # type: Any
+        self._plugin: Any = None
         self._parameters = None
-        self._parameter_names = None  # type: Optional[List[str]]
+        self._parameter_names: Optional[List[str]] = None
         self._group = None
         self._plugin_name = None
         self._version = None
 
-    def __repr__(self):  # type: () -> str
+    def __repr__(self) -> str:
         """Provide an easy to read description of the current plugin."""
-        return 'Plugin(name="{0}", entry_point="{1}")'.format(
+        return 'Plugin(name="{}", entry_point="{}")'.format(
             self.name, self.entry_point.value
         )
 
@@ -84,7 +88,7 @@ class Plugin(object):
         return self._parameters
 
     @property
-    def parameter_names(self):  # type: () -> List[str]
+    def parameter_names(self) -> List[str]:
         """List of argument names that need to be passed to the plugin."""
         if self._parameter_names is None:
             self._parameter_names = list(self.parameters)
@@ -100,7 +104,7 @@ class Plugin(object):
         return self._plugin
 
     @property
-    def version(self):  # type: () -> str
+    def version(self) -> str:
         """Return the version of the plugin."""
         version = self._version
         if version is None:
@@ -134,9 +138,9 @@ class Plugin(object):
         self._plugin = self.entry_point.load()
         if not callable(self._plugin):
             msg = (
-                "Plugin %r is not a callable. It might be written for an"
-                " older version of flake8 and might not work with this"
-                " version" % self._plugin
+                f"Plugin {self._plugin!r} is not a callable. It might be "
+                f"written for an older version of flake8 and might not work "
+                f"with this version"
             )
             LOG.critical(msg)
             raise TypeError(msg)
@@ -219,11 +223,12 @@ class Plugin(object):
             self.disable(optmanager)
 
 
-class PluginManager(object):  # pylint: disable=too-few-public-methods
+class PluginManager:  # pylint: disable=too-few-public-methods
     """Find and manage plugins consistently."""
 
-    def __init__(self, namespace, local_plugins=None):
-        # type: (str, Optional[List[str]]) -> None
+    def __init__(
+        self, namespace: str, local_plugins: Optional[List[str]] = None
+    ) -> None:
         """Initialize the manager.
 
         :param str namespace:
@@ -232,8 +237,8 @@ class PluginManager(object):  # pylint: disable=too-few-public-methods
             Plugins from config (as "X = path.to:Plugin" strings).
         """
         self.namespace = namespace
-        self.plugins = {}  # type: Dict[str, Plugin]
-        self.names = []  # type: List[str]
+        self.plugins: Dict[str, Plugin] = {}
+        self.names: List[str] = []
         self._load_local_plugins(local_plugins or [])
         self._load_entrypoint_plugins()
 
@@ -310,7 +315,7 @@ class PluginManager(object):  # pylint: disable=too-few-public-methods
         :rtype:
             tuple
         """
-        plugins_seen = set()  # type: Set[str]
+        plugins_seen: Set[str] = set()
         for entry_point_name in self.names:
             plugin = self.plugins[entry_point_name]
             plugin_name = plugin.plugin_name
@@ -342,10 +347,10 @@ def version_for(plugin):
     return getattr(module, "__version__", None)
 
 
-class PluginTypeManager(object):
+class PluginTypeManager:
     """Parent class for most of the specific plugin types."""
 
-    namespace = None  # type: str
+    namespace: str
 
     def __init__(self, local_plugins=None):
         """Initialize the plugin type's manager.

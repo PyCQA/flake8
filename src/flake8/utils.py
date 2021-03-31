@@ -1,6 +1,7 @@
 """Utility methods for flake8."""
 import collections
 import fnmatch as _fnmatch
+import functools
 import inspect
 import io
 import logging
@@ -8,24 +9,33 @@ import os
 import platform
 import re
 import sys
+import textwrap
 import tokenize
-from typing import Callable, Dict, Generator, List, Optional, Pattern
-from typing import Sequence, Set, Tuple, Union
+from typing import Callable
+from typing import Dict
+from typing import Generator
+from typing import List
+from typing import Optional
+from typing import Pattern
+from typing import Sequence
+from typing import Set
+from typing import Tuple
+from typing import TYPE_CHECKING
+from typing import Union
 
 from flake8 import exceptions
-from flake8._compat import lru_cache
 
-if False:  # `typing.TYPE_CHECKING` was introduced in 3.5.2
+if TYPE_CHECKING:
     from flake8.plugins.manager import Plugin
 
 DIFF_HUNK_REGEXP = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@.*$")
 COMMA_SEPARATED_LIST_RE = re.compile(r"[,\s]")
 LOCAL_PLUGIN_LIST_RE = re.compile(r"[,\t\n\r\f\v]")
-string_types = (str, type(u""))
 
 
-def parse_comma_separated_list(value, regexp=COMMA_SEPARATED_LIST_RE):
-    # type: (str, Pattern[str]) -> List[str]
+def parse_comma_separated_list(
+    value: str, regexp: Pattern[str] = COMMA_SEPARATED_LIST_RE
+) -> List[str]:
     """Parse a comma-separated list.
 
     :param value:
@@ -40,7 +50,7 @@ def parse_comma_separated_list(value, regexp=COMMA_SEPARATED_LIST_RE):
     :rtype:
         list
     """
-    assert isinstance(value, string_types), value
+    assert isinstance(value, str), value
 
     separated = regexp.split(value)
     item_gen = (item.strip() for item in separated)
@@ -59,8 +69,7 @@ _FILE_LIST_TOKEN_TYPES = [
 ]
 
 
-def _tokenize_files_to_codes_mapping(value):
-    # type: (str) -> List[_Token]
+def _tokenize_files_to_codes_mapping(value: str) -> List[_Token]:
     tokens = []
     i = 0
     while i < len(value):
@@ -77,8 +86,9 @@ def _tokenize_files_to_codes_mapping(value):
     return tokens
 
 
-def parse_files_to_codes_mapping(value_):  # noqa: C901
-    # type: (Union[Sequence[str], str]) -> List[Tuple[str, List[str]]]
+def parse_files_to_codes_mapping(  # noqa: C901
+    value_: Union[Sequence[str], str]
+) -> List[Tuple[str, List[str]]]:
     """Parse a files-to-codes mapping.
 
     A files-to-codes mapping a sequence of values specified as
@@ -88,22 +98,22 @@ def parse_files_to_codes_mapping(value_):  # noqa: C901
     :param value: String to be parsed and normalized.
     :type value: str
     """
-    if not isinstance(value_, string_types):
+    if not isinstance(value_, str):
         value = "\n".join(value_)
     else:
         value = value_
 
-    ret = []  # type: List[Tuple[str, List[str]]]
+    ret: List[Tuple[str, List[str]]] = []
     if not value.strip():
         return ret
 
     class State:
         seen_sep = True
         seen_colon = False
-        filenames = []  # type: List[str]
-        codes = []  # type: List[str]
+        filenames: List[str] = []
+        codes: List[str] = []
 
-    def _reset():  # type: () -> None
+    def _reset() -> None:
         if State.codes:
             for filename in State.filenames:
                 ret.append((filename, State.codes))
@@ -112,16 +122,12 @@ def parse_files_to_codes_mapping(value_):  # noqa: C901
         State.filenames = []
         State.codes = []
 
-    def _unexpected_token():  # type: () -> exceptions.ExecutionError
-        def _indent(s):  # type: (str) -> str
-            return "    " + s.strip().replace("\n", "\n    ")
-
+    def _unexpected_token() -> exceptions.ExecutionError:
         return exceptions.ExecutionError(
-            "Expected `per-file-ignores` to be a mapping from file exclude "
-            "patterns to ignore codes.\n\n"
-            "Configured `per-file-ignores` setting:\n\n{}".format(
-                _indent(value)
-            )
+            f"Expected `per-file-ignores` to be a mapping from file exclude "
+            f"patterns to ignore codes.\n\n"
+            f"Configured `per-file-ignores` setting:\n\n"
+            f"{textwrap.indent(value.strip(), '    ')}"
         )
 
     for token in _tokenize_files_to_codes_mapping(value):
@@ -155,8 +161,9 @@ def parse_files_to_codes_mapping(value_):  # noqa: C901
     return ret
 
 
-def normalize_paths(paths, parent=os.curdir):
-    # type: (Sequence[str], str) -> List[str]
+def normalize_paths(
+    paths: Sequence[str], parent: str = os.curdir
+) -> List[str]:
     """Normalize a list of paths relative to a parent directory.
 
     :returns:
@@ -168,8 +175,7 @@ def normalize_paths(paths, parent=os.curdir):
     return [normalize_path(p, parent) for p in paths]
 
 
-def normalize_path(path, parent=os.curdir):
-    # type: (str, str) -> str
+def normalize_path(path: str, parent: str = os.curdir) -> str:
     """Normalize a single-path.
 
     :returns:
@@ -190,7 +196,9 @@ def normalize_path(path, parent=os.curdir):
     return path.rstrip(separator + alternate_separator)
 
 
-def _stdin_get_value_py3():  # type: () -> str
+@functools.lru_cache(maxsize=1)
+def stdin_get_value() -> str:
+    """Get and cache it so plugins can use it."""
     stdin_value = sys.stdin.buffer.read()
     fd = io.BytesIO(stdin_value)
     try:
@@ -201,25 +209,12 @@ def _stdin_get_value_py3():  # type: () -> str
         return stdin_value.decode("utf-8")
 
 
-@lru_cache(maxsize=1)
-def stdin_get_value():  # type: () -> str
-    """Get and cache it so plugins can use it."""
-    if sys.version_info < (3,):
-        return sys.stdin.read()
-    else:
-        return _stdin_get_value_py3()
-
-
-def stdin_get_lines():  # type: () -> List[str]
+def stdin_get_lines() -> List[str]:
     """Return lines of stdin split according to file splitting."""
-    if sys.version_info < (3,):
-        return list(io.BytesIO(stdin_get_value()))
-    else:
-        return list(io.StringIO(stdin_get_value()))
+    return list(io.StringIO(stdin_get_value()))
 
 
-def parse_unified_diff(diff=None):
-    # type: (Optional[str]) -> Dict[str, Set[int]]
+def parse_unified_diff(diff: Optional[str] = None) -> Dict[str, Set[int]]:
     """Parse the unified diff passed on stdin.
 
     :returns:
@@ -233,7 +228,7 @@ def parse_unified_diff(diff=None):
 
     number_of_rows = None
     current_path = None
-    parsed_paths = collections.defaultdict(set)  # type: Dict[str, Set[int]]
+    parsed_paths: Dict[str, Set[int]] = collections.defaultdict(set)
     for line in diff.splitlines():
         if number_of_rows:
             # NOTE(sigmavirus24): Below we use a slice because stdin may be
@@ -291,8 +286,7 @@ def parse_unified_diff(diff=None):
     return parsed_paths
 
 
-def is_windows():
-    # type: () -> bool
+def is_windows() -> bool:
     """Determine if we're running on Windows.
 
     :returns:
@@ -303,8 +297,7 @@ def is_windows():
     return os.name == "nt"
 
 
-def is_using_stdin(paths):
-    # type: (List[str]) -> bool
+def is_using_stdin(paths: List[str]) -> bool:
     """Determine if we're going to read from stdin.
 
     :param list paths:
@@ -317,12 +310,14 @@ def is_using_stdin(paths):
     return "-" in paths
 
 
-def _default_predicate(*args):  # type: (*str) -> bool
+def _default_predicate(*args: str) -> bool:
     return False
 
 
-def filenames_from(arg, predicate=None):
-    # type: (str, Optional[Callable[[str], bool]]) -> Generator[str, None, None]  # noqa: E501
+def filenames_from(
+    arg: str, predicate: Optional[Callable[[str], bool]] = None
+) -> Generator[str, None, None]:
+    # noqa: E501
     """Generate filenames from an argument.
 
     :param str arg:
@@ -362,8 +357,7 @@ def filenames_from(arg, predicate=None):
         yield arg
 
 
-def fnmatch(filename, patterns):
-    # type: (str, Sequence[str]) -> bool
+def fnmatch(filename: str, patterns: Sequence[str]) -> bool:
     """Wrap :func:`fnmatch.fnmatch` to add some functionality.
 
     :param str filename:
@@ -381,8 +375,7 @@ def fnmatch(filename, patterns):
     return any(_fnmatch.fnmatch(filename, pattern) for pattern in patterns)
 
 
-def parameters_for(plugin):
-    # type: (Plugin) -> Dict[str, bool]
+def parameters_for(plugin: "Plugin") -> Dict[str, bool]:
     """Return the parameters for the plugin.
 
     This will inspect the plugin and return either the function parameters
@@ -404,24 +397,11 @@ def parameters_for(plugin):
     if is_class:  # The plugin is a class
         func = plugin.plugin.__init__
 
-    if sys.version_info < (3, 3):
-        argspec = inspect.getargspec(func)
-        start_of_optional_args = len(argspec[0]) - len(argspec[-1] or [])
-        parameter_names = argspec[0]
-        parameters = collections.OrderedDict(
-            [
-                (name, position < start_of_optional_args)
-                for position, name in enumerate(parameter_names)
-            ]
-        )
-    else:
-        parameters = collections.OrderedDict(
-            [
-                (parameter.name, parameter.default is parameter.empty)
-                for parameter in inspect.signature(func).parameters.values()
-                if parameter.kind == parameter.POSITIONAL_OR_KEYWORD
-            ]
-        )
+    parameters = {
+        parameter.name: parameter.default is parameter.empty
+        for parameter in inspect.signature(func).parameters.values()
+        if parameter.kind == parameter.POSITIONAL_OR_KEYWORD
+    }
 
     if is_class:
         parameters.pop("self", None)
@@ -429,8 +409,12 @@ def parameters_for(plugin):
     return parameters
 
 
-def matches_filename(path, patterns, log_message, logger):
-    # type: (str, Sequence[str], str, logging.Logger) -> bool
+def matches_filename(
+    path: str,
+    patterns: Sequence[str],
+    log_message: str,
+    logger: logging.Logger,
+) -> bool:
     """Use fnmatch to discern if a path exists in patterns.
 
     :param str path:
@@ -462,7 +446,7 @@ def matches_filename(path, patterns, log_message, logger):
     return match
 
 
-def get_python_version():  # type: () -> str
+def get_python_version() -> str:
     """Find and format the python implementation and version.
 
     :returns:
@@ -470,7 +454,7 @@ def get_python_version():  # type: () -> str
     :rtype:
         str
     """
-    return "%s %s on %s" % (
+    return "{} {} on {}".format(
         platform.python_implementation(),
         platform.python_version(),
         platform.system(),

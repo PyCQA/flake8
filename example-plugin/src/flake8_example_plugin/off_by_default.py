@@ -1,7 +1,7 @@
 """Our first example plugin."""
 
 
-class ExampleTwo(object):
+class ExampleTwo:
     """Second Example Plugin."""
     name = 'off-by-default-example-plugin'
     version = '1.0.0'

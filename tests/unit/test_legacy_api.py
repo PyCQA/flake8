@@ -1,8 +1,8 @@
 """Tests for Flake8's legacy API."""
 import argparse
 import os.path
+from unittest import mock
 
-import mock
 import pytest
 
 from flake8.api import legacy as api

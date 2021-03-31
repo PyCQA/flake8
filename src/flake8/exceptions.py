@@ -19,14 +19,13 @@ class FailedToLoadPlugin(Flake8Exception):
 
     FORMAT = 'Flake8 failed to load plugin "%(name)s" due to %(exc)s.'
 
-    def __init__(self, plugin_name, exception):
-        # type: (str, Exception) -> None
+    def __init__(self, plugin_name: str, exception: Exception) -> None:
         """Initialize our FailedToLoadPlugin exception."""
         self.plugin_name = plugin_name
         self.original_exception = exception
-        super(FailedToLoadPlugin, self).__init__(plugin_name, exception)
+        super().__init__(plugin_name, exception)
 
-    def __str__(self):  # type: () -> str
+    def __str__(self) -> str:
         """Format our exception message."""
         return self.FORMAT % {
             "name": self.plugin_name,
@@ -37,18 +36,18 @@ class FailedToLoadPlugin(Flake8Exception):
 class InvalidSyntax(Flake8Exception):
     """Exception raised when tokenizing a file fails."""
 
-    def __init__(self, exception):  # type: (Exception) -> None
+    def __init__(self, exception: Exception) -> None:
         """Initialize our InvalidSyntax exception."""
         self.original_exception = exception
-        self.error_message = "{0}: {1}".format(
-            exception.__class__.__name__, exception.args[0]
+        self.error_message = (
+            f"{type(exception).__name__}: {exception.args[0]}"
         )
         self.error_code = "E902"
         self.line_number = 1
         self.column_number = 0
-        super(InvalidSyntax, self).__init__(exception)
+        super().__init__(exception)
 
-    def __str__(self):  # type: () -> str
+    def __str__(self) -> str:
         """Format our exception message."""
         return self.error_message
 
@@ -58,16 +57,13 @@ class PluginRequestedUnknownParameters(Flake8Exception):
 
     FORMAT = '"%(name)s" requested unknown parameters causing %(exc)s'
 
-    def __init__(self, plugin, exception):
-        # type: (Dict[str, str], Exception) -> None
+    def __init__(self, plugin: Dict[str, str], exception: Exception) -> None:
         """Pop certain keyword arguments for initialization."""
         self.plugin = plugin
         self.original_exception = exception
-        super(PluginRequestedUnknownParameters, self).__init__(
-            plugin, exception
-        )
+        super().__init__(plugin, exception)
 
-    def __str__(self):  # type: () -> str
+    def __str__(self) -> str:
         """Format our exception message."""
         return self.FORMAT % {
             "name": self.plugin["plugin_name"],
@@ -80,14 +76,13 @@ class PluginExecutionFailed(Flake8Exception):
 
     FORMAT = '"%(name)s" failed during execution due to "%(exc)s"'
 
-    def __init__(self, plugin, exception):
-        # type: (Dict[str, str], Exception) -> None
+    def __init__(self, plugin: Dict[str, str], exception: Exception) -> None:
         """Utilize keyword arguments for message generation."""
         self.plugin = plugin
         self.original_exception = exception
-        super(PluginExecutionFailed, self).__init__(plugin, exception)
+        super().__init__(plugin, exception)
 
-    def __str__(self):  # type: () -> str
+    def __str__(self) -> str:
         """Format our exception message."""
         return self.FORMAT % {
             "name": self.plugin["plugin_name"],

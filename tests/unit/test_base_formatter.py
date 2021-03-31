@@ -1,7 +1,7 @@
 """Tests for the BaseFormatter object."""
 import argparse
+from unittest import mock
 
-import mock
 import pytest
 
 from flake8 import style_guide

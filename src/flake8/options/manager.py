@@ -5,14 +5,25 @@ import contextlib
 import enum
 import functools
 import logging
-from typing import Any, Callable, cast, Dict, Generator, List, Mapping
-from typing import Optional, Sequence, Set, Tuple, Union
+from typing import Any
+from typing import Callable
+from typing import cast
+from typing import Dict
+from typing import Generator
+from typing import List
+from typing import Mapping
+from typing import Optional
+from typing import Sequence
+from typing import Set
+from typing import Tuple
+from typing import Type
+from typing import TYPE_CHECKING
+from typing import Union
 
 from flake8 import utils
 
-if False:  # TYPE_CHECKING
+if TYPE_CHECKING:
     from typing import NoReturn
-    from typing import Type
 
 LOG = logging.getLogger(__name__)
 
@@ -21,7 +32,7 @@ LOG = logging.getLogger(__name__)
 _ARG = enum.Enum("_ARG", "NO")
 
 
-_optparse_callable_map = {
+_optparse_callable_map: Dict[str, Union[Type[Any], _ARG]] = {
     "int": int,
     "long": int,
     "string": str,
@@ -30,27 +41,25 @@ _optparse_callable_map = {
     "choice": _ARG.NO,
     # optparse allows this but does not document it
     "str": str,
-}  # type: Dict[str, Union[Type[Any], _ARG]]
+}
 
 
 class _CallbackAction(argparse.Action):
     """Shim for optparse-style callback actions."""
 
-    def __init__(self, *args, **kwargs):
-        # type: (*Any, **Any) -> None
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._callback = kwargs.pop("callback")
         self._callback_args = kwargs.pop("callback_args", ())
         self._callback_kwargs = kwargs.pop("callback_kwargs", {})
-        super(_CallbackAction, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def __call__(
         self,
-        parser,  # type: argparse.ArgumentParser
-        namespace,  # type: argparse.Namespace
-        values,  # type: Optional[Union[Sequence[str], str]]
-        option_string=None,  # type: Optional[str]
-    ):
-        # type: (...) -> None
+        parser: argparse.ArgumentParser,
+        namespace: argparse.Namespace,
+        values: Optional[Union[Sequence[str], str]],
+        option_string: Optional[str] = None,
+    ) -> None:
         if not values:
             values = None
         elif isinstance(values, list) and len(values) > 1:
@@ -61,23 +70,24 @@ class _CallbackAction(argparse.Action):
             values,
             parser,
             *self._callback_args,
-            **self._callback_kwargs
+            **self._callback_kwargs,
         )
 
 
-def _flake8_normalize(value, *args, **kwargs):
-    # type: (str, *str, **bool) -> Union[str, List[str]]
+def _flake8_normalize(
+    value: str, *args: str, **kwargs: bool
+) -> Union[str, List[str]]:
     comma_separated_list = kwargs.pop("comma_separated_list", False)
     normalize_paths = kwargs.pop("normalize_paths", False)
     if kwargs:
-        raise TypeError("Unexpected keyword args: {}".format(kwargs))
+        raise TypeError(f"Unexpected keyword args: {kwargs}")
 
-    ret = value  # type: Union[str, List[str]]
-    if comma_separated_list and isinstance(ret, utils.string_types):
+    ret: Union[str, List[str]] = value
+    if comma_separated_list and isinstance(ret, str):
         ret = utils.parse_comma_separated_list(value)
 
     if normalize_paths:
-        if isinstance(ret, utils.string_types):
+        if isinstance(ret, str):
             ret = utils.normalize_path(ret, *args)
         else:
             ret = utils.normalize_paths(ret, *args)
@@ -85,34 +95,34 @@ def _flake8_normalize(value, *args, **kwargs):
     return ret
 
 
-class Option(object):
+class Option:
     """Our wrapper around an argparse argument parsers to add features."""
 
     def __init__(
         self,
-        short_option_name=_ARG.NO,  # type: Union[str, _ARG]
-        long_option_name=_ARG.NO,  # type: Union[str, _ARG]
+        short_option_name: Union[str, _ARG] = _ARG.NO,
+        long_option_name: Union[str, _ARG] = _ARG.NO,
         # Options below here are taken from the optparse.Option class
-        action=_ARG.NO,  # type: Union[str, Type[argparse.Action], _ARG]
-        default=_ARG.NO,  # type: Union[Any, _ARG]
-        type=_ARG.NO,  # type: Union[str, Callable[..., Any], _ARG]
-        dest=_ARG.NO,  # type: Union[str, _ARG]
-        nargs=_ARG.NO,  # type: Union[int, str, _ARG]
-        const=_ARG.NO,  # type: Union[Any, _ARG]
-        choices=_ARG.NO,  # type: Union[Sequence[Any], _ARG]
-        help=_ARG.NO,  # type: Union[str, _ARG]
-        metavar=_ARG.NO,  # type: Union[str, _ARG]
+        action: Union[str, Type[argparse.Action], _ARG] = _ARG.NO,
+        default: Union[Any, _ARG] = _ARG.NO,
+        type: Union[str, Callable[..., Any], _ARG] = _ARG.NO,
+        dest: Union[str, _ARG] = _ARG.NO,
+        nargs: Union[int, str, _ARG] = _ARG.NO,
+        const: Union[Any, _ARG] = _ARG.NO,
+        choices: Union[Sequence[Any], _ARG] = _ARG.NO,
+        help: Union[str, _ARG] = _ARG.NO,
+        metavar: Union[str, _ARG] = _ARG.NO,
         # deprecated optparse-only options
-        callback=_ARG.NO,  # type: Union[Callable[..., Any], _ARG]
-        callback_args=_ARG.NO,  # type: Union[Sequence[Any], _ARG]
-        callback_kwargs=_ARG.NO,  # type: Union[Mapping[str, Any], _ARG]
+        callback: Union[Callable[..., Any], _ARG] = _ARG.NO,
+        callback_args: Union[Sequence[Any], _ARG] = _ARG.NO,
+        callback_kwargs: Union[Mapping[str, Any], _ARG] = _ARG.NO,
         # Options below are taken from argparse.ArgumentParser.add_argument
-        required=_ARG.NO,  # type: Union[bool, _ARG]
+        required: Union[bool, _ARG] = _ARG.NO,
         # Options below here are specific to Flake8
-        parse_from_config=False,  # type: bool
-        comma_separated_list=False,  # type: bool
-        normalize_paths=False,  # type: bool
-    ):  # type: (...) -> None
+        parse_from_config: bool = False,
+        comma_separated_list: bool = False,
+        normalize_paths: bool = False,
+    ) -> None:
         """Initialize an Option instance.
 
         The following are all passed directly through to argparse.
@@ -203,7 +213,7 @@ class Option(object):
                 nargs = 0
 
         # optparse -> argparse for `type`
-        if isinstance(type, utils.string_types):
+        if isinstance(type, str):
             LOG.warning(
                 "option %s: please update from optparse string `type=` to "
                 "argparse callable `type=` -- this will be an error in the "
@@ -240,7 +250,7 @@ class Option(object):
         self.help = help
         self.metavar = metavar
         self.required = required
-        self.option_kwargs = {
+        self.option_kwargs: Dict[str, Union[Any, _ARG]] = {
             "action": self.action,
             "default": self.default,
             "type": self.type,
@@ -254,14 +264,14 @@ class Option(object):
             "help": self.help,
             "metavar": self.metavar,
             "required": self.required,
-        }  # type: Dict[str, Union[Any, _ARG]]
+        }
 
         # Set our custom attributes
         self.parse_from_config = parse_from_config
         self.comma_separated_list = comma_separated_list
         self.normalize_paths = normalize_paths
 
-        self.config_name = None  # type: Optional[str]
+        self.config_name: Optional[str] = None
         if parse_from_config:
             if long_option_name is _ARG.NO:
                 raise ValueError(
@@ -273,26 +283,23 @@ class Option(object):
         self._opt = None
 
     @property
-    def filtered_option_kwargs(self):  # type: () -> Dict[str, Any]
+    def filtered_option_kwargs(self) -> Dict[str, Any]:
         """Return any actually-specified arguments."""
         return {
             k: v for k, v in self.option_kwargs.items() if v is not _ARG.NO
         }
 
-    def __repr__(self):  # type: () -> str  # noqa: D105
+    def __repr__(self) -> str:  # noqa: D105
         parts = []
         for arg in self.option_args:
             parts.append(arg)
         for k, v in self.filtered_option_kwargs.items():
-            parts.append("{}={!r}".format(k, v))
-        return "Option({})".format(", ".join(parts))
+            parts.append(f"{k}={v!r}")
+        return f"Option({', '.join(parts)})"
 
-    def normalize(self, value, *normalize_args):
-        # type: (Any, *str) -> Any
+    def normalize(self, value: Any, *normalize_args: str) -> Any:
         """Normalize the value based on the option configuration."""
-        if self.comma_separated_list and isinstance(
-            value, utils.string_types
-        ):
+        if self.comma_separated_list and isinstance(value, str):
             value = utils.parse_comma_separated_list(value)
 
         if self.normalize_paths:
@@ -303,8 +310,9 @@ class Option(object):
 
         return value
 
-    def normalize_from_setuptools(self, value):
-        # type: (str) -> Union[int, float, complex, bool, str]
+    def normalize_from_setuptools(
+        self, value: str
+    ) -> Union[int, float, complex, bool, str]:
         """Normalize the value received from setuptools."""
         value = self.normalize(value)
         if self.type is int or self.action == "count":
@@ -321,13 +329,12 @@ class Option(object):
                 return False
         return value
 
-    def to_argparse(self):
-        # type: () -> Tuple[List[str], Dict[str, Any]]
+    def to_argparse(self) -> Tuple[List[str], Dict[str, Any]]:
         """Convert a Flake8 Option to argparse ``add_argument`` arguments."""
         return self.option_args, self.filtered_option_kwargs
 
     @property
-    def to_optparse(self):  # type: () -> NoReturn
+    def to_optparse(self) -> "NoReturn":
         """No longer functional."""
         raise AttributeError("to_optparse: flake8 now uses argparse")
 
@@ -337,16 +344,16 @@ PluginVersion = collections.namedtuple(
 )
 
 
-class OptionManager(object):
+class OptionManager:
     """Manage Options and OptionParser while adding post-processing."""
 
     def __init__(
         self,
-        prog,
-        version,
-        usage="%(prog)s [options] file file ...",
-        parents=None,
-    ):  # type: (str, str, str, Optional[List[argparse.ArgumentParser]]) -> None  # noqa: E501
+        prog: str,
+        version: str,
+        usage: str = "%(prog)s [options] file file ...",
+        parents: Optional[List[argparse.ArgumentParser]] = None,
+    ) -> None:  # noqa: E501
         """Initialize an instance of an OptionManager.
 
         :param str prog:
@@ -362,10 +369,10 @@ class OptionManager(object):
         if parents is None:
             parents = []
 
-        self.parser = argparse.ArgumentParser(
+        self.parser: argparse.ArgumentParser = argparse.ArgumentParser(
             prog=prog, usage=usage, parents=parents
-        )  # type: argparse.ArgumentParser
-        self._current_group = None  # type: Optional[argparse._ArgumentGroup]
+        )
+        self._current_group: Optional[argparse._ArgumentGroup] = None
         self.version_action = cast(
             "argparse._VersionAction",
             self.parser.add_argument(
@@ -373,16 +380,16 @@ class OptionManager(object):
             ),
         )
         self.parser.add_argument("filenames", nargs="*", metavar="filename")
-        self.config_options_dict = {}  # type: Dict[str, Option]
-        self.options = []  # type: List[Option]
+        self.config_options_dict: Dict[str, Option] = {}
+        self.options: List[Option] = []
         self.program_name = prog
         self.version = version
-        self.registered_plugins = set()  # type: Set[PluginVersion]
-        self.extended_default_ignore = set()  # type: Set[str]
-        self.extended_default_select = set()  # type: Set[str]
+        self.registered_plugins: Set[PluginVersion] = set()
+        self.extended_default_ignore: Set[str] = set()
+        self.extended_default_select: Set[str] = set()
 
     @contextlib.contextmanager
-    def group(self, name):  # type: (str) -> Generator[None, None, None]
+    def group(self, name: str) -> Generator[None, None, None]:
         """Attach options to an argparse group during this context."""
         group = self.parser.add_argument_group(name)
         self._current_group, orig_group = group, self._current_group
@@ -391,7 +398,7 @@ class OptionManager(object):
         finally:
             self._current_group = orig_group
 
-    def add_option(self, *args, **kwargs):  # type: (*Any, **Any) -> None
+    def add_option(self, *args: Any, **kwargs: Any) -> None:
         """Create and register a new option.
 
         See parameters for :class:`~flake8.options.manager.Option` for
@@ -416,8 +423,7 @@ class OptionManager(object):
             self.config_options_dict[name.replace("_", "-")] = option
         LOG.debug('Registered option "%s".', option)
 
-    def remove_from_default_ignore(self, error_codes):
-        # type: (Sequence[str]) -> None
+    def remove_from_default_ignore(self, error_codes: Sequence[str]) -> None:
         """Remove specified error codes from the default ignore list.
 
         :param list error_codes:
@@ -435,8 +441,7 @@ class OptionManager(object):
                     error_code,
                 )
 
-    def extend_default_ignore(self, error_codes):
-        # type: (Sequence[str]) -> None
+    def extend_default_ignore(self, error_codes: Sequence[str]) -> None:
         """Extend the default ignore list with the error codes provided.
 
         :param list error_codes:
@@ -446,8 +451,7 @@ class OptionManager(object):
         LOG.debug("Extending default ignore list with %r", error_codes)
         self.extended_default_ignore.update(error_codes)
 
-    def extend_default_select(self, error_codes):
-        # type: (Sequence[str]) -> None
+    def extend_default_select(self, error_codes: Sequence[str]) -> None:
         """Extend the default select list with the error codes provided.
 
         :param list error_codes:
@@ -458,22 +462,21 @@ class OptionManager(object):
         self.extended_default_select.update(error_codes)
 
     def generate_versions(
-        self, format_str="%(name)s: %(version)s", join_on=", "
-    ):
-        # type: (str, str) -> str
+        self, format_str: str = "%(name)s: %(version)s", join_on: str = ", "
+    ) -> str:
         """Generate a comma-separated list of versions of plugins."""
         return join_on.join(
             format_str % plugin._asdict()
             for plugin in sorted(self.registered_plugins)
         )
 
-    def update_version_string(self):  # type: () -> None
+    def update_version_string(self) -> None:
         """Update the flake8 version string."""
         self.version_action.version = "{} ({}) {}".format(
             self.version, self.generate_versions(), utils.get_python_version()
         )
 
-    def generate_epilog(self):  # type: () -> None
+    def generate_epilog(self) -> None:
         """Create an epilog with the version and name of each of plugin."""
         plugin_version_format = "%(name)s: %(version)s"
         self.parser.epilog = "Installed plugins: " + self.generate_versions(
@@ -482,10 +485,9 @@ class OptionManager(object):
 
     def parse_args(
         self,
-        args=None,  # type: Optional[List[str]]
-        values=None,  # type: Optional[argparse.Namespace]
-    ):
-        # type: (...) -> Tuple[argparse.Namespace, List[str]]
+        args: Optional[List[str]] = None,
+        values: Optional[argparse.Namespace] = None,
+    ) -> Tuple[argparse.Namespace, List[str]]:
         """Proxy to calling the OptionParser's parse_args method."""
         self.generate_epilog()
         self.update_version_string()
@@ -495,8 +497,9 @@ class OptionManager(object):
         # TODO: refactor callers to not need this
         return parsed_args, parsed_args.filenames
 
-    def parse_known_args(self, args=None):
-        # type: (Optional[List[str]]) -> Tuple[argparse.Namespace, List[str]]
+    def parse_known_args(
+        self, args: Optional[List[str]] = None
+    ) -> Tuple[argparse.Namespace, List[str]]:
         """Parse only the known arguments from the argument values.
 
         Replicate a little argparse behaviour while we're still on
@@ -506,8 +509,9 @@ class OptionManager(object):
         self.update_version_string()
         return self.parser.parse_known_args(args)
 
-    def register_plugin(self, name, version, local=False):
-        # type: (str, str, bool) -> None
+    def register_plugin(
+        self, name: str, version: str, local: bool = False
+    ) -> None:
         """Register a plugin relying on the OptionManager.
 
         :param str name:

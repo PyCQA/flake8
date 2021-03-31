@@ -1,5 +1,6 @@
 """Tests for our debugging module."""
-import mock
+from unittest import mock
+
 import pytest
 
 from flake8.main import debug

@@ -4,16 +4,23 @@ import collections
 import contextlib
 import copy
 import enum
+import functools
 import itertools
 import linecache
 import logging
-from typing import Dict, Generator, List, Match, Optional, Sequence, Set
-from typing import Tuple, Union
+from typing import Dict
+from typing import Generator
+from typing import List
+from typing import Match
+from typing import Optional
+from typing import Sequence
+from typing import Set
+from typing import Tuple
+from typing import Union
 
 from flake8 import defaults
 from flake8 import statistics
 from flake8 import utils
-from flake8._compat import lru_cache
 from flake8.formatting import base as base_formatter
 
 __all__ = ("StyleGuide",)
@@ -42,8 +49,8 @@ class Decision(enum.Enum):
     Selected = "selected error"
 
 
-@lru_cache(maxsize=512)
-def find_noqa(physical_line):  # type: (str) -> Optional[Match[str]]
+@functools.lru_cache(maxsize=512)
+def find_noqa(physical_line: str) -> Optional[Match[str]]:
     return defaults.NOQA_INLINE_REGEXP.search(physical_line)
 
 
@@ -63,8 +70,7 @@ _Violation = collections.namedtuple(
 class Violation(_Violation):
     """Class representing a violation reported by Flake8."""
 
-    def is_inline_ignored(self, disable_noqa):
-        # type: (bool) -> bool
+    def is_inline_ignored(self, disable_noqa: bool) -> bool:
         """Determine if a comment has been added to ignore this line.
 
         :param bool disable_noqa:
@@ -105,8 +111,7 @@ class Violation(_Violation):
         )
         return False
 
-    def is_in(self, diff):
-        # type: (Dict[str, Set[int]]) -> bool
+    def is_in(self, diff: Dict[str, Set[int]]) -> bool:
         """Determine if the violation is included in a diff's line ranges.
 
         This function relies on the parsed data added via
@@ -142,16 +147,16 @@ class Violation(_Violation):
         return self.line_number in line_numbers
 
 
-class DecisionEngine(object):
+class DecisionEngine:
     """A class for managing the decision process around violations.
 
     This contains the logic for whether a violation should be reported or
     ignored.
     """
 
-    def __init__(self, options):  # type: (argparse.Namespace) -> None
+    def __init__(self, options: argparse.Namespace) -> None:
         """Initialize the engine."""
-        self.cache = {}  # type: Dict[str, Decision]
+        self.cache: Dict[str, Decision] = {}
         self.selected = tuple(options.select)
         self.extended_selected = tuple(
             sorted(options.extended_default_select, reverse=True)
@@ -169,16 +174,15 @@ class DecisionEngine(object):
         self.using_default_ignore = set(self.ignored) == set(defaults.IGNORE)
         self.using_default_select = set(self.selected) == set(defaults.SELECT)
 
-    def _in_all_selected(self, code):  # type: (str) -> bool
+    def _in_all_selected(self, code: str) -> bool:
         return bool(self.all_selected) and code.startswith(self.all_selected)
 
-    def _in_extended_selected(self, code):  # type: (str) -> bool
+    def _in_extended_selected(self, code: str) -> bool:
         return bool(self.extended_selected) and code.startswith(
             self.extended_selected
         )
 
-    def was_selected(self, code):
-        # type: (str) -> Union[Selected, Ignored]
+    def was_selected(self, code: str) -> Union[Selected, Ignored]:
         """Determine if the code has been selected by the user.
 
         :param str code:
@@ -201,8 +205,7 @@ class DecisionEngine(object):
 
         return Ignored.Implicitly
 
-    def was_ignored(self, code):
-        # type: (str) -> Union[Selected, Ignored]
+    def was_ignored(self, code: str) -> Union[Selected, Ignored]:
         """Determine if the code has been ignored by the user.
 
         :param str code:
@@ -219,8 +222,7 @@ class DecisionEngine(object):
 
         return Selected.Implicitly
 
-    def more_specific_decision_for(self, code):
-        # type: (str) -> Decision
+    def more_specific_decision_for(self, code: str) -> Decision:
         select = find_first_match(code, self.all_selected)
         extra_select = find_first_match(code, self.extended_selected)
         ignore = find_first_match(code, self.ignored)
@@ -268,8 +270,7 @@ class DecisionEngine(object):
             return Decision.Ignored
         return Decision.Selected
 
-    def make_decision(self, code):
-        # type: (str) -> Decision
+    def make_decision(self, code: str) -> Decision:
         """Decide if code should be ignored or selected."""
         LOG.debug('Deciding if "%s" should be reported', code)
         selected = self.was_selected(code)
@@ -295,8 +296,7 @@ class DecisionEngine(object):
             decision = Decision.Ignored  # pylint: disable=R0204
         return decision
 
-    def decision_for(self, code):
-        # type: (str) -> Decision
+    def decision_for(self, code: str) -> Decision:
         """Return the decision for a specific code.
 
         This method caches the decisions for codes to avoid retracing the same
@@ -318,15 +318,15 @@ class DecisionEngine(object):
         return decision
 
 
-class StyleGuideManager(object):
+class StyleGuideManager:
     """Manage multiple style guides for a single run."""
 
     def __init__(
         self,
-        options,  # type: argparse.Namespace
-        formatter,  # type: base_formatter.BaseFormatter
-        decider=None,  # type: Optional[DecisionEngine]
-    ):  # type: (...) -> None
+        options: argparse.Namespace,
+        formatter: base_formatter.BaseFormatter,
+        decider: Optional[DecisionEngine] = None,
+    ) -> None:
         """Initialize our StyleGuide.
 
         .. todo:: Add parameter documentation.
@@ -335,7 +335,7 @@ class StyleGuideManager(object):
         self.formatter = formatter
         self.stats = statistics.Statistics()
         self.decider = decider or DecisionEngine(options)
-        self.style_guides = []  # type: List[StyleGuide]
+        self.style_guides: List[StyleGuide] = []
         self.default_style_guide = StyleGuide(
             options, formatter, self.stats, decider=decider
         )
@@ -346,8 +346,9 @@ class StyleGuideManager(object):
             )
         )
 
-    def populate_style_guides_with(self, options):
-        # type: (argparse.Namespace) -> Generator[StyleGuide, None, None]
+    def populate_style_guides_with(
+        self, options: argparse.Namespace
+    ) -> Generator["StyleGuide", None, None]:
         """Generate style guides from the per-file-ignores option.
 
         :param options:
@@ -367,8 +368,8 @@ class StyleGuideManager(object):
                 filename=filename, extend_ignore_with=violations
             )
 
-    @lru_cache(maxsize=None)
-    def style_guide_for(self, filename):  # type: (str) -> StyleGuide
+    @functools.lru_cache(maxsize=None)
+    def style_guide_for(self, filename: str) -> "StyleGuide":
         """Find the StyleGuide for the filename in particular."""
         guides = sorted(
             (g for g in self.style_guides if g.applies_to(filename)),
@@ -379,8 +380,9 @@ class StyleGuideManager(object):
         return guides[0]
 
     @contextlib.contextmanager
-    def processing_file(self, filename):
-        # type: (str) -> Generator[StyleGuide, None, None]
+    def processing_file(
+        self, filename: str
+    ) -> Generator["StyleGuide", None, None]:
         """Record the fact that we're processing the file's results."""
         guide = self.style_guide_for(filename)
         with guide.processing_file(filename):
@@ -388,14 +390,13 @@ class StyleGuideManager(object):
 
     def handle_error(
         self,
-        code,
-        filename,
-        line_number,
-        column_number,
-        text,
-        physical_line=None,
-    ):
-        # type: (str, str, int, Optional[int], str, Optional[str]) -> int
+        code: str,
+        filename: str,
+        line_number: int,
+        column_number: Optional[int],
+        text: str,
+        physical_line: Optional[str] = None,
+    ) -> int:
         """Handle an error reported by a check.
 
         :param str code:
@@ -423,8 +424,7 @@ class StyleGuideManager(object):
             code, filename, line_number, column_number, text, physical_line
         )
 
-    def add_diff_ranges(self, diffinfo):
-        # type: (Dict[str, Set[int]]) -> None
+    def add_diff_ranges(self, diffinfo: Dict[str, Set[int]]) -> None:
         """Update the StyleGuides to filter out information not in the diff.
 
         This provides information to the underlying StyleGuides so that only
@@ -437,16 +437,16 @@ class StyleGuideManager(object):
             guide.add_diff_ranges(diffinfo)
 
 
-class StyleGuide(object):
+class StyleGuide:
     """Manage a Flake8 user's style guide."""
 
     def __init__(
         self,
-        options,  # type: argparse.Namespace
-        formatter,  # type: base_formatter.BaseFormatter
-        stats,  # type: statistics.Statistics
-        filename=None,  # type: Optional[str]
-        decider=None,  # type: Optional[DecisionEngine]
+        options: argparse.Namespace,
+        formatter: base_formatter.BaseFormatter,
+        stats: statistics.Statistics,
+        filename: Optional[str] = None,
+        decider: Optional[DecisionEngine] = None,
     ):
         """Initialize our StyleGuide.
 
@@ -459,14 +459,17 @@ class StyleGuide(object):
         self.filename = filename
         if self.filename:
             self.filename = utils.normalize_path(self.filename)
-        self._parsed_diff = {}  # type: Dict[str, Set[int]]
+        self._parsed_diff: Dict[str, Set[int]] = {}
 
-    def __repr__(self):  # type: () -> str
+    def __repr__(self) -> str:
         """Make it easier to debug which StyleGuide we're using."""
-        return "<StyleGuide [{}]>".format(self.filename)
+        return f"<StyleGuide [{self.filename}]>"
 
-    def copy(self, filename=None, extend_ignore_with=None):
-        # type: (Optional[str], Optional[Sequence[str]]) -> StyleGuide
+    def copy(
+        self,
+        filename: Optional[str] = None,
+        extend_ignore_with: Optional[Sequence[str]] = None,
+    ) -> "StyleGuide":
         """Create a copy of this style guide with different values."""
         filename = filename or self.filename
         options = copy.deepcopy(self.options)
@@ -476,14 +479,15 @@ class StyleGuide(object):
         )
 
     @contextlib.contextmanager
-    def processing_file(self, filename):
-        # type: (str) -> Generator[StyleGuide, None, None]
+    def processing_file(
+        self, filename: str
+    ) -> Generator["StyleGuide", None, None]:
         """Record the fact that we're processing the file's results."""
         self.formatter.beginning(filename)
         yield self
         self.formatter.finished(filename)
 
-    def applies_to(self, filename):  # type: (str) -> bool
+    def applies_to(self, filename: str) -> bool:
         """Check if this StyleGuide applies to the file.
 
         :param str filename:
@@ -499,12 +503,11 @@ class StyleGuide(object):
         return utils.matches_filename(
             filename,
             patterns=[self.filename],
-            log_message='{!r} does %(whether)smatch "%(path)s"'.format(self),
+            log_message=f'{self!r} does %(whether)smatch "%(path)s"',
             logger=LOG,
         )
 
-    def should_report_error(self, code):
-        # type: (str) -> Decision
+    def should_report_error(self, code: str) -> Decision:
         """Determine if the error code should be reported or ignored.
 
         This method only cares about the select and ignore rules as specified
@@ -520,14 +523,13 @@ class StyleGuide(object):
 
     def handle_error(
         self,
-        code,
-        filename,
-        line_number,
-        column_number,
-        text,
-        physical_line=None,
-    ):
-        # type: (str, str, int, Optional[int], str, Optional[str]) -> int
+        code: str,
+        filename: str,
+        line_number: int,
+        column_number: Optional[int],
+        text: str,
+        physical_line: Optional[str] = None,
+    ) -> int:
         """Handle an error reported by a check.
 
         :param str code:
@@ -579,8 +581,7 @@ class StyleGuide(object):
             return 1
         return 0
 
-    def add_diff_ranges(self, diffinfo):
-        # type: (Dict[str, Set[int]]) -> None
+    def add_diff_ranges(self, diffinfo: Dict[str, Set[int]]) -> None:
         """Update the StyleGuide to filter out information not in the diff.
 
         This provides information to the StyleGuide so that only the errors
@@ -592,14 +593,15 @@ class StyleGuide(object):
         self._parsed_diff = diffinfo
 
 
-def find_more_specific(selected, ignored):  # type: (str, str) -> Decision
+def find_more_specific(selected: str, ignored: str) -> Decision:
     if selected.startswith(ignored) and selected != ignored:
         return Decision.Selected
     return Decision.Ignored
 
 
-def find_first_match(error_code, code_list):
-    # type: (str, Tuple[str, ...]) -> Optional[str]
+def find_first_match(
+    error_code: str, code_list: Tuple[str, ...]
+) -> Optional[str]:
     startswith = error_code.startswith
     for code in code_list:
         if startswith(code):

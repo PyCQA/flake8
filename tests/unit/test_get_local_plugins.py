@@ -1,5 +1,5 @@
 """Tests for get_local_plugins."""
-import mock
+from unittest import mock
 
 from flake8.options import config
 

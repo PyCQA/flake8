@@ -175,11 +175,7 @@ across multiple lines, insert a new-line after the opening parenthesis, e.g.,
             statistic = next(stats_for_error_code)
             count = statistic.count
             count += sum(stat.count for stat in stats_for_error_code)
-            self._write('{count:<5} {error_code} {message}'.format(
-                count=count,
-                error_code=error_code,
-                message=statistic.message,
-            ))
+            self._write(f'{count:<5} {error_code} {statistic.message}')
 
 In the first example, we put a few of the parameters all on one line, and then
 added the last two on their own. In the second example, each parameter has its

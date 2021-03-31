@@ -3,7 +3,9 @@ import collections
 import configparser
 import logging
 import os.path
-from typing import List, Optional, Tuple
+from typing import List
+from typing import Optional
+from typing import Tuple
 
 from flake8 import utils
 
@@ -12,17 +14,16 @@ LOG = logging.getLogger(__name__)
 __all__ = ("ConfigFileFinder", "MergedConfigParser")
 
 
-class ConfigFileFinder(object):
+class ConfigFileFinder:
     """Encapsulate the logic for finding and reading config files."""
 
     def __init__(
         self,
-        program_name,
-        extra_config_files=None,
-        config_file=None,
-        ignore_config_files=False,
-    ):
-        # type: (str, Optional[List[str]], Optional[str], bool) -> None
+        program_name: str,
+        extra_config_files: Optional[List[str]] = None,
+        config_file: Optional[str] = None,
+        ignore_config_files: bool = False,
+    ) -> None:
         """Initialize object to find config files.
 
         :param str program_name:
@@ -50,16 +51,15 @@ class ConfigFileFinder(object):
         self.user_config_file = self._user_config_file(program_name)
 
         # List of filenames to find in the local/project directory
-        self.project_filenames = ("setup.cfg", "tox.ini", "." + program_name)
+        self.project_filenames = ("setup.cfg", "tox.ini", f".{program_name}")
 
         self.local_directory = os.path.abspath(os.curdir)
 
     @staticmethod
-    def _user_config_file(program_name):
-        # type: (str) -> str
+    def _user_config_file(program_name: str) -> str:
         if utils.is_windows():
             home_dir = os.path.expanduser("~")
-            config_file_basename = "." + program_name
+            config_file_basename = f".{program_name}"
         else:
             home_dir = os.environ.get(
                 "XDG_CONFIG_HOME", os.path.expanduser("~/.config")
@@ -69,8 +69,9 @@ class ConfigFileFinder(object):
         return os.path.join(home_dir, config_file_basename)
 
     @staticmethod
-    def _read_config(*files):
-        # type: (*str) -> Tuple[configparser.RawConfigParser, List[str]]
+    def _read_config(
+        *files: str,
+    ) -> Tuple[configparser.RawConfigParser, List[str]]:
         config = configparser.RawConfigParser()
 
         found_files = []
@@ -91,8 +92,7 @@ class ConfigFileFinder(object):
                 )
         return (config, found_files)
 
-    def cli_config(self, files):
-        # type: (str) -> configparser.RawConfigParser
+    def cli_config(self, files: str) -> configparser.RawConfigParser:
         """Read and parse the config file specified on the command-line."""
         config, found_files = self._read_config(files)
         if found_files:
@@ -154,7 +154,7 @@ class ConfigFileFinder(object):
         return config
 
 
-class MergedConfigParser(object):
+class MergedConfigParser:
     """Encapsulate merging different types of configuration files.
 
     This parses out the options registered that were specified in the
@@ -344,7 +344,7 @@ def get_local_plugins(config_finder):
 
     base_dirs = {os.path.dirname(cf) for cf in config_files}
 
-    section = "%s:local-plugins" % config_finder.program_name
+    section = f"{config_finder.program_name}:local-plugins"
     for plugin_type in ["extension", "report"]:
         if config.has_option(section, plugin_type):
             local_plugins_string = config.get(section, plugin_type).strip()
@@ -358,7 +358,7 @@ def get_local_plugins(config_finder):
         raw_paths = utils.parse_comma_separated_list(
             config.get(section, "paths").strip()
         )
-        norm_paths = []  # type: List[str]
+        norm_paths: List[str] = []
         for base_dir in base_dirs:
             norm_paths.extend(
                 path

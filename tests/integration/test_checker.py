@@ -1,5 +1,6 @@
 """Integration tests for the checker submodule."""
-import mock
+from unittest import mock
+
 import pytest
 
 from flake8 import checker
@@ -20,7 +21,7 @@ EXPECTED_RESULT_PHYSICAL_LINE = (
 )
 
 
-class PluginClass(object):
+class PluginClass:
     """Simple file plugin class yielding the expected report."""
 
     name = 'test'

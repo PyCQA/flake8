@@ -1,5 +1,6 @@
 """Tests for the flake8.style_guide.Violation class."""
-import mock
+from unittest import mock
+
 import pytest
 
 from flake8 import style_guide

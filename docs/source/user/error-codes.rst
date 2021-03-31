@@ -100,8 +100,6 @@ generates its own :term:`error code`\ s for ``pyflakes``:
 +------+---------------------------------------------------------------------+
 | F811 | redefinition of unused ``name`` from line ``N``                     |
 +------+---------------------------------------------------------------------+
-| F812 | list comprehension redefines ``name`` from line ``N``               |
-+------+---------------------------------------------------------------------+
 | F821 | undefined name ``name``                                             |
 +------+---------------------------------------------------------------------+
 | F822 | undefined name ``name`` in ``__all__``                              |
@@ -115,9 +113,6 @@ generates its own :term:`error code`\ s for ``pyflakes``:
 +------+---------------------------------------------------------------------+
 | F901 | ``raise NotImplemented`` should be ``raise NotImplementedError``    |
 +------+---------------------------------------------------------------------+
-
-Note that some of these entries behave differently on Python 2 and Python 3,
-for example F812 is specific to Python 2 only.
 
 We also report one extra error: ``E999``. We report ``E999`` when we fail to
 compile a file into an Abstract Syntax Tree for the plugins that require it.

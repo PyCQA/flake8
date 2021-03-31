@@ -6,8 +6,7 @@ from flake8 import defaults
 from flake8.main import debug
 
 
-def register_preliminary_options(parser):
-    # type: (argparse.ArgumentParser) -> None
+def register_preliminary_options(parser: argparse.ArgumentParser) -> None:
     """Register the preliminary options on our OptionManager.
 
     The preliminary options include:
@@ -64,7 +63,7 @@ def register_preliminary_options(parser):
 class JobsArgument:
     """Type callback for the --jobs argument."""
 
-    def __init__(self, arg):  # type: (str) -> None
+    def __init__(self, arg: str) -> None:
         """Parse and validate the --jobs argument.
 
         :param str arg:
@@ -78,7 +77,7 @@ class JobsArgument:
             self.n_jobs = int(arg)
         else:
             raise argparse.ArgumentTypeError(
-                "{!r} must be 'auto' or an integer.".format(arg),
+                f"{arg!r} must be 'auto' or an integer.",
             )
 
     def __str__(self):

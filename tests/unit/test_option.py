@@ -1,7 +1,7 @@
 """Unit tests for flake8.options.manager.Option."""
 import functools
+from unittest import mock
 
-import mock
 import pytest
 
 from flake8.options import manager

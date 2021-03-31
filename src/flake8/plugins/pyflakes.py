@@ -1,15 +1,10 @@
 """Plugin built-in to Flake8 to treat pyflakes as a plugin."""
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-
 import os
 from typing import List
 
-import pyflakes
 import pyflakes.checker
 
 from flake8 import utils
-
 
 FLAKE8_PYFLAKES_CODES = {
     "UnusedImport": "F401",
@@ -69,8 +64,8 @@ class FlakesChecker(pyflakes.checker.Checker):
     name = "pyflakes"
     version = pyflakes.__version__
     with_doctest = False
-    include_in_doctest = []  # type: List[str]
-    exclude_from_doctest = []  # type: List[str]
+    include_in_doctest: List[str] = []
+    exclude_from_doctest: List[str] = []
 
     def __init__(self, tree, file_tokens, filename):
         """Initialize the PyFlakes plugin with an AST tree and filename."""
@@ -96,7 +91,7 @@ class FlakesChecker(pyflakes.checker.Checker):
                 if overlaped_by:
                     with_doctest = True
 
-        super(FlakesChecker, self).__init__(
+        super().__init__(
             tree,
             filename=filename,
             withDoctest=with_doctest,
@@ -150,7 +145,7 @@ class FlakesChecker(pyflakes.checker.Checker):
             if included_file == "":
                 continue
             if not included_file.startswith((os.sep, "./", "~/")):
-                included_files.append("./" + included_file)
+                included_files.append(f"./{included_file}")
             else:
                 included_files.append(included_file)
         cls.include_in_doctest = utils.normalize_paths(included_files)
@@ -160,7 +155,7 @@ class FlakesChecker(pyflakes.checker.Checker):
             if excluded_file == "":
                 continue
             if not excluded_file.startswith((os.sep, "./", "~/")):
-                excluded_files.append("./" + excluded_file)
+                excluded_files.append(f"./{excluded_file}")
             else:
                 excluded_files.append(excluded_file)
         cls.exclude_from_doctest = utils.normalize_paths(excluded_files)
@@ -170,10 +165,10 @@ class FlakesChecker(pyflakes.checker.Checker):
         )
         if inc_exc:
             raise ValueError(
-                '"%s" was specified in both the '
-                "include-in-doctest and exclude-from-doctest "
-                "options. You are not allowed to specify it in "
-                "both for doctesting." % inc_exc
+                f"{inc_exc!r} was specified in both the "
+                f"include-in-doctest and exclude-from-doctest "
+                f"options. You are not allowed to specify it in "
+                f"both for doctesting."
             )
 
     def run(self):

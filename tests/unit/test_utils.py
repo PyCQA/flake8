@@ -3,8 +3,8 @@ import io
 import logging
 import os
 import sys
+from unittest import mock
 
-import mock
 import pytest
 
 from flake8 import exceptions
@@ -134,7 +134,7 @@ def test_normalize_path(value, expected):
     (["flake8", "pep8", "pyflakes", "mccabe"],
         ["flake8", "pep8", "pyflakes", "mccabe"]),
     (["../flake8", "../pep8", "../pyflakes", "../mccabe"],
-        [os.path.abspath("../" + p) for p in RELATIVE_PATHS]),
+        [os.path.abspath(f"../{p}") for p in RELATIVE_PATHS]),
 ])
 def test_normalize_paths(value, expected):
     """Verify we normalizes a sequence of paths provided to the tool."""
@@ -242,7 +242,7 @@ def test_filenames_from_exclude_doesnt_exclude_directory_names(tmpdir):
 
 def test_parameters_for_class_plugin():
     """Verify that we can retrieve the parameters for a class plugin."""
-    class FakeCheck(object):
+    class FakeCheck:
         def __init__(self, tree):
             raise NotImplementedError
 
@@ -268,7 +268,7 @@ def test_parameters_for_function_plugin():
 
 def read_diff_file(filename):
     """Read the diff file in its entirety."""
-    with open(filename, 'r') as fd:
+    with open(filename) as fd:
         content = fd.read()
     return content
 
@@ -308,7 +308,6 @@ def test_matches_filename_for_excluding_dotfiles():
     assert not utils.matches_filename('..', ('.*',), '', logger)
 
 
-@pytest.mark.xfail(sys.version_info < (3,), reason='py3+ only behaviour')
 def test_stdin_get_value_crlf():
     """Ensure that stdin is normalized from crlf to lf."""
     stdin = io.TextIOWrapper(io.BytesIO(b'1\r\n2\r\n'), 'UTF-8')

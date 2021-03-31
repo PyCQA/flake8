@@ -1,8 +1,8 @@
 """Tests for the FileProcessor class."""
 import ast
 import tokenize
+from unittest import mock
 
-import mock
 import pytest
 
 from flake8 import processor
@@ -46,7 +46,7 @@ def test_read_lines_unknown_encoding(tmpdir, default_options):
 
 @pytest.mark.parametrize('first_line', [
     '\xEF\xBB\xBF"""Module docstring."""\n',
-    u'\uFEFF"""Module docstring."""\n',
+    '\uFEFF"""Module docstring."""\n',
 ])
 def test_strip_utf_bom(first_line, default_options):
     r"""Verify that we strip '\xEF\xBB\xBF' from the first line."""
@@ -58,7 +58,7 @@ def test_strip_utf_bom(first_line, default_options):
 
 @pytest.mark.parametrize('lines, expected', [
     (['\xEF\xBB\xBF"""Module docstring."""\n'], False),
-    ([u'\uFEFF"""Module docstring."""\n'], False),
+    (['\uFEFF"""Module docstring."""\n'], False),
     (['#!/usr/bin/python', '# flake8 is great', 'a = 1'], False),
     (['#!/usr/bin/python', '# flake8: noqa', 'a = 1'], True),
     (['#!/usr/bin/python', '# flake8:noqa', 'a = 1'], True),
@@ -130,7 +130,7 @@ def test_noqa_line_for(default_options):
     ])
 
     for i in range(1, 4):
-        assert file_processor.noqa_line_for(i) == 'Line {0}\n'.format(i)
+        assert file_processor.noqa_line_for(i) == f'Line {i}\n'
 
 
 def test_noqa_line_for_continuation(default_options):
@@ -182,7 +182,7 @@ def test_next_line(default_options):
     ])
 
     for i in range(1, 4):
-        assert file_processor.next_line() == 'Line {}'.format(i)
+        assert file_processor.next_line() == f'Line {i}'
         assert file_processor.line_number == i
 
 

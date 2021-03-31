@@ -1,12 +1,11 @@
 """Integration tests for plugin loading."""
 from flake8.main import application
 
-
 LOCAL_PLUGIN_CONFIG = 'tests/fixtures/config_files/local-plugin.ini'
 LOCAL_PLUGIN_PATH_CONFIG = 'tests/fixtures/config_files/local-plugin-path.ini'
 
 
-class ExtensionTestPlugin(object):
+class ExtensionTestPlugin:
     """Extension test plugin."""
 
     name = 'ExtensionTestPlugin'
@@ -24,7 +23,7 @@ class ExtensionTestPlugin(object):
         parser.add_option('--anopt')
 
 
-class ReportTestPlugin(object):
+class ReportTestPlugin:
     """Report test plugin."""
 
     name = 'ReportTestPlugin'

@@ -1,12 +1,12 @@
 """Command-line implementation of flake8."""
 import sys
-from typing import List, Optional
+from typing import List
+from typing import Optional
 
 from flake8.main import application
 
 
-def main(argv=None):
-    # type: (Optional[List[str]]) -> None
+def main(argv: Optional[List[str]] = None) -> None:
     """Execute the main bit of the application.
 
     This handles the creation of an instance of :class:`Application`, runs it,

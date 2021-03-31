@@ -1,7 +1,7 @@
 """Tests for the flake8.style_guide.StyleGuide class."""
 import argparse
+from unittest import mock
 
-import mock
 import pytest
 
 from flake8 import statistics

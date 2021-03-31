@@ -1,8 +1,8 @@
 """Tests for the Application class."""
 import argparse
 import sys
+from unittest import mock
 
-import mock
 import pytest
 
 from flake8.main import application as app

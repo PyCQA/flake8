@@ -1,7 +1,7 @@
 """Tests for the Manager object for FileCheckers."""
 import errno
+from unittest import mock
 
-import mock
 import pytest
 
 from flake8 import checker

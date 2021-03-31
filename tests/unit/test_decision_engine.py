@@ -11,6 +11,7 @@ def create_options(**kwargs):
     """Create and return an instance of argparse.Namespace."""
     kwargs.setdefault('select', [])
     kwargs.setdefault('extended_default_select', [])
+    kwargs.setdefault('extend_select', [])
     kwargs.setdefault('ignore', [])
     kwargs.setdefault('extend_ignore', [])
     kwargs.setdefault('disable_noqa', False)
@@ -52,20 +53,27 @@ def test_was_ignored_implicitly_selects_errors(ignore_list, extend_ignore,
     assert decider.was_ignored(error_code) is style_guide.Selected.Implicitly
 
 
-@pytest.mark.parametrize('select_list,enable_extensions,error_code', [
-    (['E111', 'E121'], [], 'E111'),
-    (['E111', 'E121'], [], 'E121'),
-    (['E11', 'E12'], [], 'E121'),
-    (['E2', 'E12'], [], 'E121'),
-    (['E2', 'E12'], [], 'E211'),
-    (['E1'], ['E2'], 'E211'),
-    ([], ['E2'], 'E211'),
-])
-def test_was_selected_selects_errors(select_list, enable_extensions,
-                                     error_code):
+@pytest.mark.parametrize(
+    'select_list,extend_select,enable_extensions,error_code', [
+        (['E111', 'E121'], [], [], 'E111'),
+        (['E111', 'E121'], [], [], 'E121'),
+        (['E11', 'E12'], [], [], 'E121'),
+        (['E2', 'E12'], [], [], 'E121'),
+        (['E2', 'E12'], [], [], 'E211'),
+        (['E1'], ['E2'], [], 'E211'),
+        (['E1'], [], ['E2'], 'E211'),
+        ([], ['E2'], [], 'E211'),
+        ([], [], ['E2'], 'E211'),
+        (['E1'], ['E2'], [], 'E211'),
+        (['E111'], ['E121'], ['E2'], 'E121'),
+    ]
+)
+def test_was_selected_selects_errors(select_list, extend_select,
+                                     enable_extensions, error_code):
     """Verify we detect users explicitly selecting an error."""
     decider = style_guide.DecisionEngine(
         options=create_options(select=select_list,
+                               extend_select=extend_select,
                                enable_extensions=enable_extensions),
     )
 
@@ -144,7 +152,8 @@ def test_decision_for(select_list, ignore_list, extend_ignore, error_code,
 
 
 @pytest.mark.parametrize(
-    'select,ignore,extend_select,enabled_extensions,error_code,expected', [
+    'select,ignore,extended_default_select,'
+    'enabled_extensions,error_code,expected', [
         (defaults.SELECT, [], ['I1'], [], 'I100',
             style_guide.Decision.Selected),
         (defaults.SELECT, [], ['I1'], [], 'I201',
@@ -185,14 +194,14 @@ def test_decision_for(select_list, ignore_list, extend_ignore, error_code,
         # return statement
     ]
 )
-def test_more_specific_decision_for_logic(select, ignore, extend_select,
-                                          enabled_extensions, error_code,
-                                          expected):
+def test_more_specific_decision_for_logic(
+        select, ignore, extended_default_select,
+        enabled_extensions, error_code, expected):
     """Verify the logic of DecisionEngine.more_specific_decision_for."""
     decider = style_guide.DecisionEngine(
         create_options(
             select=select, ignore=ignore,
-            extended_default_select=extend_select,
+            extended_default_select=extended_default_select,
             enable_extensions=enabled_extensions,
         ),
     )

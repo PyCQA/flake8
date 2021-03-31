@@ -14,6 +14,7 @@ def create_options(**kwargs):
     """Create and return an instance of argparse.Namespace."""
     kwargs.setdefault('select', [])
     kwargs.setdefault('extended_default_select', [])
+    kwargs.setdefault('extend_select', [])
     kwargs.setdefault('ignore', [])
     kwargs.setdefault('extend_ignore', [])
     kwargs.setdefault('disable_noqa', False)

@@ -105,6 +105,7 @@ def register_default_options(option_manager):
     - ``--max-doc-length``
     - ``--indent-size``
     - ``--select``
+    - ``--extend-select``
     - ``--disable-noqa``
     - ``--show-source``
     - ``--statistics``
@@ -270,6 +271,16 @@ def register_default_options(option_manager):
         comma_separated_list=True,
         help="Comma-separated list of errors and warnings to enable."
         " For example, ``--select=E4,E51,W234``. (Default: %(default)s)",
+    )
+
+    add_option(
+        "--extend-select",
+        metavar="errors",
+        default="",
+        parse_from_config=True,
+        comma_separated_list=True,
+        help="Comma-separated list of errors and warnings to add to the list"
+        " of selected ones. For example, ``--extend-select=E4,E51,W234``.",
     )
 
     add_option(

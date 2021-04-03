@@ -1,0 +1,51 @@
+name: main
+
+on:
+  push:
+    branches: [master]
+    tags:
+  pull_request:
+
+jobs:
+  main:
+    strategy:
+      matrix:
+        include:
+        # linux
+        - os: ubuntu-latest
+          python: pypy-3.7
+          toxenv: py
+        - os: ubuntu-latest
+          python: 3.6
+          toxenv: py
+        - os: ubuntu-latest
+          python: 3.7
+          toxenv: py
+        - os: ubuntu-latest
+          python: 3.8
+          toxenv: py
+        - os: ubuntu-latest
+          python: 3.9
+          toxenv: py
+        # windows
+        - os: windows-latest
+          python: 3.6
+          toxenv: py
+        # misc
+        - os: ubuntu-latest
+          python: 3.9
+          toxenv: docs
+        - os: ubuntu-latest
+          python: 3.9
+          toxenv: linters
+        - os: ubuntu-latest
+          python: 3.9
+          toxenv: dogfood
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python }}
+    - run: pip install --upgrade setuptools pip tox virtualenv
+    - run: tox -e ${{ matrix.toxenv }}

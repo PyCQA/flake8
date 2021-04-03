@@ -1,3 +1,11 @@
+.. image:: https://github.com/PyCQA/flake8/workflows/main/badge.svg
+   :target: https://github.com/PyCQA/flake8/actions?query=workflow%3Amain
+   :alt: build status
+
+.. image:: https://results.pre-commit.ci/badge/github/PyCQA/flake8/master.svg
+   :target: https://results.pre-commit.ci/latest/github/PyCQA/flake8/master
+   :alt: pre-commit.ci status
+
 ========
  Flake8
 ========

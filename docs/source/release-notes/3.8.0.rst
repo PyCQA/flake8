@@ -132,7 +132,7 @@ Deprecations
 
 .. all links
 .. _3.8.0 milestone:
-    https://gitlab.com/pycqa/flake8/-/milestones/32
+    https://github.com/pycqa/flake8/milestone/31
 
 .. merge request links
 .. _GitLab#270:

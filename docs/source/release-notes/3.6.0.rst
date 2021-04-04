@@ -58,7 +58,7 @@ Bugs Fixed
 
 .. all links
 .. _3.6.0 milestone:
-    https://gitlab.com/pycqa/flake8/milestones/21
+    https://github.com/pycqa/flake8/milestone/20
 
 .. issue links
 .. _GitLab#365:

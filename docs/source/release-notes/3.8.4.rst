@@ -14,7 +14,7 @@ Bugs Fixed
 
 .. all links
 .. _3.8.4 milestone:
-    https://gitlab.com/pycqa/flake8/-/milestones/37
+    https://github.com/pycqa/flake8/milestone/36
 
 .. merge request links
 .. _GitLab!448:

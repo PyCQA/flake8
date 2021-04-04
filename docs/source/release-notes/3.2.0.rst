@@ -8,6 +8,6 @@ You can view the `3.2.0 milestone`_ on GitLab for more details.
 
 .. links
 .. _3.2.0 milestone:
-    https://gitlab.com/pycqa/flake8/milestones/14
+    https://github.com/pycqa/flake8/milestone/14
 .. _GitLab#256:
     https://gitlab.com/pycqa/flake8/issues/256

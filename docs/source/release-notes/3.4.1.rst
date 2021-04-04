@@ -8,7 +8,7 @@ You can view the `3.4.1 milestone`_ on GitLab for more details.
 
 .. all links
 .. _3.4.1 milestone:
-    https://gitlab.com/pycqa/flake8/milestones/19
+    https://github.com/pycqa/flake8/milestone/18
 
 .. issue links
 .. _GitLab#354:

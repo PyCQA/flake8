@@ -11,7 +11,7 @@ You can view the `3.1.1 milestone`_ on GitLab for more details.
 
 .. links
 .. _3.1.1 milestone:
-    https://gitlab.com/pycqa/flake8/milestones/13
+    https://github.com/pycqa/flake8/milestone/13
 .. _GitLab#254:
     https://gitlab.com/pycqa/flake8/issues/254
 .. _GitLab#255:

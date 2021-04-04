@@ -49,7 +49,7 @@ You can view the `3.1.0 milestone`_ on GitLab for more details.
 
 .. links
 .. _3.1.0 milestone:
-    https://gitlab.com/pycqa/flake8/milestones/12
+    https://github.com/pycqa/flake8/milestone/12
 .. _GitLab#209:
     https://gitlab.com/pycqa/flake8/issues/209
 .. _GitLab#210:

@@ -98,7 +98,7 @@ And you should see something like:
                             unified diff provided on standard in by the user.
       --exclude=patterns    Comma-separated list of files or directories to
                             exclude.(Default:
-                            .svn,CVS,.bzr,.hg,.git,__pycache__,.tox)
+                            .svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg)
       --filename=patterns   Only check for filenames matching the patterns in this
                             comma-separated list. (Default: *.py)
       --format=format       Format errors according to the chosen formatter.

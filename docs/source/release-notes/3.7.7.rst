@@ -7,17 +7,9 @@ Bugs Fixed
 ~~~~~~~~~~
 
 - Fix crashes in plugins causing ``flake8`` to hang while unpickling errors
-  (See also `GitLab!308`_, `GitLab#505`_)
+  (See also :issue:`1206`, :issue:`681`)
 
 
 .. all links
 .. _3.7.7 milestone:
     https://github.com/pycqa/flake8/milestone/29
-
-.. issue links
-.. _GitLab#505:
-    https://gitlab.com/pycqa/flake8/issues/505
-
-.. merge request links
-.. _GitLab!308:
-    https://gitlab.com/pycqa/flake8/merge_requests/308

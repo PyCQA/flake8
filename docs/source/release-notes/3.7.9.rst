@@ -7,17 +7,9 @@ Bugs Fixed
 ~~~~~~~~~~
 
 - Disable multiprocessing when the multiprocessing method is ``spawn`` (such
-  as on macos in python3.8) (See also `GitLab!367`_, `GitLab#587`_)
+  as on macos in python3.8) (See also :issue:`956`, :issue:`315`)
 
 
 .. all links
 .. _3.7.9 milestone:
     https://github.com/pycqa/flake8/milestone/32
-
-.. issue links
-.. _GitLab#587:
-    https://gitlab.com/pycqa/flake8/issues/587
-
-.. merge request links
-.. _GitLab!367:
-    https://gitlab.com/pycqa/flake8/merge_requests/367

@@ -5,6 +5,4 @@
   instead of ``stdout``.
 
 - **Bug** Fix interleaving of output while using multiprocessing
-  (`GitLab#17`_)
-
-.. _GitLab#17: https://gitlab.com/pycqa/flake8/issues/17
+  (:issue:`60`)

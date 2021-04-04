@@ -26,7 +26,7 @@ def aggregate_options(
     :param flake8.options.config.ConfigFileFinder config_finder:
         The config file finder to use.
     :param list argv:
-        The list of remaining command-line argumentsthat were unknown during
+        The list of remaining command-line arguments that were unknown during
         preliminary option parsing to pass to ``manager.parse_args``.
     :returns:
         Tuple of the parsed options and extra arguments returned by

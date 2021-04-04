@@ -1,7 +1,7 @@
 3.6.0 -- 2018-10-23
 -------------------
 
-You can view the `3.6.0 milestone`_ on GitLab for more details.
+You can view the `3.6.0 milestone`_ on GitHub for more details.
 
 New Dependency Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

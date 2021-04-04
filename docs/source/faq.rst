@@ -23,7 +23,7 @@ What is the next version of Flake8?
 ===================================
 
 In general we try to use milestones to indicate this. If the last release
-on PyPI is 3.1.5 and you see a milestone for 3.2.0 in GitLab, there's a
+on PyPI is 3.1.5 and you see a milestone for 3.2.0 in GitHub, there's a
 good chance that 3.2.0 is the next release.
 
 

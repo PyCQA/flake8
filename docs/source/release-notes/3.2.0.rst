@@ -1,7 +1,7 @@
 3.2.0 -- 2016-11-14
 -------------------
 
-You can view the `3.2.0 milestone`_ on GitLab for more details.
+You can view the `3.2.0 milestone`_ on GitHub for more details.
 
 - Allow for pycodestyle 2.2.0 which fixes a bug in E305 (See also
   :issue:`188`)

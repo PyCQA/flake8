@@ -1,7 +1,7 @@
 3.4.0 -- 2017-07-27
 -------------------
 
-You can view the `3.4.0 milestone`_ on GitLab for more details.
+You can view the `3.4.0 milestone`_ on GitHub for more details.
 
 - Refine logic around ``--select`` and ``--ignore`` when combined with the
   default values for each. (See also :issue:`572`)

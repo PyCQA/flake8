@@ -1,7 +1,7 @@
 3.9.0 -- 2021-03-14
 -------------------
 
-You can view the `3.9.0 milestone`_ on GitLab for more details.
+You can view the `3.9.0 milestone`_ on GitHub for more details.
 
 New Dependency Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

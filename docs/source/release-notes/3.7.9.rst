@@ -1,7 +1,7 @@
 3.7.9 -- 2019-10-28
 -------------------
 
-You can view the `3.7.9 milestone`_ on GitLab for more details.
+You can view the `3.7.9 milestone`_ on GitHub for more details.
 
 Bugs Fixed
 ~~~~~~~~~~

@@ -1,7 +1,7 @@
 3.4.1 -- 2017-07-28
 -------------------
 
-You can view the `3.4.1 milestone`_ on GitLab for more details.
+You can view the `3.4.1 milestone`_ on GitHub for more details.
 
 - Fix minor regression when users specify only a ``--select`` list with items
   in the enabled/extended select list.  (See also :issue:`605`)

@@ -1,7 +1,7 @@
 3.3.0 -- 2017-02-06
 -------------------
 
-You can view the `3.3.0 milestone`_ on GitLab for more details.
+You can view the `3.3.0 milestone`_ on GitHub for more details.
 
 - Add support for Python 3.6 (via dependencies). **Note** Flake8 does not
   guarantee that all plugins will support Python 3.6.

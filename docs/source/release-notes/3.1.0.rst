@@ -1,7 +1,7 @@
 3.1.0 -- 2016-11-14
 -------------------
 
-You can view the `3.1.0 milestone`_ on GitLab for more details.
+You can view the `3.1.0 milestone`_ on GitHub for more details.
 
 - Add ``--bug-report`` flag to make issue reporters' lives easier.
 

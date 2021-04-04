@@ -1,7 +1,7 @@
 3.2.1 -- 2016-11-21
 -------------------
 
-You can view the `3.2.1 milestone`_ on GitLab for more details.
+You can view the `3.2.1 milestone`_ on GitHub for more details.
 
 - Fix subtle bug when deciding whether to report an on-by-default's violation
   (See also :issue:`189`)

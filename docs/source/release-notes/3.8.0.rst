@@ -1,7 +1,7 @@
 3.8.0 -- 2020-05-11
 -------------------
 
-You can view the `3.8.0 milestone`_ on GitLab for more details.
+You can view the `3.8.0 milestone`_ on GitHub for more details.
 
 Bugs Fixed
 ~~~~~~~~~~
@@ -22,7 +22,7 @@ Deprecations
 3.8.0a2 -- 2020-04-24
 ---------------------
 
-You can view the `3.8.0 milestone`_ on GitLab for more details.
+You can view the `3.8.0 milestone`_ on GitHub for more details.
 
 Bugs Fixed
 ~~~~~~~~~~
@@ -33,7 +33,7 @@ Bugs Fixed
 3.8.0a1 -- 2020-04-24
 ---------------------
 
-You can view the `3.8.0 milestone`_ on GitLab for more details.
+You can view the `3.8.0 milestone`_ on GitHub for more details.
 
 New Dependency Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

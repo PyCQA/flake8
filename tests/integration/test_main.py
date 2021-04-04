@@ -207,7 +207,7 @@ def test_bug_report_successful(capsys):
 
 
 def test_specific_noqa_does_not_clobber_pycodestyle_noqa(tmpdir, capsys):
-    """See https://gitlab.com/pycqa/flake8/issues/552."""
+    """See https://github.com/pycqa/flake8/issues/1104."""
     with tmpdir.as_cwd():
         tmpdir.join('t.py').write("test = ('ABC' == None)  # noqa: E501\n")
         _call_main(['t.py'], retv=1)
@@ -219,7 +219,7 @@ t.py:1:15: E711 comparison to None should be 'if cond is None:'
 
 
 def test_specific_noqa_on_line_with_continuation(tmpdir, capsys):
-    """See https://gitlab.com/pycqa/flake8/issues/375."""
+    """See https://github.com/pycqa/flake8/issues/621."""
     t_py_src = '''\
 from os \\
     import path  # noqa: F401

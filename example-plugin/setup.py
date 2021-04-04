@@ -7,7 +7,7 @@ setuptools.setup(
     description='Example plugin to Flake8',
     author='Ian Cordasco',
     author_email='graffatcolmingov@gmail.com',
-    url='https://gitlab.com/pycqa/flake8',
+    url='https://github.com/pycqa/flake8',
     package_dir={'': 'src/'},
     packages=['flake8_example_plugin'],
     entry_points={

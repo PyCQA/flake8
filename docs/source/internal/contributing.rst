@@ -51,7 +51,7 @@ Filing a Bug
 ============
 
 When filing a bug against |Flake8|, please fill out the issue template as it
-is provided to you by `GitLab`_. If your bug is in reference to one of the
+is provided to you by `GitHub`_. If your bug is in reference to one of the
 checks that |Flake8| reports by default, please do not report them to |Flake8|
 unless |Flake8| is doing something to prevent the check from running or you
 have some reason to believe |Flake8| is inhibiting the effectiveness of the
@@ -131,7 +131,7 @@ documentation generation and refresh the documentation you're working on.
 Contributing Code
 =================
 
-|Flake8| development happens on `GitLab`_. Code contributions should be
+|Flake8| development happens on `GitHub`_. Code contributions should be
 submitted there.
 
 Merge requests should:
@@ -202,8 +202,8 @@ delivered.
 .. _tox:
     https://tox.readthedocs.io/
 
-.. _GitLab:
-    https://gitlab.com/pycqa/flake8
+.. _GitHub:
+    https://github.com/pycqa/flake8
 
 .. _pycodestyle:
     https://github.com/pycqa/pycodestyle

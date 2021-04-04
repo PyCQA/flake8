@@ -40,7 +40,7 @@ like:
         description="our extension to flake8",
         author="Me",
         author_email="example@example.com",
-        url="https://gitlab.com/me/flake8_example",
+        url="https://github.com/me/flake8_example",
         packages=[
             "flake8_example",
         ],

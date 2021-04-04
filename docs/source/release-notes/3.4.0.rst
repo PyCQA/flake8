@@ -1,41 +1,25 @@
 3.4.0 -- 2017-07-27
 -------------------
 
-You can view the `3.4.0 milestone`_ on GitLab for more details.
+You can view the `3.4.0 milestone`_ on GitHub for more details.
 
 - Refine logic around ``--select`` and ``--ignore`` when combined with the
-  default values for each. (See also `GitLab#318`_)
+  default values for each. (See also :issue:`572`)
 
 - Handle spaces as an alternate separate for error codes, e.g.,
-  ``--ignore 'E123 E234'``. (See also `GitLab#329`_)
+  ``--ignore 'E123 E234'``. (See also :issue:`580`)
 
 - Filter out empty select and ignore codes, e.g., ``--ignore E123,,E234``.
-  (See also `GitLab#330`_)
+  (See also :issue:`581`)
 
-- Specify dependencies appropriately in ``setup.py`` (See also `Gitlab#341_`)
+- Specify dependencies appropriately in ``setup.py`` (See also :issue:`592`)
 
 - Fix bug in parsing ``--quiet`` and ``--verbose`` from config files.
-  (See also `GitLab!193`_)
+  (See also :issue:`1169`)
 
 - Remove unused import of ``os`` in the git hook template (See also
-  `GitLab!194`_)
+  :issue:`1170`)
 
 .. all links
 .. _3.4.0 milestone:
-    https://gitlab.com/pycqa/flake8/milestones/18
-
-.. issue links
-.. _GitLab#318:
-    https://gitlab.com/pycqa/flake8/issues/318
-.. _GitLab#329:
-    https://gitlab.com/pycqa/flake8/issues/329
-.. _GitLab#330:
-    https://gitlab.com/pycqa/flake8/issues/330
-.. _GitLab#341:
-    https://gitlab.com/pycqa/flake8/issues/341
-
-.. merge request links
-.. _GitLab!193:
-    https://gitlab.com/pycqa/flake8/merge_requests/193
-.. _GitLab!194:
-    https://gitlab.com/pycqa/flake8/merge_requests/194
+    https://github.com/pycqa/flake8/milestone/17

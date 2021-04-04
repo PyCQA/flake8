@@ -63,10 +63,10 @@ Links
 
 * `Flake8 Documentation <http://flake8.pycqa.org/en/latest/>`_
 
-* `GitLab Project <https://gitlab.com/pycqa/flake8>`_
+* `GitHub Project <https://github.com/pycqa/flake8>`_
 
 * `All (Open and Closed) Issues
-  <https://gitlab.com/pycqa/flake8/issues?scope=all&sort=updated_desc&state=all>`_
+  <https://github.com/pycqa/flake8/issues?q=is%3Aissue>`_
 
 * `Code-Quality Archives
   <https://mail.python.org/mailman/listinfo/code-quality>`_

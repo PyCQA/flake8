@@ -1,27 +1,19 @@
 3.2.1 -- 2016-11-21
 -------------------
 
-You can view the `3.2.1 milestone`_ on GitLab for more details.
+You can view the `3.2.1 milestone`_ on GitHub for more details.
 
 - Fix subtle bug when deciding whether to report an on-by-default's violation
-  (See also `GitLab#257`_)
+  (See also :issue:`189`)
 
 - Fix another bug around SyntaxErrors not being reported at the right column
-  and row (See also `GitLab#259`_ and `GitLab#237`_ for a related, previously
+  and row (See also :issue:`191` and :issue:`169` for a related, previously
   fixed bug)
 
 - Fix regression from 2.x where we run checks against explicitly provided
   files, even if they don't match the filename patterns. (See also
-  `GitLab#266`_)
+  :issue:`198`)
 
 .. links
 .. _3.2.1 milestone:
-    https://gitlab.com/pycqa/flake8/milestones/15
-.. _GitLab#237:
-    https://gitlab.com/pycqa/flake8/issues/237
-.. _GitLab#257:
-    https://gitlab.com/pycqa/flake8/issues/257
-.. _GitLab#259:
-    https://gitlab.com/pycqa/flake8/issues/259
-.. _GitLab#266:
-    https://gitlab.com/pycqa/flake8/issues/266
+    https://github.com/pycqa/flake8/milestone/15

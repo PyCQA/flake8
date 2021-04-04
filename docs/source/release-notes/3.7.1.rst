@@ -1,22 +1,14 @@
 3.7.1 -- 2019-01-30
 -------------------
 
-You can view the `3.7.1 milestone`_ on GitLab for more details.
+You can view the `3.7.1 milestone`_ on GitHub for more details.
 
 Bugs Fixed
 ~~~~~~~~~~
 
 - Fix capitalized filenames in ``per-file-ignores`` setting (See also
-  `GitLab!290`_, `GitLab#488`_)
+  :issue:`917`, :issue:`287`)
 
 .. all links
 .. _3.7.1 milestone:
-    https://gitlab.com/pycqa/flake8/milestones/24
-
-.. issue links
-.. _GitLab#488:
-    https://gitlab.com/pycqa/flake8/issues/488
-
-.. merge request links
-.. _GitLab!290:
-    https://gitlab.com/pycqa/flake8/merge_requests/290
+    https://github.com/pycqa/flake8/milestone/23

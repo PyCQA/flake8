@@ -144,4 +144,4 @@ McCabe: https://github.com/pycqa/mccabe
 BUGS
 ====
 
-Please report all bugs to https://gitlab.com/pycqa/flake8
+Please report all bugs to https://github.com/pycqa/flake8

@@ -1,40 +1,22 @@
 3.8.2 -- 2020-05-22
 -------------------
 
-You can view the `3.8.2 milestone`_ on GitLab for more details.
+You can view the `3.8.2 milestone`_ on GitHub for more details.
 
 Bugs Fixed
 ~~~~~~~~~~
 
-- Improve performance by eliminating unnecessary sort (See also `GitLab!429`_)
+- Improve performance by eliminating unnecessary sort (See also :issue:`991`)
 
 - Improve messaging of ``--jobs`` argument by utilizing ``argparse`` (See also
-  `GitLab!428`_, `GitLab#567`_)
+  :issue:`1269`, :issue:`1110`)
 
 - Fix file configuration options to be relative to the config passed on the
-  command line (See also `GitLab!431`_, `GitLab#651`_)
+  command line (See also :issue:`442`, :issue:`736`)
 
 - Fix incorrect handling of ``--extend-exclude`` by treating its values as
-  files (See also `GitLab!432`_, `GitLab#653`_)
+  files (See also :issue:`1271`, :issue:`738`)
 
 .. all links
 .. _3.8.2 milestone:
-    https://gitlab.com/pycqa/flake8/-/milestones/35
-
-.. issue links
-.. _GitLab#567:
-    https://gitlab.com/pycqa/flake8/issues/567
-.. _GitLab#651:
-    https://gitlab.com/pycqa/flake8/issues/651
-.. _GitLab#653:
-    https://gitlab.com/pycqa/flake8/issues/653
-
-.. merge request links
-.. _GitLab!428:
-    https://gitlab.com/pycqa/flake8/merge_requests/428
-.. _GitLab!429:
-    https://gitlab.com/pycqa/flake8/merge_requests/429
-.. _GitLab!431:
-    https://gitlab.com/pycqa/flake8/merge_requests/431
-.. _GitLab!432:
-    https://gitlab.com/pycqa/flake8/merge_requests/432
+    https://github.com/pycqa/flake8/milestone/34

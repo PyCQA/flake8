@@ -11,7 +11,7 @@ from flake8 import checker
 def test_run_ast_checks_handles_SyntaxErrors(FileProcessor):  # noqa: N802,N803
     """Stress our SyntaxError handling.
 
-    Related to: https://gitlab.com/pycqa/flake8/issues/237
+    Related to: https://github.com/pycqa/flake8/issues/169
     """
     processor = mock.Mock(lines=[])
     FileProcessor.return_value = processor

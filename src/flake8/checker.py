@@ -29,7 +29,7 @@ SERIAL_RETRY_ERRNOS = {
     # > In those cases, we should replace the customized Queue Report
     # > class with pep8's StandardReport class to ensure users don't run
     # > into this problem.
-    # > (See also: https://gitlab.com/pycqa/flake8/issues/74)
+    # > (See also: https://github.com/pycqa/flake8/issues/117)
     errno.ENOSPC,
     # NOTE(sigmavirus24): When adding to this list, include the reasoning
     # on the lines before the error code and always append your error
@@ -305,7 +305,7 @@ class Manager:
         or whether to run them in serial.
 
         If running the checks in parallel causes a problem (e.g.,
-        https://gitlab.com/pycqa/flake8/issues/74) this also implements
+        https://github.com/pycqa/flake8/issues/117) this also implements
         fallback to serial processing.
         """
         try:
@@ -444,7 +444,7 @@ class FileChecker:
             # least.
             column_offset = 1
             row_offset = 0
-            # See also: https://gitlab.com/pycqa/flake8/issues/237
+            # See also: https://github.com/pycqa/flake8/issues/169
             physical_line = token[-1]
 
             # NOTE(sigmavirus24): Not all "tokens" have a string as the last
@@ -454,7 +454,7 @@ class FileChecker:
                 # NOTE(sigmavirus24): SyntaxErrors also don't exactly have a
                 # "physical" line so much as what was accumulated by the point
                 # tokenizing failed.
-                # See also: https://gitlab.com/pycqa/flake8/issues/237
+                # See also: https://github.com/pycqa/flake8/issues/169
                 lines = physical_line.rstrip("\n").split("\n")
                 row_offset = len(lines) - 1
                 logical_line = lines[0]
@@ -661,8 +661,8 @@ def calculate_pool_chunksize(num_checkers, num_jobs):
     - For chunksize, see: https://docs.python.org/3/library/multiprocessing.html#multiprocessing.pool.Pool.imap  # noqa
     - This formula, while not perfect, aims to give each worker two batches of
       work.
-    - See: https://gitlab.com/pycqa/flake8/merge_requests/156#note_18878876
-    - See: https://gitlab.com/pycqa/flake8/issues/265
+    - See: https://github.com/pycqa/flake8/issues/829#note_18878876
+    - See: https://github.com/pycqa/flake8/issues/197
     """
     return max(num_checkers // (num_jobs * 2), 1)
 

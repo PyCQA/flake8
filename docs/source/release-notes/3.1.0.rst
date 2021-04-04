@@ -1,44 +1,44 @@
 3.1.0 -- 2016-11-14
 -------------------
 
-You can view the `3.1.0 milestone`_ on GitLab for more details.
+You can view the `3.1.0 milestone`_ on GitHub for more details.
 
 - Add ``--bug-report`` flag to make issue reporters' lives easier.
 
 - Collect configuration files from the current directory when using our Git
-  hook. (See also `GitLab#210`_, `GitLab#218`_, `GitLab#223`_)
+  hook. (See also :issue:`142`, :issue:`150`, :issue:`155`)
 
 - Avoid unhandled exceptions when dealing with SyntaxErrors. (See also
-  `GitLab#214`_, `GitLab#238`_)
+  :issue:`146`, :issue:`170`)
 
-- Exit early if the value for ``--diff`` is empty. (See also `GitLab#226`_)
+- Exit early if the value for ``--diff`` is empty. (See also :issue:`158`)
 
-- Handle empty ``--stdin-display-name`` values. (See also `GitLab#235`_)
+- Handle empty ``--stdin-display-name`` values. (See also :issue:`167`)
 
 - Properly report the column number of Syntax Errors. We were assuming that
   all reports of column numbers were 0-indexed, however, SyntaxErrors report
   the column number as 1-indexed. This caused us to report a column number
   that was 1 past the actual position. Further, when combined with
   SyntaxErrors that occur at a newline, this caused the position to be
-  visually off by two. (See also `GitLab#237`_)
+  visually off by two. (See also :issue:`169`)
 
 - Fix the behaviour of ``--enable-extensions``. Previously, items specified
   here were still ignored due to the fact that the off-by-default extension
-  codes were being left in the ``ignore`` list. (See also `GitLab#239`_)
+  codes were being left in the ``ignore`` list. (See also :issue:`171`)
 
 - Fix problems around ``--select`` and ``--ignore`` behaviour that prevented
   codes that were neither explicitly selected nor explicitly ignored from
-  being reported. (See also `GitLab#242`_)
+  being reported. (See also :issue:`174`)
 
 - Truly be quiet when the user specifies ``-q`` one or more times. Previously,
   we were showing the if the user specified ``-q`` and ``--show-source``. We
-  have fixed this bug. (See also `GitLab#245`_)
+  have fixed this bug. (See also :issue:`177`)
 
 - Add new File Processor attribute, ``previous_unindented_logical_line`` to
-  accommodate pycodestyle 2.1.0. (See also `GitLab#246`_)
+  accommodate pycodestyle 2.1.0. (See also :issue:`178`)
 
-- When something goes wrong, exit non-zero. (See also `GitLab#248`_,
-  `GitLab#209`_)
+- When something goes wrong, exit non-zero. (See also :issue:`180`,
+  :issue:`141`)
 
 - Add ``--tee`` as an option to allow use of ``--output-file`` and printing to
   standard out.
@@ -49,32 +49,4 @@ You can view the `3.1.0 milestone`_ on GitLab for more details.
 
 .. links
 .. _3.1.0 milestone:
-    https://gitlab.com/pycqa/flake8/milestones/12
-.. _GitLab#209:
-    https://gitlab.com/pycqa/flake8/issues/209
-.. _GitLab#210:
-    https://gitlab.com/pycqa/flake8/issues/210
-.. _GitLab#214:
-    https://gitlab.com/pycqa/flake8/issues/214
-.. _GitLab#218:
-    https://gitlab.com/pycqa/flake8/issues/218
-.. _GitLab#223:
-    https://gitlab.com/pycqa/flake8/issues/223
-.. _GitLab#226:
-    https://gitlab.com/pycqa/flake8/issues/226
-.. _GitLab#235:
-    https://gitlab.com/pycqa/flake8/issues/235
-.. _GitLab#237:
-    https://gitlab.com/pycqa/flake8/issues/237
-.. _GitLab#238:
-    https://gitlab.com/pycqa/flake8/issues/238
-.. _GitLab#239:
-    https://gitlab.com/pycqa/flake8/issues/239
-.. _GitLab#242:
-    https://gitlab.com/pycqa/flake8/issues/242
-.. _GitLab#245:
-    https://gitlab.com/pycqa/flake8/issues/245
-.. _GitLab#246:
-    https://gitlab.com/pycqa/flake8/issues/246
-.. _GitLab#248:
-    https://gitlab.com/pycqa/flake8/issues/248
+    https://github.com/pycqa/flake8/milestone/12

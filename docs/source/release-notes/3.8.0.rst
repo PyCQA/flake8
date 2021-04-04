@@ -1,225 +1,139 @@
 3.8.0 -- 2020-05-11
 -------------------
 
-You can view the `3.8.0 milestone`_ on GitLab for more details.
+You can view the `3.8.0 milestone`_ on GitHub for more details.
 
 Bugs Fixed
 ~~~~~~~~~~
 
 - Fix logical checks which report positions out of bounds (See also
-  `GitLab!422`_, `GitLab#635`_)
+  :issue:`987`, :issue:`723`)
 
 - Fix ``--exclude=.*`` accidentally matching ``.`` and ``..`` (See also
-  `GitLab!424`_, `GitLab#632`_)
+  :issue:`441`, :issue:`360`)
 
 Deprecations
 ~~~~~~~~~~~~
 
-- Add deprecation message for vcs hooks (See also `GitLab!420`_,
-  `GitLab#568`_)
+- Add deprecation message for vcs hooks (See also :issue:`985`,
+  :issue:`296`)
 
 
 3.8.0a2 -- 2020-04-24
 ---------------------
 
-You can view the `3.8.0 milestone`_ on GitLab for more details.
+You can view the `3.8.0 milestone`_ on GitHub for more details.
 
 Bugs Fixed
 ~~~~~~~~~~
 
-- Fix ``type="str"`` optparse options (See also `GitLab!419`_)
+- Fix ``type="str"`` optparse options (See also :issue:`984`)
 
 
 3.8.0a1 -- 2020-04-24
 ---------------------
 
-You can view the `3.8.0 milestone`_ on GitLab for more details.
+You can view the `3.8.0 milestone`_ on GitHub for more details.
 
 New Dependency Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Remove dependency on ``entrypoints`` and add dependency on
-  ``importlib-metadata`` (only for ``python<3.8``) (See also `GitLab!388`_,
-  `GitLab#569`_)
+  ``importlib-metadata`` (only for ``python<3.8``) (See also :issue:`1297`,
+  :issue:`297`)
 
-- Pyflakes has been updated to >= 2.2.0, < 2.3.0 (See also `GitLab!417`_)
+- Pyflakes has been updated to >= 2.2.0, < 2.3.0 (See also :issue:`982`)
 
-- pycodestyle has been updated to >= 2.6.0a1, < 2.7.0 (See also `GitLab!418`_)
+- pycodestyle has been updated to >= 2.6.0a1, < 2.7.0 (See also :issue:`983`)
 
 Features
 ~~~~~~~~
 
 - Add ``--extend-exclude`` option to add to ``--exclude`` without overwriting
-  (See also `GitLab!315`_, `GitLab#535`_)
+  (See also :issue:`1211`, :issue:`1091`)
 
 - Move argument parsing from ``optparse`` to ``argparse`` (See also
-  `GitLab!341`_
+  :issue:`939`
 
-- Group plugin options in ``--help`` (See also `GitLab!342`_, `GitLab#565`_)
+- Group plugin options in ``--help`` (See also :issue:`1219`, :issue:`294`)
 
 - Remove parsing of ``verbose`` from configuration files as it was not
-  consistently applied (See also `GitLab!360`_, `GitLab#439`_)
+  consistently applied (See also :issue:`1245`, :issue:`245`)
 
 - Remove parsing of ``output_file`` from configuration files as it was not
-  consistently applied (See also `GitLab!361`_)
+  consistently applied (See also :issue:`1246`)
 
 - Resolve configuration files relative to ``cwd`` instead of common prefix of
   passed filenames.  You may need to change ``flake8 subproject`` to
-  ``cd subproject && flake8 .`` (See also `GitLab!363`_)
+  ``cd subproject && flake8 .`` (See also :issue:`952`)
 
-- Officially support python3.8 (See also `GitLab!377`_)
+- Officially support python3.8 (See also :issue:`963`)
 
 - ``--disable-noqa`` now also disables ``# flake8: noqa`` (See also
-  `GitLab!380`_, `GitLab#590`_)
+  :issue:`1296`, :issue:`318`)
 
-- Ensure that a missing file produces a ``E902`` error (See also `GitLab!404`_,
-  `GitLab#600`_)
+- Ensure that a missing file produces a ``E902`` error (See also :issue:`1262`,
+  :issue:`328`)
 
 - ``# noqa`` comments now apply to all of the lines in an explicit ``\``
   continuation or in a line continued by a multi-line string (See also
-  `GitLab!413`_, `GitLab#375`_)
+  :issue:`1266`, :issue:`621`)
 
 Bugs Fixed
 ~~~~~~~~~~
 
 - Fix ``--exclude=./t.py`` to only match ``t.py`` at the top level (See also
-  `GitLab!311`_, `GitLab#382`_)
+  :issue:`1208`, :issue:`628`)
 
 - Fix ``--show-source`` when a file is indented with tabs (See also
-  `GitLab!339`_, `GitLab#563`_)
+  :issue:`1218`, :issue:`719`)
 
 - Fix crash when ``--max-line-length`` is given a non-integer (See also
-  `GitLab!341`_, `GitLab#541`_)
+  :issue:`939`, :issue:`704`)
 
 - Prevent flip-flopping of ``indent_char`` causing extra ``E101`` errors (See
-  also `GitLab!357`_, `pycodestyle#886`_)
+  also :issue:`949`, `pycodestyle#886`_)
 
 - Only enable multiprocessing when the method is ``fork`` fixing issues
-  on macos with python3.8+ (See also `GitLab!366`_, `GitLab#587`_) (note: this
+  on macos with python3.8+ (See also :issue:`955`, :issue:`315`) (note: this
   fix also landed in 3.7.9)
 
 - ``noqa`` is now only handled by flake8 fixing specific-noqa.  Plugins
   requesting this parameter will always receive ``False`` (See also
-  `GitLab!331`_, `GitLab#552`_)
+  :issue:`1214`, :issue:`1104`)
 
 - Fix duplicate loading of plugins when invoked via ``python -m flake8`` (See
-  also `GitLab!388`_)
+  also :issue:`1297`)
 
 - Fix early exit when ``--exit-zero`` and ``--diff`` are provided and the diff
-  is empty (See also `GitLab!391`_)
+  is empty (See also :issue:`970`)
 
 - Consistently split lines when ``\f`` is present when reading from stdin (See
-  also `GitLab!406`_, `GitLab#270`_)
+  also :issue:`976`, :issue:`202`)
 
 Deprecations
 ~~~~~~~~~~~~
 
 - ``python setup.py flake8`` (setuptools integration) is now deprecated and
-  will be removed in a future version (See also `GitLab!330`_, `GitLab#544`_)
+  will be removed in a future version (See also :issue:`935`, :issue:`1098`)
 
 - ``type='string'`` (optparse) types are deprecated, use
   ``type=callable`` (argparse) instead.  Support for ``type='string'`` will
-  be removed in a future version (See also `GitLab!341`_)
+  be removed in a future version (See also :issue:`939`)
 
 - ``%default`` in plugin option help text is deprecated, use ``%(default)s``
   instead.  Support for ``%default`` will be removed in a future version (See
-  also `GitLab!341`_)
+  also :issue:`939`)
 
 - optparse-style ``action='callback'`` setting for options is deprecated, use
   argparse action classes instead.  This will be removed in a future version
-  (See also `GitLab!341`_)
+  (See also :issue:`939`)
 
 
 .. all links
 .. _3.8.0 milestone:
-    https://gitlab.com/pycqa/flake8/-/milestones/32
-
-.. merge request links
-.. _GitLab#270:
-   https://gitlab.com/pycqa/flake8/-/issues/270
-.. _GitLab#375:
-   https://gitlab.com/pycqa/flake8/-/issues/375
-.. _GitLab#382:
-   https://gitlab.com/pycqa/flake8/-/issues/382
-.. _GitLab#439:
-   https://gitlab.com/pycqa/flake8/-/issues/439
-.. _GitLab#535:
-   https://gitlab.com/pycqa/flake8/-/issues/535
-.. _GitLab#541:
-   https://gitlab.com/pycqa/flake8/-/issues/541
-.. _GitLab#544:
-   https://gitlab.com/pycqa/flake8/-/issues/544
-.. _GitLab#552:
-   https://gitlab.com/pycqa/flake8/-/issues/552
-.. _GitLab#563:
-   https://gitlab.com/pycqa/flake8/-/issues/563
-.. _GitLab#565:
-   https://gitlab.com/pycqa/flake8/-/issues/565
-.. _GitLab#568:
-   https://gitlab.com/pycqa/flake8/-/issues/568
-.. _GitLab#569:
-   https://gitlab.com/pycqa/flake8/-/issues/569
-.. _GitLab#587:
-   https://gitlab.com/pycqa/flake8/-/issues/587
-.. _GitLab#590:
-   https://gitlab.com/pycqa/flake8/-/issues/590
-.. _GitLab#600:
-   https://gitlab.com/pycqa/flake8/-/issues/600
-.. _GitLab#632:
-   https://gitlab.com/pycqa/flake8/-/issues/632
-.. _GitLab#635:
-   https://gitlab.com/pycqa/flake8/-/issues/635
-.. _pycodestyle#886:
-   https://github.com/PyCQA/pycodestyle/issues/886
+    https://github.com/pycqa/flake8/milestone/31
 
 .. issue links
-.. _GitLab!311:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/311
-.. _GitLab!315:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/315
-.. _GitLab!330:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/330
-.. _GitLab!331:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/331
-.. _GitLab!339:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/339
-.. _GitLab!341:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/341
-.. _GitLab!342:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/342
-.. _GitLab!357:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/357
-.. _GitLab!360:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/360
-.. _GitLab!361:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/361
-.. _GitLab!363:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/363
-.. _GitLab!366:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/366
-.. _GitLab!377:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/377
-.. _GitLab!380:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/380
-.. _GitLab!388:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/388
-.. _GitLab!391:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/391
-.. _GitLab!404:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/404
-.. _GitLab!406:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/406
-.. _GitLab!413:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/413
-.. _GitLab!417:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/417
-.. _GitLab!418:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/418
-.. _GitLab!419:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/419
-.. _GitLab!420:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/420
-.. _GitLab!422:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/422
-.. _GitLab!424:
-   https://gitlab.com/pycqa/flake8/-/merge_requests/424
+.. _pycodestyle#886:
+   https://github.com/PyCQA/pycodestyle/issues/886

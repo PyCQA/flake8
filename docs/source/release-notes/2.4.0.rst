@@ -2,32 +2,25 @@
 ------------------
 
 - **Bug** Print filenames when using multiprocessing and ``-q`` option.
-  (`GitLab#31`_)
+  (:issue:`74`)
 
 - **Bug** Put upper cap on dependencies. The caps for 2.4.0 are:
 
-  - ``pep8 < 1.6`` (Related to `GitLab#35`_)
+  - ``pep8 < 1.6`` (Related to :issue:`78`)
 
   - ``mccabe < 0.4``
 
   - ``pyflakes < 0.9``
 
-  See also `GitLab#32`_
+  See also :issue:`75`
 
 - **Bug** Files excluded in a config file were not being excluded when flake8
-  was run from a git hook. (`GitHub#2`_)
+  was run from a git hook. (:issue:`2`)
 
 - **Improvement** Print warnings for users who are providing mutually
-  exclusive options to flake8. (`GitLab#8`_, `GitLab!18`_)
+  exclusive options to flake8. (:issue:`51`, :issue:`386`)
 
 - **Feature** Allow git hook configuration to live in ``.git/config``.
-  See the updated `VCS hooks docs`_ for more details. (`GitLab!20`_)
+  See the updated `VCS hooks docs`_ for more details. (:issue:`387`)
 
-.. _GitHub#2: https://github.com/pycqa/flake8/pull/2
-.. _GitLab#8: https://gitlab.com/pycqa/flake8/issues/8
-.. _GitLab#31: https://gitlab.com/pycqa/flake8/issues/31
-.. _GitLab#32: https://gitlab.com/pycqa/flake8/issues/32
-.. _GitLab#35: https://gitlab.com/pycqa/flake8/issues/35
-.. _GitLab!18: https://gitlab.com/pycqa/flake8/merge_requests/18
-.. _GitLab!20: https://gitlab.com/pycqa/flake8/merge_requests/20
 .. _VCS hooks docs: https://flake8.readthedocs.io/en/latest/user/using-hooks.html

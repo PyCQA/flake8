@@ -1,7 +1,7 @@
 3.3.0 -- 2017-02-06
 -------------------
 
-You can view the `3.3.0 milestone`_ on GitLab for more details.
+You can view the `3.3.0 milestone`_ on GitHub for more details.
 
 - Add support for Python 3.6 (via dependencies). **Note** Flake8 does not
   guarantee that all plugins will support Python 3.6.
@@ -9,49 +9,29 @@ You can view the `3.3.0 milestone`_ on GitLab for more details.
 - Added unique error codes for all missing PyFlakes messages. (14 new
   codes, see "Error / Violation Codes")
 
-- Dramatically improve the performance of Flake8. (See also `GitLab!156`_)
+- Dramatically improve the performance of Flake8. (See also :issue:`829`)
 
 - Display the local file path instead of the temporary file path when
-  using the git hook. (See also `GitLab#244`_)
+  using the git hook. (See also :issue:`176`)
 
 - Add methods to Report class that will be called when Flake8 starts and
-  finishes processing a file. (See also `GitLab#251`_)
+  finishes processing a file. (See also :issue:`183`)
 
 - Fix problem where hooks should only check \*.py files. (See also
-  `GitLab#268`_)
+  :issue:`200`)
 
 - Fix handling of SyntaxErrors that do not include physical line information.
-  (See also `GitLab#279`_)
+  (See also :issue:`542`)
 
 - Update upper bound on PyFlakes to allow for PyFlakes 1.5.0.  (See also
-  `GitLab#290`_)
+  :issue:`549`)
 
 - Update setuptools integration to less eagerly deduplicate packages.
-  (See also `GitLab#295`_)
+  (See also :issue:`552`)
 
 - Force ``flake8 --version`` to be repeatable between invocations. (See also
-  `GitLab#297`_)
+  :issue:`554`)
 
 .. all links
 .. _3.3.0 milestone:
-    https://gitlab.com/pycqa/flake8/milestones/16
-
-.. issue links
-.. _GitLab#244:
-    https://gitlab.com/pycqa/flake8/issues/244
-.. _GitLab#251:
-    https://gitlab.com/pycqa/flake8/issues/251
-.. _GitLab#268:
-    https://gitlab.com/pycqa/flake8/issues/268
-.. _GitLab#279:
-    https://gitlab.com/pycqa/flake8/issues/279
-.. _GitLab#290:
-    https://gitlab.com/pycqa/flake8/issues/290
-.. _GitLab#295:
-    https://gitlab.com/pycqa/flake8/issues/295
-.. _GitLab#297:
-    https://gitlab.com/pycqa/flake8/issues/297
-
-.. merge request links
-.. _GitLab!156:
-    https://gitlab.com/pycqa/flake8/merge_requests/156
+    https://github.com/pycqa/flake8/milestone/16

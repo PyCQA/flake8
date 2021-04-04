@@ -1,117 +1,61 @@
 3.6.0 -- 2018-10-23
 -------------------
 
-You can view the `3.6.0 milestone`_ on GitLab for more details.
+You can view the `3.6.0 milestone`_ on GitHub for more details.
 
 New Dependency Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- pycodestyle has been updated to >= 2.4.0, < 2.5.0 (See also `GitLab#381`_,
-  `GitLab#415`_, `GitLab!212`_, `GitLab!230`_, `GitLab!231`_)
+- pycodestyle has been updated to >= 2.4.0, < 2.5.0 (See also :issue:`1068`,
+  :issue:`652`, :issue:`869`, :issue:`881`, :issue:`1239`)
 
-- Pyflakes has been updated to >= 2.0.0, < 2.1.0 (See also `GitLab#422`_,
-  `GitLab!239`_)
+- Pyflakes has been updated to >= 2.0.0, < 2.1.0 (See also :issue:`655`,
+  :issue:`883`)
 
 - flake8 requires python 2.x >= 2.7 or python 3.x >= 3.4 (See also
-  `GitLab!225`_)
+  :issue:`876`)
 
 Features
 ~~~~~~~~
 
 - Add ``paths`` to allow local plugins to exist outside of ``sys.path`` (See
-  also `GitLab#379`_, `GitLab!211`_)
+  also :issue:`1067`, :issue:`1237`)
 
 - Copy ``setup.cfg`` files to the temporary git hook execution directory (See
-  also `GitLab!215`_)
+  also :issue:`1299`)
 
 - Only skip a file if ``# flake8: noqa`` is on a line by itself (See also
-  `GitLab#453`_, `GitLab!219`_)
+  :issue:`259`, :issue:`873`)
 
-- Provide a better user experience for broken plugins (See also `GitLab!221`_)
+- Provide a better user experience for broken plugins (See also :issue:`1178`)
 
 - Report ``E902`` when a file passed on the command line does not exist (See
-  also `GitLab#405`_, `GitLab!227`_)
+  also :issue:`645`, :issue:`878`)
 
 - Add ``--extend-ignore`` for extending the default ``ignore`` instead of
-  overriding it (See also `GitLab#365`_, `GitLab!233`_)
+  overriding it (See also :issue:`1061`, :issue:`1180`)
 
 Bugs Fixed
 ~~~~~~~~~~
 
-- Respect a formatter's newline setting when printing (See also `GitLab!222`_)
+- Respect a formatter's newline setting when printing (See also :issue:`1238`)
 
-- Fix leaking of processes in the legacy api (See also `GitLab#410`_,
-  `GitLab!228`_)
+- Fix leaking of processes in the legacy api (See also :issue:`650`,
+  :issue:`879`)
 
 - Fix a ``SyntaxWarning`` for an invalid escape sequence (See also
-  `GitLab!244`_)
+  :issue:`1186`)
 
 - Fix ``DeprecationWarning`` due to import of ``abc`` classes from the
-  ``collections`` module (See also `GitLab!249`_)
+  ``collections`` module (See also :issue:`887`)
 
 - Defer ``setuptools`` import to improve flake8 startup time (See also
-  `GitLab!250`_)
+  :issue:`1190`)
 
 - Fix inconsistent line endings in ``FileProcessor.lines`` when running under
-  python 3.x (See also `GitLab#457`_, `GitLab!255`_)
+  python 3.x (See also :issue:`263`, :issue:`889`)
 
 
 .. all links
 .. _3.6.0 milestone:
-    https://gitlab.com/pycqa/flake8/milestones/21
-
-.. issue links
-.. _GitLab#365:
-    https://gitlab.com/pycqa/flake8/issues/365
-.. _GitLab#379:
-    https://gitlab.com/pycqa/flake8/issues/379
-.. _GitLab#381:
-    https://gitlab.com/pycqa/flake8/issues/381
-.. _GitLab#405:
-    https://gitlab.com/pycqa/flake8/issues/405
-.. _GitLab#410:
-    https://gitlab.com/pycqa/flake8/issues/410
-.. _GitLab#415:
-    https://gitlab.com/pycqa/flake8/issues/415
-.. _GitLab#422:
-    https://gitlab.com/pycqa/flake8/issues/422
-.. _GitLab#453:
-    https://gitlab.com/pycqa/flake8/issues/453
-.. _GitLab#457:
-    https://gitlab.com/pycqa/flake8/issues/457
-
-.. merge request links
-.. _GitLab!211:
-    https://gitlab.com/pycqa/flake8/merge_requests/211
-.. _GitLab!212:
-    https://gitlab.com/pycqa/flake8/merge_requests/212
-.. _GitLab!215:
-    https://gitlab.com/pycqa/flake8/merge_requests/215
-.. _GitLab!219:
-    https://gitlab.com/pycqa/flake8/merge_requests/219
-.. _GitLab!221:
-    https://gitlab.com/pycqa/flake8/merge_requests/221
-.. _GitLab!222:
-    https://gitlab.com/pycqa/flake8/merge_requests/222
-.. _GitLab!225:
-    https://gitlab.com/pycqa/flake8/merge_requests/225
-.. _GitLab!227:
-    https://gitlab.com/pycqa/flake8/merge_requests/227
-.. _GitLab!228:
-    https://gitlab.com/pycqa/flake8/merge_requests/228
-.. _GitLab!230:
-    https://gitlab.com/pycqa/flake8/merge_requests/230
-.. _GitLab!231:
-    https://gitlab.com/pycqa/flake8/merge_requests/231
-.. _GitLab!233:
-    https://gitlab.com/pycqa/flake8/merge_requests/233
-.. _GitLab!239:
-    https://gitlab.com/pycqa/flake8/merge_requests/239
-.. _GitLab!244:
-    https://gitlab.com/pycqa/flake8/merge_requests/244
-.. _GitLab!249:
-    https://gitlab.com/pycqa/flake8/merge_requests/249
-.. _GitLab!250:
-    https://gitlab.com/pycqa/flake8/merge_requests/250
-.. _GitLab!255:
-    https://gitlab.com/pycqa/flake8/merge_requests/255
+    https://github.com/pycqa/flake8/milestone/20

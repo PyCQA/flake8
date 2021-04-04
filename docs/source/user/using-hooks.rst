@@ -10,7 +10,7 @@ started is to add this configuration to your ``.pre-commit-config.yaml``:
 
 .. code-block:: yaml
 
-    -   repo: https://gitlab.com/pycqa/flake8
+    -   repo: https://github.com/pycqa/flake8
         rev: ''  # pick a git hash / tag to point to
         hooks:
         -   id: flake8

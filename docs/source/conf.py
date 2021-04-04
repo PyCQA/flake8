@@ -29,6 +29,7 @@ needs_sphinx = '1.3'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
+    'sphinx.ext.extlinks',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
@@ -297,3 +298,8 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'python': ('https://docs.python.org/3/', None)}
+
+extlinks = {
+    "issue": ("https://github.com/pycqa/flake8/issues/%s", "#"),
+    "pull": ("https://github.com/pycqa/flake8/pull/%s", "#"),
+}

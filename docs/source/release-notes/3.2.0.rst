@@ -1,13 +1,11 @@
 3.2.0 -- 2016-11-14
 -------------------
 
-You can view the `3.2.0 milestone`_ on GitLab for more details.
+You can view the `3.2.0 milestone`_ on GitHub for more details.
 
 - Allow for pycodestyle 2.2.0 which fixes a bug in E305 (See also
-  `GitLab#256`_)
+  :issue:`188`)
 
 .. links
 .. _3.2.0 milestone:
-    https://gitlab.com/pycqa/flake8/milestones/14
-.. _GitLab#256:
-    https://gitlab.com/pycqa/flake8/issues/256
+    https://github.com/pycqa/flake8/milestone/14

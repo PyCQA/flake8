@@ -446,8 +446,6 @@ def log_token(log: logging.Logger, token: _Token) -> None:
     )
 
 
-# NOTE(sigmavirus24): This was taken wholesale from
-# https://github.com/PyCQA/pycodestyle
 def expand_indent(line: str) -> int:
     r"""Return the amount of indentation.
 
@@ -462,17 +460,7 @@ def expand_indent(line: str) -> int:
     >>> expand_indent('        \t')
     16
     """
-    if "\t" not in line:
-        return len(line) - len(line.lstrip())
-    result = 0
-    for char in line:
-        if char == "\t":
-            result = result // 8 * 8 + 8
-        elif char == " ":
-            result += 1
-        else:
-            break
-    return result
+    return len(line.expandtabs(8))
 
 
 # NOTE(sigmavirus24): This was taken wholesale from

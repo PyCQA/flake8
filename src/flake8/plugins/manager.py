@@ -251,7 +251,9 @@ class PluginManager:  # pylint: disable=too-few-public-methods
         for plugin_str in local_plugins:
             name, _, entry_str = plugin_str.partition("=")
             name, entry_str = name.strip(), entry_str.strip()
-            entry_point = importlib_metadata.EntryPoint(name, entry_str, None)
+            entry_point = importlib_metadata.EntryPoint(
+                name, entry_str, self.namespace
+            )
             self._load_plugin_from_entrypoint(entry_point, local=True)
 
     def _load_entrypoint_plugins(self):

@@ -57,7 +57,7 @@ def parse_comma_separated_list(
     return [item for item in item_gen if item]
 
 
-_Token = collections.namedtuple("Token", ("tp", "src"))
+_Token = collections.namedtuple("_Token", ("tp", "src"))
 _CODE, _FILE, _COLON, _COMMA, _WS = "code", "file", "colon", "comma", "ws"
 _EOF = "eof"
 _FILE_LIST_TOKEN_TYPES = [

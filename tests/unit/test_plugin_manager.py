@@ -18,8 +18,8 @@ def test_calls_entrypoints_creates_plugins_automaticaly(entry_points_mck):
     """Verify that we create Plugins on instantiation."""
     entry_points_mck.return_value = {
         'testing.entrypoints': [
-            importlib_metadata.EntryPoint('T100', '', None),
-            importlib_metadata.EntryPoint('T200', '', None),
+            importlib_metadata.EntryPoint('T100', '', 'testing.entrypoints'),
+            importlib_metadata.EntryPoint('T200', '', 'testing.entrypoints'),
         ],
     }
     plugin_mgr = manager.PluginManager(namespace='testing.entrypoints')
@@ -36,8 +36,8 @@ def test_handles_mapping_functions_across_plugins(entry_points_mck):
     """Verify we can use the PluginManager call functions on all plugins."""
     entry_points_mck.return_value = {
         'testing.entrypoints': [
-            importlib_metadata.EntryPoint('T100', '', None),
-            importlib_metadata.EntryPoint('T200', '', None),
+            importlib_metadata.EntryPoint('T100', '', 'testing.entrypoints'),
+            importlib_metadata.EntryPoint('T200', '', 'testing.entrypoints'),
         ],
     }
     plugin_mgr = manager.PluginManager(namespace='testing.entrypoints')

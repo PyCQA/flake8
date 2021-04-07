@@ -1,7 +1,7 @@
 exclude: ^tests/fixtures/example-code/
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.3.0
+    rev: v3.4.0
     hooks:
     -   id: check-yaml
     -   id: debug-statements
@@ -26,7 +26,7 @@ repos:
     -   id: pyupgrade
         args: [--py36-plus]
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.720
+    rev: v0.812
     hooks:
     -   id: mypy
         exclude: ^(docs/|example-plugin/|tests/fixtures)

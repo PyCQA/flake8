@@ -54,20 +54,19 @@ def find_noqa(physical_line: str) -> Optional[Match[str]]:
     return defaults.NOQA_INLINE_REGEXP.search(physical_line)
 
 
-_Violation = collections.namedtuple(
-    "Violation",
-    [
-        "code",
-        "filename",
-        "line_number",
-        "column_number",
-        "text",
-        "physical_line",
-    ],
-)
-
-
-class Violation(_Violation):
+class Violation(
+    collections.namedtuple(
+        "Violation",
+        [
+            "code",
+            "filename",
+            "line_number",
+            "column_number",
+            "text",
+            "physical_line",
+        ],
+    )
+):
     """Class representing a violation reported by Flake8."""
 
     def is_inline_ignored(self, disable_noqa: bool) -> bool:

@@ -231,9 +231,7 @@ def parse_unified_diff(diff: Optional[str] = None) -> Dict[str, Set[int]]:
     parsed_paths: Dict[str, Set[int]] = collections.defaultdict(set)
     for line in diff.splitlines():
         if number_of_rows:
-            # NOTE(sigmavirus24): Below we use a slice because stdin may be
-            # bytes instead of text on Python 3.
-            if line[:1] != "-":
+            if not line or line[0] != "-":
                 number_of_rows -= 1
             # We're in the part of the diff that has lines starting with +, -,
             # and ' ' to show context and the changes made. We skip these
@@ -317,7 +315,6 @@ def _default_predicate(*args: str) -> bool:
 def filenames_from(
     arg: str, predicate: Optional[Callable[[str], bool]] = None
 ) -> Generator[str, None, None]:
-    # noqa: E501
     """Generate filenames from an argument.
 
     :param str arg:

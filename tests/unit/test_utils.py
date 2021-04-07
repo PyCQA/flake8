@@ -313,3 +313,10 @@ def test_stdin_get_value_crlf():
     stdin = io.TextIOWrapper(io.BytesIO(b'1\r\n2\r\n'), 'UTF-8')
     with mock.patch.object(sys, 'stdin', stdin):
         assert utils.stdin_get_value.__wrapped__() == '1\n2\n'
+
+
+def test_stdin_unknown_coding_token():
+    """Ensure we produce source even for unknown encodings."""
+    stdin = io.TextIOWrapper(io.BytesIO(b'# coding: unknown\n'), 'UTF-8')
+    with mock.patch.object(sys, 'stdin', stdin):
+        assert utils.stdin_get_value.__wrapped__() == '# coding: unknown\n'

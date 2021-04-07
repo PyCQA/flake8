@@ -44,7 +44,7 @@ class Application:
         #: The timestamp when the Application instance was instantiated.
         self.start_time = time.time()
         #: The timestamp when the Application finished reported errors.
-        self.end_time: float = None
+        self.end_time: Optional[float] = None
         #: The name of the program being run
         self.program = program
         #: The version of the program being run
@@ -63,24 +63,26 @@ class Application:
         options.register_default_options(self.option_manager)
 
         #: The instance of :class:`flake8.plugins.manager.Checkers`
-        self.check_plugins: plugin_manager.Checkers = None
+        self.check_plugins: Optional[plugin_manager.Checkers] = None
         #: The instance of :class:`flake8.plugins.manager.ReportFormatters`
-        self.formatting_plugins: plugin_manager.ReportFormatters = None
+        self.formatting_plugins: Optional[
+            plugin_manager.ReportFormatters
+        ] = None
         #: The user-selected formatter from :attr:`formatting_plugins`
-        self.formatter: BaseFormatter = None
+        self.formatter: Optional[BaseFormatter] = None
         #: The :class:`flake8.style_guide.StyleGuideManager` built from the
         #: user's options
-        self.guide: style_guide.StyleGuideManager = None
+        self.guide: Optional[style_guide.StyleGuideManager] = None
         #: The :class:`flake8.checker.Manager` that will handle running all of
         #: the checks selected by the user.
-        self.file_checker_manager: checker.Manager = None
+        self.file_checker_manager: Optional[checker.Manager] = None
 
         #: The user-supplied options parsed into an instance of
         #: :class:`argparse.Namespace`
-        self.options: argparse.Namespace = None
+        self.options: Optional[argparse.Namespace] = None
         #: The left over arguments that were not parsed by
         #: :attr:`option_manager`
-        self.args: List[str] = None
+        self.args: Optional[List[str]] = None
         #: The number of errors, warnings, and other messages after running
         #: flake8 and taking into account ignored errors and lines.
         self.result_count = 0
@@ -128,6 +130,7 @@ class Application:
         This should be the last thing called on the application instance. It
         will check certain options and exit appropriately.
         """
+        assert self.options is not None
         if self.options.count:
             print(self.result_count)
 
@@ -162,8 +165,10 @@ class Application:
 
     def register_plugin_options(self) -> None:
         """Register options provided by plugins to our option manager."""
+        assert self.check_plugins is not None
         self.check_plugins.register_options(self.option_manager)
         self.check_plugins.register_plugin_versions(self.option_manager)
+        assert self.formatting_plugins is not None
         self.formatting_plugins.register_options(self.option_manager)
 
     def parse_configuration_and_cli(
@@ -190,15 +195,18 @@ class Application:
             if not self.parsed_diff:
                 self.exit()
 
+        assert self.check_plugins is not None
         self.check_plugins.provide_options(
             self.option_manager, self.options, self.args
         )
+        assert self.formatting_plugins is not None
         self.formatting_plugins.provide_options(
             self.option_manager, self.options, self.args
         )
 
     def formatter_for(self, formatter_plugin_name):
         """Retrieve the formatter class by plugin name."""
+        assert self.formatting_plugins is not None
         default_formatter = self.formatting_plugins["default"]
         formatter_plugin = self.formatting_plugins.get(formatter_plugin_name)
         if formatter_plugin is None:
@@ -214,6 +222,7 @@ class Application:
         self, formatter_class: Optional[Type["BaseFormatter"]] = None
     ) -> None:
         """Initialize a formatter based on the parsed options."""
+        assert self.options is not None
         format_plugin = self.options.format
         if 1 <= self.options.quiet < 2:
             format_plugin = "quiet-filename"
@@ -227,6 +236,8 @@ class Application:
 
     def make_guide(self) -> None:
         """Initialize our StyleGuide."""
+        assert self.formatter is not None
+        assert self.options is not None
         self.guide = style_guide.StyleGuideManager(
             self.options, self.formatter
         )
@@ -252,6 +263,7 @@ class Application:
         :param list files:
             List of filenames to process
         """
+        assert self.file_checker_manager is not None
         if self.running_against_diff:
             files = sorted(self.parsed_diff)
         self.file_checker_manager.start(files)
@@ -267,9 +279,12 @@ class Application:
 
     def report_benchmarks(self):
         """Aggregate, calculate, and report benchmarks for this run."""
+        assert self.options is not None
         if not self.options.benchmark:
             return
 
+        assert self.file_checker_manager is not None
+        assert self.end_time is not None
         time_elapsed = self.end_time - self.start_time
         statistics = [("seconds elapsed", time_elapsed)]
         add_statistic = statistics.append
@@ -280,6 +295,7 @@ class Application:
             per_second_description = f"{statistic} processed per second"
             add_statistic((per_second_description, int(value / time_elapsed)))
 
+        assert self.formatter is not None
         self.formatter.show_benchmarks(statistics)
 
     def report_errors(self) -> None:
@@ -289,6 +305,7 @@ class Application:
         number of errors, warnings, and other messages found.
         """
         LOG.info("Reporting errors")
+        assert self.file_checker_manager is not None
         results = self.file_checker_manager.report()
         self.total_result_count, self.result_count = results
         LOG.info(
@@ -299,9 +316,12 @@ class Application:
 
     def report_statistics(self):
         """Aggregate and report statistics from this run."""
+        assert self.options is not None
         if not self.options.statistics:
             return
 
+        assert self.formatter is not None
+        assert self.guide is not None
         self.formatter.show_statistics(self.guide.stats)
 
     def initialize(self, argv: List[str]) -> None:
@@ -332,6 +352,7 @@ class Application:
 
     def report(self):
         """Report errors, statistics, and benchmarks."""
+        assert self.formatter is not None
         self.formatter.start()
         self.report_errors()
         self.report_statistics()

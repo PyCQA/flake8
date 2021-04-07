@@ -40,11 +40,7 @@ SERIAL_RETRY_ERRNOS = {
 
 def _multiprocessing_is_fork():  # type () -> bool
     """Class state is only preserved when using the `fork` strategy."""
-    return (
-        multiprocessing
-        # https://github.com/python/typeshed/pull/3415
-        and multiprocessing.get_start_method() == "fork"  # type: ignore
-    )
+    return multiprocessing and multiprocessing.get_start_method() == "fork"
 
 
 class Manager:
@@ -396,7 +392,7 @@ class FileChecker:
 
         # If we're recovering from a problem in _make_processor, we will not
         # have this attribute.
-        if hasattr(self, "processor"):
+        if hasattr(self, "processor") and self.processor is not None:
             line = self.processor.noqa_line_for(line_number)
         else:
             line = None
@@ -407,6 +403,7 @@ class FileChecker:
     def run_check(self, plugin, **arguments):
         """Run the check in a single plugin."""
         LOG.debug("Running %r with %r", plugin, arguments)
+        assert self.processor is not None
         try:
             self.processor.keyword_arguments_for(
                 plugin["parameters"], arguments
@@ -467,6 +464,7 @@ class FileChecker:
 
     def run_ast_checks(self) -> None:
         """Run all checks expecting an abstract syntax tree."""
+        assert self.processor is not None
         try:
             ast = self.processor.build_ast()
         except (ValueError, SyntaxError, TypeError) as e:
@@ -494,6 +492,7 @@ class FileChecker:
 
     def run_logical_checks(self):
         """Run all checks expecting a logical line."""
+        assert self.processor is not None
         comments, logical_line, mapping = self.processor.build_logical_line()
         if not mapping:
             return
@@ -522,6 +521,7 @@ class FileChecker:
 
         A single physical check may return multiple errors.
         """
+        assert self.processor is not None
         for plugin in self.checks["physical_line_plugins"]:
             self.processor.update_checker_state_for(plugin)
             result = self.run_check(plugin, physical_line=physical_line)
@@ -554,6 +554,7 @@ class FileChecker:
         Instead of using this directly, you should use
         :meth:`flake8.checker.FileChecker.run_checks`.
         """
+        assert self.processor is not None
         parens = 0
         statistics = self.statistics
         file_processor = self.processor
@@ -577,6 +578,7 @@ class FileChecker:
 
     def run_checks(self):
         """Run checks against the file."""
+        assert self.processor is not None
         try:
             self.process_tokens()
             self.run_ast_checks()
@@ -594,6 +596,7 @@ class FileChecker:
 
     def handle_newline(self, token_type):
         """Handle the logic when encountering a newline token."""
+        assert self.processor is not None
         if token_type == tokenize.NEWLINE:
             self.run_logical_checks()
             self.processor.reset_blank_before()
@@ -608,6 +611,7 @@ class FileChecker:
         self, token: processor._Token, prev_physical: str
     ) -> None:
         """Run physical checks if and only if it is at the end of the line."""
+        assert self.processor is not None
         # a newline token ends a single physical line.
         if processor.is_eol_token(token):
             # if the file does not end with a newline, the NEWLINE

@@ -41,7 +41,9 @@ def test_enable_local_plugin_from_config():
     app = application.Application()
     app.initialize(['flake8', '--config', LOCAL_PLUGIN_CONFIG])
 
+    assert app.check_plugins is not None
     assert app.check_plugins['XE'].plugin is ExtensionTestPlugin
+    assert app.formatting_plugins is not None
     assert app.formatting_plugins['XR'].plugin is ReportTestPlugin
 
 
@@ -51,6 +53,7 @@ def test_local_plugin_can_add_option():
     app.initialize(
         ['flake8', '--config', LOCAL_PLUGIN_CONFIG, '--anopt', 'foo'])
 
+    assert app.options is not None
     assert app.options.anopt == 'foo'
 
 
@@ -59,4 +62,5 @@ def test_enable_local_plugin_at_non_installed_path():
     app = application.Application()
     app.initialize(['flake8', '--config', LOCAL_PLUGIN_PATH_CONFIG])
 
+    assert app.check_plugins is not None
     assert app.check_plugins['XE'].plugin.name == 'ExtensionTestPlugin2'

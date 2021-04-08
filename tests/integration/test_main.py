@@ -183,7 +183,10 @@ def test_tokenization_error_but_not_syntax_error(tmpdir, capsys):
         _call_main(['t.py'], retv=1)
 
     out, err = capsys.readouterr()
-    assert out == 't.py:1:1: E902 TokenError: EOF in multi-line statement\n'
+    assert out == '''\
+t.py:1:1: E902 TokenError: EOF in multi-line statement
+t.py:1:8: E999 SyntaxError: unexpected EOF while parsing
+'''
     assert err == ''
 
 
@@ -194,7 +197,10 @@ def test_tokenization_error_is_a_syntax_error(tmpdir, capsys):
         _call_main(['t.py'], retv=1)
 
     out, err = capsys.readouterr()
-    assert out == 't.py:1:1: E902 IndentationError: unindent does not match any outer indentation level\n'  # noqa: E501
+    assert out == '''\
+t.py:1:1: E902 IndentationError: unindent does not match any outer indentation level
+t.py:3:5: E999 IndentationError: unindent does not match any outer indentation level
+'''  # noqa: E501
     assert err == ''
 
 

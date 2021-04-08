@@ -580,8 +580,8 @@ class FileChecker:
         """Run checks against the file."""
         assert self.processor is not None
         try:
-            self.process_tokens()
             self.run_ast_checks()
+            self.process_tokens()
         except exceptions.InvalidSyntax as exc:
             self.report(
                 exc.error_code,

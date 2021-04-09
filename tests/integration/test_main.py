@@ -1,6 +1,8 @@
 """Integration tests for the main entrypoint of flake8."""
 import json
 import os
+import platform
+import sys
 from unittest import mock
 
 import pytest
@@ -183,10 +185,17 @@ def test_tokenization_error_but_not_syntax_error(tmpdir, capsys):
         _call_main(['t.py'], retv=1)
 
     out, err = capsys.readouterr()
-    assert out == '''\
+
+    expected = '''\
 t.py:1:1: E902 TokenError: EOF in multi-line statement
-t.py:1:8: E999 SyntaxError: unexpected EOF while parsing
 '''
+
+    expected += '''\
+t.py:1:8: E999 SyntaxError: unexpected EOF while parsing
+''' if (platform.python_implementation() == "CPython"
+        and sys.version_info >= (3, 8)) else ""
+
+    assert out == expected
     assert err == ''
 
 

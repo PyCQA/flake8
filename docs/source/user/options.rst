@@ -68,6 +68,8 @@ Index of Options
 
 - :option:`flake8 --select`
 
+- :option:`flake8 --extend-select`
+
 - :option:`flake8 --disable-noqa`
 
 - :option:`flake8 --show-source`
@@ -630,6 +632,38 @@ Options and their Descriptions
             E431,
             W,
             F
+
+
+.. option:: --extend-select=<errors>
+
+    :ref:`Go back to index <top>`
+
+    .. versionadded:: 4.0.0
+
+    Specify a list of codes to add to the list of selected ones. Similar
+    considerations as in :option:`--select` apply here with regard to the
+    value.
+
+    The difference to the :option:`--select` option is, that this option can be
+    used to selectively add individual codes without overriding the default
+    list entirely.
+
+    Command-line example:
+
+    .. prompt:: bash
+
+        flake8 --extend-select=E4,E51,W234 dir/
+
+    This **can** be specified in config files.
+
+    Example config file usage:
+
+    .. code-block:: ini
+
+        extend-select =
+            E4,
+            E51,
+            W234
 
 
 .. option:: --disable-noqa

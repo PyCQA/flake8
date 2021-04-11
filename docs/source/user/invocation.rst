@@ -115,6 +115,10 @@ And you should see something like:
                             run. (Default: 79)
       --select=errors       Comma-separated list of errors and warnings to enable.
                             For example, ``--select=E4,E51,W234``. (Default: )
+      --extend-select errors
+                            Comma-separated list of errors and warnings to add to
+                            the list of selected ones. For example, ``--extend-
+                            select=E4,E51,W234``.
       --disable-noqa        Disable the effect of "# noqa". This will report
                             errors on lines with "# noqa" at the end.
       --show-source         Show the source generate each error or warning.

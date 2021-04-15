@@ -177,7 +177,9 @@ class DecisionEngine:
                 reverse=True,
             )
         )
-        self.using_default_ignore = set(self.ignored) == set(defaults.IGNORE)
+        self.using_default_ignore = set(self.ignored) == set(
+            defaults.IGNORE
+        ).union(options.extended_default_ignore)
         self.using_default_select = set(self.selected) == set(defaults.SELECT)
 
     def _in_all_selected(self, code: str) -> bool:

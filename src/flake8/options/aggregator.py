@@ -47,6 +47,10 @@ def aggregate_options(
     # Extend the default ignore value with the extended default ignore list,
     # registered by plugins.
     extended_default_ignore = manager.extended_default_ignore.copy()
+    # Let's store our extended default ignore for use by the decision engine
+    default_values.extended_default_ignore = (
+        manager.extended_default_ignore.copy()
+    )
     LOG.debug(
         "Extended default ignore list: %s", list(extended_default_ignore)
     )

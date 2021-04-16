@@ -1,0 +1,15 @@
+3.9.1 -- 2021-04-15
+-------------------
+
+You can view the `3.9.1 milestone`_ on GitHub for more details.
+
+Bugs Fixed
+~~~~~~~~~~
+
+- Fix codes being ignored by plugins utilizing ``extend_default_ignore`` (See
+  also :pull:`1317`)
+
+
+.. all links
+.. _3.9.1 milestone:
+    https://github.com/PyCQA/flake8/milestone/38

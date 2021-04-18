@@ -424,13 +424,23 @@ class FileChecker:
             )
 
     @staticmethod
-    def _extract_syntax_information(exception):
-        token = ()
-        if len(exception.args) > 1:
+    def _extract_syntax_information(exception: Exception) -> Tuple[int, int]:
+        if (
+            len(exception.args) > 1
+            and exception.args[1]
+            and len(exception.args[1]) > 2
+        ):
             token = exception.args[1]
-            if token and len(token) > 2:
-                row, column = token[1:3]
+            row, column = token[1:3]
+        elif (
+            isinstance(exception, tokenize.TokenError)
+            and len(exception.args) == 2
+            and len(exception.args[1]) == 2
+        ):
+            token = ()
+            row, column = exception.args[1]
         else:
+            token = ()
             row, column = (1, 0)
 
         if column > 0 and token and isinstance(exception, SyntaxError):
@@ -463,14 +473,7 @@ class FileChecker:
     def run_ast_checks(self) -> None:
         """Run all checks expecting an abstract syntax tree."""
         assert self.processor is not None
-        try:
-            ast = self.processor.build_ast()
-        except (ValueError, SyntaxError, TypeError) as e:
-            row, column = self._extract_syntax_information(e)
-            self.report(
-                "E999", row, column, f"{type(e).__name__}: {e.args[0]}"
-            )
-            return
+        ast = self.processor.build_ast()
 
         for plugin in self.checks["ast_plugins"]:
             checker = self.run_check(plugin, tree=ast)
@@ -548,7 +551,6 @@ class FileChecker:
     def process_tokens(self):
         """Process tokens and trigger checks.
 
-        This can raise a :class:`flake8.exceptions.InvalidSyntax` exception.
         Instead of using this directly, you should use
         :meth:`flake8.checker.FileChecker.run_checks`.
         """
@@ -578,15 +580,13 @@ class FileChecker:
         """Run checks against the file."""
         assert self.processor is not None
         try:
-            self.process_tokens()
             self.run_ast_checks()
-        except exceptions.InvalidSyntax as exc:
-            self.report(
-                exc.error_code,
-                exc.line_number,
-                exc.column_number,
-                exc.error_message,
-            )
+            self.process_tokens()
+        except (SyntaxError, tokenize.TokenError) as e:
+            code = "E902" if isinstance(e, tokenize.TokenError) else "E999"
+            row, column = self._extract_syntax_information(e)
+            self.report(code, row, column, f"{type(e).__name__}: {e.args[0]}")
+            return
 
         logical_lines = self.processor.statistics["logical lines"]
         self.statistics["logical lines"] = logical_lines

@@ -13,7 +13,6 @@ from typing import Tuple
 
 import flake8
 from flake8 import defaults
-from flake8 import exceptions
 from flake8 import utils
 
 LOG = logging.getLogger(__name__)
@@ -125,20 +124,12 @@ class FileProcessor:
 
     @property
     def file_tokens(self) -> List[_Token]:
-        """Return the complete set of tokens for a file.
-
-        Accessing this attribute *may* raise an InvalidSyntax exception.
-
-        :raises: flake8.exceptions.InvalidSyntax
-        """
+        """Return the complete set of tokens for a file."""
         if self._file_tokens is None:
             line_iter = iter(self.lines)
-            try:
-                self._file_tokens = list(
-                    tokenize.generate_tokens(lambda: next(line_iter))
-                )
-            except (tokenize.TokenError, SyntaxError) as exc:
-                raise exceptions.InvalidSyntax(exception=exc)
+            self._file_tokens = list(
+                tokenize.generate_tokens(lambda: next(line_iter))
+            )
 
         return self._file_tokens
 
@@ -274,20 +265,12 @@ class FileProcessor:
         return arguments
 
     def generate_tokens(self) -> Generator[_Token, None, None]:
-        """Tokenize the file and yield the tokens.
-
-        :raises flake8.exceptions.InvalidSyntax:
-            If a :class:`tokenize.TokenError` is raised while generating
-            tokens.
-        """
-        try:
-            for token in tokenize.generate_tokens(self.next_line):
-                if token[2][0] > self.total_lines:
-                    break
-                self.tokens.append(token)
-                yield token
-        except (tokenize.TokenError, SyntaxError) as exc:
-            raise exceptions.InvalidSyntax(exception=exc)
+        """Tokenize the file and yield the tokens."""
+        for token in tokenize.generate_tokens(self.next_line):
+            if token[2][0] > self.total_lines:
+                break
+            self.tokens.append(token)
+            yield token
 
     def _noqa_line_range(self, min_line: int, max_line: int) -> Dict[int, str]:
         line_range = range(min_line, max_line + 1)
@@ -299,7 +282,7 @@ class FileProcessor:
         if self._noqa_line_mapping is None:
             try:
                 file_tokens = self.file_tokens
-            except exceptions.InvalidSyntax:
+            except (tokenize.TokenError, SyntaxError):
                 # if we failed to parse the file tokens, we'll always fail in
                 # the future, so set this so the code does not try again
                 self._noqa_line_mapping = {}

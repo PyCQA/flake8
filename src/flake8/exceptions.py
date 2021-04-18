@@ -39,9 +39,7 @@ class InvalidSyntax(Flake8Exception):
     def __init__(self, exception: Exception) -> None:
         """Initialize our InvalidSyntax exception."""
         self.original_exception = exception
-        self.error_message = (
-            f"{type(exception).__name__}: {exception.args[0]}"
-        )
+        self.error_message = f"{type(exception).__name__}: {exception.args[0]}"
         self.error_code = "E902"
         self.line_number = 1
         self.column_number = 0

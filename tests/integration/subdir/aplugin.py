@@ -4,8 +4,8 @@
 class ExtensionTestPlugin2:
     """Extension test plugin in its own directory."""
 
-    name = 'ExtensionTestPlugin2'
-    version = '1.0.0'
+    name = "ExtensionTestPlugin2"
+    version = "1.0.0"
 
     def __init__(self, tree):
         """Construct an instance of test plugin."""

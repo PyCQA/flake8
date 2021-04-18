@@ -241,9 +241,7 @@ class Manager:
         """
         results_reported = results_found = 0
         for checker in self._all_checkers:
-            results = sorted(
-                checker.results, key=lambda tup: (tup[1], tup[2])
-            )
+            results = sorted(checker.results, key=lambda tup: (tup[1], tup[2]))
             filename = checker.display_name
             with self.style_guide.processing_file(filename):
                 results_reported += self._handle_results(filename, results)

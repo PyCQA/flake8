@@ -7,21 +7,21 @@ from flake8 import exceptions
 
 
 @pytest.mark.parametrize(
-    'err',
+    "err",
     (
         exceptions.FailedToLoadPlugin(
-            plugin_name='plugin_name',
-            exception=ValueError('boom!'),
+            plugin_name="plugin_name",
+            exception=ValueError("boom!"),
         ),
-        exceptions.InvalidSyntax(exception=ValueError('Unexpected token: $')),
+        exceptions.InvalidSyntax(exception=ValueError("Unexpected token: $")),
         exceptions.PluginRequestedUnknownParameters(
-            plugin={'plugin_name': 'plugin_name'},
-            exception=ValueError('boom!'),
+            plugin={"plugin_name": "plugin_name"},
+            exception=ValueError("boom!"),
         ),
         exceptions.PluginExecutionFailed(
-            plugin={'plugin_name': 'plugin_name'},
-            exception=ValueError('boom!'),
-        )
+            plugin={"plugin_name": "plugin_name"},
+            exception=ValueError("boom!"),
+        ),
     ),
 )
 def test_pickleable(err):

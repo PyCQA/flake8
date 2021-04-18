@@ -369,6 +369,4 @@ def get_local_plugins(config_finder):
     return local_plugins
 
 
-LocalPlugins = collections.namedtuple(
-    "LocalPlugins", "extension report paths"
-)
+LocalPlugins = collections.namedtuple("LocalPlugins", "extension report paths")

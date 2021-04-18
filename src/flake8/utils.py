@@ -271,13 +271,10 @@ def parse_unified_diff(diff: Optional[str] = None) -> Dict[str, Set[int]]:
         # comparing.
         if hunk_match:
             (row, number_of_rows) = [
-                1 if not group else int(group)
-                for group in hunk_match.groups()
+                1 if not group else int(group) for group in hunk_match.groups()
             ]
             assert current_path is not None
-            parsed_paths[current_path].update(
-                range(row, row + number_of_rows)
-            )
+            parsed_paths[current_path].update(range(row, row + number_of_rows))
 
     # We have now parsed our diff into a dictionary that looks like:
     #    {'file.py': set(range(10, 16), range(18, 20)), ...}

@@ -472,8 +472,7 @@ class Checkers(PluginTypeManager):
                 plugin.to_dictionary() for plugin in self.logical_line_plugins
             ],
             "physical_line_plugins": [
-                plugin.to_dictionary()
-                for plugin in self.physical_line_plugins
+                plugin.to_dictionary() for plugin in self.physical_line_plugins
             ],
         }
 

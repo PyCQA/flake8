@@ -368,9 +368,7 @@ class StyleGuideManager:
         :rtype:
             :class:`~flake8.style_guide.StyleGuide`
         """
-        per_file = utils.parse_files_to_codes_mapping(
-            options.per_file_ignores
-        )
+        per_file = utils.parse_files_to_codes_mapping(options.per_file_ignores)
         for filename, violations in per_file:
             yield self.default_style_guide.copy(
                 filename=filename, extend_ignore_with=violations
@@ -579,11 +577,7 @@ class StyleGuide:
         )
         is_not_inline_ignored = error.is_inline_ignored(disable_noqa) is False
         is_included_in_diff = error.is_in(self._parsed_diff)
-        if (
-            error_is_selected
-            and is_not_inline_ignored
-            and is_included_in_diff
-        ):
+        if error_is_selected and is_not_inline_ignored and is_included_in_diff:
             self.formatter.handle(error)
             self.stats.record(error)
             return 1

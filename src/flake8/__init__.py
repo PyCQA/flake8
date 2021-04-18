@@ -17,9 +17,7 @@ LOG = logging.getLogger(__name__)
 LOG.addHandler(logging.NullHandler())
 
 __version__ = "3.9.1"
-__version_info__ = tuple(
-    int(i) for i in __version__.split(".") if i.isdigit()
-)
+__version_info__ = tuple(int(i) for i in __version__.split(".") if i.isdigit())
 
 
 # There is nothing lower than logging.DEBUG (10) in the logging library,

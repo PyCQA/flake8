@@ -33,23 +33,6 @@ class FailedToLoadPlugin(Flake8Exception):
         }
 
 
-class InvalidSyntax(Flake8Exception):
-    """Exception raised when tokenizing a file fails."""
-
-    def __init__(self, exception: Exception) -> None:
-        """Initialize our InvalidSyntax exception."""
-        self.original_exception = exception
-        self.error_message = f"{type(exception).__name__}: {exception.args[0]}"
-        self.error_code = "E902"
-        self.line_number = 1
-        self.column_number = 0
-        super().__init__(exception)
-
-    def __str__(self) -> str:
-        """Format our exception message."""
-        return self.error_message
-
-
 class PluginRequestedUnknownParameters(Flake8Exception):
     """The plugin requested unknown parameters."""
 

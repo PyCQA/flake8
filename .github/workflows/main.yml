@@ -47,5 +47,5 @@ jobs:
     - uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python }}
-    - run: pip install --upgrade setuptools pip tox virtualenv
+    - run: python -mpip install --upgrade setuptools pip tox virtualenv
     - run: tox -e ${{ matrix.toxenv }}

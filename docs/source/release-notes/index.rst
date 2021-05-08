@@ -9,6 +9,7 @@ with the newest releases first.
 ==================
 
 .. toctree::
+    3.9.2
     3.9.1
     3.9.0
     3.8.4

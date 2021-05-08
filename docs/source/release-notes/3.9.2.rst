@@ -1,0 +1,21 @@
+3.9.2 -- 2021-05-08
+-------------------
+
+You can view the `3.9.2 milestone`_ on GitHub for more details.
+
+Bugs Fixed
+~~~~~~~~~~
+
+- Fix error message for ``E111`` in ``pycodestyle`` (See also :pull:`1328`,
+  :issue:`1327`).
+
+Deprecations
+~~~~~~~~~~~~
+
+- ``indent_size_str`` is deprecated, use ``str(indent_size)`` instead (See
+  also :pull:`1328`, :issue:`1327`).
+
+
+.. all links
+.. _3.9.2 milestone:
+    https://github.com/PyCQA/flake8/milestone/40

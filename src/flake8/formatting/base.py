@@ -1,5 +1,6 @@
 """The base class and interface for all formatting plugins."""
 import argparse
+import os
 from typing import IO
 from typing import List
 from typing import Optional
@@ -76,6 +77,8 @@ class BaseFormatter:
         This defaults to initializing :attr:`output_fd` if :attr:`filename`
         """
         if self.filename:
+            dirname = os.path.dirname(os.path.abspath(self.filename))
+            os.makedirs(dirname, exist_ok=True)
             self.output_fd = open(self.filename, "a")
 
     def handle(self, error: "Violation") -> None:

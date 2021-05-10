@@ -343,10 +343,10 @@ def test_output_file(tmpdir, capsys):
     tmpdir.join("t.py").write("import os\n")
 
     with tmpdir.as_cwd():
-        _call_main(["t.py", "--output-file=f"], retv=1)
+        _call_main(["t.py", "--output-file=a/b/f"], retv=1)
 
     out, err = capsys.readouterr()
     assert out == err == ""
 
     expected = "t.py:1:1: F401 'os' imported but unused\n"
-    assert tmpdir.join("f").read() == expected
+    assert tmpdir.join("a/b/f").read() == expected

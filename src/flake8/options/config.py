@@ -7,6 +7,7 @@ from typing import List
 from typing import Optional
 from typing import Tuple
 
+import toml
 from flake8 import utils
 
 LOG = logging.getLogger(__name__)
@@ -51,7 +52,9 @@ class ConfigFileFinder:
         self.user_config_file = self._user_config_file(program_name)
 
         # List of filenames to find in the local/project directory
-        self.project_filenames = ("setup.cfg", "tox.ini", f".{program_name}")
+        self.project_filenames = (
+            "pyproject.toml", "setup.cfg", "tox.ini", f".{program_name}",
+        )
 
         self.local_directory = os.path.abspath(os.curdir)
 
@@ -77,7 +80,17 @@ class ConfigFileFinder:
         found_files = []
         for filename in files:
             try:
-                found_files.extend(config.read(filename))
+                if filename.endswith("pyproject.toml"):
+                    pyproject_config = toml.load(filename)
+                    config.read_dict(
+                        {
+                            "flake8": pyproject_config["tool"]["flake8"],
+                        },
+                        source=filename,
+                    )
+                    found_files.append(filename)
+                else:
+                    found_files.extend(config.read(filename))
             except UnicodeDecodeError:
                 LOG.exception(
                     "There was an error decoding a config file."

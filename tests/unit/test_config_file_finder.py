@@ -10,10 +10,19 @@ from flake8.options import config
 CLI_SPECIFIED_FILEPATH = "tests/fixtures/config_files/cli-specified.ini"
 BROKEN_CONFIG_PATH = "tests/fixtures/config_files/broken.ini"
 
+CLI_SPECIFIED_PYPROJECT_CONFIG_PATH = "tests/fixtures/config_files/cli-specified-pyproject.toml"  # noqa: E501
+BROKEN_PYPROJECT_CONFIG_PATH = "tests/fixtures/config_files/broken-pyproject.toml"  # noqa: E501
 
-def test_cli_config():
+
+@pytest.mark.parametrize(
+    "cli_filepath",
+    [
+        CLI_SPECIFIED_FILEPATH,
+        CLI_SPECIFIED_PYPROJECT_CONFIG_PATH,
+    ],
+)
+def test_cli_config(cli_filepath):
     """Verify opening and reading the file specified via the cli."""
-    cli_filepath = CLI_SPECIFIED_FILEPATH
     finder = config.ConfigFileFinder("flake8")
 
     parsed_config = finder.cli_config(cli_filepath)
@@ -91,13 +100,19 @@ def test_local_configs():
     "files",
     [
         [BROKEN_CONFIG_PATH],
-        [CLI_SPECIFIED_FILEPATH, BROKEN_CONFIG_PATH],
+        [BROKEN_PYPROJECT_CONFIG_PATH],
+        [
+            CLI_SPECIFIED_FILEPATH,
+            BROKEN_CONFIG_PATH,
+            BROKEN_PYPROJECT_CONFIG_PATH,
+        ],
     ],
 )
 def test_read_config_catches_broken_config_files(files):
     """Verify that we do not allow the exception to bubble up."""
     _, parsed = config.ConfigFileFinder._read_config(*files)
     assert BROKEN_CONFIG_PATH not in parsed
+    assert BROKEN_PYPROJECT_CONFIG_PATH not in parsed
 
 
 def test_read_config_catches_decoding_errors(tmpdir):

@@ -54,6 +54,7 @@ def test_parse_cli_config(optmanager, config_finder):
     [
         ("tests/fixtures/config_files/cli-specified.ini", True),
         ("tests/fixtures/config_files/no-flake8-section.ini", False),
+        ("tests/fixtures/config_files/no-flake8-section-pyproject.toml", False),  # noqa: E501
     ],
 )
 def test_is_configured_by(
@@ -188,6 +189,7 @@ def test_parse_uses_cli_config(optmanager):
         "tests/fixtures/config_files/cli-specified.ini",
         "tests/fixtures/config_files/cli-specified-with-inline-comments.ini",
         "tests/fixtures/config_files/cli-specified-without-inline-comments.ini",  # noqa: E501
+        "tests/fixtures/config_files/cli-specified-pyproject.toml",
     ],
 )
 def test_parsed_configs_are_equivalent(

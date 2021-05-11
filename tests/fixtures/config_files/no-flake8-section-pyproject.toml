@@ -1,0 +1,12 @@
+[tool.flake9]
+ignore = [
+    "E123",
+    "W234",
+    "E111",
+]
+exclude = [
+    "foo/",
+    "bar/",
+    "bogus/",
+]
+quiet = 1

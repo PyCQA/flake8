@@ -10,8 +10,12 @@ from flake8.options import config
 CLI_SPECIFIED_FILEPATH = "tests/fixtures/config_files/cli-specified.ini"
 BROKEN_CONFIG_PATH = "tests/fixtures/config_files/broken.ini"
 
-CLI_SPECIFIED_PYPROJECT_CONFIG_PATH = "tests/fixtures/config_files/cli-specified-pyproject.toml"  # noqa: E501
-BROKEN_PYPROJECT_CONFIG_PATH = "tests/fixtures/config_files/broken-pyproject.toml"  # noqa: E501
+CLI_SPECIFIED_PYPROJECT_CONFIG_PATH = (
+    "tests/fixtures/config_files/cli-specified-pyproject.toml"  # noqa: E501
+)
+BROKEN_PYPROJECT_CONFIG_PATH = (
+    "tests/fixtures/config_files/broken-pyproject.toml"  # noqa: E501
+)
 
 
 @pytest.mark.parametrize(

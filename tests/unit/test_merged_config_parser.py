@@ -54,7 +54,10 @@ def test_parse_cli_config(optmanager, config_finder):
     [
         ("tests/fixtures/config_files/cli-specified.ini", True),
         ("tests/fixtures/config_files/no-flake8-section.ini", False),
-        ("tests/fixtures/config_files/no-flake8-section-pyproject.toml", False),  # noqa: E501
+        (
+            "tests/fixtures/config_files/no-flake8-section-pyproject.toml",
+            False,
+        ),  # noqa: E501
     ],
 )
 def test_is_configured_by(

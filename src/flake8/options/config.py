@@ -8,6 +8,7 @@ from typing import Optional
 from typing import Tuple
 
 import toml
+
 from flake8 import utils
 
 LOG = logging.getLogger(__name__)
@@ -53,7 +54,10 @@ class ConfigFileFinder:
 
         # List of filenames to find in the local/project directory
         self.project_filenames = (
-            "pyproject.toml", "setup.cfg", "tox.ini", f".{program_name}",
+            "pyproject.toml",
+            "setup.cfg",
+            "tox.ini",
+            f".{program_name}",
         )
 
         self.local_directory = os.path.abspath(os.curdir)

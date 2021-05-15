@@ -207,7 +207,7 @@ def register_default_options(option_manager):
     add_option(
         "--ignore",
         metavar="errors",
-        default=",".join(defaults.IGNORE),
+        default=",".join(sorted(defaults.IGNORE)),
         parse_from_config=True,
         comma_separated_list=True,
         help="Comma-separated list of errors and warnings to ignore (or skip)."

@@ -792,8 +792,8 @@ Options and their Descriptions
 
     .. note::
 
-        This option is ignored on Windows because :mod:`multiprocessing` does
-        not support Windows across all supported versions of Python.
+        This option is ignored on platforms where ``fork`` is not a
+        supported ``multiprocessing`` method.
 
     This defaults to: ``auto``
 

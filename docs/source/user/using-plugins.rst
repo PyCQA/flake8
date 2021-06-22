@@ -8,7 +8,7 @@ its extensibility. Our community has developed :term:`plugin`\ s that augment
 developers of these plugins often have some style they wish to enforce.
 
 For example, `flake8-docstrings`_ adds a check for :pep:`257` style
-conformance. Others attempt to enforce consistency, like `flake8-future`_.
+conformance. Others attempt to enforce consistency, like `flake8-quotes`_.
 
 .. note::
 
@@ -60,5 +60,5 @@ documented this for you.
     https://pypi.org/
 .. _flake8-docstrings:
     https://pypi.org/project/flake8-docstrings/
-.. _flake8-future:
-    https://pypi.org/project/flake8-future/
+.. _flake8-quotes:
+    https://pypi.org/project/flake8-quotes/

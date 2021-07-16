@@ -53,9 +53,7 @@ def configure_logging(verbosity, filename=None, logformat=LOG_FORMAT):
     """
     if verbosity <= 0:
         return
-    if verbosity > 3:
-        verbosity = 3
-
+    verbosity = min(verbosity, 3)
     log_level = _VERBOSITY_TO_LOG_LEVEL[verbosity]
 
     if not filename or filename in ("stderr", "stdout"):

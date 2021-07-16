@@ -464,8 +464,7 @@ class FileChecker:
                 row_offset = len(lines) - 1
                 logical_line = lines[0]
                 logical_line_length = len(logical_line)
-                if column > logical_line_length:
-                    column = logical_line_length
+                column = min(column, logical_line_length)
             row -= row_offset
             column -= column_offset
         return row, column

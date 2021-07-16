@@ -160,8 +160,7 @@ class FileProcessor:
         (start_row, start_col) = mapping[0][1]
         start_line = self.lines[start_row - 1]
         self.indent_level = expand_indent(start_line[:start_col])
-        if self.blank_before < self.blank_lines:
-            self.blank_before = self.blank_lines
+        self.blank_before = max(self.blank_before, self.blank_lines)
 
     def update_checker_state_for(self, plugin: Dict[str, Any]) -> None:
         """Update the checker_state attribute for the plugin."""

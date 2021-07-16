@@ -72,10 +72,7 @@ class Plugin:
         """Find and parse the group the plugin is in."""
         if self._group is None:
             name = self.name.split(".", 1)
-            if len(name) > 1:
-                self._group = name[0]
-            else:
-                self._group = NO_GROUP_FOUND
+            self._group = name[0] if len(name) > 1 else NO_GROUP_FOUND
         if self._group is NO_GROUP_FOUND:
             return None
         return self._group
@@ -118,11 +115,9 @@ class Plugin:
     def plugin_name(self):
         """Return the name of the plugin."""
         if self._plugin_name is None:
-            if self.is_in_a_group():
-                self._plugin_name = self.group()
-            else:
-                self._plugin_name = self.plugin.name
-
+            self._plugin_name = (
+                self.group() if self.is_in_a_group() else self.plugin.name
+            )
         return self._plugin_name
 
     @property

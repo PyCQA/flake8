@@ -148,9 +148,8 @@ class Manager:
 
     def _handle_results(self, filename, results):
         style_guide = self.style_guide
-        reported_results_count = 0
-        for (error_code, line_number, column, text, physical_line) in results:
-            reported_results_count += style_guide.handle_error(
+        return sum(
+            style_guide.handle_error(
                 code=error_code,
                 filename=filename,
                 line_number=line_number,
@@ -158,7 +157,14 @@ class Manager:
                 text=text,
                 physical_line=physical_line,
             )
-        return reported_results_count
+            for (
+                error_code,
+                line_number,
+                column,
+                text,
+                physical_line,
+            ) in results
+        )
 
     def is_path_excluded(self, path: str) -> bool:
         """Check if a path is excluded.

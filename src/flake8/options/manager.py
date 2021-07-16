@@ -290,9 +290,7 @@ class Option:
         }
 
     def __repr__(self) -> str:  # noqa: D105
-        parts = []
-        for arg in self.option_args:
-            parts.append(arg)
+        parts = [arg for arg in self.option_args]
         for k, v in self.filtered_option_kwargs.items():
             parts.append(f"{k}={v!r}")
         return f"Option({', '.join(parts)})"

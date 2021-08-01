@@ -260,7 +260,7 @@ def register_default_options(option_manager):
         metavar="n",
         default=defaults.INDENT_SIZE,
         parse_from_config=True,
-        help="Number of spaces used for indentation (Default: %default)",
+        help="Number of spaces used for indentation (Default: %(default)s)",
     )
 
     add_option(

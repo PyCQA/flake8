@@ -191,8 +191,10 @@ def test_tokenization_error_but_not_syntax_error(tmpdir, capsys):
         expected = "t.py:2:1: E999 SyntaxError: end of file (EOF) in multi-line statement\n"  # noqa: E501
     elif sys.version_info < (3, 8):  # pragma: no cover (<cp38)
         expected = "t.py:2:1: E902 TokenError: EOF in multi-line statement\n"
-    else:  # pragma: no cover (cp38+)
+    elif sys.version_info < (3, 10):  # pragma: no cover (cp38+)
         expected = "t.py:1:8: E999 SyntaxError: unexpected EOF while parsing\n"
+    else:  # pragma: no cover (cp310+)
+        expected = "t.py:1:10: E999 SyntaxError: unexpected EOF while parsing\n"  # noqa: E501
 
     out, err = capsys.readouterr()
     assert out == expected
@@ -207,8 +209,10 @@ def test_tokenization_error_is_a_syntax_error(tmpdir, capsys):
 
     if hasattr(sys, "pypy_version_info"):  # pragma: no cover (pypy)
         expected = "t.py:3:2: E999 IndentationError: unindent does not match any outer indentation level\n"  # noqa: E501
-    else:  # pragma: no cover (cpython)
+    elif sys.version_info < (3, 10):  # pragma: no cover (<cp310)
         expected = "t.py:3:5: E999 IndentationError: unindent does not match any outer indentation level\n"  # noqa: E501
+    else:  # pragma: no cover (cp310+)
+        expected = "t.py:3:7: E999 IndentationError: unindent does not match any outer indentation level\n"  # noqa: E501
 
     out, err = capsys.readouterr()
     assert out == expected

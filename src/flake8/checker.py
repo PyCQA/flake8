@@ -443,14 +443,26 @@ class FileChecker:
             token = ()
             row, column = (1, 0)
 
-        if column > 0 and token and isinstance(exception, SyntaxError):
+        if (
+            column > 0
+            and token
+            and isinstance(exception, SyntaxError)
+            and len(token) == 4  # Python 3.9 or earlier
+        ):
             # NOTE(sigmavirus24): SyntaxErrors report 1-indexed column
             # numbers. We need to decrement the column number by 1 at
             # least.
             column_offset = 1
             row_offset = 0
-            # See also: https://github.com/pycqa/flake8/issues/169
-            physical_line = token[-1]
+            # See also: https://github.com/pycqa/flake8/issues/169,
+            # https://github.com/PyCQA/flake8/issues/1372
+            # On Python 3.9 and earlier, token will be a 4-item tuple with the
+            # last item being the string. Starting with 3.10, they added to
+            # the tuple so now instead of it ending with the code that failed
+            # to parse, it ends with the end of the section of code that
+            # failed to parse. Luckily the absolute position in the tuple is
+            # stable across versions so we can use that here
+            physical_line = token[3]
 
             # NOTE(sigmavirus24): Not all "tokens" have a string as the last
             # argument. In this event, let's skip trying to find the correct

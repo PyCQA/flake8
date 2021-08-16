@@ -218,7 +218,7 @@ class FileProcessor:
             (previous_row, previous_column) = end
         return comments, logical, mapping
 
-    def build_ast(self) -> ast.AST:
+    def build_ast(self) -> ast.Module:
         """Build an abstract syntax tree from the list of lines."""
         return ast.parse("".join(self.lines))
 

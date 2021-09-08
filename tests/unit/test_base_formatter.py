@@ -102,7 +102,7 @@ def test_show_source_updates_physical_line_appropriately(line1, line2, column):
 
 
 @pytest.mark.parametrize("tee", [False, True])
-def test_write_uses_an_output_file(tee):
+def test_write_uses_an_output_file(tee, capsys):
     """Verify that we use the output file when it's present."""
     line = "Something to write"
     source = "source"
@@ -111,16 +111,11 @@ def test_write_uses_an_output_file(tee):
     formatter = base.BaseFormatter(options(tee=tee))
     formatter.output_fd = filemock
 
-    with mock.patch("flake8.formatting.base.print") as print_func:
-        formatter.write(line, source)
-        if tee:
-            assert print_func.called
-            assert print_func.mock_calls == [
-                mock.call(line, end="\n"),
-                mock.call(source, end="\n"),
-            ]
-        else:
-            assert not print_func.called
+    formatter.write(line, source)
+    if tee:
+        assert capsys.readouterr().out == f"{line}\n{source}\n"
+    else:
+        assert capsys.readouterr().out == ""
 
     assert filemock.write.called is True
     assert filemock.write.call_count == 2
@@ -130,8 +125,7 @@ def test_write_uses_an_output_file(tee):
     ]
 
 
-@mock.patch("flake8.formatting.base.print")
-def test_write_uses_print(print_function):
+def test_write_uses_print(capsys):
     """Verify that we use the print function without an output file."""
     line = "Something to write"
     source = "source"
@@ -139,12 +133,7 @@ def test_write_uses_print(print_function):
     formatter = base.BaseFormatter(options())
     formatter.write(line, source)
 
-    assert print_function.called is True
-    assert print_function.call_count == 2
-    assert print_function.mock_calls == [
-        mock.call(line, end="\n"),
-        mock.call(source, end="\n"),
-    ]
+    assert capsys.readouterr().out == f"{line}\n{source}\n"
 
 
 class AfterInitFormatter(base.BaseFormatter):

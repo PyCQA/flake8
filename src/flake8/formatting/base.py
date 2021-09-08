@@ -1,6 +1,7 @@
 """The base class and interface for all formatting plugins."""
 import argparse
 import os
+import sys
 from typing import IO
 from typing import List
 from typing import Optional
@@ -183,7 +184,7 @@ class BaseFormatter:
         if self.output_fd is not None:
             self.output_fd.write(output + self.newline)
         if self.output_fd is None or self.options.tee:
-            print(output, end=self.newline)
+            sys.stdout.buffer.write(output.encode() + self.newline.encode())
 
     def write(self, line: Optional[str], source: Optional[str]) -> None:
         """Write the line either to the output file or stdout.

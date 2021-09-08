@@ -125,8 +125,8 @@ def test_write_uses_an_output_file(tee, capsys):
     ]
 
 
-def test_write_uses_print(capsys):
-    """Verify that we use the print function without an output file."""
+def test_write_produces_stdout(capsys):
+    """Verify that we write to stdout without an output file."""
     line = "Something to write"
     source = "source"
 

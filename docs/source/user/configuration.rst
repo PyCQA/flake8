@@ -117,6 +117,7 @@ Let's actually look at |Flake8|'s own configuration section:
     ignore = D203
     exclude = .git,__pycache__,docs/source/conf.py,old,build,dist
     max-complexity = 10
+    show-source = True
 
 This is equivalent to:
 
@@ -124,7 +125,8 @@ This is equivalent to:
 
     flake8 --ignore D203 \
              --exclude .git,__pycache__,docs/source/conf.py,old,build,dist \
-             --max-complexity 10
+             --max-complexity 10 \
+             --show-source
 
 In our case, if we wanted to, we could also do
 
@@ -140,6 +142,7 @@ In our case, if we wanted to, we could also do
         build,
         dist
     max-complexity = 10
+    show-source = True
 
 This allows us to add comments for why we're excluding items, e.g.
 
@@ -161,6 +164,7 @@ This allows us to add comments for why we're excluding items, e.g.
         # This contains builds of flake8 that we don't want to check
         dist
     max-complexity = 10
+    show-source = True
 
 .. note::
 

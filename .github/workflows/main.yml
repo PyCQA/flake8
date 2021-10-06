@@ -28,7 +28,7 @@ jobs:
           python: 3.9
           toxenv: py
         - os: ubuntu-latest
-          python: '3.10.0-alpha - 3.10.999'
+          python: "3.10"
           toxenv: py
         # windows
         - os: windows-latest

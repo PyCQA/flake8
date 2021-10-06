@@ -25,7 +25,7 @@ appropriate of:
     pip3 install <plugin-name>
     python -m pip install <plugin-name>
     python3 -m pip install <plugin-name>
-    python3.9 -m pip install <plugin-name>
+    python3.10 -m pip install <plugin-name>
 
 To install the plugin, where ``<plugin-name>`` is the package name on PyPI_.
 To verify installation use:

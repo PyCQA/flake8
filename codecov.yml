@@ -1,5 +1,5 @@
 codecov:
-  branch: master
+  branch: main
   bot: null
 
 coverage:
@@ -12,7 +12,7 @@ coverage:
       default:
         server: chat.freenode.net
         channel: '##python-code-quality'
-        branches: master
+        branches: main
         threshold: 2
         message: null
 

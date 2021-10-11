@@ -1,0 +1,15 @@
+4.0.1 -- 2021-10-11
+-------------------
+
+You can view the `4.0.1 milestone`_ on GitHub for more details.
+
+Bugs Fixed
+~~~~~~~~~~
+
+- Fix parallel execution collecting a ``SyntaxError`` (See also :pull:`1410`
+  :issue:`1408`).
+
+
+.. all links
+.. _4.0.1 milestone:
+    https://github.com/PyCQA/flake8/milestone/41

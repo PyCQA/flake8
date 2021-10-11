@@ -9,6 +9,7 @@ with the newest releases first.
 ==================
 
 .. toctree::
+   4.0.1
    4.0.0
 
 3.x Release Series

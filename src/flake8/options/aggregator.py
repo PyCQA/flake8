@@ -38,7 +38,7 @@ def aggregate_options(
     default_values, _ = manager.parse_args([])
 
     # Make our new configuration file mergerator
-    config_parser = config.MergedConfigParser(
+    config_parser = config.ConfigParser(
         option_manager=manager, config_finder=config_finder
     )
 

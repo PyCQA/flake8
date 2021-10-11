@@ -11,7 +11,7 @@ from flake8 import utils
 
 LOG = logging.getLogger(__name__)
 
-__all__ = ("ConfigFileFinder", "MergedConfigParser")
+__all__ = ("ConfigFileFinder", "ConfigParser")
 
 
 class ConfigFileFinder:
@@ -48,25 +48,11 @@ class ConfigFileFinder:
 
         # User configuration file.
         self.program_name = program_name
-        self.user_config_file = self._user_config_file(program_name)
 
         # List of filenames to find in the local/project directory
         self.project_filenames = ("setup.cfg", "tox.ini", f".{program_name}")
 
         self.local_directory = os.path.abspath(os.curdir)
-
-    @staticmethod
-    def _user_config_file(program_name: str) -> str:
-        if utils.is_windows():
-            home_dir = os.path.expanduser("~")
-            config_file_basename = f".{program_name}"
-        else:
-            home_dir = os.environ.get(
-                "XDG_CONFIG_HOME", os.path.expanduser("~/.config")
-            )
-            config_file_basename = program_name
-
-        return os.path.join(home_dir, config_file_basename)
 
     @staticmethod
     def _read_config(
@@ -146,15 +132,8 @@ class ConfigFileFinder:
         """Parse all local config files into one config object."""
         return self.local_configs_with_files()[0]
 
-    def user_config(self):
-        """Parse the user config file into a config object."""
-        config, found_files = self._read_config(self.user_config_file)
-        if found_files:
-            LOG.debug("Found user configuration files: %s", found_files)
-        return config
 
-
-class MergedConfigParser:
+class ConfigParser:
     """Encapsulate merging different types of configuration files.
 
     This parses out the options registered that were specified in the
@@ -167,7 +146,7 @@ class MergedConfigParser:
     GETBOOL_ACTIONS = {"store_true", "store_false"}
 
     def __init__(self, option_manager, config_finder):
-        """Initialize the MergedConfigParser instance.
+        """Initialize the ConfigParser instance.
 
         :param flake8.options.manager.OptionManager option_manager:
             Initialized OptionManager.
@@ -239,19 +218,6 @@ class MergedConfigParser:
         LOG.debug("Parsing local configuration files.")
         return self._parse_config(config)
 
-    def parse_user_config(self):
-        """Parse and return the user configuration files."""
-        config = self.config_finder.user_config()
-        if not self.is_configured_by(config):
-            LOG.debug(
-                "User configuration files have no %s section",
-                self.program_name,
-            )
-            return {}
-
-        LOG.debug("Parsing user configuration files.")
-        return self._parse_config(config)
-
     def parse_cli_config(self, config_path):
         """Parse and return the file specified by --config."""
         config = self.config_finder.cli_config(config_path)
@@ -265,28 +231,8 @@ class MergedConfigParser:
         LOG.debug("Parsing CLI configuration files.")
         return self._parse_config(config, os.path.dirname(config_path))
 
-    def merge_user_and_local_config(self):
-        """Merge the parsed user and local configuration files.
-
-        :returns:
-            Dictionary of the parsed and merged configuration options.
-        :rtype:
-            dict
-        """
-        user_config = self.parse_user_config()
-        config = self.parse_local_config()
-
-        for option, value in user_config.items():
-            config.setdefault(option, value)
-
-        return config
-
     def parse(self):
-        """Parse and return the local and user config files.
-
-        First this copies over the parsed local configuration and then
-        iterates over the options in the user configuration and sets them if
-        they were not set by the local configuration file.
+        """Parse and return the local config files.
 
         :returns:
             Dictionary of parsed configuration options
@@ -309,7 +255,7 @@ class MergedConfigParser:
             )
             return self.parse_cli_config(self.config_finder.config_file)
 
-        return self.merge_user_and_local_config()
+        return self.parse_local_config()
 
 
 def get_local_plugins(config_finder):

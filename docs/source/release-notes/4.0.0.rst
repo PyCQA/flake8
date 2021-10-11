@@ -1,0 +1,16 @@
+4.0.0 -- 202x-mm-dd
+-------------------
+
+You can view the `4.0.0 milestone`_ on GitHub for more details.
+
+Backwards Incompatible Changes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Due to constant confusion by users, user-level |Flake8| configuration files
+  are no longer supported. Files will not be searched for in the user's home
+  directory (e.g., ``~/.flake8``) nor in the XDG config directory (e.g.,
+  ``~/.config/flake8``).
+
+.. all links
+.. _4.0.0 milestone:
+    https://github.com/PyCQA/flake8/milestone/39

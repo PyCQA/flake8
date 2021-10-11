@@ -129,13 +129,8 @@ In |Flake8| 2, configuration file discovery and management was handled by
 pep8.  In pep8's 1.6 release series, it drastically broke how discovery and
 merging worked (as a result of trying to improve it). To avoid a dependency
 breaking |Flake8| again in the future, we have created our own discovery and
-management.
-As part of managing this ourselves, we decided to change management/discovery
-for 3.0.0. We have done the following:
-
-- User files (files stored in a user's home directory or in the XDG directory
-  inside their home directory) are the first files read. For example, if the
-  user has a ``~/.flake8`` file, we will read that first.
+management in 3.0.0. In 4.0.0 we have once again changed how this works and we
+removed support for user-level config files.
 
 - Project files (files stored in the current directory) are read next and
   merged on top of the user file. In other words, configuration in project
@@ -157,7 +152,7 @@ To facilitate the configuration file management, we've taken a different
 approach to discovery and management of files than pep8. In pep8 1.5, 1.6, and
 1.7 configuration discovery and management was centralized in `66 lines of
 very terse python`_ which was confusing and not very explicit. The terseness
-of this function (|Flake8|'s authors believe) caused the confusion and
+of this function (|Flake8| 3.0.0's authors believe) caused the confusion and
 problems with pep8's 1.6 series. As such, |Flake8| has separated out
 discovery, management, and merging into a module to make reasoning about each
 of these pieces easier and more explicit (as well as easier to test).
@@ -176,23 +171,19 @@ to parse those configuration files.
 .. note:: ``local_config_files`` also filters out non-existent files.
 
 Configuration file merging and managemnt is controlled by the
-:class:`~flake8.options.config.MergedConfigParser`. This requires the instance
+:class:`~flake8.options.config.ConfigParser`. This requires the instance
 of :class:`~flake8.options.manager.OptionManager` that the program is using,
 the list of appended config files, and the list of extra arguments. This
 object is currently the sole user of the
 :class:`~flake8.options.config.ConfigFileFinder` object. It appropriately
 initializes the object and uses it in each of
 
-- :meth:`~flake8.options.config.MergedConfigParser.parse_cli_config`
-- :meth:`~flake8.options.config.MergedConfigParser.parse_local_config`
-- :meth:`~flake8.options.config.MergedConfigParser.parse_user_config`
+- :meth:`~flake8.options.config.ConfigParser.parse_cli_config`
+- :meth:`~flake8.options.config.ConfigParser.parse_local_config`
 
-Finally,
-:meth:`~flake8.options.config.MergedConfigParser.merge_user_and_local_config`
-takes the user and local configuration files that are parsed by
-:meth:`~flake8.options.config.MergedConfigParser.parse_local_config` and
-:meth:`~flake8.options.config.MergedConfigParser.parse_user_config`. The
-main usage of the ``MergedConfigParser`` is in
+Finally, :meth:`~flake8.options.config.ConfigParser.parse` returns the
+appropriate configuration dictionary for this execution of |Flake8|. The
+main usage of the ``ConfigParser`` is in
 :func:`~flake8.options.aggregator.aggregate_options`.
 
 Aggregating Configuration File and Command Line Arguments
@@ -201,7 +192,7 @@ Aggregating Configuration File and Command Line Arguments
 :func:`~flake8.options.aggregator.aggregate_options` accepts an instance of
 :class:`~flake8.options.manager.OptionManager` and does the work to parse the
 command-line arguments passed by the user necessary for creating an instance
-of :class:`~flake8.options.config.MergedConfigParser`.
+of :class:`~flake8.options.config.ConfigParser`.
 
 After parsing the configuration file, we determine the default ignore list. We
 use the defaults from the OptionManager and update those with the parsed
@@ -229,6 +220,6 @@ API Documentation
     :members:
     :special-members:
 
-.. autoclass:: flake8.options.config.MergedConfigParser
+.. autoclass:: flake8.options.config.ConfigParser
     :members:
     :special-members:

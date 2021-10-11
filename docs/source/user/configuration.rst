@@ -24,36 +24,12 @@ Remember that you want to specify certain options without writing
 Configuration Locations
 =======================
 
-|Flake8| supports storing its configuration in the following places:
-
-- Your top-level user directory
-
-- In your project in one of ``setup.cfg``, ``tox.ini``, or ``.flake8``.
+|Flake8| supports storing its configuration in your project in one of
+``setup.cfg``, ``tox.ini``, or ``.flake8``.
 
 Values set at the command line have highest priority, then those in the
-project configuration file, then those in your user directory, and finally
-there are the defaults. However, there are additional command line options
-which can alter this.
-
-
-"User" Configuration
---------------------
-
-|Flake8| allows a user to use "global" configuration file to store preferences.
-The user configuration file is expected to be stored somewhere in the user's
-"home" directory.
-
-- On Windows the "home" directory will be something like
-  ``C:\\Users\sigmavirus24``, a.k.a, ``~\``.
-
-- On Linux and other Unix like systems (including OS X) we will look in
-  ``~/``.
-
-Note that |Flake8| looks for ``~\.flake8`` on Windows and ``~/.config/flake8``
-on Linux and other Unix systems.
-
-User configuration files use the same syntax as Project Configuration files.
-Keep reading to see that syntax.
+project configuration file, and finally there are the defaults. However,
+there are additional command line options which can alter this.
 
 
 Project Configuration

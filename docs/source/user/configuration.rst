@@ -36,26 +36,6 @@ there are the defaults. However, there are additional command line options
 which can alter this.
 
 
-"User" Configuration
---------------------
-
-|Flake8| allows a user to use "global" configuration file to store preferences.
-The user configuration file is expected to be stored somewhere in the user's
-"home" directory.
-
-- On Windows the "home" directory will be something like
-  ``C:\\Users\sigmavirus24``, a.k.a, ``~\``.
-
-- On Linux and other Unix like systems (including OS X) we will look in
-  ``~/``.
-
-Note that |Flake8| looks for ``~\.flake8`` on Windows and ``~/.config/flake8``
-on Linux and other Unix systems.
-
-User configuration files use the same syntax as Project Configuration files.
-Keep reading to see that syntax.
-
-
 Project Configuration
 ---------------------
 

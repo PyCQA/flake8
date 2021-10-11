@@ -16,7 +16,7 @@ from typing import Type
 LOG = logging.getLogger(__name__)
 LOG.addHandler(logging.NullHandler())
 
-__version__ = "3.9.2"
+__version__ = "4.0.0"
 __version_info__ = tuple(int(i) for i in __version__.split(".") if i.isdigit())
 
 

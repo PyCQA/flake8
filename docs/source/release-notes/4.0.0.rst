@@ -1,4 +1,4 @@
-4.0.0 -- 202x-mm-dd
+4.0.0 -- 2021-10-10
 -------------------
 
 You can view the `4.0.0 milestone`_ on GitHub for more details.
@@ -6,10 +6,37 @@ You can view the `4.0.0 milestone`_ on GitHub for more details.
 Backwards Incompatible Changes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+- Remove ``--install-hook`` vcs integration (See also :issue:`1008`).
+- Remove ``setuptools`` command (See also :issue:`1009`).
+- Migrate from GitLab to GitHub (See also :pull:`1305`).
 - Due to constant confusion by users, user-level |Flake8| configuration files
   are no longer supported. Files will not be searched for in the user's home
   directory (e.g., ``~/.flake8``) nor in the XDG config directory (e.g.,
-  ``~/.config/flake8``).
+  ``~/.config/flake8``).  (See also :pull:`1404`).
+
+New Dependency Information
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- pycodestyle has been updated to >= 2.8.0, < 2.9.0 (See also :pull:`1406`).
+- Pyflakes has been updated to >= 2.4.0, < 2.5.0 (See also :pull:`1406`).
+- flake8 requires python >= 3.6 (See also :issue:`1010`).
+
+Features
+~~~~~~~~
+
+- Add ``--extend-select`` option (See also :pull:`1312` :issue:`1061`).
+- Automatically create directories for output files (See also :pull:`1329`).
+
+Bugs Fixed
+~~~~~~~~~~
+
+- ``ast`` parse before tokenizing to improve ``SyntaxError`` errors (See also
+  :pull:`1320` :issue:`740`).
+- Fix warning in ``--indent-size`` argparse help (See also :pull:`1367`).
+- Fix handling ``SyntaxError`` in python 3.10+ (See also :pull:`1374`
+  :issue:`1372`).
+- Fix writing non-cp1252-encodable when output is piped on windows (See also
+  :pull:`1382` :issue:`1381`).
 
 .. all links
 .. _4.0.0 milestone:

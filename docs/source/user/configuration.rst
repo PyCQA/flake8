@@ -24,16 +24,12 @@ Remember that you want to specify certain options without writing
 Configuration Locations
 =======================
 
-|Flake8| supports storing its configuration in the following places:
-
-- Your top-level user directory
-
-- In your project in one of ``setup.cfg``, ``tox.ini``, or ``.flake8``.
+|Flake8| supports storing its configuration in your project in one of
+``setup.cfg``, ``tox.ini``, or ``.flake8``.
 
 Values set at the command line have highest priority, then those in the
-project configuration file, then those in your user directory, and finally
-there are the defaults. However, there are additional command line options
-which can alter this.
+project configuration file, and finally there are the defaults. However,
+there are additional command line options which can alter this.
 
 
 Project Configuration

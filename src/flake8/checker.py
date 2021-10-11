@@ -20,6 +20,8 @@ try:
 except ImportError:
     multiprocessing = None  # type: ignore
 
+Results = List[Tuple[str, int, int, str, Optional[str]]]
+
 LOG = logging.getLogger(__name__)
 
 SERIAL_RETRY_ERRNOS = {
@@ -346,7 +348,7 @@ class FileChecker:
         self.options = options
         self.filename = filename
         self.checks = checks
-        self.results: List[Tuple[str, int, int, str, Optional[str]]] = []
+        self.results: Results = []
         self.statistics = {
             "tokens": 0,
             "logical lines": 0,
@@ -588,7 +590,7 @@ class FileChecker:
             self.run_physical_checks(file_processor.lines[-1])
             self.run_logical_checks()
 
-    def run_checks(self):
+    def run_checks(self) -> Tuple[str, Results, Dict[str, int]]:
         """Run checks against the file."""
         assert self.processor is not None
         try:
@@ -598,7 +600,7 @@ class FileChecker:
             code = "E902" if isinstance(e, tokenize.TokenError) else "E999"
             row, column = self._extract_syntax_information(e)
             self.report(code, row, column, f"{type(e).__name__}: {e.args[0]}")
-            return
+            return self.filename, self.results, self.statistics
 
         logical_lines = self.processor.statistics["logical lines"]
         self.statistics["logical lines"] = logical_lines

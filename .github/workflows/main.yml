@@ -3,46 +3,26 @@ name: main
 on:
   push:
     branches: [main]
-    tags:
+    tags: '*'
   pull_request:
 
 jobs:
   main:
     strategy:
       matrix:
+        os: [ubuntu-latest]
+        python: [pypy-3.7, 3.6, 3.7, 3.8, 3.9, '3.10.0-alpha - 3.10.999']
+        toxenv: [py]
         include:
-        # linux
-        - os: ubuntu-latest
-          python: pypy-3.7
-          toxenv: py
-        - os: ubuntu-latest
-          python: 3.6
-          toxenv: py
-        - os: ubuntu-latest
-          python: 3.7
-          toxenv: py
-        - os: ubuntu-latest
-          python: 3.8
-          toxenv: py
-        - os: ubuntu-latest
-          python: 3.9
-          toxenv: py
-        - os: ubuntu-latest
-          python: '3.10.0-alpha - 3.10.999'
-          toxenv: py
         # windows
         - os: windows-latest
           python: 3.6
-          toxenv: py
         # misc
-        - os: ubuntu-latest
-          python: 3.9
+        - python: 3.9
           toxenv: docs
-        - os: ubuntu-latest
-          python: 3.9
+        - python: 3.9
           toxenv: linters
-        - os: ubuntu-latest
-          python: 3.9
+        - python: 3.9
           toxenv: dogfood
     runs-on: ${{ matrix.os }}
     steps:

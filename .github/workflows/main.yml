@@ -3,6 +3,7 @@ name: main
 on:
   push:
     branches: main
+    tags: '*'
   pull_request:
 
 jobs:
@@ -33,7 +34,5 @@ jobs:
     - uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python }}
-    - run: |
-        pip install --upgrade pip
-        pip install --upgrade setuptools pip tox virtualenv
+    - run: pip install --upgrade pip setuptools tox virtualenv
     - run: tox -e ${{ matrix.toxenv }}

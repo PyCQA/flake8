@@ -136,32 +136,34 @@ def test_write_produces_stdout(capsys):
     assert capsys.readouterr().out == f"{line}\n{source}\n"
 
 
-@pytest.mark.parametrize('buffered_stdout', [True, False])
+@pytest.mark.parametrize("buffered_stdout", [True, False])
 def test_write_hook_fallbacks(buffered_stdout):
-    mock_line = mock.Mock(name='Mock Line')
+    mock_line = mock.Mock(name="Mock Line")
 
-    stdout_spec = ['write', 'encoding']
+    stdout_spec = ["write", "encoding"]
     if buffered_stdout:
-        stdout_spec.append('buffer')
+        stdout_spec.append("buffer")
 
-    with mock.patch('sys.stdout', spec=stdout_spec) as mock_stdout:
+    with mock.patch("sys.stdout", spec=stdout_spec) as mock_stdout:
+
         def _stdoutWriteEffect(value):
             if value is mock_line:
-                raise UnicodeEncodeError('unittest-codec', u'', 42, 43, 'NOPE')
+                raise UnicodeEncodeError("unittest-codec", "", 42, 43, "NOPE")
             return None
+
         mock_stdout.write.side_effect = _stdoutWriteEffect
 
-        mock_stdout.encoding = 'ascii'
+        mock_stdout.encoding = "ascii"
 
         formatter = base.BaseFormatter(options())
         formatter.write(mock_line, None)
 
-    mock_line.encode.assert_called_once_with('ascii', 'backslashreplace')
+    mock_line.encode.assert_called_once_with("ascii", "backslashreplace")
     byte_mock_line = mock_line.encode.return_value
     if buffered_stdout:
         mock_stdout.buffer.write.assert_any_call(byte_mock_line)
     else:
-        byte_mock_line.decode.assert_called_once_with('ascii', 'strict')
+        byte_mock_line.decode.assert_called_once_with("ascii", "strict")
         mock_stdout.write.assert_any_call(byte_mock_line.decode.return_value)
 
 

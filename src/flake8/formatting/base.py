@@ -184,11 +184,13 @@ class BaseFormatter:
         try:
             sys.stdout.write(value)
         except UnicodeEncodeError:
-            byteValue = value.encode(sys.stdout.encoding, 'backslashreplace')
-            if hasattr(sys.stdout, 'buffer'):
+            byteValue = value.encode(sys.stdout.encoding, "backslashreplace")
+            if hasattr(sys.stdout, "buffer"):
                 sys.stdout.buffer.write(byteValue)
             else:
-                sys.stdout.write(byteValue.decode(sys.stdout.encoding, 'strict'))
+                sys.stdout.write(
+                    byteValue.decode(sys.stdout.encoding, "strict")
+                )
 
     def _write(self, output: str) -> None:
         """Handle logic of whether to use an output file or print()."""

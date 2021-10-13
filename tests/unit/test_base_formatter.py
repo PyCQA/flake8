@@ -146,6 +146,7 @@ def test_write_hook_fallbacks(buffered_stdout):
         stdout_spec.append("buffer")
 
     with mock.patch("sys.stdout", spec=stdout_spec) as mock_stdout:
+
         def _stdout_write_effect(value):
             if value is mock_line:
                 raise UnicodeEncodeError("unittest-codec", "", 42, 43, "NOPE")

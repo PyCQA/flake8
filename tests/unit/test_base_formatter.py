@@ -138,6 +138,7 @@ def test_write_produces_stdout(capsys):
 
 @pytest.mark.parametrize('buffered_stdout', [True, False])
 def test_write_hook_fallbacks(buffered_stdout):
+    """Varify stdout.write() fallbacks."""
     mock_line = mock.Mock(name='Mock Line')
 
     stdout_spec = ['write', 'encoding']
@@ -145,11 +146,11 @@ def test_write_hook_fallbacks(buffered_stdout):
         stdout_spec.append('buffer')
 
     with mock.patch('sys.stdout', spec=stdout_spec) as mock_stdout:
-        def _stdoutWriteEffect(value):
+        def _stdout_write_effect(value):
             if value is mock_line:
                 raise UnicodeEncodeError('unittest-codec', u'', 42, 43, 'NOPE')
             return None
-        mock_stdout.write.side_effect = _stdoutWriteEffect
+        mock_stdout.write.side_effect = _stdout_write_effect
 
         mock_stdout.encoding = 'ascii'
 

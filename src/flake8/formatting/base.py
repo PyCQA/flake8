@@ -179,12 +179,24 @@ class BaseFormatter:
         # one
         return f"{error.physical_line}{indent}^"
 
+    def _stdoutWriteHook(self, value: str) -> None:
+        """An alternative to print() function that handles output terminal encoding."""
+        try:
+            sys.stdout.write(value)
+        except UnicodeEncodeError:
+            byteValue = value.encode(sys.stdout.encoding, 'backslashreplace')
+            if hasattr(sys.stdout, 'buffer'):
+                sys.stdout.buffer.write(byteValue)
+            else:
+                sys.stdout.write(byteValue.decode(sys.stdout.encoding, 'strict'))
+
     def _write(self, output: str) -> None:
         """Handle logic of whether to use an output file or print()."""
         if self.output_fd is not None:
             self.output_fd.write(output + self.newline)
         if self.output_fd is None or self.options.tee:
-            sys.stdout.buffer.write(output.encode() + self.newline.encode())
+            self._stdoutWriteHook(output)
+            self._stdoutWriteHook(self.newline)
 
     def write(self, line: Optional[str], source: Optional[str]) -> None:
         """Write the line either to the output file or stdout.

@@ -40,9 +40,11 @@ SERIAL_RETRY_ERRNOS = {
 }
 
 
-def _multiprocessing_is_fork():  # type () -> bool
+def _multiprocessing_is_fork() -> bool:
     """Class state is only preserved when using the `fork` strategy."""
-    return multiprocessing and multiprocessing.get_start_method() == "fork"
+    return bool(
+        multiprocessing and multiprocessing.get_start_method() == "fork"
+    )
 
 
 class Manager:

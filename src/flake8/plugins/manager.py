@@ -415,14 +415,11 @@ class PluginTypeManager:
         if self.plugins_loaded:
             return
 
-        def load_plugin(plugin):
-            """Call each plugin's load_plugin method."""
-            return plugin.load_plugin()
+        for plugin in self.plugins.values():
+            plugin.load_plugin()
 
-        plugins = list(self.manager.map(load_plugin))
         # Do not set plugins_loaded if we run into an exception
         self.plugins_loaded = True
-        return plugins
 
     def register_plugin_versions(self, optmanager):
         """Register the plugins and their versions with the OptionManager."""

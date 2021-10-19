@@ -136,6 +136,33 @@ def test_write_produces_stdout(capsys):
     assert capsys.readouterr().out == f"{line}\n{source}\n"
 
 
+def test_write_without_stdout_buffer():
+    """Verify that stdout writes when it has no buffer."""
+    line = "Something to write"
+    source = "source"
+
+    buffer_side_effect = AttributeError(
+        "'_io.StringIO' object has no \
+        attribute 'buffer'"
+    )
+    buffer_write_mock = mock.Mock(side_effect=buffer_side_effect)
+
+    write_mock = mock.Mock()
+    mock.patch("flake8.formatting.base.sys.stdout.write", write_mock)
+
+    with mock.patch(
+        "flake8.formatting.base.sys.stdout.buffer.write", buffer_write_mock
+    ):
+        formatter = base.BaseFormatter(options())
+        formatter.write(line, source)
+        assert write_mock.called is True
+        assert write_mock.call_count == 2
+        assert write_mock.mock_calls == [
+            mock.call(line + formatter.newline),
+            mock.call(source + formatter.newline),
+        ]
+
+
 class AfterInitFormatter(base.BaseFormatter):
     """Subclass for testing after_init."""
 

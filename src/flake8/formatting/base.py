@@ -184,7 +184,15 @@ class BaseFormatter:
         if self.output_fd is not None:
             self.output_fd.write(output + self.newline)
         if self.output_fd is None or self.options.tee:
-            sys.stdout.buffer.write(output.encode() + self.newline.encode())
+            # sys.stdout might be replaced, and thus could also be
+            # a file like object like io.StringIO, which do not
+            # support the 'buffer' attribute.
+            try:
+                sys.stdout.buffer.write(
+                    output.encode() + self.newline.encode()
+                )
+            except AttributeError:
+                sys.stdout.write(output + self.newline)
 
     def write(self, line: Optional[str], source: Optional[str]) -> None:
         """Write the line either to the output file or stdout.

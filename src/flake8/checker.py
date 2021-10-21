@@ -677,12 +677,13 @@ def calculate_pool_chunksize(num_checkers, num_jobs):
     """Determine the chunksize for the multiprocessing Pool.
 
     - For chunksize, see: https://docs.python.org/3/library/multiprocessing.html#multiprocessing.pool.Pool.imap  # noqa
-    - This formula, while not perfect, aims to give each worker two batches of
+    - This formula, while not perfect, aims to give each worker 16 batches of
       work.
     - See: https://github.com/pycqa/flake8/issues/829#note_18878876
     - See: https://github.com/pycqa/flake8/issues/197
+    - See: https://github.com/pycqa/flake8/issues/1430
     """
-    return max(num_checkers // (num_jobs * 2), 1)
+    return max(num_checkers // (num_jobs * 16), 1)
 
 
 def _run_checks(checker):

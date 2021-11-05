@@ -1,6 +1,7 @@
 """Plugin loading and management logic and classes."""
 import logging
 from typing import Any
+from typing import cast
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -410,13 +411,38 @@ class PluginTypeManager:
 
         return generated_function
 
-    def load_plugins(self):
-        """Load all plugins of this type that are managed by this manager."""
+    def load_plugins(
+        self,
+        allowed_plugins: Optional[List[str]] = None,
+        required_plugins: Optional[List[str]] = None,
+    ) -> None:
+        """Load all plugins of this type that are managed by this manager.
+
+        :param allowed_plugins:
+            This is the list of plugins allowed to be loaded
+        :param required_plugins:
+            This is the list of plugins required by the user
+        :raises PluginMissingError:
+            If a required plugin is missing
+        """
         if self.plugins_loaded:
             return
 
+        requireset = set(required_plugins or [])
+        allowset = set(allowed_plugins or [])
+        loaded = set()
         for plugin in self.plugins.values():
+            if allowset and plugin.name not in allowset:
+                continue
             plugin.load_plugin()
+            loaded.add(plugin.name)
+
+        missing = requireset.difference(loaded)
+        if requireset and missing:
+            required_plugins = cast(List[str], required_plugins)
+            raise exceptions.PluginMissingError(
+                required_plugins, sorted(missing)
+            )
 
         # Do not set plugins_loaded if we run into an exception
         self.plugins_loaded = True

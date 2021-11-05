@@ -59,6 +59,23 @@ def register_preliminary_options(parser: argparse.ArgumentParser) -> None:
         help="Ignore all configuration files.",
     )
 
+    add_argument(
+        "--allowed-plugins",
+        default=None,
+        # parse_from_config=True,
+        # comma_separated_list=True,
+        help="Which plugins are allowed to run from the environment",
+    )
+
+    add_argument(
+        "--required-plugins",
+        default=None,
+        # parse_from_config=True,
+        # comma_separated_list=True,
+        help="Which plugins are required for linting. Exits if not all are "
+        "present.",
+    )
+
 
 class JobsArgument:
     """Type callback for the --jobs argument."""

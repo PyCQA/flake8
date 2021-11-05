@@ -1,5 +1,6 @@
 """Exception classes for all of Flake8."""
 from typing import Dict
+from typing import List
 
 
 class Flake8Exception(Exception):
@@ -68,4 +69,25 @@ class PluginExecutionFailed(Flake8Exception):
         return self.FORMAT % {
             "name": self.plugin["plugin_name"],
             "exc": self.original_exception,
+        }
+
+
+class PluginMissingError(Flake8Exception):
+    """A plugin that was required was not found."""
+
+    FORMAT = "User required %(plugins)s but %(missing)s was not found."
+
+    def __init__(
+        self, required_plugins: List[str], missing_plugins: List[str]
+    ) -> None:
+        """Store the information passed in to format the exception message."""
+        self.required_plugins = required_plugins
+        self.missing_plugins = missing_plugins
+        super().__init__(required_plugins, missing_plugins)
+
+    def __str__(self) -> str:
+        """Format our exception message."""
+        return self.FORMAT % {
+            "plugins": ", ".join(self.required_plugins),
+            "missing": ", ".join(self.missing_plugins),
         }

@@ -1,4 +1,5 @@
 """Config handling logic for Flake8."""
+import argparse
 import collections
 import configparser
 import logging
@@ -273,7 +274,7 @@ def get_local_plugins(config_finder):
     if config_finder.ignore_config_files:
         LOG.debug(
             "Refusing to look for local plugins in configuration"
-            "files due to user-requested isolation"
+            " files due to user-requested isolation"
         )
         return local_plugins
 
@@ -313,6 +314,89 @@ def get_local_plugins(config_finder):
             )
         local_plugins.paths.extend(norm_paths)
     return local_plugins
+
+
+def get_plugin_allowlist_and_requirements(
+    config_finder: ConfigFileFinder, preliminary_opts: argparse.Namespace
+) -> Tuple[List[str], List[str]]:
+    """Get allowed and required plugin lists from config.
+
+    :param config_finder:
+        The config file finder to use.
+    :type config_finder:
+        :class:`~flake8.options.config.ConfigFileFinder`
+    :param preliminary_opts:
+        The config file finder to use.
+    :type preliminary_opts:
+        :class:`~argparse.Namespace`
+    :returns:
+        tuple of the allowed and required plugin lists
+    """
+    read_allowed_plugins_from_config = True
+    read_required_plugins_from_config = True
+    allowed_plugins: List[str] = []
+    required_plugins: List[str] = []
+    return_tuple: Tuple[List[str], List[str]] = (
+        allowed_plugins,
+        required_plugins,
+    )
+
+    if preliminary_opts.allowed_plugins is not None:
+        allowed_plugins.extend(
+            utils.parse_comma_separated_list(preliminary_opts.allowed_plugins)
+        )
+        read_allowed_plugins_from_config = False
+
+    if preliminary_opts.required_plugins is not None:
+        required_plugins.extend(
+            utils.parse_comma_separated_list(preliminary_opts.required_plugins)
+        )
+        read_required_plugins_from_config = False
+
+    if config_finder.ignore_config_files:
+        LOG.debug(
+            "Refusing to look for plugin configuration in configuration"
+            " files due to user-requested isolation"
+        )
+        return return_tuple
+
+    if (
+        not read_allowed_plugins_from_config
+        and not read_required_plugins_from_config
+    ):
+        LOG.debug("Found --allowed-plugins and --required-plugins")
+        return return_tuple
+
+    if config_finder.config_file:
+        LOG.debug(
+            'Reading local plugins only from "%s" specified via '
+            "--config by the user",
+            config_finder.config_file,
+        )
+        config = config_finder.cli_config(config_finder.config_file)
+        config_files = [config_finder.config_file]
+    else:
+        config, config_files = config_finder.local_configs_with_files()
+
+    section = f"{config_finder.program_name}"
+    if (
+        config.has_option(section, "allowed-plugins")
+        and read_allowed_plugins_from_config
+    ):
+        allowed_plugins_str = config.get(section, "allowed-plugins").strip()
+        allowed_plugins.extend(
+            utils.parse_comma_separated_list(allowed_plugins_str)
+        )
+    if (
+        config.has_option(section, "required-plugins")
+        and read_required_plugins_from_config
+    ):
+        required_plugins_str = config.get(section, "required-plugins").strip()
+        required_plugins.extend(
+            utils.parse_comma_separated_list(required_plugins_str)
+        )
+
+    return return_tuple
 
 
 LocalPlugins = collections.namedtuple("LocalPlugins", "extension report paths")

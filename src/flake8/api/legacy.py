@@ -38,7 +38,7 @@ def get_style_guide(**kwargs):
         ignore_config_files=prelim_opts.isolated,
     )
 
-    application.find_plugins(config_finder)
+    application.find_plugins(config_finder, prelim_opts)
     application.register_plugin_options()
     application.parse_configuration_and_cli(
         config_finder,

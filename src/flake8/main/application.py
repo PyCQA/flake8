@@ -141,7 +141,11 @@ class Application:
                 (self.result_count > 0) or self.catastrophic_failure
             )
 
-    def find_plugins(self, config_finder: config.ConfigFileFinder) -> None:
+    def find_plugins(
+        self,
+        config_finder: config.ConfigFileFinder,
+        prelim_opts: argparse.Namespace,
+    ) -> None:
         """Find and load the plugins for this application.
 
         Set the :attr:`check_plugins` and :attr:`formatting_plugins` attributes
@@ -149,8 +153,16 @@ class Application:
 
         :param config.ConfigFileFinder config_finder:
             The finder for finding and reading configuration files.
+        :param argparse.Namespace prelim_opts:
+            The options parsed preliminarily from the CLI
         """
         local_plugins = config.get_local_plugins(config_finder)
+        (
+            allowed_plugins,
+            required_plugins,
+        ) = config.get_plugin_allowlist_and_requirements(
+            config_finder, prelim_opts
+        )
 
         sys.path.extend(local_plugins.paths)
 
@@ -160,7 +172,11 @@ class Application:
             local_plugins.report
         )
 
-        self.check_plugins.load_plugins()
+        try:
+            self.check_plugins.load_plugins(allowed_plugins, required_plugins)
+        except exceptions.PluginMissingError as e:
+            print(f"Error: {e!s}")
+            raise SystemExit(2)
         self.formatting_plugins.load_plugins()
 
     def register_plugin_options(self) -> None:
@@ -340,7 +356,7 @@ class Application:
             config_file=prelim_opts.config,
             ignore_config_files=prelim_opts.isolated,
         )
-        self.find_plugins(config_finder)
+        self.find_plugins(config_finder, prelim_opts)
         self.register_plugin_options()
         self.parse_configuration_and_cli(
             config_finder,

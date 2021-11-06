@@ -1,15 +1,18 @@
 """Tests for the BaseFormatter object."""
 import argparse
+import sys
 from unittest import mock
 
 import pytest
 
 from flake8 import style_guide
+from flake8.formatting import _windows_color
 from flake8.formatting import base
 
 
 def options(**kwargs):
     """Create an argparse.Namespace instance."""
+    kwargs.setdefault("color", "auto")
     kwargs.setdefault("output_file", None)
     kwargs.setdefault("tee", False)
     return argparse.Namespace(**kwargs)
@@ -134,6 +137,49 @@ def test_write_produces_stdout(capsys):
     formatter.write(line, source)
 
     assert capsys.readouterr().out == f"{line}\n{source}\n"
+
+
+def test_color_always_is_true():
+    """Verify that color='always' sets it to True."""
+    formatter = base.BaseFormatter(options(color="always"))
+    assert formatter.color is True
+
+
+def _mock_isatty(val):
+    attrs = {"isatty.return_value": val}
+    return mock.patch.object(sys, "stdout", **attrs)
+
+
+def _mock_windows_color(val):
+    return mock.patch.object(_windows_color, "terminal_supports_color", val)
+
+
+def test_color_auto_is_true_for_tty():
+    """Verify that color='auto' sets it to True for a tty."""
+    with _mock_isatty(True), _mock_windows_color(True):
+        formatter = base.BaseFormatter(options(color="auto"))
+    assert formatter.color is True
+
+
+def test_color_auto_is_false_without_tty():
+    """Verify that color='auto' sets it to False without a tty."""
+    with _mock_isatty(False), _mock_windows_color(True):
+        formatter = base.BaseFormatter(options(color="auto"))
+    assert formatter.color is False
+
+
+def test_color_auto_is_false_if_not_supported_on_windows():
+    """Verify that color='auto' is False if not supported on windows."""
+    with _mock_isatty(True), _mock_windows_color(False):
+        formatter = base.BaseFormatter(options(color="auto"))
+    assert formatter.color is False
+
+
+def test_color_never_is_false():
+    """Verify that color='never' sets it to False despite a tty."""
+    with _mock_isatty(True), _mock_windows_color(True):
+        formatter = base.BaseFormatter(options(color="never"))
+    assert formatter.color is False
 
 
 class AfterInitFormatter(base.BaseFormatter):

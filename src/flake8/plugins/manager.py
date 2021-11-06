@@ -269,6 +269,12 @@ class PluginManager:  # pylint: disable=too-few-public-methods
                     "flake8>=3.7 (which implements per-file-ignores itself)."
                 )
                 continue
+            elif entry_point.name == "flake8-colors":
+                LOG.warning(
+                    "flake8-colors plugin is incompatible with "
+                    "flake8>=4.1 (which implements colors itself)."
+                )
+                continue
             self._load_plugin_from_entrypoint(entry_point)
 
     def _load_plugin_from_entrypoint(self, entry_point, local=False):

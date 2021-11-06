@@ -8,6 +8,8 @@ from typing import Optional
 from typing import Tuple
 from typing import TYPE_CHECKING
 
+from flake8.formatting import _windows_color
+
 if TYPE_CHECKING:
     from flake8.statistics import Statistics
     from flake8.style_guide import Violation
@@ -51,6 +53,11 @@ class BaseFormatter:
         self.filename = options.output_file
         self.output_fd: Optional[IO[str]] = None
         self.newline = "\n"
+        self.color = options.color == "always" or (
+            options.color == "auto"
+            and sys.stdout.isatty()
+            and _windows_color.terminal_supports_color
+        )
         self.after_init()
 
     def after_init(self) -> None:

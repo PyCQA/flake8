@@ -8,6 +8,20 @@ from flake8.formatting import base
 if TYPE_CHECKING:
     from flake8.style_guide import Violation
 
+COLORS = {
+    "bold": "\033[1m",
+    "black": "\033[30m",
+    "red": "\033[31m",
+    "green": "\033[32m",
+    "yellow": "\033[33m",
+    "blue": "\033[34m",
+    "magenta": "\033[35m",
+    "cyan": "\033[36m",
+    "white": "\033[37m",
+    "reset": "\033[m",
+}
+COLORS_OFF = {k: "" for k in COLORS}
+
 
 class SimpleFormatter(base.BaseFormatter):
     """Simple abstraction for Default and Pylint formatter commonality.
@@ -39,6 +53,7 @@ class SimpleFormatter(base.BaseFormatter):
             "path": error.filename,
             "row": error.line_number,
             "col": error.column_number,
+            **(COLORS if self.color else COLORS_OFF),
         }
 
 
@@ -49,7 +64,11 @@ class Default(SimpleFormatter):
     format string.
     """
 
-    error_format = "%(path)s:%(row)d:%(col)d: %(code)s %(text)s"
+    error_format = (
+        "%(bold)s%(path)s%(reset)s"
+        "%(cyan)s:%(reset)s%(row)d%(cyan)s:%(reset)s%(col)d%(cyan)s:%(reset)s "
+        "%(bold)s%(red)s%(code)s%(reset)s %(text)s"
+    )
 
     def after_init(self) -> None:
         """Check for a custom format string."""

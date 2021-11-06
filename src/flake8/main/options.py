@@ -91,6 +91,7 @@ def register_default_options(option_manager):
     The default options include:
 
     - ``-q``/``--quiet``
+    - ``--color``
     - ``--count``
     - ``--diff``
     - ``--exclude``
@@ -118,7 +119,6 @@ def register_default_options(option_manager):
     """
     add_option = option_manager.add_option
 
-    # pep8 options
     add_option(
         "-q",
         "--quiet",
@@ -126,6 +126,13 @@ def register_default_options(option_manager):
         action="count",
         parse_from_config=True,
         help="Report only file names, or nothing. This option is repeatable.",
+    )
+
+    add_option(
+        "--color",
+        choices=("auto", "always", "never"),
+        default="auto",
+        help="Whether to use color in output.  Defaults to `%(default)s`.",
     )
 
     add_option(

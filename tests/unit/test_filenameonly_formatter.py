@@ -7,6 +7,7 @@ from flake8.formatting import default
 
 def options(**kwargs):
     """Create an argparse.Namespace instance."""
+    kwargs.setdefault("color", "auto")
     kwargs.setdefault("output_file", None)
     kwargs.setdefault("tee", False)
     return argparse.Namespace(**kwargs)

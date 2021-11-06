@@ -146,8 +146,8 @@ def register_default_options(option_manager):
     add_option(
         "--diff",
         action="store_true",
-        help="Report changes only within line number ranges in the unified "
-        "diff provided on standard in by the user.",
+        help="(DEPRECATED) Report changes only within line number ranges in "
+        "the unified diff provided on standard in by the user.",
     )
 
     add_option(

@@ -191,6 +191,10 @@ class Application:
 
         self.running_against_diff = self.options.diff
         if self.running_against_diff:
+            LOG.warning(
+                "the --diff option is deprecated and will be removed in a "
+                "future version."
+            )
             self.parsed_diff = utils.parse_unified_diff()
             if not self.parsed_diff:
                 self.exit()

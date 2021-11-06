@@ -238,6 +238,11 @@ Options and their Descriptions
 
     :ref:`Go back to index <top>`
 
+    .. warning::
+
+        Due to hiding potential errors, this option is deprecated and will be
+        removed in a future version.
+
     Use the unified diff provided on standard in to only check the modified
     files and report errors included in the diff.
 

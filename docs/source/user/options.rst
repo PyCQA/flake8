@@ -261,7 +261,7 @@ Options and their Descriptions
 
     Provide a comma-separated list of glob patterns to exclude from checks.
 
-    This defaults to: ``.svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg``
+    This defaults to: ``.svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.nox,.eggs,*.egg``
 
     Example patterns:
 

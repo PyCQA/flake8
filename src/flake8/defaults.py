@@ -9,6 +9,7 @@ EXCLUDE = (
     ".git",
     "__pycache__",
     ".tox",
+    ".nox",
     ".eggs",
     "*.egg",
 )

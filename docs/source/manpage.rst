@@ -44,7 +44,8 @@ All options available as of Flake8 3.1.0::
                           unified diff provided on standard in by the user.
     --exclude=patterns    Comma-separated list of files or directories to
                           exclude. (Default:
-                          .svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg)
+                          .svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.nox,.eggs,
+                          *.egg)
     --filename=patterns   Only check for filenames matching the patterns in this
                           comma-separated list. (Default: *.py)
     --stdin-display-name=STDIN_DISPLAY_NAME

@@ -11,6 +11,7 @@ This module
 """
 import logging
 import sys
+from typing import Optional
 from typing import Type
 
 LOG = logging.getLogger(__name__)
@@ -40,7 +41,11 @@ LOG_FORMAT = (
 )
 
 
-def configure_logging(verbosity, filename=None, logformat=LOG_FORMAT):
+def configure_logging(
+    verbosity: int,
+    filename: Optional[str] = None,
+    logformat: str = LOG_FORMAT,
+) -> None:
     """Configure logging for flake8.
 
     :param int verbosity:

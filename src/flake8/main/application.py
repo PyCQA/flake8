@@ -80,9 +80,6 @@ class Application:
         #: The user-supplied options parsed into an instance of
         #: :class:`argparse.Namespace`
         self.options: Optional[argparse.Namespace] = None
-        #: The left over arguments that were not parsed by
-        #: :attr:`option_manager`
-        self.args: Optional[List[str]] = None
         #: The number of errors, warnings, and other messages after running
         #: flake8 and taking into account ignored errors and lines.
         self.result_count = 0
@@ -183,7 +180,7 @@ class Application:
         :param list argv:
             Command-line arguments passed in directly.
         """
-        self.options, self.args = aggregator.aggregate_options(
+        self.options = aggregator.aggregate_options(
             self.option_manager,
             config_finder,
             argv,
@@ -201,11 +198,11 @@ class Application:
 
         assert self.check_plugins is not None
         self.check_plugins.provide_options(
-            self.option_manager, self.options, self.args
+            self.option_manager, self.options, self.options.filenames
         )
         assert self.formatting_plugins is not None
         self.formatting_plugins.provide_options(
-            self.option_manager, self.options, self.args
+            self.option_manager, self.options, self.options.filenames
         )
 
     def formatter_for(self, formatter_plugin_name):
@@ -251,9 +248,10 @@ class Application:
 
     def make_file_checker_manager(self) -> None:
         """Initialize our FileChecker Manager."""
+        assert self.options is not None
         self.file_checker_manager = checker.Manager(
             style_guide=self.guide,
-            arguments=self.args,
+            arguments=self.options.filenames,
             checker_plugins=self.check_plugins,
         )
 

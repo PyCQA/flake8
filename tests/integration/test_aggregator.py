@@ -38,7 +38,7 @@ def test_aggregate_options_with_config(optmanager):
     config_finder = config.ConfigFileFinder(
         "flake8", config_file=CLI_SPECIFIED_CONFIG
     )
-    options, args = aggregator.aggregate_options(
+    options = aggregator.aggregate_options(
         optmanager, config_finder, arguments
     )
 
@@ -58,7 +58,7 @@ def test_aggregate_options_when_isolated(optmanager):
     ]
     config_finder = config.ConfigFileFinder("flake8", ignore_config_files=True)
     optmanager.extend_default_ignore(["E8"])
-    options, args = aggregator.aggregate_options(
+    options = aggregator.aggregate_options(
         optmanager, config_finder, arguments
     )
 

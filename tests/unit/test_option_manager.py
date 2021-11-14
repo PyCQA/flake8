@@ -33,16 +33,16 @@ def test_option_manager_including_parent_options():
     optmanager = manager.OptionManager(
         prog="flake8", version=TEST_VERSION, parents=[parent_parser]
     )
-    option, _ = optmanager.parse_args(["--parent", "foo"])
+    options = optmanager.parse_args(["--parent", "foo"])
 
     # THEN
-    assert option.parent == "foo"
+    assert options.parent == "foo"
 
 
 def test_parse_args_forwarding_default_values(optmanager):
     """Verify default provided values are present in the final result."""
     namespace = argparse.Namespace(foo="bar")
-    options, args = optmanager.parse_args([], namespace)
+    options = optmanager.parse_args([], namespace)
     assert options.foo == "bar"
 
 
@@ -50,7 +50,7 @@ def test_parse_args_forwarding_type_coercion(optmanager):
     """Verify default provided values are type converted from add_option."""
     optmanager.add_option("--foo", type=int)
     namespace = argparse.Namespace(foo="5")
-    options, args = optmanager.parse_args([], namespace)
+    options = optmanager.parse_args([], namespace)
     assert options.foo == 5
 
 
@@ -104,7 +104,7 @@ def test_parse_args_normalize_path(optmanager):
 
     optmanager.add_option("--config", normalize_paths=True)
 
-    options, args = optmanager.parse_args(["--config", "../config.ini"])
+    options = optmanager.parse_args(["--config", "../config.ini"])
     assert options.config == os.path.abspath("../config.ini")
 
 
@@ -117,7 +117,7 @@ def test_parse_args_handles_comma_separated_defaults(optmanager):
         "--exclude", default="E123,W234", comma_separated_list=True
     )
 
-    options, args = optmanager.parse_args([])
+    options = optmanager.parse_args([])
     assert options.exclude == ["E123", "W234"]
 
 
@@ -130,7 +130,7 @@ def test_parse_args_handles_comma_separated_lists(optmanager):
         "--exclude", default="E123,W234", comma_separated_list=True
     )
 
-    options, args = optmanager.parse_args(["--exclude", "E201,W111,F280"])
+    options = optmanager.parse_args(["--exclude", "E201,W111,F280"])
     assert options.exclude == ["E201", "W111", "F280"]
 
 
@@ -143,7 +143,7 @@ def test_parse_args_normalize_paths(optmanager):
         "--extra-config", normalize_paths=True, comma_separated_list=True
     )
 
-    options, args = optmanager.parse_args(
+    options = optmanager.parse_args(
         ["--extra-config", "../config.ini,tox.ini,flake8/some-other.cfg"]
     )
     assert options.extra_config == [
@@ -319,14 +319,14 @@ def test_optparse_normalize_callback_option_legacy(optmanager):
 def test_optparse_normalize_types(optmanager, type_s, input_val, expected):
     """Test the optparse shim for type="typename"."""
     optmanager.add_option("--foo", type=type_s)
-    opts, args = optmanager.parse_args(["--foo", input_val])
+    opts = optmanager.parse_args(["--foo", input_val])
     assert opts.foo == expected
 
 
 def test_optparse_normalize_choice_type(optmanager):
     """Test the optparse shim for type="choice"."""
     optmanager.add_option("--foo", type="choice", choices=("1", "2", "3"))
-    opts, args = optmanager.parse_args(["--foo", "1"])
+    opts = optmanager.parse_args(["--foo", "1"])
     assert opts.foo == "1"
     # fails to parse
     with pytest.raises(SystemExit):

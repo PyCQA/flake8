@@ -21,11 +21,6 @@ Purposes of existing fixtures
     This should only be used when providing config file(s) specified by the
     user on the command-line.
 
-``tests/fixtures/config_files/local-config.ini``
-
-    This should be used when providing config files that would have been found
-    by looking for config files in the current working project directory.
-
 ``tests/fixtures/config_files/local-plugin.ini``
 
     This is for testing configuring a plugin via flake8 config file instead of
@@ -35,8 +30,3 @@ Purposes of existing fixtures
 
     This should be used when parsing an ini file without a ``[flake8]``
     section.
-
-``tests/fixtures/config_files/user-config.ini``
-
-    This is an example configuration file that would be found in the user's
-    home directory (or XDG Configuration Directory).

@@ -459,15 +459,13 @@ class OptionManager:
         self,
         args: Optional[List[str]] = None,
         values: Optional[argparse.Namespace] = None,
-    ) -> Tuple[argparse.Namespace, List[str]]:
+    ) -> argparse.Namespace:
         """Proxy to calling the OptionParser's parse_args method."""
         self.generate_epilog()
         self.update_version_string()
         if values:
             self.parser.set_defaults(**vars(values))
-        parsed_args = self.parser.parse_args(args)
-        # TODO: refactor callers to not need this
-        return parsed_args, parsed_args.filenames
+        return self.parser.parse_args(args)
 
     def parse_known_args(
         self, args: Optional[List[str]] = None

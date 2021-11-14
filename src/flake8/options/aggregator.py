@@ -6,7 +6,6 @@ applies the user-specified command-line configuration on top of it.
 import argparse
 import logging
 from typing import List
-from typing import Tuple
 
 from flake8.options import config
 from flake8.options.manager import OptionManager
@@ -18,7 +17,7 @@ def aggregate_options(
     manager: OptionManager,
     config_finder: config.ConfigFileFinder,
     argv: List[str],
-) -> Tuple[argparse.Namespace, List[str]]:
+) -> argparse.Namespace:
     """Aggregate and merge CLI and config file options.
 
     :param flake8.options.manager.OptionManager manager:
@@ -35,7 +34,7 @@ def aggregate_options(
         tuple(argparse.Namespace, list)
     """
     # Get defaults from the option parser
-    default_values, _ = manager.parse_args([])
+    default_values = manager.parse_args([])
 
     # Make our new configuration file mergerator
     config_parser = config.ConfigParser(

@@ -1,5 +1,6 @@
 """Tests for the Manager object for FileCheckers."""
 import errno
+import multiprocessing
 from unittest import mock
 
 import pytest
@@ -37,8 +38,8 @@ def test_oserrors_cause_serial_fall_back():
     assert serial.call_count == 1
 
 
-@mock.patch("flake8.checker._multiprocessing_is_fork", return_value=True)
-def test_oserrors_are_reraised(is_windows):
+@mock.patch.object(multiprocessing, "get_start_method", return_value="fork")
+def test_oserrors_are_reraised(_):
     """Verify that unexpected OSErrors will cause the Manager to reraise."""
     err = OSError(errno.EAGAIN, "Ominous message")
     with mock.patch("_multiprocessing.SemLock", side_effect=err):
@@ -49,15 +50,30 @@ def test_oserrors_are_reraised(is_windows):
     assert serial.call_count == 0
 
 
-def test_multiprocessing_is_disabled():
+@mock.patch.object(multiprocessing, "get_start_method", return_value="spawn")
+def test_multiprocessing_is_disabled(_):
     """Verify not being able to import multiprocessing forces jobs to 0."""
     style_guide = style_guide_mock()
-    with mock.patch("flake8.checker.multiprocessing", None):
+    manager = checker.Manager(style_guide, [], [])
+    assert manager.jobs == 0
+
+
+def test_multiprocessing_cpu_count_not_implemented():
+    """Verify that jobs is 0 if cpu_count is unavailable."""
+    style_guide = style_guide_mock()
+    style_guide.options.jobs = JobsArgument("auto")
+
+    with mock.patch.object(
+        multiprocessing,
+        "cpu_count",
+        side_effect=NotImplementedError,
+    ):
         manager = checker.Manager(style_guide, [], [])
-        assert manager.jobs == 0
+    assert manager.jobs == 0
 
 
-def test_make_checkers():
+@mock.patch.object(multiprocessing, "get_start_method", return_value="spawn")
+def test_make_checkers(_):
     """Verify that we create a list of FileChecker instances."""
     style_guide = style_guide_mock()
     files = ["file1", "file2"]
@@ -67,8 +83,7 @@ def test_make_checkers():
         "logical_line_plugins": [],
         "physical_line_plugins": [],
     }
-    with mock.patch("flake8.checker.multiprocessing", None):
-        manager = checker.Manager(style_guide, files, checkplugins)
+    manager = checker.Manager(style_guide, files, checkplugins)
 
     with mock.patch("flake8.utils.filenames_from") as filenames_from:
         filenames_from.side_effect = [["file1"], ["file2"]]

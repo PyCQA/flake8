@@ -16,7 +16,6 @@ from flake8 import defaults
 from flake8 import utils
 
 LOG = logging.getLogger(__name__)
-PyCF_ONLY_AST = 1024
 NEWLINE = frozenset([tokenize.NL, tokenize.NEWLINE])
 
 SKIP_TOKENS = frozenset(

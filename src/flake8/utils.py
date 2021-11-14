@@ -281,17 +281,6 @@ def parse_unified_diff(diff: Optional[str] = None) -> Dict[str, Set[int]]:
     return parsed_paths
 
 
-def is_windows() -> bool:
-    """Determine if we're running on Windows.
-
-    :returns:
-        True if running on Windows, otherwise False
-    :rtype:
-        bool
-    """
-    return os.name == "nt"
-
-
 def is_using_stdin(paths: List[str]) -> bool:
     """Determine if we're going to read from stdin.
 

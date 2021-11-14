@@ -54,11 +54,6 @@ normalized path.
 This function retrieves and caches the value provided on ``sys.stdin``. This
 allows plugins to use this to retrieve ``stdin`` if necessary.
 
-.. autofunction:: flake8.utils.is_windows
-
-This provides a convenient and explicitly named function that checks if we are
-currently running on a Windows (or ``nt``) operating system.
-
 .. autofunction:: flake8.utils.is_using_stdin
 
 Another helpful function that is named only to be explicit given it is a very

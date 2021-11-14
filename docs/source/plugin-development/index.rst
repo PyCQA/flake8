@@ -62,7 +62,6 @@ Here's a tutorial which goes over building an ast checking plugin from scratch:
     registering-plugins
     plugin-parameters
     formatters
-    cross-compatibility
 
 
 .. _entry points:

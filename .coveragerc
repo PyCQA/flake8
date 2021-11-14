@@ -1,5 +1,4 @@
 [run]
-parallel = True
 branch = True
 source =
     flake8
@@ -7,12 +6,6 @@ source =
 omit =
     # Don't complain if non-runnable code isn't run
     */__main__.py
-
-[paths]
-source =
-    src/flake8
-    .tox/*/lib/python*/site-packages/flake8
-    .tox/pypy/site-packages/flake8
 
 [report]
 show_missing = True

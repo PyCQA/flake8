@@ -227,6 +227,29 @@ def test_bug_report_successful(capsys):
     assert err == ""
 
 
+def test_benchmark_successful(tmp_path, capsys):
+    """Test that --benchmark does not crash."""
+    fname = tmp_path.joinpath("t.py")
+    fname.write_text("print('hello world')\n")
+
+    _call_main(["--benchmark", str(fname)])
+
+    out, err = capsys.readouterr()
+    parts = [line.split(maxsplit=1) for line in out.splitlines()]
+    assert parts == [
+        [mock.ANY, "seconds elapsed"],
+        ["1", "total logical lines processed"],
+        [mock.ANY, "logical lines processed per second"],
+        ["1", "total physical lines processed"],
+        [mock.ANY, "physical lines processed per second"],
+        ["5", "total tokens processed"],
+        [mock.ANY, "tokens processed per second"],
+        ["1", "total files processed"],
+        [mock.ANY, "files processed per second"],
+    ]
+    assert err == ""
+
+
 def test_specific_noqa_does_not_clobber_pycodestyle_noqa(tmpdir, capsys):
     """See https://github.com/pycqa/flake8/issues/1104."""
     with tmpdir.as_cwd():

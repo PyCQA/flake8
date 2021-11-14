@@ -3,6 +3,7 @@ import collections
 import errno
 import itertools
 import logging
+import multiprocessing.pool
 import signal
 import tokenize
 from typing import Dict
@@ -14,11 +15,6 @@ from flake8 import defaults
 from flake8 import exceptions
 from flake8 import processor
 from flake8 import utils
-
-try:
-    import multiprocessing.pool
-except ImportError:
-    multiprocessing = None  # type: ignore
 
 Results = List[Tuple[str, int, int, str, Optional[str]]]
 
@@ -38,13 +34,6 @@ SERIAL_RETRY_ERRNOS = {
     # code. Further, please always add a trailing `,` to reduce the visual
     # noise in diffs.
 }
-
-
-def _multiprocessing_is_fork() -> bool:
-    """Class state is only preserved when using the `fork` strategy."""
-    return bool(
-        multiprocessing and multiprocessing.get_start_method() == "fork"
-    )
 
 
 class Manager:
@@ -113,7 +102,9 @@ class Manager:
         # - we're processing a diff, which again does not work well with
         #   multiprocessing and which really shouldn't require multiprocessing
         # - the user provided some awful input
-        if not _multiprocessing_is_fork():
+
+        # class state is only preserved when using the `fork` strategy.
+        if multiprocessing.get_start_method() != "fork":
             LOG.warning(
                 "The multiprocessing module is not available. "
                 "Ignoring --jobs arguments."

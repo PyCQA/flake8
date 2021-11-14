@@ -387,3 +387,9 @@ def test_jobs_argument_str():
     """Test that JobsArgument has a correct __str__."""
     assert str(JobsArgument("auto")) == "auto"
     assert str(JobsArgument("123")) == "123"
+
+
+def test_jobs_argument_repr():
+    """Test that JobsArgument has a correct __repr__."""
+    assert repr(JobsArgument("auto")) == "JobsArgument('auto')"
+    assert repr(JobsArgument("123")) == "JobsArgument('123')"

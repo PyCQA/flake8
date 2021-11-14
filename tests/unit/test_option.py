@@ -25,14 +25,6 @@ def test_to_argparse():
     assert isinstance(kwargs["type"], functools.partial)
 
 
-def test_to_optparse():
-    """Test that .to_optparse() produces a useful error message."""
-    with pytest.raises(AttributeError) as excinfo:
-        manager.Option("--foo").to_optparse
-    (msg,) = excinfo.value.args
-    assert msg == "to_optparse: flake8 now uses argparse"
-
-
 def test_to_argparse_creates_an_option_as_we_expect():
     """Show that we pass all keyword args to argparse."""
     opt = manager.Option("-t", "--test", action="count")

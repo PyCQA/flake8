@@ -17,13 +17,9 @@ from typing import Sequence
 from typing import Set
 from typing import Tuple
 from typing import Type
-from typing import TYPE_CHECKING
 from typing import Union
 
 from flake8 import utils
-
-if TYPE_CHECKING:
-    from typing import NoReturn
 
 LOG = logging.getLogger(__name__)
 
@@ -310,33 +306,9 @@ class Option:
 
         return value
 
-    def normalize_from_setuptools(
-        self, value: str
-    ) -> Union[int, float, complex, bool, str]:
-        """Normalize the value received from setuptools."""
-        value = self.normalize(value)
-        if self.type is int or self.action == "count":
-            return int(value)
-        elif self.type is float:
-            return float(value)
-        elif self.type is complex:
-            return complex(value)
-        if self.action in ("store_true", "store_false"):
-            value = str(value).upper()
-            if value in ("1", "T", "TRUE", "ON"):
-                return True
-            if value in ("0", "F", "FALSE", "OFF"):
-                return False
-        return value
-
     def to_argparse(self) -> Tuple[List[str], Dict[str, Any]]:
         """Convert a Flake8 Option to argparse ``add_argument`` arguments."""
         return self.option_args, self.filtered_option_kwargs
-
-    @property
-    def to_optparse(self) -> "NoReturn":
-        """No longer functional."""
-        raise AttributeError("to_optparse: flake8 now uses argparse")
 
 
 PluginVersion = collections.namedtuple(

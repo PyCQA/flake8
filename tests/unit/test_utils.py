@@ -160,15 +160,6 @@ def test_normalize_paths(value, expected):
     assert utils.normalize_paths(value) == expected
 
 
-def test_is_windows_checks_for_nt():
-    """Verify that we correctly detect Windows."""
-    with mock.patch.object(os, "name", "nt"):
-        assert utils.is_windows() is True
-
-    with mock.patch.object(os, "name", "posix"):
-        assert utils.is_windows() is False
-
-
 @pytest.mark.parametrize(
     "filename,patterns,expected",
     [

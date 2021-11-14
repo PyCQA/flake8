@@ -1,4 +1,3 @@
-exclude: ^tests/fixtures/
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.0.1
@@ -7,6 +6,7 @@ repos:
     -   id: debug-statements
     -   id: end-of-file-fixer
     -   id: trailing-whitespace
+        exclude: ^tests/fixtures/
 -   repo: https://github.com/asottile/reorder_python_imports
     rev: v2.6.0
     hooks:

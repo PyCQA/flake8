@@ -80,6 +80,10 @@ class JobsArgument:
                 f"{arg!r} must be 'auto' or an integer.",
             )
 
+    def __repr__(self) -> str:
+        """Representation for debugging."""
+        return f"{type(self).__name__}({str(self)!r})"
+
     def __str__(self):
         """Format our JobsArgument class."""
         return "auto" if self.is_auto else str(self.n_jobs)

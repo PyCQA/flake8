@@ -4,6 +4,7 @@ import functools
 
 from flake8 import defaults
 from flake8.main import debug
+from flake8.options.manager import OptionManager
 
 
 def register_preliminary_options(parser: argparse.ArgumentParser) -> None:
@@ -84,12 +85,12 @@ class JobsArgument:
         """Representation for debugging."""
         return f"{type(self).__name__}({str(self)!r})"
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Format our JobsArgument class."""
         return "auto" if self.is_auto else str(self.n_jobs)
 
 
-def register_default_options(option_manager):
+def register_default_options(option_manager: OptionManager) -> None:
     """Register the default options on our OptionManager.
 
     The default options include:

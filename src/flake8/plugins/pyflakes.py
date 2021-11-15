@@ -1,10 +1,18 @@
 """Plugin built-in to Flake8 to treat pyflakes as a plugin."""
+import argparse
+import ast
 import os
+from typing import Any
+from typing import Generator
 from typing import List
+from typing import Tuple
+from typing import Type
 
 import pyflakes.checker
 
 from flake8 import utils
+from flake8.options.manager import OptionManager
+from flake8.processor import _Token
 
 FLAKE8_PYFLAKES_CODES = {
     "UnusedImport": "F401",
@@ -67,7 +75,9 @@ class FlakesChecker(pyflakes.checker.Checker):
     include_in_doctest: List[str] = []
     exclude_from_doctest: List[str] = []
 
-    def __init__(self, tree, file_tokens, filename):
+    def __init__(
+        self, tree: ast.AST, file_tokens: List[_Token], filename: str
+    ) -> None:
         """Initialize the PyFlakes plugin with an AST tree and filename."""
         filename = utils.normalize_path(filename)
         with_doctest = self.with_doctest
@@ -99,7 +109,7 @@ class FlakesChecker(pyflakes.checker.Checker):
         )
 
     @classmethod
-    def add_options(cls, parser):
+    def add_options(cls, parser: OptionManager) -> None:
         """Register options for PyFlakes on the Flake8 OptionManager."""
         parser.add_option(
             "--builtins",
@@ -134,7 +144,7 @@ class FlakesChecker(pyflakes.checker.Checker):
         )
 
     @classmethod
-    def parse_options(cls, options):
+    def parse_options(cls, options: argparse.Namespace) -> None:
         """Parse option values from Flake8's OptionManager."""
         if options.builtins:
             cls.builtIns = cls.builtIns.union(options.builtins)
@@ -171,7 +181,7 @@ class FlakesChecker(pyflakes.checker.Checker):
                 f"both for doctesting."
             )
 
-    def run(self):
+    def run(self) -> Generator[Tuple[int, int, str, Type[Any]], None, None]:
         """Run the plugin."""
         for message in self.messages:
             col = getattr(message, "col", 0)

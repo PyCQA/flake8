@@ -6,7 +6,7 @@ from typing import Optional
 from flake8.main import application
 
 
-def main(argv: Optional[List[str]] = None) -> None:
+def main(argv: Optional[List[str]] = None) -> int:
     """Execute the main bit of the application.
 
     This handles the creation of an instance of :class:`Application`, runs it,
@@ -20,4 +20,4 @@ def main(argv: Optional[List[str]] = None) -> None:
 
     app = application.Application()
     app.run(argv)
-    app.exit()
+    return app.exit_code()

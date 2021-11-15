@@ -41,5 +41,9 @@ def test_get_local_plugins():
         localcfs.return_value = [config_fixture_path]
         local_plugins = config.get_local_plugins(config_finder)
 
-    assert local_plugins.extension == ["XE = test_plugins:ExtensionTestPlugin"]
-    assert local_plugins.report == ["XR = test_plugins:ReportTestPlugin"]
+    assert local_plugins.extension == [
+        "XE = tests.integration.test_plugins:ExtensionTestPlugin"
+    ]
+    assert local_plugins.report == [
+        "XR = tests.integration.test_plugins:ReportTestPlugin"
+    ]

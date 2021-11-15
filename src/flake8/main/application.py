@@ -272,7 +272,7 @@ class Application:
         self.file_checker_manager.stop()
         self.end_time = time.time()
 
-    def report_benchmarks(self):
+    def report_benchmarks(self) -> None:
         """Aggregate, calculate, and report benchmarks for this run."""
         assert self.options is not None
         if not self.options.benchmark:
@@ -309,7 +309,7 @@ class Application:
             self.result_count,
         )
 
-    def report_statistics(self):
+    def report_statistics(self) -> None:
         """Aggregate and report statistics from this run."""
         assert self.options is not None
         if not self.options.statistics:
@@ -345,7 +345,7 @@ class Application:
         self.make_guide()
         self.make_file_checker_manager()
 
-    def report(self):
+    def report(self) -> None:
         """Report errors, statistics, and benchmarks."""
         assert self.formatter is not None
         self.formatter.start()

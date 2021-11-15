@@ -87,7 +87,7 @@ class Manager:
             itertools.chain(self.options.exclude, self.options.extend_exclude)
         )
 
-    def _process_statistics(self):
+    def _process_statistics(self) -> None:
         for checker in self.checkers:
             for statistic in defaults.STATISTIC_NAMES:
                 self.statistics[statistic] += checker.statistics[statistic]
@@ -142,7 +142,7 @@ class Manager:
         # it to an integer
         return jobs.n_jobs
 
-    def _handle_results(self, filename, results):
+    def _handle_results(self, filename: str, results: Results) -> int:
         style_guide = self.style_guide
         reported_results_count = 0
         for (error_code, line_number, column, text, physical_line) in results:
@@ -258,7 +258,7 @@ class Manager:
             LOG.warning("Flake8 was interrupted by the user")
             raise exceptions.EarlyQuit("Early quit while running checks")
 
-    def start(self, paths=None):
+    def start(self, paths: Optional[List[str]] = None) -> None:
         """Start checking files.
 
         :param list paths:
@@ -268,7 +268,7 @@ class Manager:
         LOG.info("Making checkers")
         self.make_checkers(paths)
 
-    def stop(self):
+    def stop(self) -> None:
         """Stop checking files."""
         self._process_statistics()
 
@@ -450,7 +450,7 @@ class FileChecker:
                     text=text,
                 )
 
-    def run_logical_checks(self):
+    def run_logical_checks(self) -> None:
         """Run all checks expecting a logical line."""
         assert self.processor is not None
         comments, logical_line, mapping = self.processor.build_logical_line()
@@ -476,7 +476,7 @@ class FileChecker:
 
         self.processor.next_logical_line()
 
-    def run_physical_checks(self, physical_line):
+    def run_physical_checks(self, physical_line: str) -> None:
         """Run all checks for a given physical line.
 
         A single physical check may return multiple errors.
@@ -507,7 +507,7 @@ class FileChecker:
                         text=text,
                     )
 
-    def process_tokens(self):
+    def process_tokens(self) -> None:
         """Process tokens and trigger checks.
 
         Instead of using this directly, you should use
@@ -551,7 +551,7 @@ class FileChecker:
         self.statistics["logical lines"] = logical_lines
         return self.filename, self.results, self.statistics
 
-    def handle_newline(self, token_type):
+    def handle_newline(self, token_type: int) -> None:
         """Handle the logic when encountering a newline token."""
         assert self.processor is not None
         if token_type == tokenize.NEWLINE:
@@ -616,7 +616,7 @@ def _try_initialize_processpool(
     return None
 
 
-def calculate_pool_chunksize(num_checkers, num_jobs):
+def calculate_pool_chunksize(num_checkers: int, num_jobs: int) -> int:
     """Determine the chunksize for the multiprocessing Pool.
 
     - For chunksize, see: https://docs.python.org/3/library/multiprocessing.html#multiprocessing.pool.Pool.imap  # noqa
@@ -628,7 +628,7 @@ def calculate_pool_chunksize(num_checkers, num_jobs):
     return max(num_checkers // (num_jobs * 2), 1)
 
 
-def _run_checks(checker):
+def _run_checks(checker: FileChecker) -> Tuple[str, Results, Dict[str, int]]:
     return checker.run_checks()
 
 

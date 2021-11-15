@@ -6,6 +6,7 @@ import time
 from typing import Dict
 from typing import List
 from typing import Optional
+from typing import Sequence
 from typing import Set
 from typing import Tuple
 from typing import Type
@@ -96,7 +97,7 @@ class Application:
         self.parsed_diff: Dict[str, Set[int]] = {}
 
     def parse_preliminary_options(
-        self, argv: List[str]
+        self, argv: Sequence[str]
     ) -> Tuple[argparse.Namespace, List[str]]:
         """Get preliminary options from the CLI, pre-plugin-loading.
 
@@ -318,7 +319,7 @@ class Application:
         assert self.guide is not None
         self.formatter.show_statistics(self.guide.stats)
 
-    def initialize(self, argv: List[str]) -> None:
+    def initialize(self, argv: Sequence[str]) -> None:
         """Initialize the application to be run.
 
         This finds the plugins, registers their options, and parses the
@@ -353,12 +354,12 @@ class Application:
         self.report_benchmarks()
         self.formatter.stop()
 
-    def _run(self, argv: List[str]) -> None:
+    def _run(self, argv: Sequence[str]) -> None:
         self.initialize(argv)
         self.run_checks()
         self.report()
 
-    def run(self, argv: List[str]) -> None:
+    def run(self, argv: Sequence[str]) -> None:
         """Run our application.
 
         This method will also handle KeyboardInterrupt exceptions for the

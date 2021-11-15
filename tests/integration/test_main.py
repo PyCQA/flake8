@@ -10,11 +10,6 @@ from flake8 import utils
 from flake8.main import cli
 
 
-def _call_main(argv, retv=0):
-    exit_code = cli.main(argv)
-    assert exit_code == retv
-
-
 def test_diff_option(tmpdir, capsys):
     """Ensure that `flake8 --diff` works."""
     t_py_contents = """\
@@ -44,7 +39,7 @@ index d64ac39..7d943de 100644
     with mock.patch.object(utils, "stdin_get_value", return_value=diff):
         with tmpdir.as_cwd():
             tmpdir.join("t.py").write(t_py_contents)
-            _call_main(["--diff"], retv=1)
+            assert cli.main(["--diff"]) == 1
 
     out, err = capsys.readouterr()
     assert out == "t.py:8:1: F821 undefined name 'y'\n"
@@ -63,12 +58,12 @@ t.py:3:2: E225 missing whitespace around operator
         tmpdir.join("t.py").write(src)
 
         with mock.patch.object(utils, "stdin_get_value", return_value=src):
-            _call_main(["-", "--stdin-display-name=t.py"], retv=1)
+            assert cli.main(["-", "--stdin-display-name=t.py"]) == 1
             out, err = capsys.readouterr()
             assert out == expected_out
             assert err == ""
 
-        _call_main(["t.py"], retv=1)
+        assert cli.main(["t.py"]) == 1
         out, err = capsys.readouterr()
         assert out == expected_out
         assert err == ""
@@ -90,14 +85,14 @@ if True:
 
     with tmpdir.as_cwd():
         tmpdir.join("t.py").write(t_py_contents)
-        _call_main(["t.py"])
+        assert cli.main(["t.py"]) == 0
 
 
 def test_statistics_option(tmpdir, capsys):
     """Ensure that `flake8 --statistics` works."""
     with tmpdir.as_cwd():
         tmpdir.join("t.py").write("import os\nimport sys\n")
-        _call_main(["--statistics", "t.py"], retv=1)
+        assert cli.main(["--statistics", "t.py"]) == 1
 
     expected = """\
 t.py:1:1: F401 'os' imported but unused
@@ -114,7 +109,7 @@ def test_show_source_option(tmpdir, capsys):
     with tmpdir.as_cwd():
         tmpdir.join("tox.ini").write("[flake8]\nshow_source = true\n")
         tmpdir.join("t.py").write("import os\n")
-        _call_main(["t.py"], retv=1)
+        assert cli.main(["t.py"]) == 1
 
     expected = """\
 t.py:1:1: F401 'os' imported but unused
@@ -126,7 +121,7 @@ import os
     assert err == ""
 
     with tmpdir.as_cwd():
-        _call_main(["t.py", "--no-show-source"], retv=1)
+        assert cli.main(["t.py", "--no-show-source"]) == 1
 
     expected = """\
 t.py:1:1: F401 'os' imported but unused
@@ -142,7 +137,7 @@ def test_extend_exclude(tmpdir, capsys):
         tmpdir.mkdir(d).join("t.py").write("import os\nimport sys\n")
 
     with tmpdir.as_cwd():
-        _call_main(["--extend-exclude=vendor,legacy/"], retv=1)
+        assert cli.main(["--extend-exclude=vendor,legacy/"]) == 1
 
     out, err = capsys.readouterr()
     expected_out = """\
@@ -173,7 +168,7 @@ Configured `per-file-ignores` setting:
 
     with tmpdir.as_cwd():
         tmpdir.join("setup.cfg").write(setup_cfg)
-        _call_main(["."], retv=1)
+        assert cli.main(["."]) == 1
 
     out, err = capsys.readouterr()
     assert out == expected
@@ -184,7 +179,7 @@ def test_tokenization_error_but_not_syntax_error(tmpdir, capsys):
     with tmpdir.as_cwd():
         # this is a crash in the tokenizer, but not in the ast
         tmpdir.join("t.py").write("b'foo' \\\n")
-        _call_main(["t.py"], retv=1)
+        assert cli.main(["t.py"]) == 1
 
     if hasattr(sys, "pypy_version_info"):  # pragma: no cover (pypy)
         expected = "t.py:2:1: E999 SyntaxError: end of file (EOF) in multi-line statement\n"  # noqa: E501
@@ -204,7 +199,7 @@ def test_tokenization_error_is_a_syntax_error(tmpdir, capsys):
     """Test when tokenize raises a SyntaxError."""
     with tmpdir.as_cwd():
         tmpdir.join("t.py").write("if True:\n    pass\n pass\n")
-        _call_main(["t.py"], retv=1)
+        assert cli.main(["t.py"]) == 1
 
     if hasattr(sys, "pypy_version_info"):  # pragma: no cover (pypy)
         expected = "t.py:3:2: E999 IndentationError: unindent does not match any outer indentation level\n"  # noqa: E501
@@ -221,7 +216,7 @@ def test_tokenization_error_is_a_syntax_error(tmpdir, capsys):
 def test_bug_report_successful(capsys):
     """Test that --bug-report does not crash."""
     with pytest.raises(SystemExit) as excinfo:
-        _call_main(["--bug-report"])
+        cli.main(["--bug-report"])
     assert excinfo.value.args[0] == 0
     out, err = capsys.readouterr()
     assert json.loads(out)
@@ -233,7 +228,7 @@ def test_benchmark_successful(tmp_path, capsys):
     fname = tmp_path.joinpath("t.py")
     fname.write_text("print('hello world')\n")
 
-    _call_main(["--benchmark", str(fname)])
+    assert cli.main(["--benchmark", str(fname)]) == 0
 
     out, err = capsys.readouterr()
     parts = [line.split(maxsplit=1) for line in out.splitlines()]
@@ -255,7 +250,7 @@ def test_specific_noqa_does_not_clobber_pycodestyle_noqa(tmpdir, capsys):
     """See https://github.com/pycqa/flake8/issues/1104."""
     with tmpdir.as_cwd():
         tmpdir.join("t.py").write("test = ('ABC' == None)  # noqa: E501\n")
-        _call_main(["t.py"], retv=1)
+        assert cli.main(["t.py"]) == 1
 
     expected = """\
 t.py:1:15: E711 comparison to None should be 'if cond is None:'
@@ -277,7 +272,7 @@ x = """
 
     with tmpdir.as_cwd():
         tmpdir.join("t.py").write(t_py_src)
-        _call_main(["t.py"], retv=0)
+        assert cli.main(["t.py"]) == 0
 
     out, err = capsys.readouterr()
     assert out == err == ""
@@ -289,7 +284,7 @@ def test_physical_line_file_not_ending_in_newline(tmpdir, capsys):
 
     with tmpdir.as_cwd():
         tmpdir.join("t.py").write(t_py_src)
-        _call_main(["t.py"], retv=1)
+        assert cli.main(["t.py"]) == 1
 
     expected = """\
 t.py:2:1: W191 indentation contains tabs
@@ -305,7 +300,7 @@ def test_physical_line_file_not_ending_in_newline_trailing_ws(tmpdir, capsys):
 
     with tmpdir.as_cwd():
         tmpdir.join("t.py").write(t_py_src)
-        _call_main(["t.py"], retv=1)
+        assert cli.main(["t.py"]) == 1
 
     expected = """\
 t.py:1:6: W291 trailing whitespace
@@ -317,9 +312,9 @@ t.py:1:9: W292 no newline at end of file
 
 def test_obtaining_args_from_sys_argv_when_not_explicity_provided(capsys):
     """Test that arguments are obtained from 'sys.argv'."""
-    with pytest.raises(SystemExit) as excinfo:
-        with mock.patch("sys.argv", ["flake8", "--help"]):
-            _call_main(None)
+    with mock.patch("sys.argv", ["flake8", "--help"]):
+        with pytest.raises(SystemExit) as excinfo:
+            cli.main()
     assert excinfo.value.args[0] == 0
 
     out, err = capsys.readouterr()
@@ -340,7 +335,7 @@ ignore = F401
     py_file = tmp_path / "t.py"
     py_file.write_text("import os\n")
 
-    _call_main(["--config", str(config), str(py_file)])
+    assert cli.main(["--config", str(config), str(py_file)]) == 0
 
 
 def test_cli_isolated_overrides_config_option(tmp_path):
@@ -356,13 +351,13 @@ ignore = F401
     py_file = tmp_path / "t.py"
     py_file.write_text("import os\n")
 
-    _call_main(["--isolated", "--config", str(config), str(py_file)], retv=1)
+    assert cli.main(["--isolated", "--config", str(config), str(py_file)]) == 1
 
 
 def test_file_not_found(tmpdir, capsys):
     """Ensure that a not-found file / directory is an error."""
     with tmpdir.as_cwd():
-        _call_main(["i-do-not-exist"], retv=1)
+        assert cli.main(["i-do-not-exist"]) == 1
     out, err = capsys.readouterr()
     assert out.startswith("i-do-not-exist:0:1: E902")
     assert err == ""
@@ -373,7 +368,7 @@ def test_output_file(tmpdir, capsys):
     tmpdir.join("t.py").write("import os\n")
 
     with tmpdir.as_cwd():
-        _call_main(["t.py", "--output-file=a/b/f"], retv=1)
+        assert cli.main(["t.py", "--output-file=a/b/f"]) == 1
 
     out, err = capsys.readouterr()
     assert out == err == ""

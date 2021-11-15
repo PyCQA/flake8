@@ -11,14 +11,12 @@ DEFAULT_TEXT = "Default text"
 
 def make_error(**kwargs):
     """Create errors with a bunch of default values."""
-    return style_guide.Violation(
-        code=kwargs.pop("code", DEFAULT_ERROR_CODE),
-        filename=kwargs.pop("filename", DEFAULT_FILENAME),
-        line_number=kwargs.pop("line_number", 1),
-        column_number=kwargs.pop("column_number", 1),
-        text=kwargs.pop("text", DEFAULT_TEXT),
-        physical_line=None,
-    )
+    kwargs.setdefault("code", DEFAULT_ERROR_CODE)
+    kwargs.setdefault("filename", DEFAULT_FILENAME)
+    kwargs.setdefault("line_number", 1)
+    kwargs.setdefault("column_number", 1)
+    kwargs.setdefault("text", DEFAULT_TEXT)
+    return style_guide.Violation(**kwargs, physical_line=None)
 
 
 def test_key_creation():

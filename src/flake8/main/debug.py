@@ -9,13 +9,13 @@ from typing import List
 class DebugAction(argparse.Action):
     """argparse action to print debug information."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, option_manager, **kwargs):
         """Initialize the action.
 
         This takes an extra `option_manager` keyword argument which will be
         used to delay response.
         """
-        self._option_manager = kwargs.pop("option_manager")
+        self._option_manager = option_manager
         super().__init__(*args, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):

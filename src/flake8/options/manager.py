@@ -43,10 +43,17 @@ _optparse_callable_map: Dict[str, Union[Type[Any], _ARG]] = {
 class _CallbackAction(argparse.Action):
     """Shim for optparse-style callback actions."""
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        self._callback = kwargs.pop("callback")
-        self._callback_args = kwargs.pop("callback_args", ())
-        self._callback_kwargs = kwargs.pop("callback_kwargs", {})
+    def __init__(
+        self,
+        *args: Any,
+        callback: Callable[..., Any],
+        callback_args: Sequence[Any] = (),
+        callback_kwargs: Optional[Dict[str, Any]] = None,
+        **kwargs: Any,
+    ) -> None:
+        self._callback = callback
+        self._callback_args = callback_args
+        self._callback_kwargs = callback_kwargs or {}
         super().__init__(*args, **kwargs)
 
     def __call__(
@@ -71,13 +78,11 @@ class _CallbackAction(argparse.Action):
 
 
 def _flake8_normalize(
-    value: str, *args: str, **kwargs: bool
+    value: str,
+    *args: str,
+    comma_separated_list: bool = False,
+    normalize_paths: bool = False,
 ) -> Union[str, List[str]]:
-    comma_separated_list = kwargs.pop("comma_separated_list", False)
-    normalize_paths = kwargs.pop("normalize_paths", False)
-    if kwargs:
-        raise TypeError(f"Unexpected keyword args: {kwargs}")
-
     ret: Union[str, List[str]] = value
     if comma_separated_list and isinstance(ret, str):
         ret = utils.parse_comma_separated_list(value)

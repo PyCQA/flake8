@@ -15,6 +15,7 @@ from flake8 import defaults
 from flake8 import exceptions
 from flake8 import processor
 from flake8 import utils
+from flake8.discover_files import expand_paths
 
 Results = List[Tuple[str, int, int, str, Optional[str]]]
 
@@ -155,70 +156,21 @@ class Manager:
             )
         return reported_results_count
 
-    def is_path_excluded(self, path: str) -> bool:
-        """Check if a path is excluded.
-
-        :param str path:
-            Path to check against the exclude patterns.
-        :returns:
-            True if there are exclude patterns and the path matches,
-            otherwise False.
-        :rtype:
-            bool
-        """
-        if path == "-":
-            if self.options.stdin_display_name == "stdin":
-                return False
-            path = self.options.stdin_display_name
-
-        return utils.matches_filename(
-            path,
-            patterns=self.exclude,
-            log_message='"%(path)s" has %(whether)sbeen excluded',
-            logger=LOG,
-        )
-
     def make_checkers(self, paths: Optional[List[str]] = None) -> None:
         """Create checkers for each file."""
         if paths is None:
             paths = self.arguments
 
-        if not paths:
-            paths = ["."]
-
-        filename_patterns = self.options.filename
-        running_from_diff = self.options.diff
-
-        # NOTE(sigmavirus24): Yes this is a little unsightly, but it's our
-        # best solution right now.
-        def should_create_file_checker(filename, argument):
-            """Determine if we should create a file checker."""
-            matches_filename_patterns = utils.fnmatch(
-                filename, filename_patterns
-            )
-            is_stdin = filename == "-"
-            # NOTE(sigmavirus24): If a user explicitly specifies something,
-            # e.g, ``flake8 bin/script`` then we should run Flake8 against
-            # that. Since should_create_file_checker looks to see if the
-            # filename patterns match the filename, we want to skip that in
-            # the event that the argument and the filename are identical.
-            # If it was specified explicitly, the user intended for it to be
-            # checked.
-            explicitly_provided = not running_from_diff and (
-                argument == filename
-            )
-            return (
-                explicitly_provided or matches_filename_patterns
-            ) or is_stdin
-
         checks = self.checks.to_dictionary()
         self._all_checkers = [
             FileChecker(filename, checks, self.options)
-            for argument in paths
-            for filename in utils.filenames_from(
-                argument, self.is_path_excluded
+            for filename in expand_paths(
+                paths=paths,
+                stdin_display_name=self.options.stdin_display_name,
+                filename_patterns=self.options.filename,
+                exclude=self.exclude,
+                is_running_from_diff=self.options.diff,
             )
-            if should_create_file_checker(filename, argument)
         ]
         self.checkers = [c for c in self._all_checkers if c.should_process]
         LOG.info("Checking %d files", len(self.checkers))

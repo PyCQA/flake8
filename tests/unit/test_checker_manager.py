@@ -85,11 +85,9 @@ def test_make_checkers(_):
     }
     manager = checker.Manager(style_guide, files, checkplugins)
 
-    with mock.patch("flake8.utils.filenames_from") as filenames_from:
-        filenames_from.side_effect = [["file1"], ["file2"]]
-        with mock.patch("flake8.utils.fnmatch", return_value=True):
-            with mock.patch("flake8.processor.FileProcessor"):
-                manager.make_checkers()
+    with mock.patch("flake8.utils.fnmatch", return_value=True):
+        with mock.patch("flake8.processor.FileProcessor"):
+            manager.make_checkers(["file1", "file2"])
 
     assert manager._all_checkers
     for file_checker in manager._all_checkers:

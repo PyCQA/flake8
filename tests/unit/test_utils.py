@@ -160,6 +160,13 @@ def test_normalize_paths(value, expected):
     assert utils.normalize_paths(value) == expected
 
 
+def test_matches_filename_for_excluding_dotfiles():
+    """Verify that `.` and `..` are not matched by `.*`."""
+    logger = logging.Logger(__name__)
+    assert not utils.matches_filename(".", (".*",), "", logger)
+    assert not utils.matches_filename("..", (".*",), "", logger)
+
+
 @pytest.mark.parametrize(
     "filename,patterns,expected",
     [
@@ -172,89 +179,6 @@ def test_normalize_paths(value, expected):
 def test_fnmatch(filename, patterns, expected):
     """Verify that our fnmatch wrapper works as expected."""
     assert utils.fnmatch(filename, patterns) is expected
-
-
-@pytest.fixture
-def files_dir(tmpdir):
-    """Create test dir for testing filenames_from."""
-    with tmpdir.as_cwd():
-        tmpdir.join("a/b/c.py").ensure()
-        tmpdir.join("a/b/d.py").ensure()
-        tmpdir.join("a/b/e/f.py").ensure()
-        yield tmpdir
-
-
-def _normpath(s):
-    return s.replace("/", os.sep)
-
-
-def _normpaths(pths):
-    return {_normpath(pth) for pth in pths}
-
-
-@pytest.mark.usefixtures("files_dir")
-def test_filenames_from_a_directory():
-    """Verify that filenames_from walks a directory."""
-    filenames = set(utils.filenames_from(_normpath("a/b/")))
-    # should include all files
-    expected = _normpaths(("a/b/c.py", "a/b/d.py", "a/b/e/f.py"))
-    assert filenames == expected
-
-
-@pytest.mark.usefixtures("files_dir")
-def test_filenames_from_a_directory_with_a_predicate():
-    """Verify that predicates filter filenames_from."""
-    filenames = set(
-        utils.filenames_from(
-            arg=_normpath("a/b/"),
-            predicate=lambda path: path.endswith(_normpath("b/c.py")),
-        )
-    )
-    # should not include c.py
-    expected = _normpaths(("a/b/d.py", "a/b/e/f.py"))
-    assert filenames == expected
-
-
-@pytest.mark.usefixtures("files_dir")
-def test_filenames_from_a_directory_with_a_predicate_from_the_current_dir():
-    """Verify that predicates filter filenames_from."""
-    filenames = set(
-        utils.filenames_from(
-            arg=_normpath("./a/b"),
-            predicate=lambda path: path == "c.py",
-        )
-    )
-    # none should have matched the predicate so all returned
-    expected = _normpaths(("./a/b/c.py", "./a/b/d.py", "./a/b/e/f.py"))
-    assert filenames == expected
-
-
-@pytest.mark.usefixtures("files_dir")
-def test_filenames_from_a_single_file():
-    """Verify that we simply yield that filename."""
-    filenames = set(utils.filenames_from(_normpath("a/b/c.py")))
-    assert filenames == {_normpath("a/b/c.py")}
-
-
-def test_filenames_from_a_single_file_does_not_exist():
-    """Verify that a passed filename which does not exist is returned back."""
-    filenames = set(utils.filenames_from(_normpath("d/n/e.py")))
-    assert filenames == {_normpath("d/n/e.py")}
-
-
-def test_filenames_from_exclude_doesnt_exclude_directory_names(tmpdir):
-    """Verify that we don't greedily exclude subdirs."""
-    tmpdir.join("1").ensure_dir().join("dont_return_me.py").ensure()
-    tmpdir.join("2").join("1").ensure_dir().join("return_me.py").ensure()
-    exclude = [tmpdir.join("1").strpath]
-
-    # This acts similar to src.flake8.checker.is_path_excluded
-    def predicate(pth):
-        return utils.fnmatch(os.path.abspath(pth), exclude)
-
-    with tmpdir.as_cwd():
-        filenames = list(utils.filenames_from(".", predicate))
-    assert filenames == [os.path.join(".", "2", "1", "return_me.py")]
 
 
 def test_parameters_for_class_plugin():
@@ -321,13 +245,6 @@ MULTI_FILE_INFO = {
 def test_parse_unified_diff(diff, parsed_diff):
     """Verify that what we parse from a diff matches expectations."""
     assert utils.parse_unified_diff(diff) == parsed_diff
-
-
-def test_matches_filename_for_excluding_dotfiles():
-    """Verify that `.` and `..` are not matched by `.*`."""
-    logger = logging.Logger(__name__)
-    assert not utils.matches_filename(".", (".*",), "", logger)
-    assert not utils.matches_filename("..", (".*",), "", logger)
 
 
 def test_stdin_get_value_crlf():

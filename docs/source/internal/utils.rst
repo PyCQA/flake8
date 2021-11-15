@@ -60,24 +60,6 @@ Another helpful function that is named only to be explicit given it is a very
 trivial check, this checks if the user specified ``-`` in their arguments to
 |Flake8| to indicate we should read from stdin.
 
-.. autofunction:: flake8.utils.filenames_from
-
-When provided an argument to |Flake8|, we need to be able to traverse
-directories in a convenient manner. For example, if someone runs
-
-.. code::
-
-    $ flake8 flake8/
-
-Then they want us to check all of the files in the directory ``flake8/``. This
-function will handle that while also handling the case where they specify a
-file like:
-
-.. code::
-
-    $ flake8 flake8/__init__.py
-
-
 .. autofunction:: flake8.utils.fnmatch
 
 The standard library's :func:`fnmatch.fnmatch` is excellent at deciding if a

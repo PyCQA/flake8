@@ -11,9 +11,7 @@ import re
 import sys
 import textwrap
 import tokenize
-from typing import Callable
 from typing import Dict
-from typing import Generator
 from typing import List
 from typing import Optional
 from typing import Pattern
@@ -294,52 +292,6 @@ def is_using_stdin(paths: List[str]) -> bool:
     return "-" in paths
 
 
-def _default_predicate(*args: str) -> bool:
-    return False
-
-
-def filenames_from(
-    arg: str, predicate: Optional[Callable[[str], bool]] = None
-) -> Generator[str, None, None]:
-    """Generate filenames from an argument.
-
-    :param str arg:
-        Parameter from the command-line.
-    :param callable predicate:
-        Predicate to use to filter out filenames. If the predicate
-        returns ``True`` we will exclude the filename, otherwise we
-        will yield it. By default, we include every filename
-        generated.
-    :returns:
-        Generator of paths
-    """
-    if predicate is None:
-        predicate = _default_predicate
-
-    if predicate(arg):
-        return
-
-    if os.path.isdir(arg):
-        for root, sub_directories, files in os.walk(arg):
-            if predicate(root):
-                sub_directories[:] = []
-                continue
-
-            # NOTE(sigmavirus24): os.walk() will skip a directory if you
-            # remove it from the list of sub-directories.
-            for directory in sub_directories:
-                joined = os.path.join(root, directory)
-                if predicate(joined):
-                    sub_directories.remove(directory)
-
-            for filename in files:
-                joined = os.path.join(root, filename)
-                if not predicate(joined):
-                    yield joined
-    else:
-        yield arg
-
-
 def fnmatch(filename: str, patterns: Sequence[str]) -> bool:
     """Wrap :func:`fnmatch.fnmatch` to add some functionality.
 
@@ -351,7 +303,7 @@ def fnmatch(filename: str, patterns: Sequence[str]) -> bool:
         The default value if patterns is empty
     :returns:
         True if a pattern matches the filename, False if it doesn't.
-        ``default`` if patterns is empty.
+        ``True`` if patterns is empty.
     """
     if not patterns:
         return True

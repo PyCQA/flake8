@@ -26,13 +26,13 @@ def application():
 @pytest.mark.parametrize(
     "result_count, catastrophic, exit_zero, value",
     [
-        (0, False, False, False),
-        (0, True, False, True),
-        (2, False, False, True),
-        (2, True, False, True),
-        (0, True, True, True),
-        (2, False, True, False),
-        (2, True, True, True),
+        (0, False, False, 0),
+        (0, True, False, 1),
+        (2, False, False, 1),
+        (2, True, False, 1),
+        (0, True, True, 1),
+        (2, False, True, 0),
+        (2, True, True, 1),
     ],
 )
 def test_exit_does_raise(
@@ -43,10 +43,7 @@ def test_exit_does_raise(
     application.catastrophic_failure = catastrophic
     application.options = options(exit_zero=exit_zero)
 
-    with pytest.raises(SystemExit) as excinfo:
-        application.exit()
-
-    assert excinfo.value.args[0] is value
+    assert application.exit_code() == value
 
 
 def test_warns_on_unknown_formatter_plugin_name(application):

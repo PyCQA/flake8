@@ -11,9 +11,8 @@ from flake8.main import cli
 
 
 def _call_main(argv, retv=0):
-    with pytest.raises(SystemExit) as excinfo:
-        cli.main(argv)
-    assert excinfo.value.code == retv
+    exit_code = cli.main(argv)
+    assert exit_code == retv
 
 
 def test_diff_option(tmpdir, capsys):
@@ -221,7 +220,9 @@ def test_tokenization_error_is_a_syntax_error(tmpdir, capsys):
 
 def test_bug_report_successful(capsys):
     """Test that --bug-report does not crash."""
-    _call_main(["--bug-report"])
+    with pytest.raises(SystemExit) as excinfo:
+        _call_main(["--bug-report"])
+    assert excinfo.value.args[0] == 0
     out, err = capsys.readouterr()
     assert json.loads(out)
     assert err == ""
@@ -316,8 +317,10 @@ t.py:1:9: W292 no newline at end of file
 
 def test_obtaining_args_from_sys_argv_when_not_explicity_provided(capsys):
     """Test that arguments are obtained from 'sys.argv'."""
-    with mock.patch("sys.argv", ["flake8", "--help"]):
-        _call_main(None)
+    with pytest.raises(SystemExit) as excinfo:
+        with mock.patch("sys.argv", ["flake8", "--help"]):
+            _call_main(None)
+    assert excinfo.value.args[0] == 0
 
     out, err = capsys.readouterr()
     assert out.startswith("usage: flake8 [options] file file ...\n")

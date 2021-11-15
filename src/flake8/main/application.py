@@ -121,22 +121,13 @@ class Application:
             rest.extend(("--output-file", args.output_file))
         return args, rest
 
-    def exit(self) -> None:
-        """Handle finalization and exiting the program.
-
-        This should be the last thing called on the application instance. It
-        will check certain options and exit appropriately.
-        """
+    def exit_code(self) -> int:
+        """Return the program exit code."""
         assert self.options is not None
-        if self.options.count:
-            print(self.result_count)
-
         if self.options.exit_zero:
-            raise SystemExit(self.catastrophic_failure)
+            return int(self.catastrophic_failure)
         else:
-            raise SystemExit(
-                (self.result_count > 0) or self.catastrophic_failure
-            )
+            return int((self.result_count > 0) or self.catastrophic_failure)
 
     def find_plugins(self, config_finder: config.ConfigFileFinder) -> None:
         """Find and load the plugins for this application.
@@ -193,8 +184,6 @@ class Application:
                 "future version."
             )
             self.parsed_diff = utils.parse_unified_diff()
-            if not self.parsed_diff:
-                self.exit()
 
         assert self.check_plugins is not None
         self.check_plugins.provide_options(
@@ -268,6 +257,9 @@ class Application:
         assert self.file_checker_manager is not None
         if self.running_against_diff:
             files = sorted(self.parsed_diff)
+            if not files:
+                return
+
         self.file_checker_manager.start(files)
         try:
             self.file_checker_manager.run()
@@ -388,3 +380,7 @@ class Application:
         except exceptions.EarlyQuit:
             self.catastrophic_failure = True
             print("... stopped while processing files")
+
+        assert self.options is not None
+        if self.options.count:
+            print(self.result_count)

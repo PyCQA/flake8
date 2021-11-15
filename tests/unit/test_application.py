@@ -35,10 +35,10 @@ def application():
         (2, True, True, 1),
     ],
 )
-def test_exit_does_raise(
+def test_application_exit_code(
     result_count, catastrophic, exit_zero, value, application
 ):
-    """Verify Application.exit doesn't raise SystemExit."""
+    """Verify Application.exit_code returns the correct value."""
     application.result_count = result_count
     application.catastrophic_failure = catastrophic
     application.options = options(exit_zero=exit_zero)

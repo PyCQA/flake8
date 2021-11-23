@@ -1,5 +1,6 @@
 """Module containing the application logic for Flake8."""
 import argparse
+import configparser
 import logging
 import sys
 import time
@@ -130,24 +131,35 @@ class Application:
         else:
             return int((self.result_count > 0) or self.catastrophic_failure)
 
-    def find_plugins(self, config_finder: config.ConfigFileFinder) -> None:
+    def find_plugins(
+        self,
+        cfg: configparser.RawConfigParser,
+        cfg_dir: str,
+    ) -> None:
         """Find and load the plugins for this application.
 
         Set the :attr:`check_plugins` and :attr:`formatting_plugins` attributes
         based on the discovered plugins found.
-
-        :param config.ConfigFileFinder config_finder:
-            The finder for finding and reading configuration files.
         """
-        local_plugins = config.get_local_plugins(config_finder)
-
-        sys.path.extend(local_plugins.paths)
-
-        self.check_plugins = plugin_manager.Checkers(local_plugins.extension)
-
-        self.formatting_plugins = plugin_manager.ReportFormatters(
-            local_plugins.report
+        # TODO: move to src/flake8/plugins/finder.py
+        extension_local = utils.parse_comma_separated_list(
+            cfg.get("flake8:local-plugins", "extension", fallback="").strip(),
+            regexp=utils.LOCAL_PLUGIN_LIST_RE,
         )
+        report_local = utils.parse_comma_separated_list(
+            cfg.get("flake8:local-plugins", "report", fallback="").strip(),
+            regexp=utils.LOCAL_PLUGIN_LIST_RE,
+        )
+
+        paths_s = cfg.get("flake8:local-plugins", "paths", fallback="").strip()
+        local_paths = utils.parse_comma_separated_list(paths_s)
+        local_paths = utils.normalize_paths(local_paths, cfg_dir)
+
+        sys.path.extend(local_paths)
+
+        self.check_plugins = plugin_manager.Checkers(extension_local)
+
+        self.formatting_plugins = plugin_manager.ReportFormatters(report_local)
 
         self.check_plugins.load_plugins()
         self.formatting_plugins.load_plugins()
@@ -162,19 +174,15 @@ class Application:
 
     def parse_configuration_and_cli(
         self,
-        config_finder: config.ConfigFileFinder,
+        cfg: configparser.RawConfigParser,
+        cfg_dir: str,
         argv: List[str],
     ) -> None:
-        """Parse configuration files and the CLI options.
-
-        :param config.ConfigFileFinder config_finder:
-            The finder for finding and reading configuration files.
-        :param list argv:
-            Command-line arguments passed in directly.
-        """
+        """Parse configuration files and the CLI options."""
         self.options = aggregator.aggregate_options(
             self.option_manager,
-            config_finder,
+            cfg,
+            cfg_dir,
             argv,
         )
 
@@ -329,18 +337,16 @@ class Application:
         # our legacy API calls to these same methods.
         prelim_opts, remaining_args = self.parse_preliminary_options(argv)
         flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
-        config_finder = config.ConfigFileFinder(
-            self.program,
-            prelim_opts.append_config,
-            config_file=prelim_opts.config,
-            ignore_config_files=prelim_opts.isolated,
+
+        cfg, cfg_dir = config.load_config(
+            config=prelim_opts.config,
+            extra=prelim_opts.append_config,
+            isolated=prelim_opts.isolated,
         )
-        self.find_plugins(config_finder)
+
+        self.find_plugins(cfg, cfg_dir)
         self.register_plugin_options()
-        self.parse_configuration_and_cli(
-            config_finder,
-            remaining_args,
-        )
+        self.parse_configuration_and_cli(cfg, cfg_dir, remaining_args)
         self.make_formatter()
         self.make_guide()
         self.make_file_checker_manager()

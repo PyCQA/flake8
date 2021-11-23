@@ -1,5 +1,6 @@
 """Tests for Flake8's legacy API."""
 import argparse
+import configparser
 import os.path
 from unittest import mock
 
@@ -7,7 +8,7 @@ import pytest
 
 from flake8.api import legacy as api
 from flake8.formatting import base as formatter
-from flake8.options.config import ConfigFileFinder
+from flake8.options import config
 
 
 def test_get_style_guide():
@@ -22,22 +23,21 @@ def test_get_style_guide():
     mockedapp = mock.Mock()
     mockedapp.parse_preliminary_options.return_value = (prelim_opts, [])
     mockedapp.program = "flake8"
-    with mock.patch(
-        "flake8.api.legacy.config.ConfigFileFinder"
-    ) as mock_config_finder:  # noqa: E501
-        config_finder = ConfigFileFinder(mockedapp.program)
-        mock_config_finder.return_value = config_finder
 
+    cfg = configparser.RawConfigParser()
+    cfg_dir = os.getcwd()
+
+    with mock.patch.object(config, "load_config", return_value=(cfg, cfg_dir)):
         with mock.patch("flake8.main.application.Application") as application:
             application.return_value = mockedapp
             style_guide = api.get_style_guide()
 
     application.assert_called_once_with()
     mockedapp.parse_preliminary_options.assert_called_once_with([])
-    mockedapp.find_plugins.assert_called_once_with(config_finder)
+    mockedapp.find_plugins.assert_called_once_with(cfg, cfg_dir)
     mockedapp.register_plugin_options.assert_called_once_with()
     mockedapp.parse_configuration_and_cli.assert_called_once_with(
-        config_finder, []
+        cfg, cfg_dir, []
     )
     mockedapp.make_formatter.assert_called_once_with()
     mockedapp.make_guide.assert_called_once_with()

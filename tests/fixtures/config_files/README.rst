@@ -16,17 +16,7 @@ Files that should not be created
 Purposes of existing fixtures
 -----------------------------
 
-``tests/fixtures/config_files/cli-specified.ini``
-
-    This should only be used when providing config file(s) specified by the
-    user on the command-line.
-
 ``tests/fixtures/config_files/local-plugin.ini``
 
     This is for testing configuring a plugin via flake8 config file instead of
     setuptools entry-point.
-
-``tests/fixtures/config_files/no-flake8-section.ini``
-
-    This should be used when parsing an ini file without a ``[flake8]``
-    section.

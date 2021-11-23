@@ -462,7 +462,7 @@ class OptionManager:
 
     def parse_args(
         self,
-        args: Optional[List[str]] = None,
+        args: Optional[Sequence[str]] = None,
         values: Optional[argparse.Namespace] = None,
     ) -> argparse.Namespace:
         """Proxy to calling the OptionParser's parse_args method."""

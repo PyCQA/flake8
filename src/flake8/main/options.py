@@ -39,6 +39,7 @@ def register_preliminary_options(parser: argparse.ArgumentParser) -> None:
     add_argument(
         "--append-config",
         action="append",
+        default=[],
         help="Provide extra config files to parse in addition to the files "
         "found by Flake8 by default. These files are the last ones read "
         "and so they take the highest precedence when multiple files "

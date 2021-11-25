@@ -103,7 +103,8 @@ class StyleGuide:
         :rtype:
             flake8.api.legacy.Report
         """
-        self._application.run_checks(paths)
+        self._application.options.filenames = paths
+        self._application.run_checks()
         self._application.report_errors()
         return Report(self._application)
 

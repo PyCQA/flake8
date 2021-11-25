@@ -92,8 +92,6 @@ class Application:
         #: with a non-zero status code
         self.catastrophic_failure = False
 
-        #: Whether the program is processing a diff or not
-        self.running_against_diff = False
         #: The parsed diff information
         self.parsed_diff: Dict[str, Set[int]] = {}
 
@@ -186,8 +184,7 @@ class Application:
             argv,
         )
 
-        self.running_against_diff = self.options.diff
-        if self.running_against_diff:
+        if self.options.diff:
             LOG.warning(
                 "the --diff option is deprecated and will be removed in a "
                 "future version."
@@ -241,7 +238,7 @@ class Application:
             self.options, self.formatter
         )
 
-        if self.running_against_diff:
+        if self.options.diff:
             self.guide.add_diff_ranges(self.parsed_diff)
 
     def make_file_checker_manager(self) -> None:
@@ -258,8 +255,9 @@ class Application:
         :class:`~flake8.checker.Manger` instance run the checks it is
         managing.
         """
+        assert self.options is not None
         assert self.file_checker_manager is not None
-        if self.running_against_diff:
+        if self.options.diff:
             files: Optional[List[str]] = sorted(self.parsed_diff)
             if not files:
                 return

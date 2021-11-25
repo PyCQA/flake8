@@ -56,21 +56,18 @@ class Manager:
       together and make our output deterministic.
     """
 
-    def __init__(self, style_guide, arguments, checker_plugins):
+    def __init__(self, style_guide, checker_plugins):
         """Initialize our Manager instance.
 
         :param style_guide:
             The instantiated style guide for this instance of Flake8.
         :type style_guide:
             flake8.style_guide.StyleGuide
-        :param list arguments:
-            The extra arguments parsed from the CLI (if any)
         :param checker_plugins:
             The plugins representing checks parsed from entry-points.
         :type checker_plugins:
             flake8.plugins.manager.Checkers
         """
-        self.arguments = arguments
         self.style_guide = style_guide
         self.options = style_guide.options
         self.checks = checker_plugins
@@ -112,7 +109,7 @@ class Manager:
             )
             return 0
 
-        if utils.is_using_stdin(self.arguments):
+        if utils.is_using_stdin(self.options.filenames):
             LOG.warning(
                 "The --jobs option is not compatible with supplying "
                 "input using - . Ignoring --jobs arguments."
@@ -159,7 +156,7 @@ class Manager:
     def make_checkers(self, paths: Optional[List[str]] = None) -> None:
         """Create checkers for each file."""
         if paths is None:
-            paths = self.arguments
+            paths = self.options.filenames
 
         checks = self.checks.to_dictionary()
         self._all_checkers = [

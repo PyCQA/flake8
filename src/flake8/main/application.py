@@ -246,28 +246,25 @@ class Application:
 
     def make_file_checker_manager(self) -> None:
         """Initialize our FileChecker Manager."""
-        assert self.options is not None
         self.file_checker_manager = checker.Manager(
             style_guide=self.guide,
-            arguments=self.options.filenames,
             checker_plugins=self.check_plugins,
         )
 
-    def run_checks(self, files: Optional[List[str]] = None) -> None:
+    def run_checks(self) -> None:
         """Run the actual checks with the FileChecker Manager.
 
         This method encapsulates the logic to make a
         :class:`~flake8.checker.Manger` instance run the checks it is
         managing.
-
-        :param list files:
-            List of filenames to process
         """
         assert self.file_checker_manager is not None
         if self.running_against_diff:
-            files = sorted(self.parsed_diff)
+            files: Optional[List[str]] = sorted(self.parsed_diff)
             if not files:
                 return
+        else:
+            files = None
 
         self.file_checker_manager.start(files)
         try:

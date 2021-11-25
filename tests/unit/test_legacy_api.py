@@ -68,7 +68,8 @@ def test_styleguide_check_files():
     style_guide = api.StyleGuide(app)
     report = style_guide.check_files(paths)
 
-    app.run_checks.assert_called_once_with(paths)
+    assert app.options.filenames == paths
+    app.run_checks.assert_called_once_with()
     app.report_errors.assert_called_once_with()
     assert isinstance(report, api.Report)
 

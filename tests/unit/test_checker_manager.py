@@ -22,7 +22,7 @@ def style_guide_mock():
 def _parallel_checker_manager():
     """Call Manager.run() and return the number of calls to `run_serial`."""
     style_guide = style_guide_mock()
-    manager = checker.Manager(style_guide, [], [])
+    manager = checker.Manager(style_guide, [])
     # multiple checkers is needed for parallel mode
     manager.checkers = [mock.Mock(), mock.Mock()]
     return manager
@@ -54,7 +54,7 @@ def test_oserrors_are_reraised(_):
 def test_multiprocessing_is_disabled(_):
     """Verify not being able to import multiprocessing forces jobs to 0."""
     style_guide = style_guide_mock()
-    manager = checker.Manager(style_guide, [], [])
+    manager = checker.Manager(style_guide, [])
     assert manager.jobs == 0
 
 
@@ -68,7 +68,7 @@ def test_multiprocessing_cpu_count_not_implemented():
         "cpu_count",
         side_effect=NotImplementedError,
     ):
-        manager = checker.Manager(style_guide, [], [])
+        manager = checker.Manager(style_guide, [])
     assert manager.jobs == 0
 
 
@@ -76,14 +76,14 @@ def test_multiprocessing_cpu_count_not_implemented():
 def test_make_checkers(_):
     """Verify that we create a list of FileChecker instances."""
     style_guide = style_guide_mock()
-    files = ["file1", "file2"]
+    style_guide.options.filenames = ["file1", "file2"]
     checkplugins = mock.Mock()
     checkplugins.to_dictionary.return_value = {
         "ast_plugins": [],
         "logical_line_plugins": [],
         "physical_line_plugins": [],
     }
-    manager = checker.Manager(style_guide, files, checkplugins)
+    manager = checker.Manager(style_guide, checkplugins)
 
     with mock.patch("flake8.utils.fnmatch", return_value=True):
         with mock.patch("flake8.processor.FileProcessor"):
@@ -91,5 +91,5 @@ def test_make_checkers(_):
 
     assert manager._all_checkers
     for file_checker in manager._all_checkers:
-        assert file_checker.filename in files
+        assert file_checker.filename in style_guide.options.filenames
     assert not manager.checkers  # the files don't exist

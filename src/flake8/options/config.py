@@ -11,27 +11,45 @@ from typing import Tuple
 from flake8.options.manager import OptionManager
 
 LOG = logging.getLogger(__name__)
+DEFAULT_CANDIDATES = ("setup.cfg", "tox.ini", ".flake8")
+ADDITIONAL_CANDIDATES = ("flake8",)
+ADDITIONAL_LOCATIONS = (os.path.expanduser(r'~'),
+                        os.path.expanduser(r'~/.config'))
+
+
+def _is_config(path: str) -> bool:
+    cfg = configparser.RawConfigParser()
+    try:
+        cfg.read(path)
+    except (UnicodeDecodeError, configparser.ParsingError) as e:
+        LOG.warning("ignoring unparseable config %s: %s", path, e)
+    else:
+        # only consider it a config if it contains flake8 sections
+        if "flake8" in cfg or "flake8:local-plugins" in cfg:
+            return True
+    return False
 
 
 def _find_config_file(path: str) -> Optional[str]:
-    cfg = configparser.RawConfigParser()
     while True:
-        for candidate in ("setup.cfg", "tox.ini", ".flake8"):
+        for candidate in DEFAULT_CANDIDATES:
             cfg_path = os.path.join(path, candidate)
-            try:
-                cfg.read(cfg_path)
-            except (UnicodeDecodeError, configparser.ParsingError) as e:
-                LOG.warning("ignoring unparseable config %s: %s", cfg_path, e)
-            else:
-                # only consider it a config if it contains flake8 sections
-                if "flake8" in cfg or "flake8:local-plugins" in cfg:
-                    return cfg_path
+            if _is_config(cfg_path):
+                return cfg_path
 
         new_path = os.path.dirname(path)
         if new_path == path:
             break
         else:
             path = new_path
+
+    # try some additional locations with additional candidate names
+    candidates = DEFAULT_CANDIDATES + ADDITIONAL_CANDIDATES
+    for location in ADDITIONAL_LOCATIONS:
+        for candidate in candidates:
+            cfg_path = os.path.join(location, candidate)
+            if _is_config(cfg_path):
+                return cfg_path
 
     # did not find any configuration file
     return None

@@ -25,7 +25,8 @@ Configuration Locations
 =======================
 
 |Flake8| supports storing its configuration in your project in one of
-``setup.cfg``, ``tox.ini``, or ``.flake8``.
+``setup.cfg``, ``tox.ini``, or ``.flake8``. The configuration is not merged
+across those files and files are considered in that particular order.
 
 Values set at the command line have highest priority, then those in the
 project configuration file, and finally there are the defaults. However,
@@ -71,6 +72,15 @@ to be in the ``flake8`` section, which means it needs to start like so:
 .. code-block:: ini
 
     [flake8]
+
+.. note::
+
+   If your project does not use ``setup.cfg``, ``tox.ini``, neither
+   ``.flake8``, or they don't contain section ``flake8`` at all, the searching
+   for suitable configuration file will continue in project's parent
+   directories. This may lead to parsing no longer supported user-level
+   configuration at ``~/.flake8``. Please do not rely on this behaviour hence
+   we are supporting only per-project configuration.
 
 Each command-line option that you want to specify in your config file can
 be named in either of two ways:

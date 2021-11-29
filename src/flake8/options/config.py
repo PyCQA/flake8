@@ -11,12 +11,12 @@ from typing import Tuple
 from flake8.options.manager import OptionManager
 
 LOG = logging.getLogger(__name__)
-DEFAULT_CANDIDATES = ("setup.cfg", "tox.ini", ".flake8")
-ADDITIONAL_CANDIDATES = ("flake8",)
-ADDITIONAL_LOCATIONS = (
+DEFAULT_CANDIDATES = ["setup.cfg", "tox.ini", ".flake8"]
+ADDITIONAL_CANDIDATES = ["flake8"]
+ADDITIONAL_LOCATIONS = [
     os.path.expanduser(r"~"),
     os.path.expanduser(r"~/.config"),
-)
+]
 
 
 def _is_config(path: str) -> bool:

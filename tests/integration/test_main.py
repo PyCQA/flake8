@@ -10,8 +10,8 @@ from flake8 import utils
 from flake8.main import cli
 from flake8.options import config
 
-config.ADDITIONAL_LOCATIONS = ()
-config.ADDITIONAL_CANDIDATES = ()
+config.ADDITIONAL_LOCATIONS = []
+config.ADDITIONAL_CANDIDATES = []
 
 
 def test_diff_option(tmpdir, capsys):

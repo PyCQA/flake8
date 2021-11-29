@@ -8,8 +8,8 @@ from flake8.options.manager import OptionManager
 
 
 def test_config_not_found_returns_none(tmp_path):
-    config.ADDITIONAL_LOCATIONS = ()
-    config.ADDITIONAL_CANDIDATES = ()
+    config.ADDITIONAL_LOCATIONS = []
+    config.ADDITIONAL_CANDIDATES = []
     assert config._find_config_file(str(tmp_path)) is None
 
 

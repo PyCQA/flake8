@@ -39,7 +39,6 @@ def test_raises_exception_on_failed_plugin(tmp_path, default_options):
         "parameters": dict(),
         "plugin": mock.MagicMock(side_effect=ValueError),
     }
-    """Verify a failing plugin results in an plugin error"""
     fchecker = checker.FileChecker(
         str(foobar), checks=[], options=default_options
     )

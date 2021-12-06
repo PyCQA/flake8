@@ -13,7 +13,7 @@ repos:
     -   id: reorder-python-imports
         args: [--application-directories, '.:src', --py36-plus]
 -   repo: https://github.com/psf/black
-    rev: 21.11b1
+    rev: 21.12b0
     hooks:
     -   id: black
         args: [--line-length=79]

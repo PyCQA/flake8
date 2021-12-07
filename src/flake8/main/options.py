@@ -5,7 +5,7 @@ from flake8 import defaults
 from flake8.options.manager import OptionManager
 
 
-def register_preliminary_options(parser: argparse.ArgumentParser) -> None:
+def stage1_arg_parser() -> argparse.ArgumentParser:
     """Register the preliminary options on our OptionManager.
 
     The preliminary options include:
@@ -16,9 +16,9 @@ def register_preliminary_options(parser: argparse.ArgumentParser) -> None:
     - ``--config``
     - ``--isolated``
     """
-    add_argument = parser.add_argument
+    parser = argparse.ArgumentParser(add_help=False)
 
-    add_argument(
+    parser.add_argument(
         "-v",
         "--verbose",
         default=0,
@@ -28,13 +28,13 @@ def register_preliminary_options(parser: argparse.ArgumentParser) -> None:
         "time it is repeated.",
     )
 
-    add_argument(
+    parser.add_argument(
         "--output-file", default=None, help="Redirect report to a file."
     )
 
     # Config file options
 
-    add_argument(
+    parser.add_argument(
         "--append-config",
         action="append",
         default=[],
@@ -44,7 +44,7 @@ def register_preliminary_options(parser: argparse.ArgumentParser) -> None:
         "provide the same option.",
     )
 
-    add_argument(
+    parser.add_argument(
         "--config",
         default=None,
         help="Path to the config file that will be the authoritative config "
@@ -52,12 +52,14 @@ def register_preliminary_options(parser: argparse.ArgumentParser) -> None:
         "configuration files.",
     )
 
-    add_argument(
+    parser.add_argument(
         "--isolated",
         default=False,
         action="store_true",
         help="Ignore all configuration files.",
     )
+
+    return parser
 
 
 class JobsArgument:

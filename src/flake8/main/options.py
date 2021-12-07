@@ -1,9 +1,7 @@
 """Contains the logic for all of the default options for Flake8."""
 import argparse
-import functools
 
 from flake8 import defaults
-from flake8.main import debug
 from flake8.options.manager import OptionManager
 
 
@@ -379,9 +377,6 @@ def register_default_options(option_manager: OptionManager) -> None:
 
     add_option(
         "--bug-report",
-        action=functools.partial(
-            debug.DebugAction, option_manager=option_manager
-        ),
-        nargs=0,
+        action="store_true",
         help="Print information necessary when preparing a bug report",
     )

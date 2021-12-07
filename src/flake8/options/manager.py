@@ -330,7 +330,7 @@ class OptionManager:
         version: str,
         usage: str = "%(prog)s [options] file file ...",
         parents: Optional[List[argparse.ArgumentParser]] = None,
-    ) -> None:  # noqa: E501
+    ) -> None:
         """Initialize an instance of an OptionManager.
 
         :param str prog:

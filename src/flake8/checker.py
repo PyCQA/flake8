@@ -353,7 +353,7 @@ class FileChecker:
         except AttributeError as ae:
             LOG.error("Plugin requested unknown parameters.")
             raise exceptions.PluginRequestedUnknownParameters(
-                plugin=plugin, exception=ae
+                plugin_name=plugin["plugin_name"], exception=ae
             )
         try:
             return plugin["plugin"](**arguments)
@@ -364,7 +364,7 @@ class FileChecker:
                 exc_info=True,
             )
             raise exceptions.PluginExecutionFailed(
-                plugin=plugin, exception=all_exc
+                plugin_name=plugin["plugin_name"], exception=all_exc
             )
 
     @staticmethod

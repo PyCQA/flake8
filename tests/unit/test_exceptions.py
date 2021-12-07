@@ -14,11 +14,11 @@ from flake8 import exceptions
             exception=ValueError("boom!"),
         ),
         exceptions.PluginRequestedUnknownParameters(
-            plugin={"plugin_name": "plugin_name"},
+            plugin_name="plugin_name",
             exception=ValueError("boom!"),
         ),
         exceptions.PluginExecutionFailed(
-            plugin={"plugin_name": "plugin_name"},
+            plugin_name="plugin_name",
             exception=ValueError("boom!"),
         ),
     ),

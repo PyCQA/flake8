@@ -55,8 +55,7 @@ class Application:
         self.version = version
         #: The prelimary argument parser for handling options required for
         #: obtaining and parsing the configuration file.
-        self.prelim_arg_parser = argparse.ArgumentParser(add_help=False)
-        options.register_preliminary_options(self.prelim_arg_parser)
+        self.prelim_arg_parser = options.stage1_arg_parser()
         #: The instance of :class:`flake8.options.manager.OptionManager` used
         #: to parse and handle the options and arguments passed by the user
         self.option_manager = manager.OptionManager(

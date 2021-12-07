@@ -79,6 +79,10 @@ class AlwaysErrors:
         yield 1, 0, "ABC123 error", type(self)
 
 
+class AlwaysErrorsDisabled(AlwaysErrors):
+    off_by_default = True
+
+
 def test_plugin_gets_enabled_by_default(tmp_path, capsys):
     cfg_s = f"""\
 [flake8:local-plugins]
@@ -92,6 +96,30 @@ extension =
     t_py.touch()
 
     assert main((str(t_py), "--config", str(cfg))) == 1
+    out, err = capsys.readouterr()
+    assert out == f"{t_py}:1:1: ABC123 error\n"
+    assert err == ""
+
+
+def test_plugin_off_by_default(tmp_path, capsys):
+    cfg_s = f"""\
+[flake8:local-plugins]
+extension =
+    ABC = {AlwaysErrorsDisabled.__module__}:{AlwaysErrorsDisabled.__name__}
+"""
+    cfg = tmp_path.joinpath("tox.ini")
+    cfg.write_text(cfg_s)
+
+    t_py = tmp_path.joinpath("t.py")
+    t_py.touch()
+
+    cmd = (str(t_py), "--config", str(cfg))
+
+    assert main(cmd) == 0
+    out, err = capsys.readouterr()
+    assert out == err == ""
+
+    assert main((*cmd, "--enable-extension=ABC")) == 1
     out, err = capsys.readouterr()
     assert out == f"{t_py}:1:1: ABC123 error\n"
     assert err == ""

@@ -1,6 +1,7 @@
 """Module containing the application logic for Flake8."""
 import argparse
 import configparser
+import json
 import logging
 import sys
 import time
@@ -19,6 +20,7 @@ from flake8 import defaults
 from flake8 import exceptions
 from flake8 import style_guide
 from flake8 import utils
+from flake8.main import debug
 from flake8.main import options
 from flake8.options import aggregator
 from flake8.options import config
@@ -183,6 +185,11 @@ class Application:
             cfg_dir,
             argv,
         )
+
+        if self.options.bug_report:
+            info = debug.information(self.option_manager)
+            print(json.dumps(info, indent=2, sort_keys=True))
+            raise SystemExit(0)
 
         if self.options.diff:
             LOG.warning(

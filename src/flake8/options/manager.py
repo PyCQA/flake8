@@ -1,13 +1,11 @@
 """Option handling and Option management logic."""
 import argparse
-import collections
 import contextlib
 import enum
 import functools
 import logging
 from typing import Any
 from typing import Callable
-from typing import cast
 from typing import Dict
 from typing import Generator
 from typing import List
@@ -316,20 +314,15 @@ class Option:
         return self.option_args, self.filtered_option_kwargs
 
 
-PluginVersion = collections.namedtuple(
-    "PluginVersion", ["name", "version", "local"]
-)
-
-
 class OptionManager:
     """Manage Options and OptionParser while adding post-processing."""
 
     def __init__(
         self,
-        prog: str,
+        *,
         version: str,
-        usage: str = "%(prog)s [options] file file ...",
-        parents: Optional[List[argparse.ArgumentParser]] = None,
+        plugin_versions: str,
+        parents: List[argparse.ArgumentParser],
     ) -> None:
         """Initialize an instance of an OptionManager.
 
@@ -343,27 +336,27 @@ class OptionManager:
             A list of ArgumentParser objects whose arguments should also be
             included.
         """
-        if parents is None:
-            parents = []
-
-        self.parser: argparse.ArgumentParser = argparse.ArgumentParser(
-            prog=prog, usage=usage, parents=parents
+        self.parser = argparse.ArgumentParser(
+            prog="flake8",
+            usage="%(prog)s [options] file file ...",
+            parents=parents,
+            epilog=f"Installed plugins: {plugin_versions}",
         )
-        self._current_group: Optional[argparse._ArgumentGroup] = None
-        self.version_action = cast(
-            "argparse._VersionAction",
-            self.parser.add_argument(
-                "--version", action="version", version=version
+        self.parser.add_argument(
+            "--version",
+            action="version",
+            version=(
+                f"{version} ({plugin_versions}) "
+                f"{utils.get_python_version()}"
             ),
         )
         self.parser.add_argument("filenames", nargs="*", metavar="filename")
         self.config_options_dict: Dict[str, Option] = {}
         self.options: List[Option] = []
-        self.program_name = prog
-        self.version = version
-        self.registered_plugins: Set[PluginVersion] = set()
         self.extended_default_ignore: Set[str] = set()
         self.extended_default_select: Set[str] = set()
+
+        self._current_group: Optional[argparse._ArgumentGroup] = None
 
     @contextlib.contextmanager
     def group(self, name: str) -> Generator[None, None, None]:
@@ -395,7 +388,7 @@ class OptionManager:
         self.options.append(option)
         if option.parse_from_config:
             name = option.config_name
-            assert name is not None  # nosec (for mypy)
+            assert name is not None
             self.config_options_dict[name] = option
             self.config_options_dict[name.replace("_", "-")] = option
         LOG.debug('Registered option "%s".', option)
@@ -438,63 +431,12 @@ class OptionManager:
         LOG.debug("Extending default select list with %r", error_codes)
         self.extended_default_select.update(error_codes)
 
-    def generate_versions(
-        self, format_str: str = "%(name)s: %(version)s", join_on: str = ", "
-    ) -> str:
-        """Generate a comma-separated list of versions of plugins."""
-        return join_on.join(
-            format_str % plugin._asdict()
-            for plugin in sorted(self.registered_plugins)
-        )
-
-    def update_version_string(self) -> None:
-        """Update the flake8 version string."""
-        self.version_action.version = "{} ({}) {}".format(
-            self.version, self.generate_versions(), utils.get_python_version()
-        )
-
-    def generate_epilog(self) -> None:
-        """Create an epilog with the version and name of each of plugin."""
-        plugin_version_format = "%(name)s: %(version)s"
-        self.parser.epilog = "Installed plugins: " + self.generate_versions(
-            plugin_version_format
-        )
-
     def parse_args(
         self,
         args: Optional[Sequence[str]] = None,
         values: Optional[argparse.Namespace] = None,
     ) -> argparse.Namespace:
         """Proxy to calling the OptionParser's parse_args method."""
-        self.generate_epilog()
-        self.update_version_string()
         if values:
             self.parser.set_defaults(**vars(values))
         return self.parser.parse_args(args)
-
-    def parse_known_args(
-        self, args: Optional[List[str]] = None
-    ) -> Tuple[argparse.Namespace, List[str]]:
-        """Parse only the known arguments from the argument values.
-
-        Replicate a little argparse behaviour while we're still on
-        optparse.
-        """
-        self.generate_epilog()
-        self.update_version_string()
-        return self.parser.parse_known_args(args)
-
-    def register_plugin(
-        self, name: str, version: str, local: bool = False
-    ) -> None:
-        """Register a plugin relying on the OptionManager.
-
-        :param str name:
-            The name of the checker itself. This will be the ``name``
-            attribute of the class or function loaded from the entry-point.
-        :param str version:
-            The version of the checker that we're using.
-        :param bool local:
-            Whether the plugin is local to the project/repository or not.
-        """
-        self.registered_plugins.add(PluginVersion(name, version, local))

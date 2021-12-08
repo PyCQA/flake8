@@ -119,7 +119,7 @@ def test_load_config_append_config(tmpdir):
 
 @pytest.fixture
 def opt_manager():
-    ret = OptionManager(prog="flake8", version="123")
+    ret = OptionManager(version="123", plugin_versions="", parents=[])
     register_default_options(ret)
     return ret
 

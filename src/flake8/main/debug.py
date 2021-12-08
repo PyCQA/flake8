@@ -1,12 +1,20 @@
 """Module containing the logic for our debugging logic."""
 import platform
+from typing import Any
+from typing import Dict
+from typing import List
+
+from flake8.plugins.manager import PluginTypeManager
 
 
-def information(option_manager):
+def information(
+    version: str,
+    plugins: PluginTypeManager,
+) -> Dict[str, Any]:
     """Generate the information to be printed for the bug report."""
     return {
-        "version": option_manager.version,
-        "plugins": plugins_from(option_manager),
+        "version": version,
+        "plugins": plugins_from(plugins),
         "platform": {
             "python_implementation": platform.python_implementation(),
             "python_version": platform.python_version(),
@@ -15,13 +23,9 @@ def information(option_manager):
     }
 
 
-def plugins_from(option_manager):
+def plugins_from(plugins: PluginTypeManager) -> List[Dict[str, str]]:
     """Generate the list of plugins installed."""
     return [
-        {
-            "plugin": plugin.name,
-            "version": plugin.version,
-            "is_local": plugin.local,
-        }
-        for plugin in sorted(option_manager.registered_plugins)
+        {"plugin": name, "version": version}
+        for name, version in sorted(set(plugins.manager.versions()))
     ]

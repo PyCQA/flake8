@@ -13,8 +13,9 @@ from flake8.options import manager
 def optmanager():
     """Create a new OptionManager."""
     option_manager = manager.OptionManager(
-        prog="flake8",
         version="3.0.0",
+        plugin_versions="",
+        parents=[],
     )
     options.register_default_options(option_manager)
     return option_manager

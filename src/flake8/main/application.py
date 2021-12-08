@@ -37,7 +37,7 @@ LOG = logging.getLogger(__name__)
 class Application:
     """Abstract our application into a class."""
 
-    def __init__(self, program="flake8", version=flake8.__version__):
+    def __init__(self) -> None:
         """Initialize our application.
 
         :param str program:
@@ -49,21 +49,12 @@ class Application:
         self.start_time = time.time()
         #: The timestamp when the Application finished reported errors.
         self.end_time: Optional[float] = None
-        #: The name of the program being run
-        self.program = program
-        #: The version of the program being run
-        self.version = version
         #: The prelimary argument parser for handling options required for
         #: obtaining and parsing the configuration file.
         self.prelim_arg_parser = options.stage1_arg_parser()
         #: The instance of :class:`flake8.options.manager.OptionManager` used
         #: to parse and handle the options and arguments passed by the user
-        self.option_manager = manager.OptionManager(
-            prog="flake8",
-            version=flake8.__version__,
-            parents=[self.prelim_arg_parser],
-        )
-        options.register_default_options(self.option_manager)
+        self.option_manager: Optional[manager.OptionManager] = None
 
         #: The instance of :class:`flake8.plugins.manager.Checkers`
         self.check_plugins: Optional[plugin_manager.Checkers] = None
@@ -166,9 +157,19 @@ class Application:
     def register_plugin_options(self) -> None:
         """Register options provided by plugins to our option manager."""
         assert self.check_plugins is not None
-        self.check_plugins.register_options(self.option_manager)
-        self.check_plugins.register_plugin_versions(self.option_manager)
         assert self.formatting_plugins is not None
+
+        versions = sorted(set(self.check_plugins.manager.versions()))
+        self.option_manager = manager.OptionManager(
+            version=flake8.__version__,
+            plugin_versions=", ".join(
+                f"{name}: {version}" for name, version in versions
+            ),
+            parents=[self.prelim_arg_parser],
+        )
+        options.register_default_options(self.option_manager)
+
+        self.check_plugins.register_options(self.option_manager)
         self.formatting_plugins.register_options(self.option_manager)
 
     def parse_configuration_and_cli(
@@ -178,6 +179,7 @@ class Application:
         argv: List[str],
     ) -> None:
         """Parse configuration files and the CLI options."""
+        assert self.option_manager is not None
         self.options = aggregator.aggregate_options(
             self.option_manager,
             cfg,
@@ -186,7 +188,8 @@ class Application:
         )
 
         if self.options.bug_report:
-            info = debug.information(self.option_manager)
+            assert self.check_plugins is not None
+            info = debug.information(flake8.__version__, self.check_plugins)
             print(json.dumps(info, indent=2, sort_keys=True))
             raise SystemExit(0)
 

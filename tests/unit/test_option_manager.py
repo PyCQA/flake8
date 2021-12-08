@@ -5,7 +5,6 @@ from unittest import mock
 
 import pytest
 
-from flake8 import utils
 from flake8.main.options import JobsArgument
 from flake8.options import manager
 
@@ -15,7 +14,9 @@ TEST_VERSION = "3.0.0b1"
 @pytest.fixture
 def optmanager():
     """Generate a simple OptionManager with default test arguments."""
-    return manager.OptionManager(prog="flake8", version=TEST_VERSION)
+    return manager.OptionManager(
+        version=TEST_VERSION, plugin_versions="", parents=[]
+    )
 
 
 def test_option_manager_creates_option_parser(optmanager):
@@ -31,7 +32,7 @@ def test_option_manager_including_parent_options():
 
     # WHEN
     optmanager = manager.OptionManager(
-        prog="flake8", version=TEST_VERSION, parents=[parent_parser]
+        version=TEST_VERSION, plugin_versions="", parents=[parent_parser]
     )
     options = optmanager.parse_args(["--parent", "foo"])
 
@@ -153,104 +154,12 @@ def test_parse_args_normalize_paths(optmanager):
     ]
 
 
-def test_generate_versions(optmanager):
-    """Verify a comma-separated string is generated of registered plugins."""
-    optmanager.registered_plugins = [
-        manager.PluginVersion("Testing 100", "0.0.0", False),
-        manager.PluginVersion("Testing 101", "0.0.0", False),
-        manager.PluginVersion("Testing 300", "0.0.0", True),
-    ]
-    assert (
-        optmanager.generate_versions()
-        == "Testing 100: 0.0.0, Testing 101: 0.0.0, Testing 300: 0.0.0"
-    )
-
-
-def test_plugins_are_sorted_in_generate_versions(optmanager):
-    """Verify we sort before joining strings in generate_versions."""
-    optmanager.registered_plugins = [
-        manager.PluginVersion("pyflakes", "1.5.0", False),
-        manager.PluginVersion("mccabe", "0.7.0", False),
-        manager.PluginVersion("pycodestyle", "2.2.0", False),
-        manager.PluginVersion("flake8-docstrings", "0.6.1", False),
-        manager.PluginVersion("flake8-bugbear", "2016.12.1", False),
-    ]
-    assert (
-        optmanager.generate_versions() == "flake8-bugbear: 2016.12.1, "
-        "flake8-docstrings: 0.6.1, "
-        "mccabe: 0.7.0, "
-        "pycodestyle: 2.2.0, "
-        "pyflakes: 1.5.0"
-    )
-
-
-def test_generate_versions_with_format_string(optmanager):
-    """Verify a comma-separated string is generated of registered plugins."""
-    optmanager.registered_plugins.update(
-        [
-            manager.PluginVersion("Testing", "0.0.0", False),
-            manager.PluginVersion("Testing", "0.0.0", False),
-            manager.PluginVersion("Testing", "0.0.0", False),
-        ]
-    )
-    assert optmanager.generate_versions() == "Testing: 0.0.0"
-
-
-def test_update_version_string(optmanager):
-    """Verify we update the version string idempotently."""
-    assert optmanager.version == TEST_VERSION
-    assert optmanager.version_action.version == TEST_VERSION
-
-    optmanager.registered_plugins = [
-        manager.PluginVersion("Testing 100", "0.0.0", False),
-        manager.PluginVersion("Testing 101", "0.0.0", False),
-        manager.PluginVersion("Testing 300", "0.0.0", False),
-    ]
-
-    optmanager.update_version_string()
-
-    assert optmanager.version == TEST_VERSION
-    assert (
-        optmanager.version_action.version
-        == TEST_VERSION
-        + " (Testing 100: 0.0.0, Testing 101: 0.0.0, Testing 300: 0.0.0) "
-        + utils.get_python_version()
-    )
-
-
-def test_generate_epilog(optmanager):
-    """Verify how we generate the epilog for help text."""
-    assert optmanager.parser.epilog is None
-
-    optmanager.registered_plugins = [
-        manager.PluginVersion("Testing 100", "0.0.0", False),
-        manager.PluginVersion("Testing 101", "0.0.0", False),
-        manager.PluginVersion("Testing 300", "0.0.0", False),
-    ]
-
-    expected_value = (
-        "Installed plugins: Testing 100: 0.0.0, Testing 101: 0.0.0, Testing"
-        " 300: 0.0.0"
-    )
-
-    optmanager.generate_epilog()
-    assert optmanager.parser.epilog == expected_value
-
-
 def test_extend_default_ignore(optmanager):
     """Verify that we update the extended default ignore list."""
     assert optmanager.extended_default_ignore == set()
 
     optmanager.extend_default_ignore(["T100", "T101", "T102"])
     assert optmanager.extended_default_ignore == {"T100", "T101", "T102"}
-
-
-def test_parse_known_args(optmanager):
-    """Verify we ignore unknown options."""
-    with mock.patch("sys.exit") as sysexit:
-        optmanager.parse_known_args(["--max-complexity", "5"])
-
-    assert sysexit.called is False
 
 
 def test_optparse_normalize_callback_option_legacy(optmanager):

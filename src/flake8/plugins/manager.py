@@ -427,12 +427,6 @@ class PluginTypeManager:
         # Do not set plugins_loaded if we run into an exception
         self.plugins_loaded = True
 
-    def register_plugin_versions(self, optmanager):
-        """Register the plugins and their versions with the OptionManager."""
-        self.load_plugins()
-        for (plugin_name, version) in self.manager.versions():
-            optmanager.register_plugin(name=plugin_name, version=version)
-
     def register_options(self, optmanager):
         """Register all of the checkers' options to the OptionManager."""
         self.load_plugins()

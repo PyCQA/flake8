@@ -4,58 +4,24 @@ from unittest import mock
 import pytest
 
 from flake8.main import debug
-from flake8.options import manager
 
 
 @pytest.mark.parametrize(
-    "plugins, expected",
-    [
+    ("versions", "expected"),
+    (
         ([], []),
         (
-            [manager.PluginVersion("pycodestyle", "2.0.0", False)],
+            [("p1", "1"), ("p2", "2"), ("p1", "1")],
             [
-                {
-                    "plugin": "pycodestyle",
-                    "version": "2.0.0",
-                    "is_local": False,
-                }
+                {"plugin": "p1", "version": "1"},
+                {"plugin": "p2", "version": "2"},
             ],
         ),
-        (
-            [
-                manager.PluginVersion("pycodestyle", "2.0.0", False),
-                manager.PluginVersion("mccabe", "0.5.9", False),
-            ],
-            [
-                {"plugin": "mccabe", "version": "0.5.9", "is_local": False},
-                {
-                    "plugin": "pycodestyle",
-                    "version": "2.0.0",
-                    "is_local": False,
-                },
-            ],
-        ),
-        (
-            [
-                manager.PluginVersion("pycodestyle", "2.0.0", False),
-                manager.PluginVersion("my-local", "0.0.1", True),
-                manager.PluginVersion("mccabe", "0.5.9", False),
-            ],
-            [
-                {"plugin": "mccabe", "version": "0.5.9", "is_local": False},
-                {"plugin": "my-local", "version": "0.0.1", "is_local": True},
-                {
-                    "plugin": "pycodestyle",
-                    "version": "2.0.0",
-                    "is_local": False,
-                },
-            ],
-        ),
-    ],
+    ),
 )
-def test_plugins_from(plugins, expected):
+def test_plugins_from(versions, expected):
     """Test that we format plugins appropriately."""
-    option_manager = mock.Mock(registered_plugins=set(plugins))
+    option_manager = mock.Mock(**{"manager.versions.return_value": versions})
     assert expected == debug.plugins_from(option_manager)
 
 
@@ -67,8 +33,8 @@ def test_information(system, pyversion, pyimpl):
     expected = {
         "version": "3.1.0",
         "plugins": [
-            {"plugin": "mccabe", "version": "0.5.9", "is_local": False},
-            {"plugin": "pycodestyle", "version": "2.0.0", "is_local": False},
+            {"plugin": "mccabe", "version": "0.5.9"},
+            {"plugin": "pycodestyle", "version": "2.0.0"},
         ],
         "platform": {
             "python_implementation": "CPython",
@@ -76,14 +42,15 @@ def test_information(system, pyversion, pyimpl):
             "system": "Linux",
         },
     }
-    option_manager = mock.Mock(
-        registered_plugins={
-            manager.PluginVersion("pycodestyle", "2.0.0", False),
-            manager.PluginVersion("mccabe", "0.5.9", False),
-        },
-        version="3.1.0",
+    plugins = mock.Mock(
+        **{
+            "manager.versions.return_value": [
+                ("pycodestyle", "2.0.0"),
+                ("mccabe", "0.5.9"),
+            ]
+        }
     )
-    assert expected == debug.information(option_manager)
+    assert expected == debug.information("3.1.0", plugins)
     pyimpl.assert_called_once_with()
     pyversion.assert_called_once_with()
     system.assert_called_once_with()

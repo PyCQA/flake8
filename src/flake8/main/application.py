@@ -115,11 +115,13 @@ class Application:
 
     def exit_code(self) -> int:
         """Return the program exit code."""
+        if self.catastrophic_failure:
+            return 1
         assert self.options is not None
         if self.options.exit_zero:
-            return int(self.catastrophic_failure)
+            return 0
         else:
-            return int((self.result_count > 0) or self.catastrophic_failure)
+            return int(self.result_count > 0)
 
     def find_plugins(
         self,
@@ -391,7 +393,7 @@ class Application:
         except exceptions.EarlyQuit:
             self.catastrophic_failure = True
             print("... stopped while processing files")
-
-        assert self.options is not None
-        if self.options.count:
-            print(self.result_count)
+        else:
+            assert self.options is not None
+            if self.options.count:
+                print(self.result_count)

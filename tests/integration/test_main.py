@@ -394,7 +394,7 @@ def test_config_file_not_found(tmpdir, capsys):
 
     expected = """\
 There was a critical error during execution of Flake8:
-The specified config file does not exist
+The specified config file does not exist: missing.cfg
 """
 
     with tmpdir.as_cwd():

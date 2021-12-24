@@ -2,6 +2,7 @@ import configparser
 
 import pytest
 
+from flake8 import exceptions
 from flake8.main.options import register_default_options
 from flake8.options import config
 from flake8.options.manager import OptionManager
@@ -164,3 +165,8 @@ def test_parse_config_ignores_unknowns(tmp_path, opt_manager, caplog):
             'Option "wat" is not registered. Ignoring.',
         )
     ]
+
+
+def test_load_config_missing_file_raises_exception(capsys):
+    with pytest.raises(exceptions.ExecutionError):
+        config.load_config("foo.cfg", [])

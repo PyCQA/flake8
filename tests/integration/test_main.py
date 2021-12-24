@@ -8,6 +8,7 @@ import pytest
 
 from flake8 import utils
 from flake8.main import cli
+from flake8.options import config
 
 
 def test_diff_option(tmpdir, capsys):
@@ -375,3 +376,13 @@ def test_output_file(tmpdir, capsys):
 
     expected = "t.py:1:1: F401 'os' imported but unused\n"
     assert tmpdir.join("a/b/f").read() == expected
+
+
+def test_early_keyboard_interrupt_does_not_crash(capsys):
+    with mock.patch.object(
+        config, "load_config", side_effect=KeyboardInterrupt
+    ):
+        assert cli.main(["does-not-exist"]) == 1
+    out, err = capsys.readouterr()
+    assert out == "... stopped\n"
+    assert err == ""

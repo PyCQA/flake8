@@ -8,6 +8,7 @@ from typing import List
 from typing import Optional
 from typing import Tuple
 
+from flake8 import exceptions
 from flake8.options.manager import OptionManager
 
 LOG = logging.getLogger(__name__)
@@ -60,7 +61,10 @@ def load_config(
 
     cfg = configparser.RawConfigParser()
     if config is not None:
-        cfg.read(config)
+        if not cfg.read(config):
+            raise exceptions.ExecutionError(
+                f"The specified config file does not exist: {config}"
+            )
         cfg_dir = os.path.dirname(config)
     else:
         cfg_dir = pwd

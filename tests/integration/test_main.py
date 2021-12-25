@@ -386,3 +386,21 @@ def test_early_keyboard_interrupt_does_not_crash(capsys):
     out, err = capsys.readouterr()
     assert out == "... stopped\n"
     assert err == ""
+
+
+def test_config_file_not_found(tmpdir, capsys):
+    """Ensure that an explicitly specified config file which is not found is an
+    error"""
+
+    expected = """\
+There was a critical error during execution of Flake8:
+The specified config file does not exist: missing.cfg
+"""
+
+    with tmpdir.as_cwd():
+        tmpdir.join("t.py").write("print('hello hello world')\n")
+        assert cli.main(["--config", "missing.cfg", "t.py"]) == 1
+
+    out, err = capsys.readouterr()
+    assert out == expected
+    assert err == ""

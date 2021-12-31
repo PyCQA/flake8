@@ -1,13 +1,11 @@
 """Option handling and Option management logic."""
 import argparse
-import contextlib
 import enum
 import functools
 import logging
 from typing import Any
 from typing import Callable
 from typing import Dict
-from typing import Generator
 from typing import List
 from typing import Mapping
 from typing import Optional
@@ -18,6 +16,7 @@ from typing import Type
 from typing import Union
 
 from flake8 import utils
+from flake8.plugins.finder import Plugins
 
 LOG = logging.getLogger(__name__)
 
@@ -351,6 +350,7 @@ class OptionManager:
             ),
         )
         self.parser.add_argument("filenames", nargs="*", metavar="filename")
+
         self.config_options_dict: Dict[str, Option] = {}
         self.options: List[Option] = []
         self.extended_default_ignore: Set[str] = set()
@@ -358,15 +358,32 @@ class OptionManager:
 
         self._current_group: Optional[argparse._ArgumentGroup] = None
 
-    @contextlib.contextmanager
-    def group(self, name: str) -> Generator[None, None, None]:
-        """Attach options to an argparse group during this context."""
-        group = self.parser.add_argument_group(name)
-        self._current_group, orig_group = group, self._current_group
-        try:
-            yield
-        finally:
-            self._current_group = orig_group
+    # TODO: maybe make this a free function to reduce api surface area
+    def register_plugins(self, plugins: Plugins) -> None:
+        """Register the plugin options (if needed)."""
+        groups: Dict[str, argparse._ArgumentGroup] = {}
+
+        def _set_group(name: str) -> None:
+            try:
+                self._current_group = groups[name]
+            except KeyError:
+                group = self.parser.add_argument_group(name)
+                self._current_group = groups[name] = group
+
+        for loaded in plugins.all_plugins():
+            add_options = getattr(loaded.obj, "add_options", None)
+            if add_options:
+                _set_group(loaded.plugin.package)
+                add_options(self)
+
+            # if the plugin is off by default, disable it!
+            if getattr(loaded.obj, "off_by_default", False):
+                self.extend_default_ignore(loaded.entry_name)
+            else:
+                self.extend_default_select(loaded.entry_name)
+
+        # isn't strictly necessary, but seems cleaner
+        self._current_group = None
 
     def add_option(self, *args: Any, **kwargs: Any) -> None:
         """Create and register a new option.

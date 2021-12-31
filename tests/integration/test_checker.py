@@ -6,27 +6,18 @@ import pytest
 
 from flake8 import checker
 from flake8._compat import importlib_metadata
-from flake8.plugins import manager
+from flake8.plugins import finder
 from flake8.processor import FileProcessor
 
 PHYSICAL_LINE = "# Physical line content"
 
 EXPECTED_REPORT = (1, 1, "T000 Expected Message")
 EXPECTED_REPORT_PHYSICAL_LINE = (1, "T000 Expected Message")
-EXPECTED_RESULT_PHYSICAL_LINE = (
-    "T000",
-    0,
-    1,
-    "Expected Message",
-    None,
-)
+EXPECTED_RESULT_PHYSICAL_LINE = ("T000", 0, 1, "Expected Message", None)
 
 
 class PluginClass:
     """Simple file plugin class yielding the expected report."""
-
-    name = "test"
-    version = "1.0.0"
 
     def __init__(self, tree):
         """Construct a dummy object to provide mandatory parameter."""
@@ -37,60 +28,50 @@ class PluginClass:
         yield EXPECTED_REPORT + (type(self),)
 
 
-def plugin_func(func):
-    """Decorate file plugins which are implemented as functions."""
-    func.name = "test"
-    func.version = "1.0.0"
-    return func
-
-
-@plugin_func
 def plugin_func_gen(tree):
     """Yield the expected report."""
     yield EXPECTED_REPORT + (type(plugin_func_gen),)
 
 
-@plugin_func
 def plugin_func_list(tree):
     """Return a list of expected reports."""
     return [EXPECTED_REPORT + (type(plugin_func_list),)]
 
 
-@plugin_func
 def plugin_func_physical_ret(physical_line):
     """Expect report from a physical_line. Single return."""
     return EXPECTED_REPORT_PHYSICAL_LINE
 
 
-@plugin_func
 def plugin_func_physical_none(physical_line):
     """Expect report from a physical_line. No results."""
     return None
 
 
-@plugin_func
 def plugin_func_physical_list_single(physical_line):
     """Expect report from a physical_line. List of single result."""
     return [EXPECTED_REPORT_PHYSICAL_LINE]
 
 
-@plugin_func
 def plugin_func_physical_list_multiple(physical_line):
     """Expect report from a physical_line. List of multiple results."""
     return [EXPECTED_REPORT_PHYSICAL_LINE] * 2
 
 
-@plugin_func
 def plugin_func_physical_gen_single(physical_line):
     """Expect report from a physical_line. Generator of single result."""
     yield EXPECTED_REPORT_PHYSICAL_LINE
 
 
-@plugin_func
 def plugin_func_physical_gen_multiple(physical_line):
     """Expect report from a physical_line. Generator of multiple results."""
     for _ in range(3):
         yield EXPECTED_REPORT_PHYSICAL_LINE
+
+
+def plugin_func_out_of_bounds(logical_line):
+    """This produces an error out of bounds."""
+    yield 10000, "L100 test"
 
 
 def mock_file_checker_with_plugin(plugin_target):
@@ -98,26 +79,27 @@ def mock_file_checker_with_plugin(plugin_target):
 
     Useful as a starting point for mocking reports/results.
     """
-    # Mock an entry point returning the plugin target
-    entry_point = mock.Mock(spec=["load"])
-    entry_point.name = plugin_target.name
-    entry_point.load.return_value = plugin_target
-    entry_point.value = "mocked:value"
-
-    # Load the checker plugins using the entry point mock
-    with mock.patch.object(
-        importlib_metadata,
-        "entry_points",
-        return_value={"flake8.extension": [entry_point]},
-    ):
-        checks = manager.Checkers()
+    to_load = [
+        finder.Plugin(
+            "flake-package",
+            "9001",
+            importlib_metadata.EntryPoint(
+                "Q",
+                f"{plugin_target.__module__}:{plugin_target.__name__}",
+                "flake8.extension",
+            ),
+        ),
+    ]
+    plugins = finder.load_plugins(to_load, [])
 
     # Prevent it from reading lines from stdin or somewhere else
     with mock.patch(
         "flake8.processor.FileProcessor.read_lines", return_value=["Line 1"]
     ):
         file_checker = checker.FileChecker(
-            "-", checks.to_dictionary(), mock.MagicMock()
+            filename="-",
+            plugins=plugins.checkers,
+            options=mock.MagicMock(),
         )
     return file_checker
 
@@ -173,11 +155,7 @@ def test_line_check_results(plugin_target, len_results):
 def test_logical_line_offset_out_of_bounds():
     """Ensure that logical line offsets that are out of bounds do not crash."""
 
-    @plugin_func
-    def _logical_line_out_of_bounds(logical_line):
-        yield 10000, "L100 test"
-
-    file_checker = mock_file_checker_with_plugin(_logical_line_out_of_bounds)
+    file_checker = mock_file_checker_with_plugin(plugin_func_out_of_bounds)
 
     logical_ret = (
         "",
@@ -293,7 +271,7 @@ def test_report_order(results, expected_order):
 
     # Create a placeholder manager without arguments or plugins
     # Just add one custom file checker which just provides the results
-    manager = checker.Manager(style_guide, [])
+    manager = checker.Manager(style_guide, finder.Checkers([], [], []))
     manager.checkers = manager._all_checkers = [file_checker]
 
     # _handle_results is the first place which gets the sorted result
@@ -357,6 +335,10 @@ def test_handling_syntaxerrors_across_pythons():
             "invalid syntax", ("<unknown>", 2, 1, "bad python:\n", 2, 11)
         )
         expected = (2, 1)
-    file_checker = checker.FileChecker("-", {}, mock.MagicMock())
+    file_checker = checker.FileChecker(
+        filename="-",
+        plugins=finder.Checkers([], [], []),
+        options=mock.MagicMock(),
+    )
     actual = file_checker._extract_syntax_information(err)
     assert actual == expected

@@ -1,16 +1,17 @@
 """Integration tests for plugin loading."""
-from flake8.main import application
-from flake8.main.cli import main
+import pytest
 
-LOCAL_PLUGIN_CONFIG = "tests/fixtures/config_files/local-plugin.ini"
-LOCAL_PLUGIN_PATH_CONFIG = "tests/fixtures/config_files/local-plugin-path.ini"
+from flake8.main.cli import main
+from flake8.main.options import register_default_options
+from flake8.main.options import stage1_arg_parser
+from flake8.options import aggregator
+from flake8.options import config
+from flake8.options.manager import OptionManager
+from flake8.plugins import finder
 
 
 class ExtensionTestPlugin:
     """Extension test plugin."""
-
-    name = "ExtensionTestPlugin"
-    version = "1.0.0"
 
     def __init__(self, tree):
         """Construct an instance of test plugin."""
@@ -27,9 +28,6 @@ class ExtensionTestPlugin:
 class ReportTestPlugin:
     """Report test plugin."""
 
-    name = "ReportTestPlugin"
-    version = "1.0.0"
-
     def __init__(self, tree):
         """Construct an instance of test plugin."""
 
@@ -37,41 +35,69 @@ class ReportTestPlugin:
         """Do nothing."""
 
 
-def test_enable_local_plugin_from_config():
+@pytest.fixture
+def local_config(tmp_path):
+    cfg_s = f"""\
+[flake8:local-plugins]
+extension =
+    XE = {ExtensionTestPlugin.__module__}:{ExtensionTestPlugin.__name__}
+report =
+    XR = {ReportTestPlugin.__module__}:{ReportTestPlugin.__name__}
+"""
+    cfg = tmp_path.joinpath("tox.ini")
+    cfg.write_text(cfg_s)
+
+    return str(cfg)
+
+
+def test_enable_local_plugin_from_config(local_config):
     """App can load a local plugin from config file."""
-    app = application.Application()
-    app.initialize(["flake8", "--config", LOCAL_PLUGIN_CONFIG])
+    cfg, cfg_dir = config.load_config(local_config, [], isolated=False)
+    plugins = finder.find_plugins(cfg)
+    plugin_paths = finder.find_local_plugin_paths(cfg, cfg_dir)
+    loaded_plugins = finder.load_plugins(plugins, plugin_paths)
 
-    assert app.check_plugins is not None
-    assert app.check_plugins["XE"].plugin is ExtensionTestPlugin
-    assert app.formatting_plugins is not None
-    assert app.formatting_plugins["XR"].plugin is ReportTestPlugin
+    (custom_extension,) = (
+        loaded
+        for loaded in loaded_plugins.checkers.tree
+        if loaded.entry_name == "XE"
+    )
+    custom_report = loaded_plugins.reporters["XR"]
+
+    assert custom_extension.obj is ExtensionTestPlugin
+    assert custom_report.obj is ReportTestPlugin
 
 
-def test_local_plugin_can_add_option():
+def test_local_plugin_can_add_option(local_config):
     """A local plugin can add a CLI option."""
-    app = application.Application()
-    app.initialize(
-        ["flake8", "--config", LOCAL_PLUGIN_CONFIG, "--anopt", "foo"]
+
+    argv = ["--config", local_config, "--anopt", "foo"]
+
+    stage1_parser = stage1_arg_parser()
+    stage1_args, rest = stage1_parser.parse_known_args(argv)
+
+    cfg, cfg_dir = config.load_config(
+        config=stage1_args.config, extra=[], isolated=False
     )
 
-    assert app.options is not None
-    assert app.options.anopt == "foo"
+    plugins = finder.find_plugins(cfg)
+    plugin_paths = finder.find_local_plugin_paths(cfg, cfg_dir)
+    loaded_plugins = finder.load_plugins(plugins, plugin_paths)
 
+    option_manager = OptionManager(
+        version="123",
+        plugin_versions="",
+        parents=[stage1_parser],
+    )
+    register_default_options(option_manager)
+    option_manager.register_plugins(loaded_plugins)
 
-def test_enable_local_plugin_at_non_installed_path():
-    """Can add a paths option in local-plugins config section for finding."""
-    app = application.Application()
-    app.initialize(["flake8", "--config", LOCAL_PLUGIN_PATH_CONFIG])
+    args = aggregator.aggregate_options(option_manager, cfg, cfg_dir, argv)
 
-    assert app.check_plugins is not None
-    assert app.check_plugins["XE"].plugin.name == "ExtensionTestPlugin2"
+    assert args.anopt == "foo"
 
 
 class AlwaysErrors:
-    name = "AlwaysError"
-    version = "1"
-
     def __init__(self, tree):
         pass
 

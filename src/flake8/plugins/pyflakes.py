@@ -69,8 +69,6 @@ FLAKE8_PYFLAKES_CODES = {
 class FlakesChecker(pyflakes.checker.Checker):
     """Subclass the Pyflakes checker to conform with the flake8 API."""
 
-    name = "pyflakes"
-    version = pyflakes.__version__
     with_doctest = False
     include_in_doctest: List[str] = []
     exclude_from_doctest: List[str] = []

@@ -14,6 +14,7 @@ from typing import Tuple
 import flake8
 from flake8 import defaults
 from flake8 import utils
+from flake8.plugins.finder import LoadedPlugin
 
 LOG = logging.getLogger(__name__)
 NEWLINE = frozenset([tokenize.NL, tokenize.NEWLINE])
@@ -160,11 +161,11 @@ class FileProcessor:
         if self.blank_before < self.blank_lines:
             self.blank_before = self.blank_lines
 
-    def update_checker_state_for(self, plugin: Dict[str, Any]) -> None:
+    def update_checker_state_for(self, plugin: LoadedPlugin) -> None:
         """Update the checker_state attribute for the plugin."""
-        if "checker_state" in plugin["parameters"]:
+        if "checker_state" in plugin.parameters:
             self.checker_state = self._checker_states.setdefault(
-                plugin["name"], {}
+                plugin.entry_name, {}
             )
 
     def next_logical_line(self) -> None:

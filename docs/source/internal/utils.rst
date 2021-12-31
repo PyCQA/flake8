@@ -67,23 +67,6 @@ filename matches a single pattern. In our use case, however, we typically have
 a list of patterns and want to know if the filename matches any of them. This
 function abstracts that logic away with a little extra logic.
 
-.. autofunction:: flake8.utils.parameters_for
-
-|Flake8| analyzes the parameters to plugins to determine what input they are
-expecting. Plugins may expect one of the following:
-
-- ``physical_line`` to receive the line as it appears in the file
-
-- ``logical_line`` to receive the logical line (not as it appears in the file)
-
-- ``tree`` to receive the abstract syntax tree (AST) for the file
-
-We also analyze the rest of the parameters to provide more detail to the
-plugin. This function will return the parameters in a consistent way across
-versions of Python and will handle both classes and functions that are used as
-plugins. Further, if the plugin is a class, it will strip the ``self``
-argument so we can check the parameters of the plugin consistently.
-
 .. autofunction:: flake8.utils.parse_unified_diff
 
 To handle usage of :option:`flake8 --diff`, |Flake8| needs to be able

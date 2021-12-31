@@ -4,9 +4,6 @@
 class ExampleTwo:
     """Second Example Plugin."""
 
-    name = "off-by-default-example-plugin"
-    version = "1.0.0"
-
     off_by_default = True
 
     def __init__(self, tree):

@@ -1,4 +1,5 @@
 """Checker Manager and Checker classes."""
+import argparse
 import collections
 import errno
 import itertools
@@ -6,6 +7,7 @@ import logging
 import multiprocessing.pool
 import signal
 import tokenize
+from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -16,6 +18,9 @@ from flake8 import exceptions
 from flake8 import processor
 from flake8 import utils
 from flake8.discover_files import expand_paths
+from flake8.plugins.finder import Checkers
+from flake8.plugins.finder import LoadedPlugin
+from flake8.style_guide import StyleGuideManager
 
 Results = List[Tuple[str, int, int, str, Optional[str]]]
 
@@ -56,21 +61,15 @@ class Manager:
       together and make our output deterministic.
     """
 
-    def __init__(self, style_guide, checker_plugins):
-        """Initialize our Manager instance.
-
-        :param style_guide:
-            The instantiated style guide for this instance of Flake8.
-        :type style_guide:
-            flake8.style_guide.StyleGuide
-        :param checker_plugins:
-            The plugins representing checks parsed from entry-points.
-        :type checker_plugins:
-            flake8.plugins.manager.Checkers
-        """
+    def __init__(
+        self,
+        style_guide: StyleGuideManager,
+        plugins: Checkers,
+    ) -> None:
+        """Initialize our Manager instance."""
         self.style_guide = style_guide
         self.options = style_guide.options
-        self.checks = checker_plugins
+        self.plugins = plugins
         self.jobs = self._job_count()
         self._all_checkers: List[FileChecker] = []
         self.checkers: List[FileChecker] = []
@@ -158,9 +157,12 @@ class Manager:
         if paths is None:
             paths = self.options.filenames
 
-        checks = self.checks.to_dictionary()
         self._all_checkers = [
-            FileChecker(filename, checks, self.options)
+            FileChecker(
+                filename=filename,
+                plugins=self.plugins,
+                options=self.options,
+            )
             for filename in expand_paths(
                 paths=paths,
                 stdin_display_name=self.options.stdin_display_name,
@@ -273,23 +275,17 @@ class Manager:
 class FileChecker:
     """Manage running checks for a file and aggregate the results."""
 
-    def __init__(self, filename, checks, options):
-        """Initialize our file checker.
-
-        :param str filename:
-            Name of the file to check.
-        :param checks:
-            The plugins registered to check the file.
-        :type checks:
-            dict
-        :param options:
-            Parsed option values from config and command-line.
-        :type options:
-            argparse.Namespace
-        """
+    def __init__(
+        self,
+        *,
+        filename: str,
+        plugins: Checkers,
+        options: argparse.Namespace,
+    ) -> None:
+        """Initialize our file checker."""
         self.options = options
         self.filename = filename
-        self.checks = checks
+        self.plugins = plugins
         self.results: Results = []
         self.statistics = {
             "tokens": 0,
@@ -342,29 +338,27 @@ class FileChecker:
         self.results.append((error_code, line_number, column, text, line))
         return error_code
 
-    def run_check(self, plugin, **arguments):
+    def run_check(self, plugin: LoadedPlugin, **arguments: Any) -> Any:
         """Run the check in a single plugin."""
         LOG.debug("Running %r with %r", plugin, arguments)
         assert self.processor is not None
         try:
-            self.processor.keyword_arguments_for(
-                plugin["parameters"], arguments
-            )
+            self.processor.keyword_arguments_for(plugin.parameters, arguments)
         except AttributeError as ae:
             LOG.error("Plugin requested unknown parameters.")
             raise exceptions.PluginRequestedUnknownParameters(
-                plugin_name=plugin["plugin_name"], exception=ae
+                plugin_name=plugin.plugin.package, exception=ae
             )
         try:
-            return plugin["plugin"](**arguments)
+            return plugin.obj(**arguments)
         except Exception as all_exc:
             LOG.critical(
                 "Plugin %s raised an unexpected exception",
-                plugin["name"],
+                plugin.display_name,
                 exc_info=True,
             )
             raise exceptions.PluginExecutionFailed(
-                plugin_name=plugin["plugin_name"], exception=all_exc
+                plugin_name=plugin.display_name, exception=all_exc
             )
 
     @staticmethod
@@ -431,7 +425,7 @@ class FileChecker:
         assert self.processor is not None
         ast = self.processor.build_ast()
 
-        for plugin in self.checks["ast_plugins"]:
+        for plugin in self.plugins.tree:
             checker = self.run_check(plugin, tree=ast)
             # If the plugin uses a class, call the run method of it, otherwise
             # the call should return something iterable itself
@@ -457,7 +451,7 @@ class FileChecker:
 
         LOG.debug('Logical line: "%s"', logical_line.rstrip())
 
-        for plugin in self.checks["logical_line_plugins"]:
+        for plugin in self.plugins.logical_line:
             self.processor.update_checker_state_for(plugin)
             results = self.run_check(plugin, logical_line=logical_line) or ()
             for offset, text in results:
@@ -479,7 +473,7 @@ class FileChecker:
         A single physical check may return multiple errors.
         """
         assert self.processor is not None
-        for plugin in self.checks["physical_line_plugins"]:
+        for plugin in self.plugins.physical_line:
             self.processor.update_checker_state_for(plugin)
             result = self.run_check(plugin, physical_line=physical_line)
 

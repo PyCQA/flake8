@@ -9,7 +9,6 @@ import pytest
 
 from flake8 import exceptions
 from flake8 import utils
-from flake8.plugins import manager as plugin_manager
 
 RELATIVE_PATHS = ["flake8", "pep8", "pyflakes", "mccabe"]
 
@@ -179,34 +178,6 @@ def test_matches_filename_for_excluding_dotfiles():
 def test_fnmatch(filename, patterns, expected):
     """Verify that our fnmatch wrapper works as expected."""
     assert utils.fnmatch(filename, patterns) is expected
-
-
-def test_parameters_for_class_plugin():
-    """Verify that we can retrieve the parameters for a class plugin."""
-
-    class FakeCheck:
-        def __init__(self, tree):
-            raise NotImplementedError
-
-    plugin = plugin_manager.Plugin("plugin-name", object())
-    plugin._plugin = FakeCheck
-    assert utils.parameters_for(plugin) == {"tree": True}
-
-
-def test_parameters_for_function_plugin():
-    """Verify that we retrieve the parameters for a function plugin."""
-
-    def fake_plugin(physical_line, self, tree, optional=None):
-        raise NotImplementedError
-
-    plugin = plugin_manager.Plugin("plugin-name", object())
-    plugin._plugin = fake_plugin
-    assert utils.parameters_for(plugin) == {
-        "physical_line": True,
-        "self": True,
-        "tree": True,
-        "optional": False,
-    }
 
 
 def read_diff_file(filename):

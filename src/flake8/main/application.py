@@ -3,7 +3,6 @@ import argparse
 import configparser
 import json
 import logging
-import sys
 import time
 from typing import Dict
 from typing import List
@@ -12,7 +11,6 @@ from typing import Sequence
 from typing import Set
 from typing import Tuple
 from typing import Type
-from typing import TYPE_CHECKING
 
 import flake8
 from flake8 import checker
@@ -20,15 +18,14 @@ from flake8 import defaults
 from flake8 import exceptions
 from flake8 import style_guide
 from flake8 import utils
+from flake8.formatting.base import BaseFormatter
 from flake8.main import debug
 from flake8.main import options
 from flake8.options import aggregator
 from flake8.options import config
 from flake8.options import manager
-from flake8.plugins import manager as plugin_manager
-
-if TYPE_CHECKING:
-    from flake8.formatting.base import BaseFormatter
+from flake8.plugins import finder
+from flake8.plugins import reporter
 
 
 LOG = logging.getLogger(__name__)
@@ -56,12 +53,7 @@ class Application:
         #: to parse and handle the options and arguments passed by the user
         self.option_manager: Optional[manager.OptionManager] = None
 
-        #: The instance of :class:`flake8.plugins.manager.Checkers`
-        self.check_plugins: Optional[plugin_manager.Checkers] = None
-        #: The instance of :class:`flake8.plugins.manager.ReportFormatters`
-        self.formatting_plugins: Optional[
-            plugin_manager.ReportFormatters
-        ] = None
+        self.plugins: Optional[finder.Plugins] = None
         #: The user-selected formatter from :attr:`formatting_plugins`
         self.formatter: Optional[BaseFormatter] = None
         #: The :class:`flake8.style_guide.StyleGuideManager` built from the
@@ -130,49 +122,23 @@ class Application:
     ) -> None:
         """Find and load the plugins for this application.
 
-        Set the :attr:`check_plugins` and :attr:`formatting_plugins` attributes
-        based on the discovered plugins found.
+        Set :attr:`plugins` based on loaded plugins.
         """
-        # TODO: move to src/flake8/plugins/finder.py
-        extension_local = utils.parse_comma_separated_list(
-            cfg.get("flake8:local-plugins", "extension", fallback="").strip(),
-            regexp=utils.LOCAL_PLUGIN_LIST_RE,
-        )
-        report_local = utils.parse_comma_separated_list(
-            cfg.get("flake8:local-plugins", "report", fallback="").strip(),
-            regexp=utils.LOCAL_PLUGIN_LIST_RE,
-        )
-
-        paths_s = cfg.get("flake8:local-plugins", "paths", fallback="").strip()
-        local_paths = utils.parse_comma_separated_list(paths_s)
-        local_paths = utils.normalize_paths(local_paths, cfg_dir)
-
-        sys.path.extend(local_paths)
-
-        self.check_plugins = plugin_manager.Checkers(extension_local)
-
-        self.formatting_plugins = plugin_manager.ReportFormatters(report_local)
-
-        self.check_plugins.load_plugins()
-        self.formatting_plugins.load_plugins()
+        raw_plugins = finder.find_plugins(cfg)
+        local_plugin_paths = finder.find_local_plugin_paths(cfg, cfg_dir)
+        self.plugins = finder.load_plugins(raw_plugins, local_plugin_paths)
 
     def register_plugin_options(self) -> None:
         """Register options provided by plugins to our option manager."""
-        assert self.check_plugins is not None
-        assert self.formatting_plugins is not None
+        assert self.plugins is not None
 
-        versions = sorted(set(self.check_plugins.manager.versions()))
         self.option_manager = manager.OptionManager(
             version=flake8.__version__,
-            plugin_versions=", ".join(
-                f"{name}: {version}" for name, version in versions
-            ),
+            plugin_versions=self.plugins.versions_str(),
             parents=[self.prelim_arg_parser],
         )
         options.register_default_options(self.option_manager)
-
-        self.check_plugins.register_options(self.option_manager)
-        self.formatting_plugins.register_options(self.option_manager)
+        self.option_manager.register_plugins(self.plugins)
 
     def parse_configuration_and_cli(
         self,
@@ -182,6 +148,7 @@ class Application:
     ) -> None:
         """Parse configuration files and the CLI options."""
         assert self.option_manager is not None
+        assert self.plugins is not None
         self.options = aggregator.aggregate_options(
             self.option_manager,
             cfg,
@@ -190,8 +157,7 @@ class Application:
         )
 
         if self.options.bug_report:
-            assert self.check_plugins is not None
-            info = debug.information(flake8.__version__, self.check_plugins)
+            info = debug.information(flake8.__version__, self.plugins)
             print(json.dumps(info, indent=2, sort_keys=True))
             raise SystemExit(0)
 
@@ -202,44 +168,28 @@ class Application:
             )
             self.parsed_diff = utils.parse_unified_diff()
 
-        assert self.check_plugins is not None
-        self.check_plugins.provide_options(
-            self.option_manager, self.options, self.options.filenames
-        )
-        assert self.formatting_plugins is not None
-        self.formatting_plugins.provide_options(
-            self.option_manager, self.options, self.options.filenames
-        )
+        for loaded in self.plugins.all_plugins():
+            parse_options = getattr(loaded.obj, "parse_options", None)
+            if parse_options is None:
+                continue
 
-    def formatter_for(self, formatter_plugin_name):
-        """Retrieve the formatter class by plugin name."""
-        assert self.formatting_plugins is not None
-        default_formatter = self.formatting_plugins["default"]
-        formatter_plugin = self.formatting_plugins.get(formatter_plugin_name)
-        if formatter_plugin is None:
-            LOG.warning(
-                '"%s" is an unknown formatter. Falling back to default.',
-                formatter_plugin_name,
-            )
-            formatter_plugin = default_formatter
-
-        return formatter_plugin.execute
+            # XXX: ideally we would't have two forms of parse_options
+            try:
+                parse_options(
+                    self.option_manager,
+                    self.options,
+                    self.options.filenames,
+                )
+            except TypeError:
+                parse_options(self.options)
 
     def make_formatter(
-        self, formatter_class: Optional[Type["BaseFormatter"]] = None
+        self, formatter_class: Optional[Type[BaseFormatter]] = None
     ) -> None:
         """Initialize a formatter based on the parsed options."""
+        assert self.plugins is not None
         assert self.options is not None
-        format_plugin = self.options.format
-        if 1 <= self.options.quiet < 2:
-            format_plugin = "quiet-filename"
-        elif 2 <= self.options.quiet:
-            format_plugin = "quiet-nothing"
-
-        if formatter_class is None:
-            formatter_class = self.formatter_for(format_plugin)
-
-        self.formatter = formatter_class(self.options)
+        self.formatter = reporter.make(self.plugins.reporters, self.options)
 
     def make_guide(self) -> None:
         """Initialize our StyleGuide."""
@@ -254,9 +204,11 @@ class Application:
 
     def make_file_checker_manager(self) -> None:
         """Initialize our FileChecker Manager."""
+        assert self.guide is not None
+        assert self.plugins is not None
         self.file_checker_manager = checker.Manager(
             style_guide=self.guide,
-            checker_plugins=self.check_plugins,
+            plugins=self.plugins.checkers,
         )
 
     def run_checks(self) -> None:

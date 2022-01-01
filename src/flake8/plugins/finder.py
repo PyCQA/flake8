@@ -9,6 +9,8 @@ from typing import Generator
 from typing import Iterable
 from typing import List
 from typing import NamedTuple
+from typing import Optional
+from typing import Set
 
 from flake8 import utils
 from flake8._compat import importlib_metadata
@@ -63,6 +65,7 @@ class Plugins(NamedTuple):
 
     checkers: Checkers
     reporters: Dict[str, LoadedPlugin]
+    disabled: List[LoadedPlugin]
 
     def all_plugins(self) -> Generator[LoadedPlugin, None, None]:
         """Return an iterator over all :class:`LoadedPlugin`s."""
@@ -171,6 +174,24 @@ def find_local_plugin_paths(
     return utils.normalize_paths(paths, cfg_dir)
 
 
+def parse_enabled(
+    cfg: configparser.RawConfigParser,
+    enable_extensions: Optional[str],
+) -> Set[str]:
+    """Parse --enable-extensions."""
+    if enable_extensions is not None:
+        return set(utils.parse_comma_separated_list(enable_extensions))
+    else:
+        # ideally this would reuse our config parsing framework but we need to
+        # parse this from preliminary options before plugins are enabled
+        for opt in ("enable_extensions", "enable-extensions"):
+            val = cfg.get("flake8", opt, fallback=None)
+            if val is not None:
+                return set(utils.parse_comma_separated_list(val))
+        else:
+            return set()
+
+
 def _parameters_for(func: Any) -> Dict[str, bool]:
     """Return the parameters for the plugin.
 
@@ -218,14 +239,23 @@ def _import_plugins(
     return [_load_plugin(p) for p in plugins]
 
 
-def _classify_plugins(plugins: List[LoadedPlugin]) -> Plugins:
+def _classify_plugins(
+    plugins: List[LoadedPlugin],
+    enabled: Set[str],
+) -> Plugins:
     tree = []
     logical_line = []
     physical_line = []
     reporters = {}
+    disabled = []
 
     for loaded in plugins:
-        if loaded.plugin.entry_point.group == "flake8.report":
+        if (
+            getattr(loaded.obj, "off_by_default", False)
+            and loaded.plugin.entry_point.name not in enabled
+        ):
+            disabled.append(loaded)
+        elif loaded.plugin.entry_point.group == "flake8.report":
             reporters[loaded.entry_name] = loaded
         elif "tree" in loaded.parameters:
             tree.append(loaded)
@@ -243,14 +273,19 @@ def _classify_plugins(plugins: List[LoadedPlugin]) -> Plugins:
             physical_line=physical_line,
         ),
         reporters=reporters,
+        disabled=disabled,
     )
 
 
-def load_plugins(plugins: List[Plugin], paths: List[str]) -> Plugins:
+def load_plugins(
+    plugins: List[Plugin],
+    paths: List[str],
+    enabled: Set[str],
+) -> Plugins:
     """Load and classify all flake8 plugins.
 
     - first: extends ``sys.path`` with ``paths`` (to import local plugins)
     - next: converts the ``Plugin``s to ``LoadedPlugins``
     - finally: classifies plugins into their specific types
     """
-    return _classify_plugins(_import_plugins(plugins, paths))
+    return _classify_plugins(_import_plugins(plugins, paths), enabled)

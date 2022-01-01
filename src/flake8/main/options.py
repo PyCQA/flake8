@@ -15,6 +15,7 @@ def stage1_arg_parser() -> argparse.ArgumentParser:
     - ``--append-config``
     - ``--config``
     - ``--isolated``
+    - ``--enable-extensions``
     """
     parser = argparse.ArgumentParser(add_help=False)
 
@@ -57,6 +58,14 @@ def stage1_arg_parser() -> argparse.ArgumentParser:
         default=False,
         action="store_true",
         help="Ignore all configuration files.",
+    )
+
+    # Plugin enablement options
+
+    parser.add_argument(
+        "--enable-extensions",
+        help="Enable plugins and extensions that are otherwise disabled "
+        "by default",
     )
 
     return parser
@@ -116,7 +125,6 @@ def register_default_options(option_manager: OptionManager) -> None:
     - ``--disable-noqa``
     - ``--show-source``
     - ``--statistics``
-    - ``--enable-extensions``
     - ``--exit-zero``
     - ``-j``/``--jobs``
     - ``--tee``
@@ -331,14 +339,6 @@ def register_default_options(option_manager: OptionManager) -> None:
     )
 
     # Flake8 options
-    add_option(
-        "--enable-extensions",
-        default="",
-        parse_from_config=True,
-        comma_separated_list=True,
-        help="Enable plugins and extensions that are otherwise disabled "
-        "by default",
-    )
 
     add_option(
         "--exit-zero",

@@ -160,14 +160,9 @@ class DecisionEngine:
         self.extended_selected = tuple(
             sorted(options.extended_default_select, reverse=True)
         )
-        self.enabled_extensions = tuple(options.enable_extensions)
         self.all_selected = tuple(
             sorted(
-                itertools.chain(
-                    self.selected,
-                    options.extend_select,
-                    self.enabled_extensions,
-                ),
+                itertools.chain(self.selected, options.extend_select),
                 reverse=True,
             )
         )

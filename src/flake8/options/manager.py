@@ -376,11 +376,7 @@ class OptionManager:
                 _set_group(loaded.plugin.package)
                 add_options(self)
 
-            # if the plugin is off by default, disable it!
-            if getattr(loaded.obj, "off_by_default", False):
-                self.extend_default_ignore(loaded.entry_name)
-            else:
-                self.extend_default_select(loaded.entry_name)
+            self.extend_default_select(loaded.entry_name)
 
         # isn't strictly necessary, but seems cleaner
         self._current_group = None

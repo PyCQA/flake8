@@ -30,6 +30,7 @@ def test_debug_information():
             physical_line=[],
         ),
         reporters={},
+        disabled=[],
     )
 
     info = debug.information("9001", plugins)

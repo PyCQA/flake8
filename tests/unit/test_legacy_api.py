@@ -19,6 +19,7 @@ def test_get_style_guide():
         isolated=False,
         output_file=None,
         verbose=0,
+        enable_extensions=None,
     )
     mockedapp = mock.Mock()
     mockedapp.parse_preliminary_options.return_value = (prelim_opts, [])
@@ -34,7 +35,7 @@ def test_get_style_guide():
 
     application.assert_called_once_with()
     mockedapp.parse_preliminary_options.assert_called_once_with([])
-    mockedapp.find_plugins.assert_called_once_with(cfg, cfg_dir)
+    mockedapp.find_plugins.assert_called_once_with(cfg, cfg_dir, None)
     mockedapp.register_plugin_options.assert_called_once_with()
     mockedapp.parse_configuration_and_cli.assert_called_once_with(
         cfg, cfg_dir, []

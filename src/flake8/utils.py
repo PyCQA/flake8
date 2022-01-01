@@ -2,7 +2,6 @@
 import collections
 import fnmatch as _fnmatch
 import functools
-import inspect
 import io
 import logging
 import os
@@ -18,13 +17,9 @@ from typing import Pattern
 from typing import Sequence
 from typing import Set
 from typing import Tuple
-from typing import TYPE_CHECKING
 from typing import Union
 
 from flake8 import exceptions
-
-if TYPE_CHECKING:
-    from flake8.plugins.manager import Plugin
 
 DIFF_HUNK_REGEXP = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@.*$")
 COMMA_SEPARATED_LIST_RE = re.compile(r"[,\s]")
@@ -308,40 +303,6 @@ def fnmatch(filename: str, patterns: Sequence[str]) -> bool:
     if not patterns:
         return True
     return any(_fnmatch.fnmatch(filename, pattern) for pattern in patterns)
-
-
-def parameters_for(plugin: "Plugin") -> Dict[str, bool]:
-    """Return the parameters for the plugin.
-
-    This will inspect the plugin and return either the function parameters
-    if the plugin is a function or the parameters for ``__init__`` after
-    ``self`` if the plugin is a class.
-
-    :param plugin:
-        The internal plugin object.
-    :type plugin:
-        flake8.plugins.manager.Plugin
-    :returns:
-        A dictionary mapping the parameter name to whether or not it is
-        required (a.k.a., is positional only/does not have a default).
-    :rtype:
-        dict([(str, bool)])
-    """
-    func = plugin.plugin
-    is_class = not inspect.isfunction(func)
-    if is_class:  # The plugin is a class
-        func = plugin.plugin.__init__
-
-    parameters = {
-        parameter.name: parameter.default is parameter.empty
-        for parameter in inspect.signature(func).parameters.values()
-        if parameter.kind == parameter.POSITIONAL_OR_KEYWORD
-    }
-
-    if is_class:
-        parameters.pop("self", None)
-
-    return parameters
 
 
 def matches_filename(

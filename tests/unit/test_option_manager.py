@@ -252,17 +252,6 @@ def test_optparse_normalize_help(optmanager, capsys):
     assert "default: bar" in output
 
 
-def test_optmanager_group(optmanager, capsys):
-    """Test that group(...) causes options to be assigned to a group."""
-    with optmanager.group("groupname"):
-        optmanager.add_option("--foo")
-    with pytest.raises(SystemExit):
-        optmanager.parse_args(["--help"])
-    out, err = capsys.readouterr()
-    output = out + err
-    assert "\ngroupname:\n" in output
-
-
 @pytest.mark.parametrize(
     ("s", "is_auto", "n_jobs"),
     (

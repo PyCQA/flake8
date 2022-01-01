@@ -22,8 +22,8 @@ Indicating Desired Data
 =======================
 
 |Flake8| inspects the plugin's signature to determine what parameters it
-expects using :func:`flake8.utils.parameters_for`.
-:attr:`flake8.plugins.manager.Plugin.parameters` caches the values so that
+expects using :func:`flake8.plugins.finder._parameters_for`.
+:attr:`flake8.plugins.finder.LoadedPlugin.parameters` caches the values so that
 each plugin makes that fairly expensive call once per plugin. When processing
 a file, a plugin can ask for any of the following:
 

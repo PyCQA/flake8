@@ -38,7 +38,7 @@ def get_style_guide(**kwargs):
         isolated=prelim_opts.isolated,
     )
 
-    application.find_plugins(cfg, cfg_dir)
+    application.find_plugins(cfg, cfg_dir, prelim_opts.enable_extensions)
     application.register_plugin_options()
     application.parse_configuration_and_cli(cfg, cfg_dir, remaining_args)
     # We basically want application.initialize to be called but with these

@@ -102,6 +102,11 @@ def _flake8_plugins(
         if ep.name == "F":
             yield Plugin(pyflakes_meta["name"], pyflakes_meta["version"], ep)
         elif ep.name.startswith("pycodestyle"):
+            # pycodestyle provides both `E` and `W` -- but our default select
+            # handles those
+            # ideally pycodestyle's plugin entrypoints would exactly represent
+            # the codes they produce...
+            ep = importlib_metadata.EntryPoint("E", ep.value, ep.group)
             yield Plugin(
                 pycodestyle_meta["name"], pycodestyle_meta["version"], ep
             )

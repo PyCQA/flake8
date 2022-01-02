@@ -179,7 +179,7 @@ def test_flake8_plugins(flake8_dist, mock_distribution):
             "pycodestyle",
             "9000.2.0",
             importlib_metadata.EntryPoint(
-                "pycodestyle.bare_except",
+                "E",
                 "pycodestyle:bare_except",
                 "flake8.extension",
             ),
@@ -188,7 +188,7 @@ def test_flake8_plugins(flake8_dist, mock_distribution):
             "pycodestyle",
             "9000.2.0",
             importlib_metadata.EntryPoint(
-                "pycodestyle.blank_lines",
+                "E",
                 "pycodestyle:blank_lines",
                 "flake8.extension",
             ),
@@ -274,7 +274,7 @@ unrelated = unrelated:main
             "pycodestyle",
             "9000.2.0",
             importlib_metadata.EntryPoint(
-                "pycodestyle.bare_except",
+                "E",
                 "pycodestyle:bare_except",
                 "flake8.extension",
             ),
@@ -283,7 +283,7 @@ unrelated = unrelated:main
             "pycodestyle",
             "9000.2.0",
             importlib_metadata.EntryPoint(
-                "pycodestyle.blank_lines",
+                "E",
                 "pycodestyle:blank_lines",
                 "flake8.extension",
             ),
@@ -459,7 +459,7 @@ def test_find_plugins(
             "pycodestyle",
             "9000.2.0",
             importlib_metadata.EntryPoint(
-                "pycodestyle.bare_except",
+                "E",
                 "pycodestyle:bare_except",
                 "flake8.extension",
             ),
@@ -468,7 +468,7 @@ def test_find_plugins(
             "pycodestyle",
             "9000.2.0",
             importlib_metadata.EntryPoint(
-                "pycodestyle.blank_lines",
+                "E",
                 "pycodestyle:blank_lines",
                 "flake8.extension",
             ),

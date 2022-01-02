@@ -376,7 +376,8 @@ class OptionManager:
                 _set_group(loaded.plugin.package)
                 add_options(self)
 
-            self.extend_default_select(loaded.entry_name)
+            if loaded.plugin.entry_point.group == "flake8.extension":
+                self.extend_default_select([loaded.entry_name])
 
         # isn't strictly necessary, but seems cleaner
         self._current_group = None

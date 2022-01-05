@@ -4,10 +4,8 @@ from typing import Generator
 from typing import List
 from typing import NamedTuple
 from typing import Optional
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from flake8.style_guide import Violation
+from flake8.violation import Violation
 
 
 class Statistics:
@@ -34,7 +32,7 @@ class Statistics:
             The Violation instance containing the information about the
             violation.
         :type error:
-            flake8.style_guide.Violation
+            flake8.violation.Violation
         """
         key = Key.create_from(error)
         if key not in self._store:
@@ -86,7 +84,7 @@ class Key(NamedTuple):
 
     @classmethod
     def create_from(cls, error: "Violation") -> "Key":
-        """Create a Key from :class:`flake8.style_guide.Violation`."""
+        """Create a Key from :class:`flake8.violation.Violation`."""
         return cls(filename=error.filename, code=error.code)
 
     def matches(self, prefix: str, filename: Optional[str]) -> bool:
@@ -127,7 +125,7 @@ class Statistic:
 
     @classmethod
     def create_from(cls, error: "Violation") -> "Statistic":
-        """Create a Statistic from a :class:`flake8.style_guide.Violation`."""
+        """Create a Statistic from a :class:`flake8.violation.Violation`."""
         return cls(
             error_code=error.code,
             filename=error.filename,

@@ -57,9 +57,9 @@ def test_styleguide_options():
 def test_styleguide_paths():
     """Show that we proxy the StyleGuide.paths attribute."""
     app = mock.Mock()
-    app.paths = "paths"
+    app.options.filenames = ["paths"]
     style_guide = api.StyleGuide(app)
-    assert style_guide.paths == "paths"
+    assert style_guide.paths == ["paths"]
 
 
 def test_styleguide_check_files():
@@ -78,33 +78,13 @@ def test_styleguide_check_files():
 def test_styleguide_excluded():
     """Verify we delegate to our file checker manager.
 
-    We also want to ensure that if we don't specify a parent, is_path_excluded
-    is called exactly once.
-    """
-    app = mock.Mock()
-    file_checker_manager = app.file_checker_manager = mock.Mock()
-    style_guide = api.StyleGuide(app)
-
-    style_guide.excluded("file.py")
-    file_checker_manager.is_path_excluded.assert_called_once_with("file.py")
-
-
-def test_styleguide_excluded_with_parent():
-    """Verify we delegate to our file checker manager.
-
     When we add the parent argument, we don't check that is_path_excluded was
     called only once.
     """
-    app = mock.Mock()
-    file_checker_manager = app.file_checker_manager = mock.Mock()
-    file_checker_manager.is_path_excluded.return_value = False
-    style_guide = api.StyleGuide(app)
-
-    style_guide.excluded("file.py", "parent")
-    assert file_checker_manager.is_path_excluded.call_args_list == [
-        mock.call("file.py"),
-        mock.call(os.path.join("parent", "file.py")),
-    ]
+    style_guide = api.get_style_guide(exclude=["file*", "*/parent/*"])
+    assert not style_guide.excluded("unrelated.py")
+    assert style_guide.excluded("file.py")
+    assert style_guide.excluded("test.py", "parent")
 
 
 def test_styleguide_init_report_does_nothing():
@@ -121,7 +101,7 @@ def test_styleguide_init_report_with_non_subclass():
     app = mock.Mock()
     style_guide = api.StyleGuide(app)
     with pytest.raises(ValueError):
-        style_guide.init_report(object)
+        style_guide.init_report(object)  # type: ignore
     assert app.make_formatter.called is False
     assert app.make_guide.called is False
 

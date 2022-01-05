@@ -6,9 +6,13 @@ In 3.0 we no longer have an "engine" module but we maintain the API from it.
 import argparse
 import logging
 import os.path
+from typing import Any
 from typing import List
+from typing import Optional
+from typing import Type
 
 import flake8
+from flake8.discover_files import expand_paths
 from flake8.formatting import base as formatter
 from flake8.main import application as app
 from flake8.options import config
@@ -17,156 +21,6 @@ LOG = logging.getLogger(__name__)
 
 
 __all__ = ("get_style_guide",)
-
-
-def get_style_guide(**kwargs):
-    r"""Provision a StyleGuide for use.
-
-    :param \*\*kwargs:
-        Keyword arguments that provide some options for the StyleGuide.
-    :returns:
-        An initialized StyleGuide
-    :rtype:
-        :class:`StyleGuide`
-    """
-    application = app.Application()
-    prelim_opts, remaining_args = application.parse_preliminary_options([])
-    flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
-
-    cfg, cfg_dir = config.load_config(
-        config=prelim_opts.config,
-        extra=prelim_opts.append_config,
-        isolated=prelim_opts.isolated,
-    )
-
-    application.find_plugins(cfg, cfg_dir, prelim_opts.enable_extensions)
-    application.register_plugin_options()
-    application.parse_configuration_and_cli(cfg, cfg_dir, remaining_args)
-    # We basically want application.initialize to be called but with these
-    # options set instead before we make our formatter, notifier, internal
-    # style guide and file checker manager.
-    options = application.options
-    for key, value in kwargs.items():
-        try:
-            getattr(options, key)
-            setattr(options, key, value)
-        except AttributeError:
-            LOG.error('Could not update option "%s"', key)
-    application.make_formatter()
-    application.make_guide()
-    application.make_file_checker_manager()
-    return StyleGuide(application)
-
-
-class StyleGuide:
-    """Public facing object that mimic's Flake8 2.0's StyleGuide.
-
-    .. note::
-
-        There are important changes in how this object behaves compared to
-        the StyleGuide object provided in Flake8 2.x.
-
-    .. warning::
-
-        This object should not be instantiated directly by users.
-
-    .. versionchanged:: 3.0.0
-    """
-
-    def __init__(self, application):
-        """Initialize our StyleGuide."""
-        self._application = application
-        self._file_checker_manager = application.file_checker_manager
-
-    @property
-    def options(self) -> argparse.Namespace:
-        """Return application's options.
-
-        An instance of :class:`argparse.Namespace` containing parsed options.
-        """
-        return self._application.options
-
-    @property
-    def paths(self):
-        """Return the extra arguments passed as paths."""
-        return self._application.paths
-
-    def check_files(self, paths=None):
-        """Run collected checks on the files provided.
-
-        This will check the files passed in and return a :class:`Report`
-        instance.
-
-        :param list paths:
-            List of filenames (or paths) to check.
-        :returns:
-            Object that mimic's Flake8 2.0's Reporter class.
-        :rtype:
-            flake8.api.legacy.Report
-        """
-        self._application.options.filenames = paths
-        self._application.run_checks()
-        self._application.report_errors()
-        return Report(self._application)
-
-    def excluded(self, filename, parent=None):
-        """Determine if a file is excluded.
-
-        :param str filename:
-            Path to the file to check if it is excluded.
-        :param str parent:
-            Name of the parent directory containing the file.
-        :returns:
-            True if the filename is excluded, False otherwise.
-        :rtype:
-            bool
-        """
-        return self._file_checker_manager.is_path_excluded(filename) or (
-            parent
-            and self._file_checker_manager.is_path_excluded(
-                os.path.join(parent, filename)
-            )
-        )
-
-    def init_report(self, reporter=None):
-        """Set up a formatter for this run of Flake8."""
-        if reporter is None:
-            return
-        if not issubclass(reporter, formatter.BaseFormatter):
-            raise ValueError(
-                "Report should be subclass of "
-                "flake8.formatter.BaseFormatter."
-            )
-        self._application.formatter = None
-        self._application.make_formatter(reporter)
-        self._application.guide = None
-        # NOTE(sigmavirus24): This isn't the intended use of
-        # Application#make_guide but it works pretty well.
-        # Stop cringing... I know it's gross.
-        self._application.make_guide()
-        self._application.file_checker_manager = None
-        self._application.make_file_checker_manager()
-
-    def input_file(self, filename, lines=None, expected=None, line_offset=0):
-        """Run collected checks on a single file.
-
-        This will check the file passed in and return a :class:`Report`
-        instance.
-
-        :param str filename:
-            The path to the file to check.
-        :param list lines:
-            Ignored since Flake8 3.0.
-        :param expected:
-            Ignored since Flake8 3.0.
-        :param int line_offset:
-            Ignored since Flake8 3.0.
-        :returns:
-            Object that mimic's Flake8 2.0's Reporter class.
-        :rtype:
-            flake8.api.legacy.Report
-        """
-        return self.check_files([filename])
 
 
 class Report:
@@ -213,3 +67,175 @@ class Report:
             f"{s.count} {s.error_code} {s.message}"
             for s in self._stats.statistics_for(violation)
         ]
+
+
+class StyleGuide:
+    """Public facing object that mimic's Flake8 2.0's StyleGuide.
+
+    .. note::
+
+        There are important changes in how this object behaves compared to
+        the StyleGuide object provided in Flake8 2.x.
+
+    .. warning::
+
+        This object should not be instantiated directly by users.
+
+    .. versionchanged:: 3.0.0
+    """
+
+    def __init__(self, application: app.Application) -> None:
+        """Initialize our StyleGuide."""
+        self._application = application
+        self._file_checker_manager = application.file_checker_manager
+
+    @property
+    def options(self) -> argparse.Namespace:
+        """Return application's options.
+
+        An instance of :class:`argparse.Namespace` containing parsed options.
+        """
+        assert self._application.options is not None
+        return self._application.options
+
+    @property
+    def paths(self) -> List[str]:
+        """Return the extra arguments passed as paths."""
+        assert self._application.options is not None
+        return self._application.options.filenames
+
+    def check_files(self, paths: Optional[List[str]] = None) -> Report:
+        """Run collected checks on the files provided.
+
+        This will check the files passed in and return a :class:`Report`
+        instance.
+
+        :param list paths:
+            List of filenames (or paths) to check.
+        :returns:
+            Object that mimic's Flake8 2.0's Reporter class.
+        :rtype:
+            flake8.api.legacy.Report
+        """
+        assert self._application.options is not None
+        self._application.options.filenames = paths
+        self._application.run_checks()
+        self._application.report_errors()
+        return Report(self._application)
+
+    def excluded(self, filename: str, parent: Optional[str] = None) -> bool:
+        """Determine if a file is excluded.
+
+        :param str filename:
+            Path to the file to check if it is excluded.
+        :param str parent:
+            Name of the parent directory containing the file.
+        :returns:
+            True if the filename is excluded, False otherwise.
+        :rtype:
+            bool
+        """
+
+        def excluded(path: str) -> bool:
+            paths = tuple(
+                expand_paths(
+                    paths=[path],
+                    stdin_display_name=self.options.stdin_display_name,
+                    filename_patterns=self.options.filename,
+                    exclude=self.options.exclude,
+                    is_running_from_diff=self.options.diff,
+                )
+            )
+            return not paths
+
+        return excluded(filename) or (
+            parent is not None and excluded(os.path.join(parent, filename))
+        )
+
+    def init_report(
+        self,
+        reporter: Optional[Type[formatter.BaseFormatter]] = None,
+    ) -> None:
+        """Set up a formatter for this run of Flake8."""
+        if reporter is None:
+            return
+        if not issubclass(reporter, formatter.BaseFormatter):
+            raise ValueError(
+                "Report should be subclass of "
+                "flake8.formatter.BaseFormatter."
+            )
+        self._application.formatter = None
+        self._application.make_formatter(reporter)
+        self._application.guide = None
+        # NOTE(sigmavirus24): This isn't the intended use of
+        # Application#make_guide but it works pretty well.
+        # Stop cringing... I know it's gross.
+        self._application.make_guide()
+        self._application.file_checker_manager = None
+        self._application.make_file_checker_manager()
+
+    def input_file(
+        self,
+        filename: str,
+        lines: Optional[Any] = None,
+        expected: Optional[Any] = None,
+        line_offset: Optional[Any] = 0,
+    ) -> Report:
+        """Run collected checks on a single file.
+
+        This will check the file passed in and return a :class:`Report`
+        instance.
+
+        :param str filename:
+            The path to the file to check.
+        :param list lines:
+            Ignored since Flake8 3.0.
+        :param expected:
+            Ignored since Flake8 3.0.
+        :param int line_offset:
+            Ignored since Flake8 3.0.
+        :returns:
+            Object that mimic's Flake8 2.0's Reporter class.
+        :rtype:
+            flake8.api.legacy.Report
+        """
+        return self.check_files([filename])
+
+
+def get_style_guide(**kwargs: Any) -> StyleGuide:
+    r"""Provision a StyleGuide for use.
+
+    :param \*\*kwargs:
+        Keyword arguments that provide some options for the StyleGuide.
+    :returns:
+        An initialized StyleGuide
+    :rtype:
+        :class:`StyleGuide`
+    """
+    application = app.Application()
+    prelim_opts, remaining_args = application.parse_preliminary_options([])
+    flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
+
+    cfg, cfg_dir = config.load_config(
+        config=prelim_opts.config,
+        extra=prelim_opts.append_config,
+        isolated=prelim_opts.isolated,
+    )
+
+    application.find_plugins(cfg, cfg_dir, prelim_opts.enable_extensions)
+    application.register_plugin_options()
+    application.parse_configuration_and_cli(cfg, cfg_dir, remaining_args)
+    # We basically want application.initialize to be called but with these
+    # options set instead before we make our formatter, notifier, internal
+    # style guide and file checker manager.
+    options = application.options
+    for key, value in kwargs.items():
+        try:
+            getattr(options, key)
+            setattr(options, key, value)
+        except AttributeError:
+            LOG.error('Could not update option "%s"', key)
+    application.make_formatter()
+    application.make_guide()
+    application.make_file_checker_manager()
+    return StyleGuide(application)

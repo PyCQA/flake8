@@ -5,9 +5,9 @@ from unittest import mock
 
 import pytest
 
-from flake8 import style_guide
 from flake8.formatting import _windows_color
 from flake8.formatting import base
+from flake8.violation import Violation
 
 
 def options(**kwargs):
@@ -48,7 +48,7 @@ def test_format_needs_to_be_implemented():
     formatter = base.BaseFormatter(options())
     with pytest.raises(NotImplementedError):
         formatter.format(
-            style_guide.Violation("A000", "file.py", 1, 1, "error text", None)
+            Violation("A000", "file.py", 1, 1, "error text", None)
         )
 
 
@@ -57,9 +57,7 @@ def test_show_source_returns_nothing_when_not_showing_source():
     formatter = base.BaseFormatter(options(show_source=False))
     assert (
         formatter.show_source(
-            style_guide.Violation(
-                "A000", "file.py", 1, 1, "error text", "line"
-            )
+            Violation("A000", "file.py", 1, 1, "error text", "line")
         )
         == ""
     )
@@ -70,7 +68,7 @@ def test_show_source_returns_nothing_when_there_is_source():
     formatter = base.BaseFormatter(options(show_source=True))
     assert (
         formatter.show_source(
-            style_guide.Violation("A000", "file.py", 1, 1, "error text", None)
+            Violation("A000", "file.py", 1, 1, "error text", None)
         )
         == ""
     )
@@ -99,7 +97,7 @@ def test_show_source_returns_nothing_when_there_is_source():
 def test_show_source_updates_physical_line_appropriately(line1, line2, column):
     """Ensure the error column is appropriately indicated."""
     formatter = base.BaseFormatter(options(show_source=True))
-    error = style_guide.Violation("A000", "file.py", 1, column, "error", line1)
+    error = Violation("A000", "file.py", 1, column, "error", line1)
     output = formatter.show_source(error)
     assert output == line1 + line2
 
@@ -208,7 +206,7 @@ def test_handle_formats_the_error():
     """Verify that a formatter will call format from handle."""
     formatter = FormatFormatter(options(show_source=False))
     filemock = formatter.output_fd = mock.Mock()
-    error = style_guide.Violation(
+    error = Violation(
         code="A001",
         filename="example.py",
         line_number=1,

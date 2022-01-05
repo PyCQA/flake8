@@ -2,7 +2,7 @@
 import pytest
 
 from flake8 import statistics as stats
-from flake8 import style_guide
+from flake8.violation import Violation
 
 DEFAULT_ERROR_CODE = "E100"
 DEFAULT_FILENAME = "file.py"
@@ -16,7 +16,7 @@ def make_error(**kwargs):
     kwargs.setdefault("line_number", 1)
     kwargs.setdefault("column_number", 1)
     kwargs.setdefault("text", DEFAULT_TEXT)
-    return style_guide.Violation(**kwargs, physical_line=None)
+    return Violation(**kwargs, physical_line=None)
 
 
 def test_key_creation():

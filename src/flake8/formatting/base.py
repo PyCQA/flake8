@@ -6,13 +6,10 @@ from typing import IO
 from typing import List
 from typing import Optional
 from typing import Tuple
-from typing import TYPE_CHECKING
 
 from flake8.formatting import _windows_color
-
-if TYPE_CHECKING:
-    from flake8.statistics import Statistics
-    from flake8.style_guide import Violation
+from flake8.statistics import Statistics
+from flake8.violation import Violation
 
 
 class BaseFormatter:
@@ -98,9 +95,9 @@ class BaseFormatter:
 
         :param error:
             This will be an instance of
-            :class:`~flake8.style_guide.Violation`.
+            :class:`~flake8.violation.Violation`.
         :type error:
-            flake8.style_guide.Violation
+            flake8.violation.Violation
         """
         line = self.format(error)
         source = self.show_source(error)
@@ -113,9 +110,9 @@ class BaseFormatter:
 
         :param error:
             This will be an instance of
-            :class:`~flake8.style_guide.Violation`.
+            :class:`~flake8.violation.Violation`.
         :type error:
-            flake8.style_guide.Violation
+            flake8.violation.Violation
         :returns:
             The formatted error string.
         :rtype:
@@ -163,9 +160,9 @@ class BaseFormatter:
 
         :param error:
             This will be an instance of
-            :class:`~flake8.style_guide.Violation`.
+            :class:`~flake8.violation.Violation`.
         :type error:
-            flake8.style_guide.Violation
+            flake8.violation.Violation
         :returns:
             The formatted error string if the user wants to show the source.
             If the user does not want to show the source, this will return

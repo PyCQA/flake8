@@ -1,9 +1,9 @@
-"""Tests for the flake8.style_guide.Violation class."""
+"""Tests for the flake8.violation.Violation class."""
 from unittest import mock
 
 import pytest
 
-from flake8 import style_guide
+from flake8.violation import Violation
 
 
 @pytest.mark.parametrize(
@@ -33,9 +33,7 @@ from flake8 import style_guide
 )
 def test_is_inline_ignored(error_code, physical_line, expected_result):
     """Verify that we detect inline usage of ``# noqa``."""
-    error = style_guide.Violation(
-        error_code, "filename.py", 1, 1, "error text", None
-    )
+    error = Violation(error_code, "filename.py", 1, 1, "error text", None)
     # We want `None` to be passed as the physical line so we actually use our
     # monkey-patched linecache.getline value.
 
@@ -45,9 +43,7 @@ def test_is_inline_ignored(error_code, physical_line, expected_result):
 
 def test_disable_is_inline_ignored():
     """Verify that is_inline_ignored exits immediately if disabling NoQA."""
-    error = style_guide.Violation(
-        "E121", "filename.py", 1, 1, "error text", "line"
-    )
+    error = Violation("E121", "filename.py", 1, 1, "error text", "line")
 
     with mock.patch("linecache.getline") as getline:
         assert error.is_inline_ignored(True) is False
@@ -67,13 +63,8 @@ def test_disable_is_inline_ignored():
 )
 def test_violation_is_in_diff(violation_file, violation_line, diff, expected):
     """Verify that we find violations within a diff."""
-    violation = style_guide.Violation(
-        "E001",
-        violation_file,
-        violation_line,
-        1,
-        "warning",
-        "line",
+    violation = Violation(
+        "E001", violation_file, violation_line, 1, "warning", "line"
     )
 
     assert violation.is_in(diff) is expected

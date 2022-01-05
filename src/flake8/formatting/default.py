@@ -1,12 +1,9 @@
 """Default formatting class for Flake8."""
 from typing import Optional
 from typing import Set
-from typing import TYPE_CHECKING
 
 from flake8.formatting import base
-
-if TYPE_CHECKING:
-    from flake8.style_guide import Violation
+from flake8.violation import Violation
 
 COLORS = {
     "bold": "\033[1m",

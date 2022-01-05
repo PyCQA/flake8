@@ -554,7 +554,7 @@ class FileChecker:
             self.run_logical_checks()
 
     def check_physical_eol(
-        self, token: processor._Token, prev_physical: str
+        self, token: tokenize.TokenInfo, prev_physical: str
     ) -> None:
         """Run physical checks if and only if it is at the end of the line."""
         assert self.processor is not None

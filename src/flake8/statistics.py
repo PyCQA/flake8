@@ -20,8 +20,6 @@ class Statistics:
 
         :returns:
             Sorted list of error codes.
-        :rtype:
-            list(str)
         """
         return sorted({key.code for key in self._store})
 
@@ -31,8 +29,6 @@ class Statistics:
         :param error:
             The Violation instance containing the information about the
             violation.
-        :type error:
-            flake8.violation.Violation
         """
         key = Key.create_from(error)
         if key not in self._store:
@@ -57,9 +53,9 @@ class Statistics:
             >>> stats.statistics_for('W')
             <generator ...>
 
-        :param str prefix:
+        :param prefix:
             The error class or specific error code to find statistics for.
-        :param str filename:
+        :param filename:
             (Optional) The filename to further filter results by.
         :returns:
             Generator of instances of :class:`Statistic`
@@ -90,16 +86,14 @@ class Key(NamedTuple):
     def matches(self, prefix: str, filename: Optional[str]) -> bool:
         """Determine if this key matches some constraints.
 
-        :param str prefix:
+        :param prefix:
             The error code prefix that this key's error code should start with.
-        :param str filename:
+        :param filename:
             The filename that we potentially want to match on. This can be
             None to only match on error prefix.
         :returns:
             True if the Key's code starts with the prefix and either filename
             is None, or the Key's filename matches the value passed in.
-        :rtype:
-            bool
         """
         return self.code.startswith(prefix) and (
             filename is None or self.filename == filename

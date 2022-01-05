@@ -35,13 +35,7 @@ class Application:
     """Abstract our application into a class."""
 
     def __init__(self) -> None:
-        """Initialize our application.
-
-        :param str program:
-            The name of the program/application that we're executing.
-        :param str version:
-            The version of the program/application we're executing.
-        """
+        """Initialize our application."""
         #: The timestamp when the Application instance was instantiated.
         self.start_time = time.time()
         #: The timestamp when the Application finished reported errors.
@@ -91,12 +85,10 @@ class Application:
         options; we ignore those for now, they'll be parsed later when we do
         real option parsing.
 
-        :param list argv:
+        :param argv:
             Command-line arguments passed in directly.
         :returns:
             Populated namespace and list of remaining argument strings.
-        :rtype:
-            (argparse.Namespace, list)
         """
         args, rest = self.prelim_arg_parser.parse_known_args(argv)
         # XXX (ericvw): Special case "forwarding" the output file option so

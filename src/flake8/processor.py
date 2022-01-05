@@ -67,8 +67,7 @@ class FileProcessor:
     ) -> None:
         """Initialice our file processor.
 
-        :param str filename:
-            Name of the file to process
+        :param filename: Name of the file to process
         """
         self.options = options
         self.filename = filename
@@ -355,8 +354,6 @@ class FileProcessor:
         :returns:
             True if a line matches :attr:`defaults.NOQA_FILE`,
             otherwise False
-        :rtype:
-            bool
         """
         if not self.options.disable_noqa and any(
             defaults.NOQA_FILE.match(line) for line in self.lines

@@ -89,8 +89,7 @@ class DecisionEngine:
     def was_selected(self, code: str) -> Union[Selected, Ignored]:
         """Determine if the code has been selected by the user.
 
-        :param str code:
-            The code for the check that has been run.
+        :param code: The code for the check that has been run.
         :returns:
             Selected.Implicitly if the selected list is empty,
             Selected.Explicitly if the selected list is not empty and a match
@@ -112,7 +111,7 @@ class DecisionEngine:
     def was_ignored(self, code: str) -> Union[Selected, Ignored]:
         """Determine if the code has been ignored by the user.
 
-        :param str code:
+        :param code:
             The code for the check that has been run.
         :returns:
             Selected.Implicitly if the ignored list is empty,
@@ -211,8 +210,7 @@ class DecisionEngine:
         This method does not look at whether the specific line is being
         ignored in the file itself.
 
-        :param str code:
-            The code for the check that has been run.
+        :param code: The code for the check that has been run.
         """
         decision = self.cache.get(code)
         if decision is None:
@@ -257,12 +255,8 @@ class StyleGuideManager:
 
         :param options:
             The original options parsed from the CLI and config file.
-        :type options:
-            :class:`~argparse.Namespace`
         :returns:
             A copy of the default style guide with overridden values.
-        :rtype:
-            :class:`~flake8.style_guide.StyleGuide`
         """
         per_file = utils.parse_files_to_codes_mapping(options.per_file_ignores)
         for filename, violations in per_file:
@@ -301,25 +295,23 @@ class StyleGuideManager:
     ) -> int:
         """Handle an error reported by a check.
 
-        :param str code:
+        :param code:
             The error code found, e.g., E123.
-        :param str filename:
+        :param filename:
             The file in which the error was found.
-        :param int line_number:
+        :param line_number:
             The line number (where counting starts at 1) at which the error
             occurs.
-        :param int column_number:
+        :param column_number:
             The column number (where counting starts at 1) at which the error
             occurs.
-        :param str text:
+        :param text:
             The text of the error message.
-        :param str physical_line:
+        :param physical_line:
             The actual physical line causing the error.
         :returns:
             1 if the error was reported. 0 if it was ignored. This is to allow
             for counting of the number of errors found that were not ignored.
-        :rtype:
-            int
         """
         guide = self.style_guide_for(filename)
         return guide.handle_error(
@@ -332,7 +324,7 @@ class StyleGuideManager:
         This provides information to the underlying StyleGuides so that only
         the errors in the line number ranges are reported.
 
-        :param dict diffinfo:
+        :param diffinfo:
             Dictionary mapping filenames to sets of line number ranges.
         """
         for guide in self.style_guides:
@@ -392,13 +384,11 @@ class StyleGuide:
     def applies_to(self, filename: str) -> bool:
         """Check if this StyleGuide applies to the file.
 
-        :param str filename:
+        :param filename:
             The name of the file with violations that we're potentially
             applying this StyleGuide to.
         :returns:
             True if this applies, False otherwise
-        :rtype:
-            bool
         """
         if self.filename is None:
             return True
@@ -418,7 +408,7 @@ class StyleGuide:
         This method does not look at whether the specific line is being
         ignored in the file itself.
 
-        :param str code:
+        :param code:
             The code for the check that has been run.
         """
         return self.decider.decision_for(code)
@@ -434,25 +424,23 @@ class StyleGuide:
     ) -> int:
         """Handle an error reported by a check.
 
-        :param str code:
+        :param code:
             The error code found, e.g., E123.
-        :param str filename:
+        :param filename:
             The file in which the error was found.
-        :param int line_number:
+        :param line_number:
             The line number (where counting starts at 1) at which the error
             occurs.
-        :param int column_number:
+        :param column_number:
             The column number (where counting starts at 1) at which the error
             occurs.
-        :param str text:
+        :param text:
             The text of the error message.
-        :param str physical_line:
+        :param physical_line:
             The actual physical line causing the error.
         :returns:
             1 if the error was reported. 0 if it was ignored. This is to allow
             for counting of the number of errors found that were not ignored.
-        :rtype:
-            int
         """
         disable_noqa = self.options.disable_noqa
         # NOTE(sigmavirus24): Apparently we're provided with 0-indexed column
@@ -485,7 +473,7 @@ class StyleGuide:
         This provides information to the StyleGuide so that only the errors
         in the line number ranges are reported.
 
-        :param dict diffinfo:
+        :param diffinfo:
             Dictionary mapping filenames to sets of line number ranges.
         """
         self._parsed_diff = diffinfo

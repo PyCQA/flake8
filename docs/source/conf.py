@@ -19,7 +19,7 @@ import flake8
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-needs_sphinx = "1.3"
+needs_sphinx = "2.1"
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -306,3 +306,5 @@ extlinks = {
     "issue": ("https://github.com/pycqa/flake8/issues/%s", "#"),
     "pull": ("https://github.com/pycqa/flake8/pull/%s", "#"),
 }
+
+autodoc_typehints = "description"

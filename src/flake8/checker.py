@@ -182,8 +182,6 @@ class Manager:
 
         :returns:
             A tuple of the total results found and the results reported.
-        :rtype:
-            tuple(int, int)
         """
         results_reported = results_found = 0
         for checker in self._all_checkers:
@@ -260,7 +258,7 @@ class Manager:
     def start(self, paths: Optional[List[str]] = None) -> None:
         """Start checking files.
 
-        :param list paths:
+        :param paths:
             Path names to check. This is passed directly to
             :meth:`~Manager.make_checkers`.
         """

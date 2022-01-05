@@ -43,8 +43,6 @@ class BaseFormatter:
         :param options:
             User specified configuration parsed from both configuration files
             and the command-line interface.
-        :type options:
-            :class:`argparse.Namespace`
         """
         self.options = options
         self.filename = options.output_file
@@ -63,7 +61,7 @@ class BaseFormatter:
     def beginning(self, filename: str) -> None:
         """Notify the formatter that we're starting to process a file.
 
-        :param str filename:
+        :param filename:
             The name of the file that Flake8 is beginning to report results
             from.
         """
@@ -71,7 +69,7 @@ class BaseFormatter:
     def finished(self, filename: str) -> None:
         """Notify the formatter that we've finished processing a file.
 
-        :param str filename:
+        :param filename:
             The name of the file that Flake8 has finished reporting results
             from.
         """
@@ -96,8 +94,6 @@ class BaseFormatter:
         :param error:
             This will be an instance of
             :class:`~flake8.violation.Violation`.
-        :type error:
-            flake8.violation.Violation
         """
         line = self.format(error)
         source = self.show_source(error)
@@ -111,12 +107,8 @@ class BaseFormatter:
         :param error:
             This will be an instance of
             :class:`~flake8.violation.Violation`.
-        :type error:
-            flake8.violation.Violation
         :returns:
             The formatted error string.
-        :rtype:
-            str
         """
         raise NotImplementedError(
             "Subclass of BaseFormatter did not implement" " format."
@@ -161,14 +153,10 @@ class BaseFormatter:
         :param error:
             This will be an instance of
             :class:`~flake8.violation.Violation`.
-        :type error:
-            flake8.violation.Violation
         :returns:
             The formatted error string if the user wants to show the source.
             If the user does not want to show the source, this will return
             ``None``.
-        :rtype:
-            str
         """
         if not self.options.show_source or error.physical_line is None:
             return ""
@@ -197,9 +185,9 @@ class BaseFormatter:
         out for subclasses. Override this if you want behaviour that differs
         from the default.
 
-        :param str line:
+        :param line:
             The formatted string to print or write.
-        :param str source:
+        :param source:
             The source code that has been formatted and associated with the
             line of output.
         """

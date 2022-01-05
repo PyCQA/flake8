@@ -34,7 +34,7 @@ def test_handle_error_does_not_raise_type_errors():
     )
 
     assert 1 == guide.handle_error(
-        "T111", "file.py", 1, None, "error found", "a = 1"
+        "T111", "file.py", 1, 1, "error found", "a = 1"
     )
 
 

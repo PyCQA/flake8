@@ -1,8 +1,8 @@
 """Statistic collection logic for Flake8."""
-import collections
 from typing import Dict
 from typing import Generator
 from typing import List
+from typing import NamedTuple
 from typing import Optional
 from typing import TYPE_CHECKING
 
@@ -73,7 +73,7 @@ class Statistics:
             yield self._store[error_code]
 
 
-class Key(collections.namedtuple("Key", ["filename", "code"])):
+class Key(NamedTuple):
     """Simple key structure for the Statistics dictionary.
 
     To make things clearer, easier to read, and more understandable, we use a
@@ -81,7 +81,8 @@ class Key(collections.namedtuple("Key", ["filename", "code"])):
     Statistics object.
     """
 
-    __slots__ = ()
+    filename: str
+    code: str
 
     @classmethod
     def create_from(cls, error: "Violation") -> "Key":
@@ -111,7 +112,7 @@ class Statistic:
     """Simple wrapper around the logic of each statistic.
 
     Instead of maintaining a simple but potentially hard to reason about
-    tuple, we create a namedtuple which has attributes and a couple
+    tuple, we create a class which has attributes and a couple
     convenience methods on it.
     """
 

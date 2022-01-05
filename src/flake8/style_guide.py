@@ -1,6 +1,5 @@
 """Implementation of the StyleGuide used by Flake8."""
 import argparse
-import collections
 import contextlib
 import copy
 import enum
@@ -12,6 +11,7 @@ from typing import Dict
 from typing import Generator
 from typing import List
 from typing import Match
+from typing import NamedTuple
 from typing import Optional
 from typing import Sequence
 from typing import Set
@@ -54,20 +54,15 @@ def find_noqa(physical_line: str) -> Optional[Match[str]]:
     return defaults.NOQA_INLINE_REGEXP.search(physical_line)
 
 
-class Violation(
-    collections.namedtuple(
-        "Violation",
-        [
-            "code",
-            "filename",
-            "line_number",
-            "column_number",
-            "text",
-            "physical_line",
-        ],
-    )
-):
+class Violation(NamedTuple):
     """Class representing a violation reported by Flake8."""
+
+    code: str
+    filename: str
+    line_number: int
+    column_number: int
+    text: str
+    physical_line: Optional[str]
 
     def is_inline_ignored(self, disable_noqa: bool) -> bool:
         """Determine if a comment has been added to ignore this line.
@@ -394,7 +389,7 @@ class StyleGuideManager:
         code: str,
         filename: str,
         line_number: int,
-        column_number: Optional[int],
+        column_number: int,
         text: str,
         physical_line: Optional[str] = None,
     ) -> int:
@@ -527,7 +522,7 @@ class StyleGuide:
         code: str,
         filename: str,
         line_number: int,
-        column_number: Optional[int],
+        column_number: int,
         text: str,
         physical_line: Optional[str] = None,
     ) -> int:

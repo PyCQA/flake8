@@ -6,6 +6,7 @@ In 3.0 we no longer have an "engine" module but we maintain the API from it.
 import argparse
 import logging
 import os.path
+from typing import List
 
 import flake8
 from flake8.formatting import base as formatter
@@ -183,21 +184,22 @@ class Report:
     .. versionchanged:: 3.0.0
     """
 
-    def __init__(self, application):
+    def __init__(self, application: app.Application) -> None:
         """Initialize the Report for the user.
 
         .. warning:: This should not be instantiated by users.
         """
+        assert application.guide is not None
         self._application = application
         self._style_guide = application.guide
         self._stats = self._style_guide.stats
 
     @property
-    def total_errors(self):
+    def total_errors(self) -> int:
         """Return the total number of errors."""
         return self._application.result_count
 
-    def get_statistics(self, violation):
+    def get_statistics(self, violation: str) -> List[str]:
         """Get the list of occurrences of a violation.
 
         :returns:

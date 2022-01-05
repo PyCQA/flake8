@@ -132,6 +132,7 @@ def test_invalid_file_list(value):
     "value,expected",
     [
         ("flake8", "flake8"),
+        (".", os.path.abspath(".")),
         ("../flake8", os.path.abspath("../flake8")),
         ("flake8/", os.path.abspath("flake8")),
     ],

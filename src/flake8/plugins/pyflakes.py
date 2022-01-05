@@ -2,6 +2,7 @@
 import argparse
 import ast
 import os
+import tokenize
 from typing import Any
 from typing import Generator
 from typing import List
@@ -12,7 +13,6 @@ import pyflakes.checker
 
 from flake8 import utils
 from flake8.options.manager import OptionManager
-from flake8.processor import _Token
 
 FLAKE8_PYFLAKES_CODES = {
     "UnusedImport": "F401",
@@ -74,7 +74,10 @@ class FlakesChecker(pyflakes.checker.Checker):
     exclude_from_doctest: List[str] = []
 
     def __init__(
-        self, tree: ast.AST, file_tokens: List[_Token], filename: str
+        self,
+        tree: ast.AST,
+        file_tokens: List[tokenize.TokenInfo],
+        filename: str,
     ) -> None:
         """Initialize the PyFlakes plugin with an AST tree and filename."""
         filename = utils.normalize_path(filename)

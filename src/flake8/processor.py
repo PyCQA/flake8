@@ -23,7 +23,6 @@ SKIP_TOKENS = frozenset(
     [tokenize.NL, tokenize.NEWLINE, tokenize.INDENT, tokenize.DEDENT]
 )
 
-_Token = Tuple[int, str, Tuple[int, int], Tuple[int, int], str]
 _LogicalMapping = List[Tuple[int, Tuple[int, int]]]
 _Logical = Tuple[List[str], List[str], _LogicalMapping]
 
@@ -108,19 +107,19 @@ class FileProcessor:
         #: Previous unindented (i.e. top-level) logical line
         self.previous_unindented_logical_line = ""
         #: Current set of tokens
-        self.tokens: List[_Token] = []
+        self.tokens: List[tokenize.TokenInfo] = []
         #: Total number of lines in the file
         self.total_lines = len(self.lines)
         #: Verbosity level of Flake8
         self.verbose = options.verbose
         #: Statistics dictionary
         self.statistics = {"logical lines": 0}
-        self._file_tokens: Optional[List[_Token]] = None
+        self._file_tokens: Optional[List[tokenize.TokenInfo]] = None
         # map from line number to the line we'll search for `noqa` in
         self._noqa_line_mapping: Optional[Dict[int, str]] = None
 
     @property
-    def file_tokens(self) -> List[_Token]:
+    def file_tokens(self) -> List[tokenize.TokenInfo]:
         """Return the complete set of tokens for a file."""
         if self._file_tokens is None:
             line_iter = iter(self.lines)
@@ -227,7 +226,9 @@ class FileProcessor:
         self.statistics["logical lines"] += 1
         return joined_comments, self.logical_line, mapping_list
 
-    def split_line(self, token: _Token) -> Generator[str, None, None]:
+    def split_line(
+        self, token: tokenize.TokenInfo
+    ) -> Generator[str, None, None]:
         """Split a physical line's line based on new-lines.
 
         This also auto-increments the line number for the caller.
@@ -261,7 +262,7 @@ class FileProcessor:
                     )
         return arguments
 
-    def generate_tokens(self) -> Generator[_Token, None, None]:
+    def generate_tokens(self) -> Generator[tokenize.TokenInfo, None, None]:
         """Tokenize the file and yield the tokens."""
         for token in tokenize.generate_tokens(self.next_line):
             if token[2][0] > self.total_lines:
@@ -385,17 +386,17 @@ class FileProcessor:
             self.lines[0] = self.lines[0][3:]
 
 
-def is_eol_token(token: _Token) -> bool:
+def is_eol_token(token: tokenize.TokenInfo) -> bool:
     """Check if the token is an end-of-line token."""
     return token[0] in NEWLINE or token[4][token[3][1] :].lstrip() == "\\\n"
 
 
-def is_multiline_string(token: _Token) -> bool:
+def is_multiline_string(token: tokenize.TokenInfo) -> bool:
     """Check if this is a multiline string."""
     return token[0] == tokenize.STRING and "\n" in token[1]
 
 
-def token_is_newline(token: _Token) -> bool:
+def token_is_newline(token: tokenize.TokenInfo) -> bool:
     """Check if the token type is a newline token type."""
     return token[0] in NEWLINE
 
@@ -409,7 +410,7 @@ def count_parentheses(current_parentheses_count: int, token_text: str) -> int:
     return current_parentheses_count
 
 
-def log_token(log: logging.Logger, token: _Token) -> None:
+def log_token(log: logging.Logger, token: tokenize.TokenInfo) -> None:
     """Log a token to a provided logging object."""
     if token[2][0] == token[3][0]:
         pos = "[{}:{}]".format(token[2][1] or "", token[3][1])

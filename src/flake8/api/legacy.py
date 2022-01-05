@@ -19,43 +19,50 @@ LOG = logging.getLogger(__name__)
 __all__ = ("get_style_guide",)
 
 
-def get_style_guide(**kwargs):
-    r"""Provision a StyleGuide for use.
+class Report:
+    """Public facing object that mimic's Flake8 2.0's API.
 
-    :param \*\*kwargs:
-        Keyword arguments that provide some options for the StyleGuide.
-    :returns:
-        An initialized StyleGuide
-    :rtype:
-        :class:`StyleGuide`
+    .. note::
+
+        There are important changes in how this object behaves compared to
+        the object provided in Flake8 2.x.
+
+    .. warning::
+
+        This should not be instantiated by users.
+
+    .. versionchanged:: 3.0.0
     """
-    application = app.Application()
-    prelim_opts, remaining_args = application.parse_preliminary_options([])
-    flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
 
-    cfg, cfg_dir = config.load_config(
-        config=prelim_opts.config,
-        extra=prelim_opts.append_config,
-        isolated=prelim_opts.isolated,
-    )
+    def __init__(self, application: app.Application) -> None:
+        """Initialize the Report for the user.
 
-    application.find_plugins(cfg, cfg_dir, prelim_opts.enable_extensions)
-    application.register_plugin_options()
-    application.parse_configuration_and_cli(cfg, cfg_dir, remaining_args)
-    # We basically want application.initialize to be called but with these
-    # options set instead before we make our formatter, notifier, internal
-    # style guide and file checker manager.
-    options = application.options
-    for key, value in kwargs.items():
-        try:
-            getattr(options, key)
-            setattr(options, key, value)
-        except AttributeError:
-            LOG.error('Could not update option "%s"', key)
-    application.make_formatter()
-    application.make_guide()
-    application.make_file_checker_manager()
-    return StyleGuide(application)
+        .. warning:: This should not be instantiated by users.
+        """
+        assert application.guide is not None
+        self._application = application
+        self._style_guide = application.guide
+        self._stats = self._style_guide.stats
+
+    @property
+    def total_errors(self) -> int:
+        """Return the total number of errors."""
+        return self._application.result_count
+
+    def get_statistics(self, violation: str) -> List[str]:
+        """Get the list of occurrences of a violation.
+
+        :returns:
+            List of occurrences of a violation formatted as:
+            {Count} {Error Code} {Message}, e.g.,
+            ``8 E531 Some error message about the error``
+        :rtype:
+            list
+        """
+        return [
+            f"{s.count} {s.error_code} {s.message}"
+            for s in self._stats.statistics_for(violation)
+        ]
 
 
 class StyleGuide:
@@ -169,47 +176,40 @@ class StyleGuide:
         return self.check_files([filename])
 
 
-class Report:
-    """Public facing object that mimic's Flake8 2.0's API.
+def get_style_guide(**kwargs):
+    r"""Provision a StyleGuide for use.
 
-    .. note::
-
-        There are important changes in how this object behaves compared to
-        the object provided in Flake8 2.x.
-
-    .. warning::
-
-        This should not be instantiated by users.
-
-    .. versionchanged:: 3.0.0
+    :param \*\*kwargs:
+        Keyword arguments that provide some options for the StyleGuide.
+    :returns:
+        An initialized StyleGuide
+    :rtype:
+        :class:`StyleGuide`
     """
+    application = app.Application()
+    prelim_opts, remaining_args = application.parse_preliminary_options([])
+    flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
 
-    def __init__(self, application: app.Application) -> None:
-        """Initialize the Report for the user.
+    cfg, cfg_dir = config.load_config(
+        config=prelim_opts.config,
+        extra=prelim_opts.append_config,
+        isolated=prelim_opts.isolated,
+    )
 
-        .. warning:: This should not be instantiated by users.
-        """
-        assert application.guide is not None
-        self._application = application
-        self._style_guide = application.guide
-        self._stats = self._style_guide.stats
-
-    @property
-    def total_errors(self) -> int:
-        """Return the total number of errors."""
-        return self._application.result_count
-
-    def get_statistics(self, violation: str) -> List[str]:
-        """Get the list of occurrences of a violation.
-
-        :returns:
-            List of occurrences of a violation formatted as:
-            {Count} {Error Code} {Message}, e.g.,
-            ``8 E531 Some error message about the error``
-        :rtype:
-            list
-        """
-        return [
-            f"{s.count} {s.error_code} {s.message}"
-            for s in self._stats.statistics_for(violation)
-        ]
+    application.find_plugins(cfg, cfg_dir, prelim_opts.enable_extensions)
+    application.register_plugin_options()
+    application.parse_configuration_and_cli(cfg, cfg_dir, remaining_args)
+    # We basically want application.initialize to be called but with these
+    # options set instead before we make our formatter, notifier, internal
+    # style guide and file checker manager.
+    options = application.options
+    for key, value in kwargs.items():
+        try:
+            getattr(options, key)
+            setattr(options, key, value)
+        except AttributeError:
+            LOG.error('Could not update option "%s"', key)
+    application.make_formatter()
+    application.make_guide()
+    application.make_file_checker_manager()
+    return StyleGuide(application)

@@ -37,12 +37,8 @@ def parse_comma_separated_list(
     :param regexp:
         Compiled regular expression used to split the value when it is a
         string.
-    :type regexp:
-        _sre.SRE_Pattern
     :returns:
         List of values with whitespace stripped.
-    :rtype:
-        list
     """
     assert isinstance(value, str), value
 
@@ -94,7 +90,6 @@ def parse_files_to_codes_mapping(  # noqa: C901
     either comma or whitespace tokens.
 
     :param value: String to be parsed and normalized.
-    :type value: str
     """
     if not isinstance(value_, str):
         value = "\n".join(value_)
@@ -166,8 +161,6 @@ def normalize_paths(
 
     :returns:
         The normalized paths.
-    :rtype:
-        [str]
     """
     assert isinstance(paths, list), paths
     return [normalize_path(p, parent) for p in paths]
@@ -178,8 +171,6 @@ def normalize_path(path: str, parent: str = os.curdir) -> str:
 
     :returns:
         The normalized path.
-    :rtype:
-        str
     """
     # NOTE(sigmavirus24): Using os.path.sep and os.path.altsep allow for
     # Windows compatibility with both Windows-style paths (c:\foo\bar) and
@@ -219,8 +210,6 @@ def parse_unified_diff(diff: Optional[str] = None) -> Dict[str, Set[int]]:
 
     :returns:
         dictionary mapping file names to sets of line numbers
-    :rtype:
-        dict
     """
     # Allow us to not have to patch out stdin_get_value
     if diff is None:
@@ -284,12 +273,10 @@ def parse_unified_diff(diff: Optional[str] = None) -> Dict[str, Set[int]]:
 def is_using_stdin(paths: List[str]) -> bool:
     """Determine if we're going to read from stdin.
 
-    :param list paths:
+    :param paths:
         The paths that we're going to check.
     :returns:
         True if stdin (-) is in the path, otherwise False
-    :rtype:
-        bool
     """
     return "-" in paths
 
@@ -297,11 +284,11 @@ def is_using_stdin(paths: List[str]) -> bool:
 def fnmatch(filename: str, patterns: Sequence[str]) -> bool:
     """Wrap :func:`fnmatch.fnmatch` to add some functionality.
 
-    :param str filename:
+    :param filename:
         Name of the file we're trying to match.
-    :param list patterns:
+    :param patterns:
         Patterns we're using to try to match the filename.
-    :param bool default:
+    :param default:
         The default value if patterns is empty
     :returns:
         True if a pattern matches the filename, False if it doesn't.
@@ -320,18 +307,14 @@ def matches_filename(
 ) -> bool:
     """Use fnmatch to discern if a path exists in patterns.
 
-    :param str path:
+    :param path:
         The path to the file under question
     :param patterns:
         The patterns to match the path against.
-    :type patterns:
-        list[str]
-    :param str log_message:
+    :param log_message:
         The message used for logging purposes.
     :returns:
         True if path matches patterns, False otherwise
-    :rtype:
-        bool
     """
     if not patterns:
         return False
@@ -354,8 +337,6 @@ def get_python_version() -> str:
 
     :returns:
         Implementation name, version, and platform as a string.
-    :rtype:
-        str
     """
     return "{} {} on {}".format(
         platform.python_implementation(),

@@ -12,7 +12,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     This handles the creation of an instance of :class:`Application`, runs it,
     and then exits the application.
 
-    :param list argv:
+    :param argv:
         The arguments to be passed to the application for parsing.
     """
     if argv is None:

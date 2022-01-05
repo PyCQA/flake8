@@ -17,9 +17,9 @@ def _filenames_from(
 ) -> Generator[str, None, None]:
     """Generate filenames from an argument.
 
-    :param str arg:
+    :param arg:
         Parameter from the command-line.
-    :param callable predicate:
+    :param predicate:
         Predicate to use to filter out filenames. If the predicate
         returns ``True`` we will exclude the filename, otherwise we
         will yield it. By default, we include every filename

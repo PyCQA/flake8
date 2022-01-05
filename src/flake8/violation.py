@@ -33,12 +33,10 @@ class Violation(NamedTuple):
     def is_inline_ignored(self, disable_noqa: bool) -> bool:
         """Determine if a comment has been added to ignore this line.
 
-        :param bool disable_noqa:
+        :param disable_noqa:
             Whether or not users have provided ``--disable-noqa``.
         :returns:
             True if error is ignored in-line, False otherwise.
-        :rtype:
-            bool
         """
         physical_line = self.physical_line
         # TODO(sigmavirus24): Determine how to handle stdin with linecache
@@ -88,8 +86,6 @@ class Violation(NamedTuple):
             True if there is no diff or if the error is in the diff's line
             number ranges. False if the error's line number falls outside
             the diff's line number ranges.
-        :rtype:
-            bool
         """
         if not diff:
             return True

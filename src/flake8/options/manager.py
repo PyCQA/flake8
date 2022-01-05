@@ -125,10 +125,10 @@ class Option:
 
         The following are all passed directly through to argparse.
 
-        :param str short_option_name:
+        :param short_option_name:
             The short name of the option (e.g., ``-x``). This will be the
             first argument passed to ``ArgumentParser.add_argument``
-        :param str long_option_name:
+        :param long_option_name:
             The long name of the option (e.g., ``--xtra-long-option``). This
             will be the second argument passed to
             ``ArgumentParser.add_argument``
@@ -141,13 +141,13 @@ class Option:
         :param const:
             Constant value to store on a common destination. Usually used in
             conjunction with ``action="store_const"``.
-        :param iterable choices:
+        :param choices:
             Possible values for the option.
-        :param str help:
+        :param help:
             Help text displayed in the usage information.
-        :param str metavar:
+        :param metavar:
             Name to use instead of the long option name for help text.
-        :param bool required:
+        :param required:
             Whether this option is required or not.
 
         The following options may be passed directly through to :mod:`argparse`
@@ -157,28 +157,28 @@ class Option:
             A callable to normalize the type (as is the case in
             :mod:`argparse`).  Deprecated: you can also pass through type
             strings such as ``'int'`` which are handled by :mod:`optparse`.
-        :param str action:
+        :param action:
             Any action allowed by :mod:`argparse`.  Deprecated: this also
             understands the ``action='callback'`` action from :mod:`optparse`.
-        :param callable callback:
+        :param callback:
             Callback used if the action is ``"callback"``.  Deprecated: please
             use ``action=`` instead.
-        :param iterable callback_args:
+        :param callback_args:
             Additional positional arguments to the callback callable.
             Deprecated: please use ``action=`` instead (probably with
             ``functools.partial``).
-        :param dictionary callback_kwargs:
+        :param callback_kwargs:
             Keyword arguments to the callback callable. Deprecated: please
             use ``action=`` instead (probably with ``functools.partial``).
 
         The following parameters are for Flake8's option handling alone.
 
-        :param bool parse_from_config:
+        :param parse_from_config:
             Whether or not this option should be parsed out of config files.
-        :param bool comma_separated_list:
+        :param comma_separated_list:
             Whether the option is a comma separated list when parsing from a
             config file.
-        :param bool normalize_paths:
+        :param normalize_paths:
             Whether the option is expecting a path or list of paths and should
             attempt to normalize the paths to absolute paths.
         """
@@ -325,13 +325,13 @@ class OptionManager:
     ) -> None:
         """Initialize an instance of an OptionManager.
 
-        :param str prog:
+        :param prog:
             Name of the actual program (e.g., flake8).
-        :param str version:
+        :param version:
             Version string for the program.
-        :param str usage:
+        :param usage:
             Basic usage string used by the OptionParser.
-        :param argparse.ArgumentParser parents:
+        :param parents:
             A list of ArgumentParser objects whose arguments should also be
             included.
         """
@@ -410,7 +410,7 @@ class OptionManager:
     def remove_from_default_ignore(self, error_codes: Sequence[str]) -> None:
         """Remove specified error codes from the default ignore list.
 
-        :param list error_codes:
+        :param error_codes:
             List of strings that are the error/warning codes to attempt to
             remove from the extended default ignore list.
         """
@@ -428,7 +428,7 @@ class OptionManager:
     def extend_default_ignore(self, error_codes: Sequence[str]) -> None:
         """Extend the default ignore list with the error codes provided.
 
-        :param list error_codes:
+        :param error_codes:
             List of strings that are the error/warning codes with which to
             extend the default ignore list.
         """
@@ -438,7 +438,7 @@ class OptionManager:
     def extend_default_select(self, error_codes: Sequence[str]) -> None:
         """Extend the default select list with the error codes provided.
 
-        :param list error_codes:
+        :param error_codes:
             List of strings that are the error/warning codes with which
             to extend the default select list.
         """

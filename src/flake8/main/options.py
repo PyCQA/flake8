@@ -77,8 +77,7 @@ class JobsArgument:
     def __init__(self, arg: str) -> None:
         """Parse and validate the --jobs argument.
 
-        :param str arg:
-            The argument passed by argparse for validation
+        :param arg: The argument passed by argparse for validation
         """
         self.is_auto = False
         self.n_jobs = -1

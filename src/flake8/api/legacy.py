@@ -60,8 +60,6 @@ class Report:
             List of occurrences of a violation formatted as:
             {Count} {Error Code} {Message}, e.g.,
             ``8 E531 Some error message about the error``
-        :rtype:
-            list
         """
         return [
             f"{s.count} {s.error_code} {s.message}"
@@ -110,12 +108,10 @@ class StyleGuide:
         This will check the files passed in and return a :class:`Report`
         instance.
 
-        :param list paths:
+        :param paths:
             List of filenames (or paths) to check.
         :returns:
             Object that mimic's Flake8 2.0's Reporter class.
-        :rtype:
-            flake8.api.legacy.Report
         """
         assert self._application.options is not None
         self._application.options.filenames = paths
@@ -126,14 +122,12 @@ class StyleGuide:
     def excluded(self, filename: str, parent: Optional[str] = None) -> bool:
         """Determine if a file is excluded.
 
-        :param str filename:
+        :param filename:
             Path to the file to check if it is excluded.
-        :param str parent:
+        :param parent:
             Name of the parent directory containing the file.
         :returns:
             True if the filename is excluded, False otherwise.
-        :rtype:
-            bool
         """
 
         def excluded(path: str) -> bool:
@@ -186,18 +180,16 @@ class StyleGuide:
         This will check the file passed in and return a :class:`Report`
         instance.
 
-        :param str filename:
+        :param filename:
             The path to the file to check.
-        :param list lines:
+        :param lines:
             Ignored since Flake8 3.0.
         :param expected:
             Ignored since Flake8 3.0.
-        :param int line_offset:
+        :param line_offset:
             Ignored since Flake8 3.0.
         :returns:
             Object that mimic's Flake8 2.0's Reporter class.
-        :rtype:
-            flake8.api.legacy.Report
         """
         return self.check_files([filename])
 
@@ -209,8 +201,6 @@ def get_style_guide(**kwargs: Any) -> StyleGuide:
         Keyword arguments that provide some options for the StyleGuide.
     :returns:
         An initialized StyleGuide
-    :rtype:
-        :class:`StyleGuide`
     """
     application = app.Application()
     prelim_opts, remaining_args = application.parse_preliminary_options([])

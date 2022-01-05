@@ -34,23 +34,21 @@ accepts as well as what it returns.
 .. code-block:: python
 
     # src/flake8/main/git.py
-    def hook(lazy=False, strict=False):
+    def hook(lazy: bool = False, strict: bool = False) -> int:
         """Execute Flake8 on the files in git's index.
 
         Determine which files are about to be committed and run Flake8 over them
         to check for violations.
 
-        :param bool lazy:
+        :param lazy:
             Find files not added to the index prior to committing. This is useful
             if you frequently use ``git commit -a`` for example. This defaults to
             False since it will otherwise include files not in the index.
-        :param bool strict:
+        :param strict:
             If True, return the total number of errors/violations found by Flake8.
             This will cause the hook to fail.
         :returns:
             Total number of errors found during the run.
-        :rtype:
-            int
         """
         # NOTE(sigmavirus24): Delay import of application until we need it.
         from flake8.main import application
@@ -66,38 +64,8 @@ accepts as well as what it returns.
             return app.result_count
         return 0
 
-Note that because the parameters ``hook`` and ``strict`` are simply boolean
-parameters, we inline the type declaration for those parameters, e.g.,
-
-.. code-block:: restructuredtext
-
-    :param bool lazy:
-
-Also note that we begin the description of the parameter on a new-line and
+Note that we begin the description of the parameter on a new-line and
 indented 4 spaces.
-
-On the other hand, we also separate the parameter type declaration in some
-places where the name is a little longer, e.g.,
-
-.. code-block:: python
-
-    # src/flake8/formatting/base.py
-    def format(self, error):
-        """Format an error reported by Flake8.
-
-        This method **must** be implemented by subclasses.
-
-        :param error:
-            This will be an instance of :class:`~flake8.style_guide.Error`.
-        :type error:
-            flake8.style_guide.Error
-        :returns:
-            The formatted error string.
-        :rtype:
-            str
-        """
-
-Here we've separated ``:param error:`` and ``:type error:``.
 
 Following the above examples and guidelines should help you write doc-strings
 that are stylistically correct for |Flake8|.

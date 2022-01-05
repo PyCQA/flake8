@@ -6,9 +6,13 @@ In 3.0 we no longer have an "engine" module but we maintain the API from it.
 import argparse
 import logging
 import os.path
+from typing import Any
 from typing import List
+from typing import Optional
+from typing import Type
 
 import flake8
+from flake8.discover_files import expand_paths
 from flake8.formatting import base as formatter
 from flake8.main import application as app
 from flake8.options import config
@@ -80,7 +84,7 @@ class StyleGuide:
     .. versionchanged:: 3.0.0
     """
 
-    def __init__(self, application):
+    def __init__(self, application: app.Application) -> None:
         """Initialize our StyleGuide."""
         self._application = application
         self._file_checker_manager = application.file_checker_manager
@@ -91,14 +95,16 @@ class StyleGuide:
 
         An instance of :class:`argparse.Namespace` containing parsed options.
         """
+        assert self._application.options is not None
         return self._application.options
 
     @property
-    def paths(self):
+    def paths(self) -> List[str]:
         """Return the extra arguments passed as paths."""
-        return self._application.paths
+        assert self._application.options is not None
+        return self._application.options.filenames
 
-    def check_files(self, paths=None):
+    def check_files(self, paths: Optional[List[str]] = None) -> Report:
         """Run collected checks on the files provided.
 
         This will check the files passed in and return a :class:`Report`
@@ -111,12 +117,13 @@ class StyleGuide:
         :rtype:
             flake8.api.legacy.Report
         """
+        assert self._application.options is not None
         self._application.options.filenames = paths
         self._application.run_checks()
         self._application.report_errors()
         return Report(self._application)
 
-    def excluded(self, filename, parent=None):
+    def excluded(self, filename: str, parent: Optional[str] = None) -> bool:
         """Determine if a file is excluded.
 
         :param str filename:
@@ -128,14 +135,27 @@ class StyleGuide:
         :rtype:
             bool
         """
-        return self._file_checker_manager.is_path_excluded(filename) or (
-            parent
-            and self._file_checker_manager.is_path_excluded(
-                os.path.join(parent, filename)
+
+        def excluded(path: str) -> bool:
+            paths = tuple(
+                expand_paths(
+                    paths=[path],
+                    stdin_display_name=self.options.stdin_display_name,
+                    filename_patterns=self.options.filename,
+                    exclude=self.options.exclude,
+                    is_running_from_diff=self.options.diff,
+                )
             )
+            return not paths
+
+        return excluded(filename) or (
+            parent is not None and excluded(os.path.join(parent, filename))
         )
 
-    def init_report(self, reporter=None):
+    def init_report(
+        self,
+        reporter: Optional[Type[formatter.BaseFormatter]] = None,
+    ) -> None:
         """Set up a formatter for this run of Flake8."""
         if reporter is None:
             return
@@ -154,7 +174,13 @@ class StyleGuide:
         self._application.file_checker_manager = None
         self._application.make_file_checker_manager()
 
-    def input_file(self, filename, lines=None, expected=None, line_offset=0):
+    def input_file(
+        self,
+        filename: str,
+        lines: Optional[Any] = None,
+        expected: Optional[Any] = None,
+        line_offset: Optional[Any] = 0,
+    ) -> Report:
         """Run collected checks on a single file.
 
         This will check the file passed in and return a :class:`Report`
@@ -176,7 +202,7 @@ class StyleGuide:
         return self.check_files([filename])
 
 
-def get_style_guide(**kwargs):
+def get_style_guide(**kwargs: Any) -> StyleGuide:
     r"""Provision a StyleGuide for use.
 
     :param \*\*kwargs:

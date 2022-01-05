@@ -12,6 +12,7 @@ import textwrap
 import tokenize
 from typing import Dict
 from typing import List
+from typing import NamedTuple
 from typing import Optional
 from typing import Pattern
 from typing import Sequence
@@ -50,7 +51,11 @@ def parse_comma_separated_list(
     return [item for item in item_gen if item]
 
 
-_Token = collections.namedtuple("_Token", ("tp", "src"))
+class _Token(NamedTuple):
+    tp: str
+    src: str
+
+
 _CODE, _FILE, _COLON, _COMMA, _WS = "code", "file", "colon", "comma", "ws"
 _EOF = "eof"
 _FILE_LIST_TOKEN_TYPES = [

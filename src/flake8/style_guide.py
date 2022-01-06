@@ -78,14 +78,6 @@ class DecisionEngine:
         ).union(options.extended_default_ignore)
         self.using_default_select = set(self.selected) == set(defaults.SELECT)
 
-    def _in_all_selected(self, code: str) -> bool:
-        return bool(self.all_selected) and code.startswith(self.all_selected)
-
-    def _in_extended_selected(self, code: str) -> bool:
-        return bool(self.extended_selected) and code.startswith(
-            self.extended_selected
-        )
-
     def was_selected(self, code: str) -> Union[Selected, Ignored]:
         """Determine if the code has been selected by the user.
 
@@ -97,10 +89,10 @@ class DecisionEngine:
             Ignored.Implicitly if the selected list is not empty but no match
             was found.
         """
-        if self._in_all_selected(code):
+        if code.startswith(self.all_selected):
             return Selected.Explicitly
 
-        if not self.all_selected and self._in_extended_selected(code):
+        if not self.all_selected and code.startswith(self.extended_selected):
             # If it was not explicitly selected, it may have been implicitly
             # selected because the check comes from a plugin that is enabled by
             # default
@@ -120,7 +112,7 @@ class DecisionEngine:
             Selected.Implicitly if the ignored list is not empty but no match
             was found.
         """
-        if self.ignored and code.startswith(self.ignored):
+        if code.startswith(self.ignored):
             return Ignored.Explicitly
 
         return Selected.Implicitly
@@ -444,8 +436,7 @@ class StyleGuide:
         """
         disable_noqa = self.options.disable_noqa
         # NOTE(sigmavirus24): Apparently we're provided with 0-indexed column
-        # numbers so we have to offset that here. Also, if a SyntaxError is
-        # caught, column_number may be None.
+        # numbers so we have to offset that here.
         if not column_number:
             column_number = 0
         error = Violation(
@@ -491,7 +482,6 @@ def find_first_match(
     startswith = error_code.startswith
     for code in code_list:
         if startswith(code):
-            break
+            return code
     else:
         return None
-    return code

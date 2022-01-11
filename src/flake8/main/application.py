@@ -119,8 +119,8 @@ class Application:
         """
         raw = finder.find_plugins(cfg)
         local_plugin_paths = finder.find_local_plugin_paths(cfg, cfg_dir)
-        enabled = finder.parse_enabled(cfg, enable_extensions)
-        self.plugins = finder.load_plugins(raw, local_plugin_paths, enabled)
+        opts = finder.parse_plugin_options(cfg, enable_extensions)
+        self.plugins = finder.load_plugins(raw, local_plugin_paths, opts)
 
     def register_plugin_options(self) -> None:
         """Register options provided by plugins to our option manager."""

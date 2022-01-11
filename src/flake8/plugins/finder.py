@@ -5,12 +5,12 @@ import logging
 import sys
 from typing import Any
 from typing import Dict
+from typing import FrozenSet
 from typing import Generator
 from typing import Iterable
 from typing import List
 from typing import NamedTuple
 from typing import Optional
-from typing import Set
 
 from flake8 import utils
 from flake8._compat import importlib_metadata
@@ -179,22 +179,43 @@ def find_local_plugin_paths(
     return utils.normalize_paths(paths, cfg_dir)
 
 
-def parse_enabled(
+class PluginOptions(NamedTuple):
+    """Options related to plugin loading."""
+
+    enable_extensions: FrozenSet[str]
+    # TODO: more options here!
+    # require_plugins: Tuple[str, ...]
+
+
+def _parse_option(
     cfg: configparser.RawConfigParser,
-    enable_extensions: Optional[str],
-) -> Set[str]:
-    """Parse --enable-extensions."""
-    if enable_extensions is not None:
-        return set(utils.parse_comma_separated_list(enable_extensions))
+    cfg_opt_name: str,
+    opt: Optional[str],
+) -> List[str]:
+    # specified on commandline: use that
+    if opt is not None:
+        return utils.parse_comma_separated_list(opt)
     else:
         # ideally this would reuse our config parsing framework but we need to
         # parse this from preliminary options before plugins are enabled
-        for opt in ("enable_extensions", "enable-extensions"):
-            val = cfg.get("flake8", opt, fallback=None)
+        for opt_name in (cfg_opt_name, cfg_opt_name.replace("_", "-")):
+            val = cfg.get("flake8", opt_name, fallback=None)
             if val is not None:
-                return set(utils.parse_comma_separated_list(val))
+                return utils.parse_comma_separated_list(val)
         else:
-            return set()
+            return []
+
+
+def parse_plugin_options(
+    cfg: configparser.RawConfigParser,
+    enable_extensions: Optional[str],
+) -> PluginOptions:
+    """Parse plugin loading related options."""
+    return PluginOptions(
+        enable_extensions=frozenset(
+            _parse_option(cfg, "enable_extensions", enable_extensions),
+        ),
+    )
 
 
 def _parameters_for(func: Any) -> Dict[str, bool]:
@@ -246,7 +267,7 @@ def _import_plugins(
 
 def _classify_plugins(
     plugins: List[LoadedPlugin],
-    enabled: Set[str],
+    opts: PluginOptions,
 ) -> Plugins:
     tree = []
     logical_line = []
@@ -257,7 +278,7 @@ def _classify_plugins(
     for loaded in plugins:
         if (
             getattr(loaded.obj, "off_by_default", False)
-            and loaded.plugin.entry_point.name not in enabled
+            and loaded.plugin.entry_point.name not in opts.enable_extensions
         ):
             disabled.append(loaded)
         elif loaded.plugin.entry_point.group == "flake8.report":
@@ -285,7 +306,7 @@ def _classify_plugins(
 def load_plugins(
     plugins: List[Plugin],
     paths: List[str],
-    enabled: Set[str],
+    opts: PluginOptions,
 ) -> Plugins:
     """Load and classify all flake8 plugins.
 
@@ -293,4 +314,4 @@ def load_plugins(
     - next: converts the ``Plugin``s to ``LoadedPlugins``
     - finally: classifies plugins into their specific types
     """
-    return _classify_plugins(_import_plugins(plugins, paths), enabled)
+    return _classify_plugins(_import_plugins(plugins, paths), opts)

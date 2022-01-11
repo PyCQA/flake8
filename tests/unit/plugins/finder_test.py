@@ -376,15 +376,18 @@ def test_find_local_plugins(local_plugin_cfg):
     }
 
 
-def test_parse_enabled_not_specified():
-    assert finder.parse_enabled(configparser.RawConfigParser(), None) == set()
+def test_parse_plugin_options_not_specified():
+    cfg = configparser.RawConfigParser()
+    ret = finder.parse_plugin_options(cfg, None)
+    assert ret == finder.PluginOptions(frozenset())
 
 
 def test_parse_enabled_from_commandline():
     cfg = configparser.RawConfigParser()
     cfg.add_section("flake8")
     cfg.set("flake8", "enable_extensions", "A,B,C")
-    assert finder.parse_enabled(cfg, "D,E,F") == {"D", "E", "F"}
+    ret = finder.parse_plugin_options(cfg, "D,E,F")
+    assert ret == finder.PluginOptions(frozenset(("D", "E", "F")))
 
 
 @pytest.mark.parametrize("opt", ("enable_extensions", "enable-extensions"))
@@ -392,7 +395,8 @@ def test_parse_enabled_from_config(opt):
     cfg = configparser.RawConfigParser()
     cfg.add_section("flake8")
     cfg.set("flake8", opt, "A,B,C")
-    assert finder.parse_enabled(cfg, None) == {"A", "B", "C"}
+    ret = finder.parse_plugin_options(cfg, None)
+    assert ret == finder.PluginOptions(frozenset(("A", "B", "C")))
 
 
 def test_find_plugins(
@@ -600,7 +604,7 @@ def test_classify_plugins():
             logical_line_plugin,
             physical_line_plugin,
         ],
-        set(),
+        finder.PluginOptions(frozenset()),
     )
 
     assert classified == finder.Plugins(
@@ -619,8 +623,10 @@ def test_classify_plugins_enable_a_disabled_plugin():
     plugin = _plugin(ep=_ep(name="ABC"))
     loaded = _loaded(plugin=plugin, parameters={"tree": True}, obj=obj)
 
-    classified_normal = finder._classify_plugins([loaded], set())
-    classified_enabled = finder._classify_plugins([loaded], {"ABC"})
+    normal_opts = finder.PluginOptions(frozenset())
+    classified_normal = finder._classify_plugins([loaded], normal_opts)
+    enabled_opts = finder.PluginOptions(frozenset(("ABC",)))
+    classified_enabled = finder._classify_plugins([loaded], enabled_opts)
 
     assert classified_normal == finder.Plugins(
         checkers=finder.Checkers([], [], []),
@@ -638,7 +644,8 @@ def test_classify_plugins_enable_a_disabled_plugin():
 def test_load_plugins():
     plugin = _plugin(ep=_ep(value="aplugin:ExtensionTestPlugin2"))
 
-    ret = finder.load_plugins([plugin], ["tests/integration/subdir"], set())
+    opts = finder.PluginOptions(frozenset())
+    ret = finder.load_plugins([plugin], ["tests/integration/subdir"], opts)
 
     import aplugin
 

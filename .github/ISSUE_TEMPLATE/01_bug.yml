@@ -1,0 +1,86 @@
+name: bug report
+description: something went wrong
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Please read this brief portion of documentation before going any
+        further:
+        http://flake8.pycqa.org/en/latest/internal/contributing.html#filing-a-bug
+
+  - type: markdown
+    attributes:
+      value: >
+        **NOTE: flake8 is a linting framework and does not implement any
+        checks**
+
+  - type: markdown
+    attributes:
+      value: >
+        _if you are reporting a problem with a particular check, please track
+        down the plugin which implements that check_
+
+  - type: textarea
+    id: install
+    attributes:
+      label: how did you install flake8?
+      description: 'note: this will be rendered as ```console automatically'
+      placeholder: |
+        $ pip install flake8  # or `brew install flake8` etc.
+        Collecting flake8
+        ...
+        Successfully installed flake8...
+      render: console
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: >
+        **Note**: Some *nix distributions patch Flake8 arbitrarily to
+        accommodate incompatible software versions. If you're on one of those
+        distributions, your issue may be closed and you will be asked to open
+        an issue with your distribution package maintainers instead.
+
+  - type: textarea
+    id: bug-report
+    attributes:
+      label: unmodified output of `flake8 --bug-report`
+      description: 'note: this will be rendered as ```json automatically'
+      placeholder: |
+        {
+          "platform": {
+            "...": "...
+          }
+        }
+      render: json
+    validations:
+      required: true
+
+  - type: textarea
+    id: freeform
+    attributes:
+      label: describe the problem
+      description: >
+        please provide **sample code** and **directions for reproducing
+        your problem** including the **commands you ran**, their
+        **unedited output**, and **what you expected to happen**
+      value: |
+        #### what I expected to happen
+
+        ...
+
+        #### sample code
+
+        ```python
+        print('hello world!')
+        ```
+
+        #### commands ran
+
+        ```console
+        $ flake8 t.py
+        ...
+        ```
+    validations:
+      required: true

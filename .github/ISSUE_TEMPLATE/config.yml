@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: problem with E___ or W___ codes
+    url: https://github.com/PyCQA/pycodestyle/issues
+    about: flake8 does not implement any checks, perhaps you want pycodestyle?
+  - name: problem with F___ codes
+    url: https://github.com/PyCQA/pyflakes/issues
+    about: flake8 does not implement any checks, perhaps you want pyflakes?
+  - name: problem with C___ codes
+    url: https://github.com/PyCQA/mccabe/issues
+    about: flake8 does not implement any checks, perhaps you want mccabe?

@@ -1,0 +1,19 @@
+name: feature request
+description: a new feature!
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Please read this brief portion of documentation before going any
+        further:
+        http://flake8.pycqa.org/en/latest/internal/contributing.html#filing-a-bug
+
+  - type: textarea
+    id: freeform
+    attributes:
+      label: describe the request
+      description: >
+        please describe your use case and why the current feature set does
+        not satisfy your needs
+    validations:
+      required: true

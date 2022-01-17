@@ -243,8 +243,7 @@ class Manager:
         or whether to run them in serial.
 
         If running the checks in parallel causes a problem (e.g.,
-        https://github.com/pycqa/flake8/issues/117) this also implements
-        fallback to serial processing.
+        :issue:`117`) this also implements fallback to serial processing.
         """
         try:
             if self.jobs > 1 and len(self.checkers) > 1:

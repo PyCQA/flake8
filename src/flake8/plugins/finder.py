@@ -11,6 +11,7 @@ from typing import Iterable
 from typing import List
 from typing import NamedTuple
 from typing import Optional
+from typing import Tuple
 
 from flake8 import utils
 from flake8._compat import importlib_metadata
@@ -169,22 +170,18 @@ def find_plugins(cfg: configparser.RawConfigParser) -> List[Plugin]:
     return ret
 
 
-def find_local_plugin_paths(
-    cfg: configparser.RawConfigParser,
-    cfg_dir: str,
-) -> List[str]:
-    """Discovers the list of ``flake8:local-plugins`` ``paths``."""
-    paths_s = cfg.get("flake8:local-plugins", "paths", fallback="").strip()
-    paths = utils.parse_comma_separated_list(paths_s)
-    return utils.normalize_paths(paths, cfg_dir)
-
-
 class PluginOptions(NamedTuple):
     """Options related to plugin loading."""
 
+    local_plugin_paths: Tuple[str, ...]
     enable_extensions: FrozenSet[str]
     # TODO: more options here!
     # require_plugins: Tuple[str, ...]
+
+    @classmethod
+    def blank(cls) -> "PluginOptions":
+        """Make a blank PluginOptions, mostly used for tests."""
+        return cls(local_plugin_paths=(), enable_extensions=frozenset())
 
 
 def _parse_option(
@@ -208,10 +205,16 @@ def _parse_option(
 
 def parse_plugin_options(
     cfg: configparser.RawConfigParser,
+    cfg_dir: str,
     enable_extensions: Optional[str],
 ) -> PluginOptions:
     """Parse plugin loading related options."""
+    paths_s = cfg.get("flake8:local-plugins", "paths", fallback="").strip()
+    paths = utils.parse_comma_separated_list(paths_s)
+    paths = utils.normalize_paths(paths, cfg_dir)
+
     return PluginOptions(
+        local_plugin_paths=tuple(paths),
         enable_extensions=frozenset(
             _parse_option(cfg, "enable_extensions", enable_extensions),
         ),
@@ -259,9 +262,10 @@ def _load_plugin(plugin: Plugin) -> LoadedPlugin:
 
 
 def _import_plugins(
-    plugins: List[Plugin], paths: List[str]
+    plugins: List[Plugin],
+    opts: PluginOptions,
 ) -> List[LoadedPlugin]:
-    sys.path.extend(paths)
+    sys.path.extend(opts.local_plugin_paths)
     return [_load_plugin(p) for p in plugins]
 
 
@@ -305,7 +309,6 @@ def _classify_plugins(
 
 def load_plugins(
     plugins: List[Plugin],
-    paths: List[str],
     opts: PluginOptions,
 ) -> Plugins:
     """Load and classify all flake8 plugins.
@@ -314,4 +317,4 @@ def load_plugins(
     - next: converts the ``Plugin``s to ``LoadedPlugins``
     - finally: classifies plugins into their specific types
     """
-    return _classify_plugins(_import_plugins(plugins, paths), opts)
+    return _classify_plugins(_import_plugins(plugins, opts), opts)

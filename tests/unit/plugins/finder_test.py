@@ -376,27 +376,43 @@ def test_find_local_plugins(local_plugin_cfg):
     }
 
 
-def test_parse_plugin_options_not_specified():
+def test_parse_plugin_options_not_specified(tmp_path):
     cfg = configparser.RawConfigParser()
-    ret = finder.parse_plugin_options(cfg, None)
-    assert ret == finder.PluginOptions(frozenset())
+    ret = finder.parse_plugin_options(cfg, str(tmp_path), None)
+    assert ret == finder.PluginOptions((), frozenset())
 
 
-def test_parse_enabled_from_commandline():
+def test_parse_enabled_from_commandline(tmp_path):
     cfg = configparser.RawConfigParser()
     cfg.add_section("flake8")
     cfg.set("flake8", "enable_extensions", "A,B,C")
-    ret = finder.parse_plugin_options(cfg, "D,E,F")
-    assert ret == finder.PluginOptions(frozenset(("D", "E", "F")))
+    ret = finder.parse_plugin_options(cfg, str(tmp_path), "D,E,F")
+    assert ret == finder.PluginOptions((), frozenset(("D", "E", "F")))
 
 
 @pytest.mark.parametrize("opt", ("enable_extensions", "enable-extensions"))
-def test_parse_enabled_from_config(opt):
+def test_parse_enabled_from_config(opt, tmp_path):
     cfg = configparser.RawConfigParser()
     cfg.add_section("flake8")
     cfg.set("flake8", opt, "A,B,C")
-    ret = finder.parse_plugin_options(cfg, None)
-    assert ret == finder.PluginOptions(frozenset(("A", "B", "C")))
+    ret = finder.parse_plugin_options(cfg, str(tmp_path), None)
+    assert ret == finder.PluginOptions((), frozenset(("A", "B", "C")))
+
+
+def test_parse_plugin_options_local_plugin_paths_missing(tmp_path):
+    cfg = configparser.RawConfigParser()
+    opts = finder.parse_plugin_options(cfg, str(tmp_path), None)
+    assert opts.local_plugin_paths == ()
+
+
+def test_parse_plugin_options_local_plugin_paths(tmp_path):
+    cfg = configparser.RawConfigParser()
+    cfg.add_section("flake8:local-plugins")
+    cfg.set("flake8:local-plugins", "paths", "./a, ./b")
+    opts = finder.parse_plugin_options(cfg, str(tmp_path), None)
+
+    expected = (str(tmp_path.joinpath("a")), str(tmp_path.joinpath("b")))
+    assert opts.local_plugin_paths == expected
 
 
 def test_find_plugins(
@@ -489,20 +505,6 @@ def test_find_plugins(
     ]
 
 
-def test_find_local_plugin_paths_missing(tmp_path):
-    cfg = configparser.RawConfigParser()
-    assert finder.find_local_plugin_paths(cfg, str(tmp_path)) == []
-
-
-def test_find_local_plugin_paths(tmp_path):
-    cfg = configparser.RawConfigParser()
-    cfg.add_section("flake8:local-plugins")
-    cfg.set("flake8:local-plugins", "paths", "./a, ./b")
-    ret = finder.find_local_plugin_paths(cfg, str(tmp_path))
-
-    assert ret == [str(tmp_path.joinpath("a")), str(tmp_path.joinpath("b"))]
-
-
 def test_parameters_for_class_plugin():
     """Verify that we can retrieve the parameters for a class plugin."""
 
@@ -576,7 +578,11 @@ def reset_sys():
 def test_import_plugins_extends_sys_path():
     plugin = _plugin(ep=_ep(value="aplugin:ExtensionTestPlugin2"))
 
-    ret = finder._import_plugins([plugin], ["tests/integration/subdir"])
+    opts = finder.PluginOptions(
+        local_plugin_paths=("tests/integration/subdir",),
+        enable_extensions=frozenset(),
+    )
+    ret = finder._import_plugins([plugin], opts)
 
     import aplugin
 
@@ -604,7 +610,7 @@ def test_classify_plugins():
             logical_line_plugin,
             physical_line_plugin,
         ],
-        finder.PluginOptions(frozenset()),
+        finder.PluginOptions.blank(),
     )
 
     assert classified == finder.Plugins(
@@ -623,9 +629,15 @@ def test_classify_plugins_enable_a_disabled_plugin():
     plugin = _plugin(ep=_ep(name="ABC"))
     loaded = _loaded(plugin=plugin, parameters={"tree": True}, obj=obj)
 
-    normal_opts = finder.PluginOptions(frozenset())
+    normal_opts = finder.PluginOptions(
+        local_plugin_paths=(),
+        enable_extensions=frozenset(),
+    )
     classified_normal = finder._classify_plugins([loaded], normal_opts)
-    enabled_opts = finder.PluginOptions(frozenset(("ABC",)))
+    enabled_opts = finder.PluginOptions(
+        local_plugin_paths=(),
+        enable_extensions=frozenset(("ABC",)),
+    )
     classified_enabled = finder._classify_plugins([loaded], enabled_opts)
 
     assert classified_normal == finder.Plugins(
@@ -644,8 +656,11 @@ def test_classify_plugins_enable_a_disabled_plugin():
 def test_load_plugins():
     plugin = _plugin(ep=_ep(value="aplugin:ExtensionTestPlugin2"))
 
-    opts = finder.PluginOptions(frozenset())
-    ret = finder.load_plugins([plugin], ["tests/integration/subdir"], opts)
+    opts = finder.PluginOptions(
+        local_plugin_paths=("tests/integration/subdir",),
+        enable_extensions=frozenset(),
+    )
+    ret = finder.load_plugins([plugin], opts)
 
     import aplugin
 

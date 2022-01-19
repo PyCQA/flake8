@@ -90,8 +90,8 @@ def mock_file_checker_with_plugin(plugin_target):
             ),
         ),
     ]
-    opts = finder.PluginOptions(frozenset())
-    plugins = finder.load_plugins(to_load, [], opts)
+    opts = finder.PluginOptions.blank()
+    plugins = finder.load_plugins(to_load, opts)
 
     # Prevent it from reading lines from stdin or somewhere else
     with mock.patch(

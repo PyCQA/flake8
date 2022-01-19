@@ -53,10 +53,9 @@ report =
 def test_enable_local_plugin_from_config(local_config):
     """App can load a local plugin from config file."""
     cfg, cfg_dir = config.load_config(local_config, [], isolated=False)
+    opts = finder.parse_plugin_options(cfg, cfg_dir, None)
     plugins = finder.find_plugins(cfg)
-    plugin_paths = finder.find_local_plugin_paths(cfg, cfg_dir)
-    opts = finder.PluginOptions(frozenset())
-    loaded_plugins = finder.load_plugins(plugins, plugin_paths, opts)
+    loaded_plugins = finder.load_plugins(plugins, opts)
 
     (custom_extension,) = (
         loaded
@@ -81,10 +80,9 @@ def test_local_plugin_can_add_option(local_config):
         config=stage1_args.config, extra=[], isolated=False
     )
 
+    opts = finder.parse_plugin_options(cfg, cfg_dir, None)
     plugins = finder.find_plugins(cfg)
-    plugin_paths = finder.find_local_plugin_paths(cfg, cfg_dir)
-    opts = finder.PluginOptions(frozenset())
-    loaded_plugins = finder.load_plugins(plugins, plugin_paths, opts)
+    loaded_plugins = finder.load_plugins(plugins, opts)
 
     option_manager = OptionManager(
         version="123",

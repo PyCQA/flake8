@@ -36,8 +36,8 @@ reporting each check in the ``--version`` output, we only report
 API Documentation
 -----------------
 
-.. autofunction:: flake8.plugins.finder.find_plugins
+.. autofunction:: flake8.plugins.finder.parse_plugin_options
 
-.. autofunction:: flake8.plugins.finder.find_local_plugin_paths
+.. autofunction:: flake8.plugins.finder.find_plugins
 
 .. autofunction:: flake8.plugins.finder.load_plugins

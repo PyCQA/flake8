@@ -117,10 +117,9 @@ class Application:
 
         Set :attr:`plugins` based on loaded plugins.
         """
+        opts = finder.parse_plugin_options(cfg, cfg_dir, enable_extensions)
         raw = finder.find_plugins(cfg)
-        local_plugin_paths = finder.find_local_plugin_paths(cfg, cfg_dir)
-        opts = finder.parse_plugin_options(cfg, enable_extensions)
-        self.plugins = finder.load_plugins(raw, local_plugin_paths, opts)
+        self.plugins = finder.load_plugins(raw, opts)
 
     def register_plugin_options(self) -> None:
         """Register options provided by plugins to our option manager."""

@@ -10,7 +10,7 @@ body:
 
   - type: markdown
     attributes:
-      value: **NOTE: flake8 is a linting framework and does not implement any checks**
+      value: '**NOTE: flake8 is a linting framework and does not implement any checks**'
 
   - type: textarea
     id: freeform

@@ -6,7 +6,11 @@ body:
       value: >
         Please read this brief portion of documentation before going any
         further:
-        https://flake8.pycqa.org/en/latest/internal/contributing.html#requesting-a-new-feature
+        https://flake8.pycqa.org/en/latest/internal/contributing.html#filing-a-bug
+
+  - type: markdown
+    attributes:
+      value: '**NOTE: flake8 is a linting framework and does not implement any checks**'
 
   - type: textarea
     id: freeform

@@ -6,7 +6,7 @@ body:
       value: >
         Please read this brief portion of documentation before going any
         further:
-        http://flake8.pycqa.org/en/latest/internal/contributing.html#filing-a-bug
+        https://flake8.pycqa.org/en/latest/internal/contributing.html#filing-a-bug
 
   - type: markdown
     attributes:

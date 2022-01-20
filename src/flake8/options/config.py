@@ -20,7 +20,7 @@ def _find_config_file(path: str) -> Optional[str]:
         for candidate in ("setup.cfg", "tox.ini", ".flake8"):
             cfg_path = os.path.join(path, candidate)
             try:
-                cfg.read(cfg_path)
+                cfg.read(cfg_path, encoding="UTF-8")
             except (UnicodeDecodeError, configparser.ParsingError) as e:
                 LOG.warning("ignoring unparseable config %s: %s", cfg_path, e)
             else:
@@ -61,7 +61,7 @@ def load_config(
 
     cfg = configparser.RawConfigParser()
     if config is not None:
-        if not cfg.read(config):
+        if not cfg.read(config, encoding="UTF-8"):
             raise exceptions.ExecutionError(
                 f"The specified config file does not exist: {config}"
             )
@@ -72,7 +72,7 @@ def load_config(
     # TODO: remove this and replace it with configuration modifying plugins
     # read the additional configs afterwards
     for filename in extra:
-        cfg.read(filename)
+        cfg.read(filename, encoding="UTF-8")
 
     return cfg, cfg_dir
 

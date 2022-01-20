@@ -118,6 +118,31 @@ def test_load_config_append_config(tmpdir):
     assert cfg_dir == str(tmpdir)
 
 
+NON_ASCII_CONFIG = "# ☃\n[flake8]\nindent-size=8\n"
+
+
+def test_load_auto_config_utf8(tmpdir):
+    tmpdir.join("setup.cfg").write_text(NON_ASCII_CONFIG, encoding="UTF-8")
+    with tmpdir.as_cwd():
+        cfg, cfg_dir = config.load_config(None, [], isolated=False)
+    assert cfg["flake8"]["indent-size"] == "8"
+
+
+def test_load_explicit_config_utf8(tmpdir):
+    tmpdir.join("t.cfg").write_text(NON_ASCII_CONFIG, encoding="UTF-8")
+    with tmpdir.as_cwd():
+        cfg, cfg_dir = config.load_config("t.cfg", [], isolated=False)
+    assert cfg["flake8"]["indent-size"] == "8"
+
+
+def test_load_extra_config_utf8(tmpdir):
+    tmpdir.join("setup.cfg").write("[flake8]\nindent-size=2\n")
+    tmpdir.join("t.cfg").write_text(NON_ASCII_CONFIG, encoding="UTF-8")
+    with tmpdir.as_cwd():
+        cfg, cfg_dir = config.load_config(None, ["t.cfg"], isolated=False)
+    assert cfg["flake8"]["indent-size"] == "8"
+
+
 @pytest.fixture
 def opt_manager():
     ret = OptionManager(version="123", plugin_versions="", parents=[])

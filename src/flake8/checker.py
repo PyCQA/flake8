@@ -581,7 +581,7 @@ class FileChecker:
             line_no = token[2][0]
             with self.processor.inside_multiline(line_number=line_no):
                 for line in self.processor.split_line(token):
-                    self.run_physical_checks(line + "\n")
+                    self.run_physical_checks(line)
 
 
 def _pool_init() -> None:

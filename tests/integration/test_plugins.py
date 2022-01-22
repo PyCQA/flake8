@@ -160,3 +160,37 @@ extension =
     out, err = capsys.readouterr()
     assert out == f"{t_py}:1:1: ABC123 error\n"
     assert err == ""
+
+
+def yields_physical_line(physical_line):
+    yield 0, f"T001 {physical_line!r}"
+
+
+def test_physical_line_plugin_multiline_string(tmpdir, capsys):
+    cfg_s = f"""\
+[flake8:local-plugins]
+extension =
+    T = {yields_physical_line.__module__}:{yields_physical_line.__name__}
+"""
+
+    cfg = tmpdir.join("tox.ini")
+    cfg.write(cfg_s)
+
+    src = '''\
+x = "foo" + """
+bar
+"""
+'''
+    t_py = tmpdir.join("t.py")
+    t_py.write_binary(src.encode())
+
+    with tmpdir.as_cwd():
+        assert main(("t.py", "--config", str(cfg))) == 1
+
+    expected = '''\
+t.py:1:1: T001 'x = "foo" + """\\n'
+t.py:2:1: T001 'bar\\n'
+t.py:3:1: T001 '"""\\n'
+'''
+    out, err = capsys.readouterr()
+    assert out == expected

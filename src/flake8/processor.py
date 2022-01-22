@@ -233,8 +233,10 @@ class FileProcessor:
 
         This also auto-increments the line number for the caller.
         """
-        for line in token[1].split("\n")[:-1]:
-            yield line
+        # intentionally don't include the last line, that line will be
+        # terminated later by a future end-of-line
+        for line_no in range(token.start[0], token.end[0]):
+            yield self.lines[line_no - 1]
             self.line_number += 1
 
     def keyword_arguments_for(

@@ -256,30 +256,30 @@ def test_keyword_arguments_for_does_not_handle_attribute_errors(
         file_processor.keyword_arguments_for({"fake": True})
 
 
-@pytest.mark.parametrize(
-    "unsplit_line, expected_lines",
-    [
-        ("line", []),
-        ("line 1\n", ["line 1"]),
-        ("line 1\nline 2\n", ["line 1", "line 2"]),
-        ("line 1\n\nline 2\n", ["line 1", "", "line 2"]),
-    ],
-)
-def test_split_line(unsplit_line, expected_lines, default_options):
-    """Verify the token line splitting."""
+def test_processor_split_line(default_options):
     file_processor = processor.FileProcessor(
         "-",
         default_options,
         lines=[
-            "Line 1",
+            'x = """\n',
+            "contents\n",
+            '"""\n',
         ],
     )
-
-    token = tokenize.TokenInfo(1, unsplit_line, (0, 0), (0, 0), "")
-    actual_lines = list(file_processor.split_line(token))
-    assert expected_lines == actual_lines
-
-    assert len(actual_lines) == file_processor.line_number
+    token = tokenize.TokenInfo(
+        3,
+        '"""\ncontents\n"""',
+        (1, 4),
+        (3, 3),
+        'x = """\ncontents\n"""\n',
+    )
+    expected = [('x = """\n', 0), ("contents\n", 1)]
+    actual = [
+        (line, file_processor.line_number)
+        for line in file_processor.split_line(token)
+    ]
+    assert expected == actual
+    assert file_processor.line_number == 2
 
 
 def test_build_ast(default_options):

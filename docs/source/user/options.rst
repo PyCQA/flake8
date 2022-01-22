@@ -78,6 +78,8 @@ Index of Options
 
 - :option:`flake8 --statistics`
 
+- :option:`flake8 --require-plugins`
+
 - :option:`flake8 --enable-extensions`
 
 - :option:`flake8 --exit-zero`
@@ -772,6 +774,32 @@ Options and their Descriptions
         statistics = True
 
 
+.. option:: --require-plugins=<names>
+
+    :ref:`Go back to index <top>`
+
+    Require specific plugins to be installed before running.
+
+    This option takes a list of distribution names (usually the name you would
+    use when running ``pip install``).
+
+    Command-line example:
+
+    .. prompt:: bash
+
+        flake8 --require-plugins=flake8-2020,flake8-typing-extensions dir/
+
+    This **can** be specified in config files.
+
+    Example config file usage:
+
+    .. code-block:: ini
+
+        require-plugins =
+            flake8-2020
+            flake8-typing-extensions
+
+
 .. option:: --enable-extensions=<errors>
 
     :ref:`Go back to index <top>`
@@ -779,8 +807,8 @@ Options and their Descriptions
     Enable off-by-default extensions.
 
     Plugins to |Flake8| have the option of registering themselves as
-    off-by-default. These plugins effectively add themselves to the
-    default ignore list.
+    off-by-default. These plugins will not be loaded unless enabled by this
+    option.
 
     Command-line example:
 

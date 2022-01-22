@@ -25,6 +25,7 @@ from flake8 import exceptions
 DIFF_HUNK_REGEXP = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@.*$")
 COMMA_SEPARATED_LIST_RE = re.compile(r"[,\s]")
 LOCAL_PLUGIN_LIST_RE = re.compile(r"[,\t\n\r\f\v]")
+NORMALIZE_PACKAGE_NAME_RE = re.compile(r"[-_.]+")
 
 
 def parse_comma_separated_list(
@@ -343,3 +344,8 @@ def get_python_version() -> str:
         platform.python_version(),
         platform.system(),
     )
+
+
+def normalize_pypi_name(s: str) -> str:
+    """Normalize a distribution name according to PEP 503."""
+    return NORMALIZE_PACKAGE_NAME_RE.sub("-", s).lower()

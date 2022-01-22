@@ -111,14 +111,21 @@ class Application:
         self,
         cfg: configparser.RawConfigParser,
         cfg_dir: str,
+        *,
         enable_extensions: Optional[str],
+        require_plugins: Optional[str],
     ) -> None:
         """Find and load the plugins for this application.
 
         Set :attr:`plugins` based on loaded plugins.
         """
-        opts = finder.parse_plugin_options(cfg, cfg_dir, enable_extensions)
-        raw = finder.find_plugins(cfg)
+        opts = finder.parse_plugin_options(
+            cfg,
+            cfg_dir,
+            enable_extensions=enable_extensions,
+            require_plugins=require_plugins,
+        )
+        raw = finder.find_plugins(cfg, opts)
         self.plugins = finder.load_plugins(raw, opts)
 
     def register_plugin_options(self) -> None:
@@ -295,7 +302,12 @@ class Application:
             isolated=prelim_opts.isolated,
         )
 
-        self.find_plugins(cfg, cfg_dir, prelim_opts.enable_extensions)
+        self.find_plugins(
+            cfg,
+            cfg_dir,
+            enable_extensions=prelim_opts.enable_extensions,
+            require_plugins=prelim_opts.require_plugins,
+        )
         self.register_plugin_options()
         self.parse_configuration_and_cli(cfg, cfg_dir, remaining_args)
         self.make_formatter()

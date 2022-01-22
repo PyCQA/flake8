@@ -231,3 +231,19 @@ def test_stdin_unknown_coding_token():
     stdin = io.TextIOWrapper(io.BytesIO(b"# coding: unknown\n"), "UTF-8")
     with mock.patch.object(sys, "stdin", stdin):
         assert utils.stdin_get_value.__wrapped__() == "# coding: unknown\n"
+
+
+@pytest.mark.parametrize(
+    ("s", "expected"),
+    (
+        ("", ""),
+        ("my-plugin", "my-plugin"),
+        ("MyPlugin", "myplugin"),
+        ("my_plugin", "my-plugin"),
+        ("my.plugin", "my-plugin"),
+        ("my--plugin", "my-plugin"),
+        ("my__plugin", "my-plugin"),
+    ),
+)
+def test_normalize_pypi_name(s, expected):
+    assert utils.normalize_pypi_name(s) == expected

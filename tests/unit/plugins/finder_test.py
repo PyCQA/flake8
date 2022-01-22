@@ -5,6 +5,7 @@ from unittest import mock
 import pytest
 
 from flake8._compat import importlib_metadata
+from flake8.exceptions import ExecutionError
 from flake8.exceptions import FailedToLoadPlugin
 from flake8.plugins import finder
 from flake8.plugins.pyflakes import FlakesChecker
@@ -378,16 +379,31 @@ def test_find_local_plugins(local_plugin_cfg):
 
 def test_parse_plugin_options_not_specified(tmp_path):
     cfg = configparser.RawConfigParser()
-    ret = finder.parse_plugin_options(cfg, str(tmp_path), None)
-    assert ret == finder.PluginOptions((), frozenset())
+    opts = finder.parse_plugin_options(
+        cfg,
+        str(tmp_path),
+        enable_extensions=None,
+        require_plugins=None,
+    )
+    expected = finder.PluginOptions(
+        local_plugin_paths=(),
+        enable_extensions=frozenset(),
+        require_plugins=frozenset(),
+    )
+    assert opts == expected
 
 
 def test_parse_enabled_from_commandline(tmp_path):
     cfg = configparser.RawConfigParser()
     cfg.add_section("flake8")
     cfg.set("flake8", "enable_extensions", "A,B,C")
-    ret = finder.parse_plugin_options(cfg, str(tmp_path), "D,E,F")
-    assert ret == finder.PluginOptions((), frozenset(("D", "E", "F")))
+    opts = finder.parse_plugin_options(
+        cfg,
+        str(tmp_path),
+        enable_extensions="D,E,F",
+        require_plugins=None,
+    )
+    assert opts.enable_extensions == frozenset(("D", "E", "F"))
 
 
 @pytest.mark.parametrize("opt", ("enable_extensions", "enable-extensions"))
@@ -395,13 +411,23 @@ def test_parse_enabled_from_config(opt, tmp_path):
     cfg = configparser.RawConfigParser()
     cfg.add_section("flake8")
     cfg.set("flake8", opt, "A,B,C")
-    ret = finder.parse_plugin_options(cfg, str(tmp_path), None)
-    assert ret == finder.PluginOptions((), frozenset(("A", "B", "C")))
+    opts = finder.parse_plugin_options(
+        cfg,
+        str(tmp_path),
+        enable_extensions=None,
+        require_plugins=None,
+    )
+    assert opts.enable_extensions == frozenset(("A", "B", "C"))
 
 
 def test_parse_plugin_options_local_plugin_paths_missing(tmp_path):
     cfg = configparser.RawConfigParser()
-    opts = finder.parse_plugin_options(cfg, str(tmp_path), None)
+    opts = finder.parse_plugin_options(
+        cfg,
+        str(tmp_path),
+        enable_extensions=None,
+        require_plugins=None,
+    )
     assert opts.local_plugin_paths == ()
 
 
@@ -409,7 +435,12 @@ def test_parse_plugin_options_local_plugin_paths(tmp_path):
     cfg = configparser.RawConfigParser()
     cfg.add_section("flake8:local-plugins")
     cfg.set("flake8:local-plugins", "paths", "./a, ./b")
-    opts = finder.parse_plugin_options(cfg, str(tmp_path), None)
+    opts = finder.parse_plugin_options(
+        cfg,
+        str(tmp_path),
+        enable_extensions=None,
+        require_plugins=None,
+    )
 
     expected = (str(tmp_path.joinpath("a")), str(tmp_path.joinpath("b")))
     assert opts.local_plugin_paths == expected
@@ -422,12 +453,13 @@ def test_find_plugins(
     mock_distribution,
     local_plugin_cfg,
 ):
+    opts = finder.PluginOptions.blank()
     with mock.patch.object(
         importlib_metadata,
         "distributions",
         return_value=[flake8_dist, flake8_foo_dist],
     ):
-        ret = finder.find_plugins(local_plugin_cfg)
+        ret = finder.find_plugins(local_plugin_cfg, opts)
 
     assert ret == [
         finder.Plugin(
@@ -503,6 +535,80 @@ def test_find_plugins(
             ),
         ),
     ]
+
+
+def test_find_plugins_plugin_is_present(flake8_foo_dist):
+    cfg = configparser.RawConfigParser()
+    options_flake8_foo_required = finder.PluginOptions(
+        local_plugin_paths=(),
+        enable_extensions=frozenset(),
+        require_plugins=frozenset(("flake8-foo",)),
+    )
+    options_not_required = finder.PluginOptions(
+        local_plugin_paths=(),
+        enable_extensions=frozenset(),
+        require_plugins=frozenset(),
+    )
+
+    with mock.patch.object(
+        importlib_metadata,
+        "distributions",
+        return_value=[flake8_foo_dist],
+    ):
+        # neither of these raise, `flake8-foo` is satisfied
+        finder.find_plugins(cfg, options_flake8_foo_required)
+        finder.find_plugins(cfg, options_not_required)
+
+
+def test_find_plugins_plugin_is_missing(flake8_dist, flake8_foo_dist):
+    cfg = configparser.RawConfigParser()
+    options_flake8_foo_required = finder.PluginOptions(
+        local_plugin_paths=(),
+        enable_extensions=frozenset(),
+        require_plugins=frozenset(("flake8-foo",)),
+    )
+    options_not_required = finder.PluginOptions(
+        local_plugin_paths=(),
+        enable_extensions=frozenset(),
+        require_plugins=frozenset(),
+    )
+
+    with mock.patch.object(
+        importlib_metadata,
+        "distributions",
+        return_value=[flake8_dist],
+    ):
+        # this is ok, no special requirements
+        finder.find_plugins(cfg, options_not_required)
+
+        # but we get a nice error for missing plugins here!
+        with pytest.raises(ExecutionError) as excinfo:
+            finder.find_plugins(cfg, options_flake8_foo_required)
+
+        (msg,) = excinfo.value.args
+        assert msg == (
+            "required plugins were not installed!\n"
+            "- installed: flake8, pycodestyle, pyflakes\n"
+            "- expected: flake8-foo\n"
+            "- missing: flake8-foo"
+        )
+
+
+def test_find_plugins_name_normalization(flake8_foo_dist):
+    cfg = configparser.RawConfigParser()
+    opts = finder.PluginOptions(
+        local_plugin_paths=(),
+        enable_extensions=frozenset(),
+        # this name will be normalized before checking
+        require_plugins=frozenset(("Flake8_Foo",)),
+    )
+
+    with mock.patch.object(
+        importlib_metadata,
+        "distributions",
+        return_value=[flake8_foo_dist],
+    ):
+        finder.find_plugins(cfg, opts)
 
 
 def test_parameters_for_class_plugin():
@@ -581,6 +687,7 @@ def test_import_plugins_extends_sys_path():
     opts = finder.PluginOptions(
         local_plugin_paths=("tests/integration/subdir",),
         enable_extensions=frozenset(),
+        require_plugins=frozenset(),
     )
     ret = finder._import_plugins([plugin], opts)
 
@@ -632,11 +739,13 @@ def test_classify_plugins_enable_a_disabled_plugin():
     normal_opts = finder.PluginOptions(
         local_plugin_paths=(),
         enable_extensions=frozenset(),
+        require_plugins=frozenset(),
     )
     classified_normal = finder._classify_plugins([loaded], normal_opts)
     enabled_opts = finder.PluginOptions(
         local_plugin_paths=(),
         enable_extensions=frozenset(("ABC",)),
+        require_plugins=frozenset(),
     )
     classified_enabled = finder._classify_plugins([loaded], enabled_opts)
 
@@ -659,6 +768,7 @@ def test_load_plugins():
     opts = finder.PluginOptions(
         local_plugin_paths=("tests/integration/subdir",),
         enable_extensions=frozenset(),
+        require_plugins=frozenset(),
     )
     ret = finder.load_plugins([plugin], opts)
 

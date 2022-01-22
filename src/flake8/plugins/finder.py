@@ -15,6 +15,7 @@ from typing import Tuple
 
 from flake8 import utils
 from flake8._compat import importlib_metadata
+from flake8.exceptions import ExecutionError
 from flake8.exceptions import FailedToLoadPlugin
 
 LOG = logging.getLogger(__name__)
@@ -86,6 +87,65 @@ class Plugins(NamedTuple):
                 }
             )
         )
+
+
+class PluginOptions(NamedTuple):
+    """Options related to plugin loading."""
+
+    local_plugin_paths: Tuple[str, ...]
+    enable_extensions: FrozenSet[str]
+    require_plugins: FrozenSet[str]
+
+    @classmethod
+    def blank(cls) -> "PluginOptions":
+        """Make a blank PluginOptions, mostly used for tests."""
+        return cls(
+            local_plugin_paths=(),
+            enable_extensions=frozenset(),
+            require_plugins=frozenset(),
+        )
+
+
+def _parse_option(
+    cfg: configparser.RawConfigParser,
+    cfg_opt_name: str,
+    opt: Optional[str],
+) -> List[str]:
+    # specified on commandline: use that
+    if opt is not None:
+        return utils.parse_comma_separated_list(opt)
+    else:
+        # ideally this would reuse our config parsing framework but we need to
+        # parse this from preliminary options before plugins are enabled
+        for opt_name in (cfg_opt_name, cfg_opt_name.replace("_", "-")):
+            val = cfg.get("flake8", opt_name, fallback=None)
+            if val is not None:
+                return utils.parse_comma_separated_list(val)
+        else:
+            return []
+
+
+def parse_plugin_options(
+    cfg: configparser.RawConfigParser,
+    cfg_dir: str,
+    *,
+    enable_extensions: Optional[str],
+    require_plugins: Optional[str],
+) -> PluginOptions:
+    """Parse plugin loading related options."""
+    paths_s = cfg.get("flake8:local-plugins", "paths", fallback="").strip()
+    paths = utils.parse_comma_separated_list(paths_s)
+    paths = utils.normalize_paths(paths, cfg_dir)
+
+    return PluginOptions(
+        local_plugin_paths=tuple(paths),
+        enable_extensions=frozenset(
+            _parse_option(cfg, "enable_extensions", enable_extensions),
+        ),
+        require_plugins=frozenset(
+            _parse_option(cfg, "require_plugins", require_plugins),
+        ),
+    )
 
 
 def _flake8_plugins(
@@ -160,65 +220,38 @@ def _find_local_plugins(
             yield Plugin("local", "local", ep)
 
 
-def find_plugins(cfg: configparser.RawConfigParser) -> List[Plugin]:
+def _check_required_plugins(
+    plugins: List[Plugin],
+    expected: FrozenSet[str],
+) -> None:
+    plugin_names = {
+        utils.normalize_pypi_name(plugin.package) for plugin in plugins
+    }
+    expected_names = {utils.normalize_pypi_name(name) for name in expected}
+    missing_plugins = expected_names - plugin_names
+
+    if missing_plugins:
+        raise ExecutionError(
+            f"required plugins were not installed!\n"
+            f"- installed: {', '.join(sorted(plugin_names))}\n"
+            f"- expected: {', '.join(sorted(expected_names))}\n"
+            f"- missing: {', '.join(sorted(missing_plugins))}"
+        )
+
+
+def find_plugins(
+    cfg: configparser.RawConfigParser,
+    opts: PluginOptions,
+) -> List[Plugin]:
     """Discovers all plugins (but does not load them)."""
     ret = [*_find_importlib_plugins(), *_find_local_plugins(cfg)]
 
     # for determinism, sort the list
     ret.sort()
 
+    _check_required_plugins(ret, opts.require_plugins)
+
     return ret
-
-
-class PluginOptions(NamedTuple):
-    """Options related to plugin loading."""
-
-    local_plugin_paths: Tuple[str, ...]
-    enable_extensions: FrozenSet[str]
-    # TODO: more options here!
-    # require_plugins: Tuple[str, ...]
-
-    @classmethod
-    def blank(cls) -> "PluginOptions":
-        """Make a blank PluginOptions, mostly used for tests."""
-        return cls(local_plugin_paths=(), enable_extensions=frozenset())
-
-
-def _parse_option(
-    cfg: configparser.RawConfigParser,
-    cfg_opt_name: str,
-    opt: Optional[str],
-) -> List[str]:
-    # specified on commandline: use that
-    if opt is not None:
-        return utils.parse_comma_separated_list(opt)
-    else:
-        # ideally this would reuse our config parsing framework but we need to
-        # parse this from preliminary options before plugins are enabled
-        for opt_name in (cfg_opt_name, cfg_opt_name.replace("_", "-")):
-            val = cfg.get("flake8", opt_name, fallback=None)
-            if val is not None:
-                return utils.parse_comma_separated_list(val)
-        else:
-            return []
-
-
-def parse_plugin_options(
-    cfg: configparser.RawConfigParser,
-    cfg_dir: str,
-    enable_extensions: Optional[str],
-) -> PluginOptions:
-    """Parse plugin loading related options."""
-    paths_s = cfg.get("flake8:local-plugins", "paths", fallback="").strip()
-    paths = utils.parse_comma_separated_list(paths_s)
-    paths = utils.normalize_paths(paths, cfg_dir)
-
-    return PluginOptions(
-        local_plugin_paths=tuple(paths),
-        enable_extensions=frozenset(
-            _parse_option(cfg, "enable_extensions", enable_extensions),
-        ),
-    )
 
 
 def _parameters_for(func: Any) -> Dict[str, bool]:

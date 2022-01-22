@@ -68,6 +68,11 @@ def stage1_arg_parser() -> argparse.ArgumentParser:
         "by default",
     )
 
+    parser.add_argument(
+        "--require-plugins",
+        help="Require specific plugins to be installed before running",
+    )
+
     return parser
 
 

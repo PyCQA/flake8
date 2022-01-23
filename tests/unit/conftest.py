@@ -10,7 +10,7 @@ def options_from(**kwargs):
     kwargs.setdefault("max_line_length", 79)
     kwargs.setdefault("max_doc_length", None)
     kwargs.setdefault("indent_size", 4)
-    kwargs.setdefault("verbose", False)
+    kwargs.setdefault("verbose", 0)
     kwargs.setdefault("stdin_display_name", "stdin")
     kwargs.setdefault("disable_noqa", False)
     return argparse.Namespace(**kwargs)

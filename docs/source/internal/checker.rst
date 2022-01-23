@@ -57,8 +57,6 @@ Utility Functions
 
 .. autofunction:: flake8.processor.is_multiline_string
 
-.. autofunction:: flake8.processor.log_token
-
 .. autofunction:: flake8.processor.mutate_string
 
 .. autofunction:: flake8.processor.token_is_newline

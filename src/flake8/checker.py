@@ -510,7 +510,6 @@ class FileChecker:
             statistics["tokens"] += 1
             self.check_physical_eol(token, prev_physical)
             token_type, text = token[0:2]
-            processor.log_token(LOG, token)
             if token_type == tokenize.OP:
                 parens = processor.count_parentheses(parens, text)
             elif parens == 0:

@@ -381,51 +381,6 @@ def test_expand_indent(string, expected):
 
 
 @pytest.mark.parametrize(
-    "token, log_string",
-    [
-        [
-            (
-                tokenize.COMMENT,
-                "# this is a comment",
-                (1, 0),  # (start_row, start_column)
-                (1, 19),  # (end_ro, end_column)
-                "# this is a comment",
-            ),
-            "l.1\t[:19]\tCOMMENT\t'# this is a comment'",
-        ],
-        [
-            (
-                tokenize.COMMENT,
-                "# this is a comment",
-                (1, 5),  # (start_row, start_column)
-                (1, 19),  # (end_ro, end_column)
-                "# this is a comment",
-            ),
-            "l.1\t[5:19]\tCOMMENT\t'# this is a comment'",
-        ],
-        [
-            (
-                tokenize.COMMENT,
-                "# this is a comment",
-                (1, 0),  # (start_row, start_column)
-                (2, 19),  # (end_ro, end_column)
-                "# this is a comment",
-            ),
-            "l.1\tl.2\tCOMMENT\t'# this is a comment'",
-        ],
-    ],
-)
-def test_log_token(token, log_string):
-    """Verify we use the log object passed in."""
-    log = mock.Mock()
-    processor.log_token(log, token)
-    log.log.assert_called_once_with(
-        5,  # flake8._EXTRA_VERBOSE
-        log_string,
-    )
-
-
-@pytest.mark.parametrize(
     "current_count, token_text, expected",
     [
         (0, "(", 1),

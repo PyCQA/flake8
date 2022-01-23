@@ -20,19 +20,11 @@ LOG.addHandler(logging.NullHandler())
 __version__ = "4.0.1"
 __version_info__ = tuple(int(i) for i in __version__.split(".") if i.isdigit())
 
-
-# There is nothing lower than logging.DEBUG (10) in the logging library,
-# but we want an extra level to avoid being too verbose when using -vv.
-_EXTRA_VERBOSE = 5
-logging.addLevelName(_EXTRA_VERBOSE, "VERBOSE")
-
 _VERBOSITY_TO_LOG_LEVEL = {
     # output more than warnings but not debugging info
     1: logging.INFO,  # INFO is a numerical level of 20
     # output debugging information
     2: logging.DEBUG,  # DEBUG is a numerical level of 10
-    # output extra verbose debugging information
-    3: _EXTRA_VERBOSE,
 }
 
 LOG_FORMAT = (
@@ -58,9 +50,8 @@ def configure_logging(
     """
     if verbosity <= 0:
         return
-    if verbosity > 3:
-        verbosity = 3
 
+    verbosity = min(verbosity, max(_VERBOSITY_TO_LOG_LEVEL))
     log_level = _VERBOSITY_TO_LOG_LEVEL[verbosity]
 
     if not filename or filename in ("stderr", "stdout"):

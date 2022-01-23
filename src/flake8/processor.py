@@ -11,7 +11,6 @@ from typing import List
 from typing import Optional
 from typing import Tuple
 
-import flake8
 from flake8 import defaults
 from flake8 import utils
 from flake8.plugins.finder import LoadedPlugin
@@ -410,19 +409,6 @@ def count_parentheses(current_parentheses_count: int, token_text: str) -> int:
     elif token_text in "}])":  # nosec
         return current_parentheses_count - 1
     return current_parentheses_count
-
-
-def log_token(log: logging.Logger, token: tokenize.TokenInfo) -> None:
-    """Log a token to a provided logging object."""
-    if token[2][0] == token[3][0]:
-        pos = "[{}:{}]".format(token[2][1] or "", token[3][1])
-    else:
-        pos = f"l.{token[3][0]}"
-    log.log(
-        flake8._EXTRA_VERBOSE,
-        "l.%s\t%s\t%s\t%r"
-        % (token[2][0], pos, tokenize.tok_name[token[0]], token[1]),
-    )
 
 
 def expand_indent(line: str) -> int:

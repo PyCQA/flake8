@@ -251,9 +251,8 @@ class FileProcessor:
                 continue
             try:
                 arguments[param] = getattr(self, param)
-            except AttributeError as exc:
+            except AttributeError:
                 if required:
-                    LOG.exception(exc)
                     raise
                 else:
                     LOG.warning(

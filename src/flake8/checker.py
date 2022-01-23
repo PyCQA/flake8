@@ -342,7 +342,6 @@ class FileChecker:
         try:
             self.processor.keyword_arguments_for(plugin.parameters, arguments)
         except AttributeError as ae:
-            LOG.error("Plugin requested unknown parameters.")
             raise exceptions.PluginRequestedUnknownParameters(
                 plugin_name=plugin.display_name, exception=ae
             )

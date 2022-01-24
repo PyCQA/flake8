@@ -337,7 +337,6 @@ class FileChecker:
 
     def run_check(self, plugin: LoadedPlugin, **arguments: Any) -> Any:
         """Run the check in a single plugin."""
-        LOG.debug("Running %r with %r", plugin, arguments)
         assert self.processor is not None
         try:
             params = self.processor.keyword_arguments_for(

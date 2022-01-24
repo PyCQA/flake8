@@ -54,5 +54,10 @@ def test_raises_exception_on_failed_plugin(tmp_path, default_options):
         plugins=finder.Checkers([], [], []),
         options=default_options,
     )
-    with pytest.raises(flake8.exceptions.PluginExecutionFailed):
+    with pytest.raises(flake8.exceptions.PluginExecutionFailed) as excinfo:
         fchecker.run_check(plugin)
+    expected = (
+        f'{fname}: "plugin-name[X]" failed during execution '
+        f"due to ValueError()"
+    )
+    assert str(excinfo.value) == expected

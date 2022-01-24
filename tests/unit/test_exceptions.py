@@ -18,6 +18,7 @@ from flake8 import exceptions
             exception=ValueError("boom!"),
         ),
         exceptions.PluginExecutionFailed(
+            filename="filename.py",
             plugin_name="plugin_name",
             exception=ValueError("boom!"),
         ),

@@ -356,7 +356,9 @@ class FileChecker:
                 exc_info=True,
             )
             raise exceptions.PluginExecutionFailed(
-                plugin_name=plugin.display_name, exception=all_exc
+                filename=self.filename,
+                plugin_name=plugin.display_name,
+                exception=all_exc,
             )
 
     @staticmethod

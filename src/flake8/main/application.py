@@ -10,7 +10,6 @@ from typing import Optional
 from typing import Sequence
 from typing import Set
 from typing import Tuple
-from typing import Type
 
 import flake8
 from flake8 import checker
@@ -183,9 +182,7 @@ class Application:
             except TypeError:
                 parse_options(self.options)
 
-    def make_formatter(
-        self, formatter_class: Optional[Type[BaseFormatter]] = None
-    ) -> None:
+    def make_formatter(self) -> None:
         """Initialize a formatter based on the parsed options."""
         assert self.plugins is not None
         assert self.options is not None

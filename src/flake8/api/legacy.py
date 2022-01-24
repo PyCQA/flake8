@@ -158,8 +158,7 @@ class StyleGuide:
                 "Report should be subclass of "
                 "flake8.formatter.BaseFormatter."
             )
-        self._application.formatter = None
-        self._application.make_formatter(reporter)
+        self._application.formatter = reporter(self.options)
         self._application.guide = None
         # NOTE(sigmavirus24): This isn't the intended use of
         # Application#make_guide but it works pretty well.

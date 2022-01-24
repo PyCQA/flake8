@@ -122,7 +122,7 @@ def test_styleguide_init_report():
             raise NotImplementedError
 
     style_guide.init_report(FakeFormatter)
-    app.make_formatter.assert_called_once_with(FakeFormatter)
+    assert isinstance(app.formatter, FakeFormatter)
     assert app.guide is None
     app.make_guide.assert_called_once_with()
 

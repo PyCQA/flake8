@@ -241,16 +241,15 @@ class FileProcessor:
     def keyword_arguments_for(
         self,
         parameters: Dict[str, bool],
-        arguments: Optional[Dict[str, Any]] = None,
+        arguments: Dict[str, Any],
     ) -> Dict[str, Any]:
         """Generate the keyword arguments for a list of parameters."""
-        if arguments is None:
-            arguments = {}
+        ret = {}
         for param, required in parameters.items():
             if param in arguments:
                 continue
             try:
-                arguments[param] = getattr(self, param)
+                ret[param] = getattr(self, param)
             except AttributeError:
                 if required:
                     raise
@@ -260,7 +259,7 @@ class FileProcessor:
                         "but this is not an available parameter.",
                         param,
                     )
-        return arguments
+        return ret
 
     def generate_tokens(self) -> Generator[tokenize.TokenInfo, None, None]:
         """Tokenize the file and yield the tokens."""

@@ -340,13 +340,15 @@ class FileChecker:
         LOG.debug("Running %r with %r", plugin, arguments)
         assert self.processor is not None
         try:
-            self.processor.keyword_arguments_for(plugin.parameters, arguments)
+            params = self.processor.keyword_arguments_for(
+                plugin.parameters, arguments
+            )
         except AttributeError as ae:
             raise exceptions.PluginRequestedUnknownParameters(
                 plugin_name=plugin.display_name, exception=ae
             )
         try:
-            return plugin.obj(**arguments)
+            return plugin.obj(**arguments, **params)
         except Exception as all_exc:
             LOG.critical(
                 "Plugin %s raised an unexpected exception",

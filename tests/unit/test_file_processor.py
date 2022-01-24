@@ -209,21 +209,21 @@ def test_next_line(default_options):
     [
         (
             {"blank_before": True, "blank_lines": True},
-            None,
+            {},
             {"blank_before": 0, "blank_lines": 0},
         ),
         (
             {"noqa": True, "fake": True},
             {"fake": "foo"},
-            {"noqa": False, "fake": "foo"},
+            {"noqa": False},
         ),
         (
             {"blank_before": True, "blank_lines": True, "noqa": True},
             {"blank_before": 10, "blank_lines": 5, "noqa": True},
-            {"blank_before": 10, "blank_lines": 5, "noqa": True},
+            {},
         ),
-        ({}, {"fake": "foo"}, {"fake": "foo"}),
-        ({"non-existent": False}, {"fake": "foo"}, {"fake": "foo"}),
+        ({}, {"fake": "foo"}, {}),
+        ({"non-existent": False}, {"fake": "foo"}, {}),
     ],
 )
 def test_keyword_arguments_for(params, args, expected_kwargs, default_options):
@@ -235,9 +235,9 @@ def test_keyword_arguments_for(params, args, expected_kwargs, default_options):
             "Line 1",
         ],
     )
-    kwargs_for = file_processor.keyword_arguments_for
+    ret = file_processor.keyword_arguments_for(params, args)
 
-    assert kwargs_for(params, args) == expected_kwargs
+    assert ret == expected_kwargs
 
 
 def test_keyword_arguments_for_does_not_handle_attribute_errors(
@@ -253,7 +253,7 @@ def test_keyword_arguments_for_does_not_handle_attribute_errors(
     )
 
     with pytest.raises(AttributeError):
-        file_processor.keyword_arguments_for({"fake": True})
+        file_processor.keyword_arguments_for({"fake": True}, {})
 
 
 def test_processor_split_line(default_options):

@@ -104,7 +104,7 @@ def test_local_plugin_can_add_option(local_config):
 
     args = aggregator.aggregate_options(option_manager, cfg, cfg_dir, argv)
 
-    assert args.extended_default_select == {"XE", "F", "E", "C90"}
+    assert args.extended_default_select == {"XE", "F", "E", "W", "C90"}
     assert args.anopt == "foo"
 
 

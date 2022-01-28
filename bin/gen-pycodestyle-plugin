@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+import inspect
+import os.path
+from typing import Any
+from typing import Callable
+from typing import Generator
+from typing import NamedTuple
+from typing import Tuple
+
+import pycodestyle
+
+
+def _too_long(s: str) -> str:
+    if len(s) >= 80:
+        return f"{s}  # noqa: E501"
+    else:
+        return s
+
+
+class Call(NamedTuple):
+    name: str
+    is_generator: bool
+    params: Tuple[str, ...]
+
+    def to_src(self) -> str:
+        params_s = ", ".join(self.params)
+        if self.is_generator:
+            return _too_long(f"    yield from _{self.name}({params_s})")
+        else:
+            lines = (
+                _too_long(f"    ret = _{self.name}({params_s})"),
+                "    if ret is not None:",
+                "        yield ret",
+            )
+            return "\n".join(lines)
+
+    @classmethod
+    def from_func(cls, func: Callable[..., Any]) -> "Call":
+        spec = inspect.getfullargspec(func)
+        params = tuple(spec.args)
+        return cls(func.__name__, inspect.isgeneratorfunction(func), params)
+
+
+def lines() -> Generator[str, None, None]:
+    logical = []
+    physical = []
+
+    logical = [
+        Call.from_func(check) for check in pycodestyle._checks["logical_line"]
+    ]
+    physical = [
+        Call.from_func(check) for check in pycodestyle._checks["physical_line"]
+    ]
+    assert not pycodestyle._checks["tree"]
+
+    yield f'"""Generated using ./bin/{os.path.basename(__file__)}."""'
+    yield "# fmt: off"
+    yield "from typing import Any"
+    yield "from typing import Generator"
+    yield "from typing import Tuple"
+    yield ""
+    imports = sorted(call.name for call in logical + physical)
+    for name in imports:
+        yield _too_long(f"from pycodestyle import {name} as _{name}")
+    yield ""
+    yield ""
+
+    yield "def pycodestyle_logical("
+    logical_params = {param for call in logical for param in call.params}
+    for param in sorted(logical_params):
+        yield f"    {param}: Any,"
+    yield ") -> Generator[Tuple[int, str], None, None]:"
+    yield '    """Run pycodestyle logical checks."""'
+    for call in sorted(logical):
+        yield call.to_src()
+    yield ""
+    yield ""
+
+    yield "def pycodestyle_physical("
+    physical_params = {param for call in physical for param in call.params}
+    for param in sorted(physical_params):
+        yield f"    {param}: Any,"
+    yield ") -> Generator[Tuple[int, str], None, None]:"
+    yield '    """Run pycodestyle physical checks."""'
+    for call in sorted(physical):
+        yield call.to_src()
+
+
+def main() -> int:
+    for line in lines():
+        print(line)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

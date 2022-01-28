@@ -825,9 +825,6 @@ Options and their Descriptions
         enable-extensions =
             H111,
             G123
-        enable_extensions =
-            H111,
-            G123
 
 
 .. option:: --exit-zero

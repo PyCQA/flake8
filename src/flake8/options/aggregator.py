@@ -35,11 +35,9 @@ def aggregate_options(
     default_values.extended_default_ignore = (
         manager.extended_default_ignore.copy()
     )
-    LOG.debug(
-        "Extended default ignore list: %s", list(extended_default_ignore)
-    )
-    extended_default_ignore.update(default_values.ignore)
-    default_values.ignore = list(extended_default_ignore)
+    LOG.debug("Extended default ignore list: %s", extended_default_ignore)
+    extended_default_ignore.extend(default_values.ignore)
+    default_values.ignore = extended_default_ignore
     LOG.debug("Merged default ignore list: %s", default_values.ignore)
 
     extended_default_select = manager.extended_default_select.copy()

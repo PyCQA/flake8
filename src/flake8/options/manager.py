@@ -10,7 +10,6 @@ from typing import List
 from typing import Mapping
 from typing import Optional
 from typing import Sequence
-from typing import Set
 from typing import Tuple
 from typing import Type
 from typing import Union
@@ -353,8 +352,8 @@ class OptionManager:
 
         self.config_options_dict: Dict[str, Option] = {}
         self.options: List[Option] = []
-        self.extended_default_ignore: Set[str] = set()
-        self.extended_default_select: Set[str] = set()
+        self.extended_default_ignore: List[str] = []
+        self.extended_default_select: List[str] = []
 
         self._current_group: Optional[argparse._ArgumentGroup] = None
 
@@ -415,7 +414,7 @@ class OptionManager:
             extend the default ignore list.
         """
         LOG.debug("Extending default ignore list with %r", error_codes)
-        self.extended_default_ignore.update(error_codes)
+        self.extended_default_ignore.extend(error_codes)
 
     def extend_default_select(self, error_codes: Sequence[str]) -> None:
         """Extend the default select list with the error codes provided.
@@ -425,7 +424,7 @@ class OptionManager:
             to extend the default select list.
         """
         LOG.debug("Extending default select list with %r", error_codes)
-        self.extended_default_select.update(error_codes)
+        self.extended_default_select.extend(error_codes)
 
     def parse_args(
         self,

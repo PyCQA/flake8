@@ -156,10 +156,10 @@ def test_parse_args_normalize_paths(optmanager):
 
 def test_extend_default_ignore(optmanager):
     """Verify that we update the extended default ignore list."""
-    assert optmanager.extended_default_ignore == set()
+    assert optmanager.extended_default_ignore == []
 
     optmanager.extend_default_ignore(["T100", "T101", "T102"])
-    assert optmanager.extended_default_ignore == {"T100", "T101", "T102"}
+    assert optmanager.extended_default_ignore == ["T100", "T101", "T102"]
 
 
 def test_optparse_normalize_callback_option_legacy(optmanager):

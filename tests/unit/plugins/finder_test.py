@@ -118,8 +118,8 @@ flake8 = flake8.main.cli:main
 
 [flake8.extension]
 F = flake8.plugins.pyflakes:FlakesChecker
-pycodestyle.bare_except = pycodestyle:bare_except
-pycodestyle.blank_lines = pycodestyle:blank_lines
+E = flake8.plugins.pycodestyle:pycodestyle_logical
+W = flake8.plugins.pycodestyle:pycodestyle_physical
 
 [flake8.report]
 default = flake8.formatting.default:Default
@@ -181,7 +181,7 @@ def test_flake8_plugins(flake8_dist, mock_distribution):
             "9000.2.0",
             importlib_metadata.EntryPoint(
                 "E",
-                "pycodestyle:bare_except",
+                "flake8.plugins.pycodestyle:pycodestyle_logical",
                 "flake8.extension",
             ),
         ),
@@ -189,8 +189,8 @@ def test_flake8_plugins(flake8_dist, mock_distribution):
             "pycodestyle",
             "9000.2.0",
             importlib_metadata.EntryPoint(
-                "E",
-                "pycodestyle:blank_lines",
+                "W",
+                "flake8.plugins.pycodestyle:pycodestyle_physical",
                 "flake8.extension",
             ),
         ),
@@ -276,7 +276,7 @@ unrelated = unrelated:main
             "9000.2.0",
             importlib_metadata.EntryPoint(
                 "E",
-                "pycodestyle:bare_except",
+                "flake8.plugins.pycodestyle:pycodestyle_logical",
                 "flake8.extension",
             ),
         ),
@@ -284,8 +284,8 @@ unrelated = unrelated:main
             "pycodestyle",
             "9000.2.0",
             importlib_metadata.EntryPoint(
-                "E",
-                "pycodestyle:blank_lines",
+                "W",
+                "flake8.plugins.pycodestyle:pycodestyle_physical",
                 "flake8.extension",
             ),
         ),
@@ -512,7 +512,7 @@ def test_find_plugins(
             "9000.2.0",
             importlib_metadata.EntryPoint(
                 "E",
-                "pycodestyle:bare_except",
+                "flake8.plugins.pycodestyle:pycodestyle_logical",
                 "flake8.extension",
             ),
         ),
@@ -520,8 +520,8 @@ def test_find_plugins(
             "pycodestyle",
             "9000.2.0",
             importlib_metadata.EntryPoint(
-                "E",
-                "pycodestyle:blank_lines",
+                "W",
+                "flake8.plugins.pycodestyle:pycodestyle_physical",
                 "flake8.extension",
             ),
         ),

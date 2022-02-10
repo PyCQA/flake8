@@ -1,7 +1,7 @@
 3.0.0 -- 2016-07-25
 -------------------
 
-- Rewrite our documentation from scratch! (http://flake8.pycqa.org)
+- Rewrite our documentation from scratch! (https://flake8.pycqa.org)
 
 - Drop explicit support for Pythons 2.6, 3.2, and 3.3.
 

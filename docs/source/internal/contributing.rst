@@ -197,7 +197,7 @@ delivered.
 
 .. links
 .. _Python Code Quality Authority's Code of Conduct:
-    http://meta.pycqa.org/en/latest/code-of-conduct.html
+    https://meta.pycqa.org/code-of-conduct.html
 
 .. _tox:
     https://tox.readthedocs.io/

@@ -37,14 +37,14 @@ Quickstart
 ==========
 
 See our `quickstart documentation
-<http://flake8.pycqa.org/en/latest/index.html#quickstart>`_ for how to install
+<https://flake8.pycqa.org/en/latest/index.html#quickstart>`_ for how to install
 and get started with Flake8.
 
 
 Frequently Asked Questions
 ==========================
 
-Flake8 maintains an `FAQ <http://flake8.pycqa.org/en/latest/faq.html>`_ in its
+Flake8 maintains an `FAQ <https://flake8.pycqa.org/en/latest/faq.html>`_ in its
 documentation.
 
 
@@ -61,7 +61,7 @@ to suggest, the mailing list would be the best place for it.
 Links
 =====
 
-* `Flake8 Documentation <http://flake8.pycqa.org/en/latest/>`_
+* `Flake8 Documentation <https://flake8.pycqa.org/en/latest/>`_
 
 * `GitHub Project <https://github.com/pycqa/flake8>`_
 
@@ -72,14 +72,14 @@ Links
   <https://mail.python.org/mailman/listinfo/code-quality>`_
 
 * `Code of Conduct
-  <http://flake8.pycqa.org/en/latest/internal/contributing.html#code-of-conduct>`_
+  <https://flake8.pycqa.org/en/latest/internal/contributing.html#code-of-conduct>`_
 
 * `Getting Started Contributing
-  <http://flake8.pycqa.org/en/latest/internal/contributing.html>`_
+  <https://flake8.pycqa.org/en/latest/internal/contributing.html>`_
 
 
 Maintenance
 ===========
 
 Flake8 was created by Tarek Ziadé and is currently maintained by `Ian Cordasco
-<http://www.coglib.com/~icordasc/>`_
+<https://www.coglib.com/~icordasc/>`_

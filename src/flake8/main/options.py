@@ -157,7 +157,7 @@ def register_default_options(option_manager: OptionManager) -> None:
         "--count",
         action="store_true",
         parse_from_config=True,
-        help="Print total number of errors and warnings to standard error and"
+        help="Print total number of errors and warnings to standard output and"
         " set the exit code to 1 if total is not empty.",
     )
 

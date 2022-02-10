@@ -89,7 +89,6 @@ and how to specify them on the command-line or in configuration files.
     :maxdepth: 2
 
     user/index
-    Flake8 man page <manpage>
 
 Plugin Developer Guide
 ======================

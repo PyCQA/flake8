@@ -61,6 +61,7 @@ def load_config(
 
     cfg = configparser.RawConfigParser()
     if config is not None:
+        LOG.debug("Reading config file %s", config)
         if not cfg.read(config, encoding="UTF-8"):
             raise exceptions.ExecutionError(
                 f"The specified config file does not exist: {config}"
@@ -72,6 +73,7 @@ def load_config(
     # TODO: remove this and replace it with configuration modifying plugins
     # read the additional configs afterwards
     for filename in extra:
+        LOG.debug("Reading extra config file %s", config)
         cfg.read(filename, encoding="UTF-8")
 
     return cfg, cfg_dir

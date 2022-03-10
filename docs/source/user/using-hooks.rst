@@ -34,7 +34,7 @@ plugins, use the ``additional_dependencies`` setting.
 .. code-block:: yaml
 
         -   id: flake8
-            additional_dependencies: [flake8-docstrings]
+            additional_dependencies: [flake8-bugbear, flake8-docstrings]
 
 .. _pre-commit:
     https://pre-commit.com/

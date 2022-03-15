@@ -99,6 +99,11 @@ def test_parse_comma_separated_list(value, expected):
             "f.py: ABC123",
             [("f.py", ["ABC123"])],
         ),
+        # hyphens are allowed
+        (
+            "f.py: COMPANY-NAME-SPACE-123,COMPANY-NAME-SPACE-321",
+            [("f.py", ["COMPANY-NAME-SPACE-123", "COMPANY-NAME-SPACE-321"])],
+        ),
     ),
 )
 def test_parse_files_to_codes_mapping(value, expected):
@@ -118,8 +123,6 @@ def test_parse_files_to_codes_mapping(value, expected):
         "f.py:E,g.py"
         # colon while looking for codes
         "f.py::",
-        # no separator between
-        "f.py:E1F1",
     ),
 )
 def test_invalid_file_list(value):

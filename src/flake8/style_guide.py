@@ -240,6 +240,10 @@ class StyleGuideManager:
             )
         )
 
+        self.style_guide_for = functools.lru_cache(maxsize=None)(
+            self._style_guide_for
+        )
+
     def populate_style_guides_with(
         self, options: argparse.Namespace
     ) -> Generator["StyleGuide", None, None]:
@@ -256,8 +260,7 @@ class StyleGuideManager:
                 filename=filename, extend_ignore_with=violations
             )
 
-    @functools.lru_cache(maxsize=None)
-    def style_guide_for(self, filename: str) -> "StyleGuide":
+    def _style_guide_for(self, filename: str) -> "StyleGuide":
         """Find the StyleGuide for the filename in particular."""
         guides = sorted(
             (g for g in self.style_guides if g.applies_to(filename)),

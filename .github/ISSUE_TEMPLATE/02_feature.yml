@@ -14,7 +14,7 @@ body:
 
   - type: markdown
     attributes:
-      value: '**NOTE: if you ask about `pyproject.toml` your issue will be closed as a duplicate of #234**'
+      value: '**NOTE: if you ask about `pyproject.toml` your issue will be closed as a duplicate of [#234](https://github.com/PyCQA/flake8/issues/234)**'
 
   - type: textarea
     id: freeform

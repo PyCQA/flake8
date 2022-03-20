@@ -12,6 +12,10 @@ body:
     attributes:
       value: '**NOTE: flake8 is a linting framework and does not implement any checks**'
 
+  - type: markdown
+    attributes:
+      value: '**NOTE: if you ask about `pyproject.toml` your issue will be closed as a duplicate of #234**'
+
   - type: textarea
     id: freeform
     attributes:

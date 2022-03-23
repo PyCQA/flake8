@@ -24,8 +24,8 @@ def stage1_arg_parser() -> argparse.ArgumentParser:
         "--verbose",
         default=0,
         action="count",
-        help="Print more information about what is happening in flake8."
-        " This option is repeatable and will increase verbosity each "
+        help="Print more information about what is happening in flake8. "
+        "This option is repeatable and will increase verbosity each "
         "time it is repeated.",
     )
 
@@ -157,8 +157,8 @@ def register_default_options(option_manager: OptionManager) -> None:
         "--count",
         action="store_true",
         parse_from_config=True,
-        help="Print total number of errors and warnings to standard output and"
-        " set the exit code to 1 if total is not empty.",
+        help="Print total number of errors to standard output and "
+        "set the exit code to 1 if total is not empty.",
     )
 
     add_option(
@@ -175,8 +175,8 @@ def register_default_options(option_manager: OptionManager) -> None:
         comma_separated_list=True,
         parse_from_config=True,
         normalize_paths=True,
-        help="Comma-separated list of files or directories to exclude."
-        " (Default: %(default)s)",
+        help="Comma-separated list of files or directories to exclude. "
+        "(Default: %(default)s)",
     )
 
     add_option(
@@ -186,8 +186,8 @@ def register_default_options(option_manager: OptionManager) -> None:
         parse_from_config=True,
         comma_separated_list=True,
         normalize_paths=True,
-        help="Comma-separated list of files or directories to add to the list"
-        " of excluded ones.",
+        help="Comma-separated list of files or directories to add to the list "
+        "of excluded ones.",
     )
 
     add_option(
@@ -203,9 +203,9 @@ def register_default_options(option_manager: OptionManager) -> None:
     add_option(
         "--stdin-display-name",
         default="stdin",
-        help="The name used when reporting errors from code passed via stdin."
-        " This is useful for editors piping the file contents to flake8."
-        " (Default: %(default)s)",
+        help="The name used when reporting errors from code passed via stdin. "
+        "This is useful for editors piping the file contents to flake8. "
+        "(Default: %(default)s)",
     )
 
     # TODO(sigmavirus24): Figure out --first/--repeat
@@ -225,28 +225,29 @@ def register_default_options(option_manager: OptionManager) -> None:
         "--hang-closing",
         action="store_true",
         parse_from_config=True,
-        help="Hang closing bracket instead of matching indentation of opening"
-        " bracket's line.",
+        help="Hang closing bracket instead of matching indentation of opening "
+        "bracket's line.",
     )
 
     add_option(
         "--ignore",
         metavar="errors",
-        default=",".join(defaults.IGNORE),
         parse_from_config=True,
         comma_separated_list=True,
-        help="Comma-separated list of errors and warnings to ignore (or skip)."
-        " For example, ``--ignore=E4,E51,W234``. (Default: %(default)s)",
+        help=(
+            f"Comma-separated list of error codes to ignore (or skip). "
+            f"For example, ``--ignore=E4,E51,W234``. "
+            f"(Default: {','.join(defaults.IGNORE)})"
+        ),
     )
 
     add_option(
         "--extend-ignore",
         metavar="errors",
-        default="",
         parse_from_config=True,
         comma_separated_list=True,
-        help="Comma-separated list of errors and warnings to add to the list"
-        " of ignored ones. For example, ``--extend-ignore=E4,E51,W234``.",
+        help="Comma-separated list of error codes to add to the list of "
+        "ignored ones. For example, ``--extend-ignore=E4,E51,W234``.",
     )
 
     add_option(
@@ -291,21 +292,22 @@ def register_default_options(option_manager: OptionManager) -> None:
     add_option(
         "--select",
         metavar="errors",
-        default=",".join(defaults.SELECT),
         parse_from_config=True,
         comma_separated_list=True,
-        help="Comma-separated list of errors and warnings to enable."
-        " For example, ``--select=E4,E51,W234``. (Default: %(default)s)",
+        help=(
+            f"Comma-separated list of error codes to enable. "
+            f"For example, ``--select=E4,E51,W234``. "
+            f"(Default: {','.join(defaults.SELECT)})"
+        ),
     )
 
     add_option(
         "--extend-select",
         metavar="errors",
-        default="",
         parse_from_config=True,
         comma_separated_list=True,
         help=(
-            "Comma-separated list of errors and warnings to add to the list "
+            "Comma-separated list of error codes to add to the list "
             "of selected ones. For example, ``--extend-select=E4,E51,W234``."
         ),
     )
@@ -339,7 +341,7 @@ def register_default_options(option_manager: OptionManager) -> None:
         "--statistics",
         action="store_true",
         parse_from_config=True,
-        help="Count errors and warnings.",
+        help="Count errors.",
     )
 
     # Flake8 options
@@ -358,8 +360,8 @@ def register_default_options(option_manager: OptionManager) -> None:
         type=JobsArgument,
         help="Number of subprocesses to use to run checks in parallel. "
         'This is ignored on Windows. The default, "auto", will '
-        "auto-detect the number of processors available to use."
-        " (Default: %(default)s)",
+        "auto-detect the number of processors available to use. "
+        "(Default: %(default)s)",
     )
 
     add_option(

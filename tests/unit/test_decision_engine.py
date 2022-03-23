@@ -3,18 +3,17 @@ import argparse
 
 import pytest
 
-from flake8 import defaults
 from flake8 import style_guide
 
 
 def create_options(**kwargs):
     """Create and return an instance of argparse.Namespace."""
-    kwargs.setdefault("select", [])
-    kwargs.setdefault("extended_default_ignore", [])
+    kwargs.setdefault("select", None)
+    kwargs.setdefault("ignore", None)
+    kwargs.setdefault("extend_select", None)
+    kwargs.setdefault("extend_ignore", None)
     kwargs.setdefault("extended_default_select", [])
-    kwargs.setdefault("extend_select", [])
-    kwargs.setdefault("ignore", [])
-    kwargs.setdefault("extend_ignore", [])
+    kwargs.setdefault("extended_default_ignore", [])
     kwargs.setdefault("disable_noqa", False)
     return argparse.Namespace(**kwargs)
 
@@ -93,7 +92,7 @@ def test_was_selected_implicitly_selects_errors():
     error_code = "E121"
     decider = style_guide.DecisionEngine(
         create_options(
-            select=[],
+            select=None,
             extended_default_select=["E"],
         ),
     )
@@ -121,13 +120,13 @@ def test_was_selected_excludes_errors(select_list, error_code):
 @pytest.mark.parametrize(
     "select_list,ignore_list,extend_ignore,error_code,expected",
     [
-        (["E111", "E121"], [], [], "E111", style_guide.Decision.Selected),
-        (["E111", "E121"], [], [], "E112", style_guide.Decision.Ignored),
-        (["E111", "E121"], [], [], "E121", style_guide.Decision.Selected),
-        (["E111", "E121"], [], [], "E122", style_guide.Decision.Ignored),
-        (["E11", "E12"], [], [], "E132", style_guide.Decision.Ignored),
-        (["E2", "E12"], [], [], "E321", style_guide.Decision.Ignored),
-        (["E2", "E12"], [], [], "E410", style_guide.Decision.Ignored),
+        (["E111", "E121"], [], None, "E111", style_guide.Decision.Selected),
+        (["E111", "E121"], [], None, "E112", style_guide.Decision.Ignored),
+        (["E111", "E121"], [], None, "E121", style_guide.Decision.Selected),
+        (["E111", "E121"], [], None, "E122", style_guide.Decision.Ignored),
+        (["E11", "E12"], [], None, "E132", style_guide.Decision.Ignored),
+        (["E2", "E12"], [], None, "E321", style_guide.Decision.Ignored),
+        (["E2", "E12"], [], None, "E410", style_guide.Decision.Ignored),
         (["E11", "E121"], ["E1"], [], "E112", style_guide.Decision.Selected),
         (["E11", "E121"], [], ["E1"], "E112", style_guide.Decision.Selected),
         (
@@ -137,41 +136,41 @@ def test_was_selected_excludes_errors(select_list, error_code):
             "E122",
             style_guide.Decision.Ignored,
         ),
-        (["E11", "E12"], ["E13"], [], "E132", style_guide.Decision.Ignored),
-        (["E1", "E3"], ["E32"], [], "E321", style_guide.Decision.Ignored),
-        ([], ["E2", "E12"], [], "E410", style_guide.Decision.Ignored),
+        (["E11", "E12"], ["E13"], None, "E132", style_guide.Decision.Ignored),
+        (["E1", "E3"], ["E32"], None, "E321", style_guide.Decision.Ignored),
+        ([], ["E2", "E12"], None, "E410", style_guide.Decision.Ignored),
         (
             ["E4"],
             ["E2", "E12", "E41"],
-            [],
+            None,
             "E410",
             style_guide.Decision.Ignored,
         ),
         (
             ["E41"],
             ["E2", "E12", "E4"],
-            [],
+            None,
             "E410",
             style_guide.Decision.Selected,
         ),
-        (["E"], ["F"], [], "E410", style_guide.Decision.Selected),
-        (["F"], [], [], "E410", style_guide.Decision.Ignored),
-        (["E"], defaults.IGNORE, [], "E126", style_guide.Decision.Selected),
-        (["W"], defaults.IGNORE, [], "E126", style_guide.Decision.Ignored),
-        (["E"], defaults.IGNORE, [], "W391", style_guide.Decision.Ignored),
-        (["E", "W"], ["E13"], [], "E131", style_guide.Decision.Ignored),
-        (defaults.SELECT, ["E13"], [], "E131", style_guide.Decision.Ignored),
+        (["E"], ["F"], None, "E410", style_guide.Decision.Selected),
+        (["F"], [], None, "E410", style_guide.Decision.Ignored),
+        (["E"], None, None, "E126", style_guide.Decision.Selected),
+        (["W"], None, None, "E126", style_guide.Decision.Ignored),
+        (["E"], None, None, "W391", style_guide.Decision.Ignored),
+        (["E", "W"], ["E13"], None, "E131", style_guide.Decision.Ignored),
+        (None, ["E13"], None, "E131", style_guide.Decision.Ignored),
         (
-            defaults.SELECT,
-            defaults.IGNORE,
+            None,
+            None,
             ["W391"],
             "E126",
             style_guide.Decision.Ignored,
         ),
         (
-            defaults.SELECT,
-            defaults.IGNORE,
-            [],
+            None,
+            None,
+            None,
             "W391",
             style_guide.Decision.Selected,
         ),
@@ -192,166 +191,36 @@ def test_decision_for(
     assert decider.decision_for(error_code) is expected
 
 
-@pytest.mark.parametrize(
-    (
-        "select",
-        "ignore",
-        "extended_default_ignore",
-        "extended_default_select",
-        "error_code",
-        "expected",
-    ),
-    [
-        (
-            defaults.SELECT,
-            [],
-            [],
-            ["I1"],
-            "I100",
-            style_guide.Decision.Selected,
-        ),
-        (
-            defaults.SELECT,
-            [],
-            [],
-            ["I1"],
-            "I201",
-            style_guide.Decision.Ignored,
-        ),
-        (
-            defaults.SELECT,
-            ["I2"],
-            [],
-            ["I1"],
-            "I101",
-            style_guide.Decision.Selected,
-        ),
-        (
-            defaults.SELECT,
-            ["I2"],
-            [],
-            ["I1"],
-            "I201",
-            style_guide.Decision.Ignored,
-        ),
-        (
-            defaults.SELECT,
-            ["I1"],
-            [],
-            ["I10"],
-            "I101",
-            style_guide.Decision.Selected,
-        ),
-        (
-            defaults.SELECT,
-            ["I10"],
-            [],
-            ["I1"],
-            "I101",
-            style_guide.Decision.Ignored,
-        ),
-        (
-            defaults.SELECT,
-            ["U401"],
-            [],
-            [],
-            "U401",
-            style_guide.Decision.Ignored,
-        ),
-        (
-            ["E", "W"],
-            ["E13"],
-            [],
-            [],
-            "E131",
-            style_guide.Decision.Ignored,
-        ),
-        (
-            ["E", "W"],
-            ["E13"],
-            [],
-            [],
-            "E126",
-            style_guide.Decision.Selected,
-        ),
-        (["E2"], ["E21"], [], [], "E221", style_guide.Decision.Selected),
-        (["E2"], ["E21"], [], [], "E212", style_guide.Decision.Ignored),
-        (
-            ["F", "W"],
-            ["C90"],
-            [],
-            ["I1"],
-            "C901",
-            style_guide.Decision.Ignored,
-        ),
-        (
-            ["E", "W"],
-            ["C"],
-            [],
-            [],
-            "E131",
-            style_guide.Decision.Selected,
-        ),
-        (
-            defaults.SELECT,
-            defaults.IGNORE,
-            [],
-            ["G"],
-            "G101",
-            style_guide.Decision.Selected,
-        ),
-        (
-            defaults.SELECT,
-            ["G1"],
-            [],
-            ["G"],
-            "G101",
-            style_guide.Decision.Ignored,
-        ),
-        (
-            ["E", "W"],
-            defaults.IGNORE,
-            [],
-            ["I"],
-            "I101",
-            style_guide.Decision.Ignored,
-        ),
-        (
-            ["E", "W", "I101"],
-            defaults.IGNORE + ("I101",),
-            ["I101"],
-            [],
-            "I101",
-            style_guide.Decision.Selected,
-        ),
-        (
-            ["E", "W"],
-            defaults.IGNORE + ("I101",),
-            ["I101"],
-            [],
-            "I101",
-            style_guide.Decision.Ignored,
-        ),
-        # TODO(sigmavirus24) Figure out how to exercise the final catch-all
-        # return statement
-    ],
-)
-def test_more_specific_decision_for_logic(
-    select,
-    ignore,
-    extended_default_ignore,
-    extended_default_select,
-    error_code,
-    expected,
-):
-    """Verify the logic of DecisionEngine.more_specific_decision_for."""
+def test_implicitly_selected_and_implicitly_ignored_defers_to_length():
     decider = style_guide.DecisionEngine(
         create_options(
-            select=select,
-            ignore=ignore,
-            extended_default_select=extended_default_select,
-            extended_default_ignore=extended_default_ignore,
+            # no options selected by user
+            select=None,
+            ignore=None,
+            extend_select=None,
+            extend_ignore=None,
+            # a plugin is installed and extends default ignore
+            extended_default_select=["P"],
+            extended_default_ignore=["P002"],
         ),
     )
 
-    assert decider.more_specific_decision_for(error_code) is expected
+    assert decider.decision_for("P001") is style_guide.Decision.Selected
+    assert decider.decision_for("P002") is style_guide.Decision.Ignored
+
+
+def test_user_can_extend_select_to_enable_plugin_default_ignored():
+    decider = style_guide.DecisionEngine(
+        create_options(
+            # user options --extend-select=P002
+            select=None,
+            ignore=None,
+            extend_select=["P002"],
+            extend_ignore=None,
+            # a plugin is installed and extends default ignore
+            extended_default_select=["P"],
+            extended_default_ignore=["P002"],
+        ),
+    )
+
+    assert decider.decision_for("P002") is style_guide.Decision.Selected

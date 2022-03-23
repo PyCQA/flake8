@@ -76,15 +76,5 @@ def test_aggregate_options_when_isolated(optmanager, flake8_config):
     options = aggregator.aggregate_options(optmanager, cfg, cfg_dir, arguments)
 
     assert options.select == ["E11", "E34", "E402", "W", "F"]
-    assert sorted(options.ignore) == [
-        "E121",
-        "E123",
-        "E126",
-        "E226",
-        "E24",
-        "E704",
-        "E8",
-        "W503",
-        "W504",
-    ]
+    assert options.ignore is None
     assert options.exclude == [os.path.abspath("tests/*")]

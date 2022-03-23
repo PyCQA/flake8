@@ -47,6 +47,21 @@ class Decision(enum.Enum):
     Selected = "selected error"
 
 
+def _select_ignore(
+    *,
+    option: Optional[List[str]],
+    default: Tuple[str, ...],
+    extended_default: List[str],
+    extend: Optional[List[str]],
+) -> Tuple[str, ...]:
+    # option was explicitly set, ignore the default and extended default
+    if option is not None:
+        ret = [*option, *(extend or [])]
+    else:
+        ret = [*default, *extended_default, *(extend or [])]
+    return tuple(sorted(ret, reverse=True))
+
+
 class DecisionEngine:
     """A class for managing the decision process around violations.
 
@@ -57,26 +72,27 @@ class DecisionEngine:
     def __init__(self, options: argparse.Namespace) -> None:
         """Initialize the engine."""
         self.cache: Dict[str, Decision] = {}
-        self.selected = tuple(options.select)
-        self.extended_selected = tuple(
-            sorted(options.extended_default_select, reverse=True)
+
+        self.using_default_select = (
+            options.select is None and options.extend_select is None
         )
-        self.all_selected = tuple(
-            sorted(
-                itertools.chain(self.selected, options.extend_select),
-                reverse=True,
-            )
+        self.using_default_ignore = (
+            options.ignore is None and options.extend_ignore is None
         )
-        self.ignored = tuple(
-            sorted(
-                itertools.chain(options.ignore, options.extend_ignore),
-                reverse=True,
-            )
+
+        self.selected = _select_ignore(
+            option=options.select,
+            default=defaults.SELECT,
+            extended_default=options.extended_default_select,
+            extend=options.extend_select,
         )
-        self.using_default_ignore = set(self.ignored) == set(
-            defaults.IGNORE
-        ).union(options.extended_default_ignore)
-        self.using_default_select = set(self.selected) == set(defaults.SELECT)
+
+        self.ignored = _select_ignore(
+            option=options.ignore,
+            default=defaults.IGNORE,
+            extended_default=options.extended_default_ignore,
+            extend=options.extend_ignore,
+        )
 
     def was_selected(self, code: str) -> Union[Selected, Ignored]:
         """Determine if the code has been selected by the user.
@@ -89,16 +105,13 @@ class DecisionEngine:
             Ignored.Implicitly if the selected list is not empty but no match
             was found.
         """
-        if code.startswith(self.all_selected):
-            return Selected.Explicitly
-
-        if not self.all_selected and code.startswith(self.extended_selected):
-            # If it was not explicitly selected, it may have been implicitly
-            # selected because the check comes from a plugin that is enabled by
-            # default
-            return Selected.Implicitly
-
-        return Ignored.Implicitly
+        if code.startswith(self.selected):
+            if self.using_default_select:
+                return Selected.Implicitly
+            else:
+                return Selected.Explicitly
+        else:
+            return Ignored.Implicitly
 
     def was_ignored(self, code: str) -> Union[Selected, Ignored]:
         """Determine if the code has been ignored by the user.
@@ -113,83 +126,54 @@ class DecisionEngine:
             was found.
         """
         if code.startswith(self.ignored):
-            return Ignored.Explicitly
-
-        return Selected.Implicitly
-
-    def more_specific_decision_for(self, code: str) -> Decision:
-        select = find_first_match(code, self.all_selected)
-        extra_select = find_first_match(code, self.extended_selected)
-        ignore = find_first_match(code, self.ignored)
-
-        if select and ignore:
-            # If the violation code appears in both the select and ignore
-            # lists (in some fashion) then if we're using the default ignore
-            # list and a custom select list we should select the code. An
-            # example usage looks like this:
-            #   A user has a code that would generate an E126 violation which
-            #   is in our default ignore list and they specify select=E.
-            # We should be reporting that violation. This logic changes,
-            # however, if they specify select and ignore such that both match.
-            # In that case we fall through to our find_more_specific call.
-            # If, however, the user hasn't specified a custom select, and
-            # we're using the defaults for both select and ignore then the
-            # more specific rule must win. In most cases, that will be to
-            # ignore the violation since our default select list is very
-            # high-level and our ignore list is highly specific.
-            if self.using_default_ignore and not self.using_default_select:
-                return Decision.Selected
-            return find_more_specific(select, ignore)
-        if extra_select and ignore:
-            # At this point, select is false-y. Now we need to check if the
-            # code is in our extended select list and our ignore list. This is
-            # a *rare* case as we see little usage of the extended select list
-            # that plugins can use, so I suspect this section may change to
-            # look a little like the block above in which we check if we're
-            # using our default ignore list.
-            return find_more_specific(extra_select, ignore)
-        if select or (extra_select and self.using_default_select):
-            # Here, ignore was false-y and the user has either selected
-            # explicitly the violation or the violation is covered by
-            # something in the extended select list and we're using the
-            # default select list. In either case, we want the violation to be
-            # selected.
-            return Decision.Selected
-        if select is None and (
-            extra_select is None or not self.using_default_ignore
-        ):
-            return Decision.Ignored
-        if (select is None and not self.using_default_select) and (
-            ignore is None and self.using_default_ignore
-        ):
-            return Decision.Ignored
-        return Decision.Selected
+            if self.using_default_ignore:
+                return Ignored.Implicitly
+            else:
+                return Ignored.Explicitly
+        else:
+            return Selected.Implicitly
 
     def make_decision(self, code: str) -> Decision:
         """Decide if code should be ignored or selected."""
-        LOG.debug('Deciding if "%s" should be reported', code)
         selected = self.was_selected(code)
         ignored = self.was_ignored(code)
         LOG.debug(
-            'The user configured "%s" to be "%s", "%s"',
+            "The user configured %r to be %r, %r",
             code,
             selected,
             ignored,
         )
 
-        if (
-            selected is Selected.Explicitly or selected is Selected.Implicitly
-        ) and ignored is Selected.Implicitly:
-            decision = Decision.Selected
+        if isinstance(selected, Selected) and isinstance(ignored, Selected):
+            return Decision.Selected
+        elif isinstance(selected, Ignored) and isinstance(ignored, Ignored):
+            return Decision.Ignored
+        elif (
+            selected is Selected.Explicitly
+            and ignored is not Ignored.Explicitly
+        ):
+            return Decision.Selected
+        elif (
+            selected is not Selected.Explicitly
+            and ignored is Ignored.Explicitly
+        ):
+            return Decision.Ignored
+        elif selected is Ignored.Implicitly and ignored is Selected.Implicitly:
+            return Decision.Ignored
         elif (
             selected is Selected.Explicitly and ignored is Ignored.Explicitly
         ) or (
-            selected is Ignored.Implicitly and ignored is Selected.Implicitly
+            selected is Selected.Implicitly and ignored is Ignored.Implicitly
         ):
-            decision = self.more_specific_decision_for(code)
-        elif selected is Ignored.Implicitly or ignored is Ignored.Explicitly:
-            decision = Decision.Ignored  # pylint: disable=R0204
-        return decision
+            # we only get here if it was in both lists: longest prefix wins
+            select = next(s for s in self.selected if code.startswith(s))
+            ignore = next(s for s in self.ignored if code.startswith(s))
+            if len(select) > len(ignore):
+                return Decision.Selected
+            else:
+                return Decision.Ignored
+        else:
+            raise AssertionError(f"unreachable {code} {selected} {ignored}")
 
     def decision_for(self, code: str) -> Decision:
         """Return the decision for a specific code.
@@ -362,7 +346,8 @@ class StyleGuide:
         """Create a copy of this style guide with different values."""
         filename = filename or self.filename
         options = copy.deepcopy(self.options)
-        options.ignore.extend(extend_ignore_with or [])
+        options.extend_ignore = options.extend_ignore or []
+        options.extend_ignore.extend(extend_ignore_with or [])
         return StyleGuide(
             options, self.formatter, self.stats, filename=filename
         )
@@ -471,20 +456,3 @@ class StyleGuide:
             Dictionary mapping filenames to sets of line number ranges.
         """
         self._parsed_diff = diffinfo
-
-
-def find_more_specific(selected: str, ignored: str) -> Decision:
-    if selected.startswith(ignored) and selected != ignored:
-        return Decision.Selected
-    return Decision.Ignored
-
-
-def find_first_match(
-    error_code: str, code_list: Tuple[str, ...]
-) -> Optional[str]:
-    startswith = error_code.startswith
-    for code in code_list:
-        if startswith(code):
-            return code
-    else:
-        return None

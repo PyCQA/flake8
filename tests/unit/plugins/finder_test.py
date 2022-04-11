@@ -29,6 +29,37 @@ def _loaded(plugin=None, obj=None, parameters=None):
     return finder.LoadedPlugin(plugin, obj, parameters)
 
 
+@pytest.mark.parametrize(
+    "s",
+    (
+        "E",
+        "E1",
+        "E123",
+        "ABC",
+        "ABC1",
+        "ABC123",
+    ),
+)
+def test_valid_plugin_prefixes(s):
+    assert finder.VALID_CODE.match(s)
+
+
+@pytest.mark.parametrize(
+    "s",
+    (
+        "",
+        "A1234",
+        "ABCD",
+        "abc",
+        "a-b",
+        "☃",
+        "A𝟗",
+    ),
+)
+def test_invalid_plugin_prefixes(s):
+    assert finder.VALID_CODE.match(s) is None
+
+
 def test_loaded_plugin_entry_name_vs_display_name():
     loaded = _loaded(_plugin(package="package-name", ep=_ep(name="Q")))
     assert loaded.entry_name == "Q"
@@ -758,6 +789,35 @@ def test_classify_plugins_enable_a_disabled_plugin():
         checkers=finder.Checkers([loaded], [], []),
         reporters={},
         disabled=[],
+    )
+
+
+def test_classify_plugins_does_not_error_on_reporter_prefix():
+    # these are ok, don't check their name
+    plugin = _plugin(ep=_ep(name="report-er", group="flake8.report"))
+    loaded = _loaded(plugin=plugin)
+
+    opts = finder.PluginOptions.blank()
+    classified = finder._classify_plugins([loaded], opts)
+
+    assert classified == finder.Plugins(
+        checkers=finder.Checkers([], [], []),
+        reporters={"report-er": loaded},
+        disabled=[],
+    )
+
+
+def test_classify_plugins_errors_on_incorrect_checker_name():
+    plugin = _plugin(ep=_ep(name="INVALID", group="flake8.extension"))
+    loaded = _loaded(plugin=plugin, parameters={"tree": True})
+
+    with pytest.raises(ExecutionError) as excinfo:
+        finder._classify_plugins([loaded], finder.PluginOptions.blank())
+
+    (msg,) = excinfo.value.args
+    assert msg == (
+        "plugin code for `local[INVALID]` "
+        "does not match ^[A-Z]{1,3}[0-9]{0,3}$"
     )
 
 

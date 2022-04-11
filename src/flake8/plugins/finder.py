@@ -1,7 +1,9 @@
 """Functions related to finding and loading plugins."""
 import configparser
 import inspect
+import itertools
 import logging
+import re
 import sys
 from typing import Any
 from typing import Dict
@@ -19,6 +21,8 @@ from flake8.exceptions import ExecutionError
 from flake8.exceptions import FailedToLoadPlugin
 
 LOG = logging.getLogger(__name__)
+
+VALID_CODE = re.compile("^[A-Z]{1,3}[0-9]{0,3}$", re.ASCII)
 
 FLAKE8_GROUPS = frozenset(("flake8.extension", "flake8.report"))
 
@@ -327,6 +331,13 @@ def _classify_plugins(
             physical_line.append(loaded)
         else:
             raise NotImplementedError(f"what plugin type? {loaded}")
+
+    for loaded in itertools.chain(tree, logical_line, physical_line):
+        if not VALID_CODE.match(loaded.entry_name):
+            raise ExecutionError(
+                f"plugin code for `{loaded.display_name}` does not match "
+                f"{VALID_CODE.pattern}"
+            )
 
     return Plugins(
         checkers=Checkers(

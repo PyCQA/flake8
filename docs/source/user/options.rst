@@ -911,7 +911,6 @@ Options and their Descriptions
 
     .. code-block:: ini
 
-        output-file = output.txt
         tee = True
 
 

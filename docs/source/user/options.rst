@@ -568,9 +568,9 @@ Options and their Descriptions
 
         # https://some-super-long-domain-name.com/with/some/very/long/path
 
-        url = (
-            'https://...'
-        )
+        url = '''\
+            https://...
+        '''
 
     This defaults to: ``79``
 

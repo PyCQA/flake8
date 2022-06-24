@@ -47,6 +47,15 @@ class Decision(enum.Enum):
     Selected = "selected error"
 
 
+def _explicitly_chosen(
+    *,
+    option: Optional[List[str]],
+    extend: Optional[List[str]],
+) -> Tuple[str, ...]:
+    ret = [*(option or []), *(extend or [])]
+    return tuple(sorted(ret, reverse=True))
+
+
 def _select_ignore(
     *,
     option: Optional[List[str]],
@@ -73,11 +82,13 @@ class DecisionEngine:
         """Initialize the engine."""
         self.cache: Dict[str, Decision] = {}
 
-        self.using_default_select = (
-            options.select is None and options.extend_select is None
+        self.selected_explicitly = _explicitly_chosen(
+            option=options.select,
+            extend=options.extend_select,
         )
-        self.using_default_ignore = (
-            options.ignore is None and options.extend_ignore is None
+        self.ignored_explicitly = _explicitly_chosen(
+            option=options.ignore,
+            extend=options.extend_ignore,
         )
 
         self.selected = _select_ignore(
@@ -86,7 +97,6 @@ class DecisionEngine:
             extended_default=options.extended_default_select,
             extend=options.extend_select,
         )
-
         self.ignored = _select_ignore(
             option=options.ignore,
             default=defaults.IGNORE,
@@ -105,11 +115,10 @@ class DecisionEngine:
             Ignored.Implicitly if the selected list is not empty but no match
             was found.
         """
-        if code.startswith(self.selected):
-            if self.using_default_select:
-                return Selected.Implicitly
-            else:
-                return Selected.Explicitly
+        if code.startswith(self.selected_explicitly):
+            return Selected.Explicitly
+        elif code.startswith(self.selected):
+            return Selected.Implicitly
         else:
             return Ignored.Implicitly
 
@@ -125,11 +134,10 @@ class DecisionEngine:
             Selected.Implicitly if the ignored list is not empty but no match
             was found.
         """
-        if code.startswith(self.ignored):
-            if self.using_default_ignore:
-                return Ignored.Implicitly
-            else:
-                return Ignored.Explicitly
+        if code.startswith(self.ignored_explicitly):
+            return Ignored.Explicitly
+        elif code.startswith(self.ignored):
+            return Ignored.Implicitly
         else:
             return Selected.Implicitly
 

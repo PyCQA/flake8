@@ -224,3 +224,20 @@ def test_user_can_extend_select_to_enable_plugin_default_ignored():
     )
 
     assert decider.decision_for("P002") is style_guide.Decision.Selected
+
+
+def test_plugin_extends_default_ignore_but_extend_selected():
+    decider = style_guide.DecisionEngine(
+        create_options(
+            # user options --extend-select P002 --extend-ignore E501
+            select=None,
+            ignore=None,
+            extend_select=["P002"],
+            extend_ignore=["E501"],
+            # a plugin is installed and extends default ignore
+            extended_default_select=["P"],
+            extended_default_ignore=["P002"],
+        ),
+    )
+
+    assert decider.decision_for("P002") is style_guide.Decision.Selected

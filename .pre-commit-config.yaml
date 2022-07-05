@@ -8,7 +8,7 @@ repos:
     -   id: trailing-whitespace
         exclude: ^tests/fixtures/
 -   repo: https://github.com/asottile/reorder_python_imports
-    rev: v3.1.0
+    rev: v3.3.0
     hooks:
     -   id: reorder-python-imports
         args: [--application-directories, '.:src', --py36-plus]
@@ -18,7 +18,7 @@ repos:
     -   id: pyupgrade
         args: [--py36-plus]
 -   repo: https://github.com/psf/black
-    rev: 22.3.0
+    rev: 22.6.0
     hooks:
     -   id: black
         args: [--line-length=79]

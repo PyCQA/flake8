@@ -14,7 +14,18 @@ from flake8.options.manager import OptionManager
 LOG = logging.getLogger(__name__)
 
 
+def _stat_key(s: str) -> Tuple[int, int]:
+    # same as what's used by samefile / samestat
+    st = os.stat(s)
+    return st.st_ino, st.st_dev
+
+
 def _find_config_file(path: str) -> Optional[str]:
+    # on windows if the homedir isn't detected this returns back `~`
+    home = os.path.expanduser("~")
+    home_stat = _stat_key(home) if home != "~" else None
+
+    dir_stat = _stat_key(path)
     cfg = configparser.RawConfigParser()
     while True:
         for candidate in ("setup.cfg", "tox.ini", ".flake8"):
@@ -29,10 +40,12 @@ def _find_config_file(path: str) -> Optional[str]:
                     return cfg_path
 
         new_path = os.path.dirname(path)
-        if new_path == path:
+        new_dir_stat = _stat_key(new_path)
+        if new_dir_stat == dir_stat or new_dir_stat == home_stat:
             break
         else:
             path = new_path
+            dir_stat = new_dir_stat
 
     # did not find any configuration file
     return None

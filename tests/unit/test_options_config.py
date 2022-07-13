@@ -1,4 +1,6 @@
 import configparser
+import os.path
+from unittest import mock
 
 import pytest
 
@@ -64,6 +66,16 @@ def test_find_config_searches_upwards(tmp_path):
     expected.write_text("[flake8]")
 
     assert config._find_config_file(str(subdir)) == str(expected)
+
+
+def test_find_config_ignores_homedir(tmp_path):
+    subdir = tmp_path.joinpath("d")
+    subdir.mkdir()
+
+    tmp_path.joinpath(".flake8").write_text("[flake8]")
+
+    with mock.patch.object(os.path, "expanduser", return_value=str(tmp_path)):
+        assert config._find_config_file(str(subdir)) is None
 
 
 def test_load_config_config_specified_skips_discovery(tmpdir):

@@ -1,6 +1,7 @@
 """Tests for the Manager object for FileCheckers."""
 import errno
 import multiprocessing
+import platform
 from unittest import mock
 
 import pytest
@@ -51,12 +52,26 @@ def test_oserrors_are_reraised(_):
     assert serial.call_count == 0
 
 
+@mock.patch.object(platform, "system")
 @mock.patch.object(multiprocessing, "get_start_method", return_value="spawn")
-def test_multiprocessing_is_disabled(_):
+def test_multiprocessing_is_disabled(_, mock_system):
     """Verify not being able to import multiprocessing forces jobs to 0."""
     style_guide = style_guide_mock()
     manager = checker.Manager(style_guide, finder.Checkers([], [], []))
     assert manager.jobs == 0
+
+
+@mock.patch.object(platform, "system", return_value="Darwin")
+@mock.patch.object(multiprocessing, "get_start_method", return_value="spawn")
+def test_multiprocessing_is_enabled_for_macos(_, mock_system):
+    """Verify jobs are returned on macOS.
+
+    Since Python 3.8, `spawn` is the default value on macOS, which is
+    not currently supported by flake8.
+    """
+    style_guide = style_guide_mock()
+    manager = checker.Manager(style_guide, finder.Checkers([], [], []))
+    assert manager.jobs > 0
 
 
 def test_multiprocessing_cpu_count_not_implemented():

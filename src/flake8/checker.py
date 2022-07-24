@@ -5,6 +5,7 @@ import errno
 import itertools
 import logging
 import multiprocessing.pool
+import platform
 import signal
 import tokenize
 from typing import Any
@@ -101,7 +102,11 @@ class Manager:
         # - the user provided some awful input
 
         # class state is only preserved when using the `fork` strategy.
-        if multiprocessing.get_start_method() != "fork":
+        # since Python 3.8, macOS has the method `spawn` as the default value
+        if (
+            platform.system() != "Darwin"
+            and multiprocessing.get_start_method() != "fork"
+        ):
             LOG.warning(
                 "The multiprocessing module is not available. "
                 "Ignoring --jobs arguments."
@@ -595,7 +600,8 @@ def _try_initialize_processpool(
 ) -> Optional[multiprocessing.pool.Pool]:
     """Return a new process pool instance if we are able to create one."""
     try:
-        return multiprocessing.Pool(job_count, _pool_init)
+        context = multiprocessing.get_context("fork")
+        return context.Pool(job_count, _pool_init)
     except OSError as err:
         if err.errno not in SERIAL_RETRY_ERRNOS:
             raise

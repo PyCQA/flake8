@@ -292,11 +292,11 @@ def test_acquire_when_multiprocessing_pool_can_initialize():
 
     This simulates the behaviour on most common platforms.
     """
-    with mock.patch("multiprocessing.Pool") as pool:
+    with mock.patch("multiprocessing.get_context") as context:
         result = checker._try_initialize_processpool(2)
 
-    pool.assert_called_once_with(2, checker._pool_init)
-    assert result is pool.return_value
+    context.return_value.Pool.assert_called_once_with(2, checker._pool_init)
+    assert result is context.return_value.Pool.return_value
 
 
 def test_acquire_when_multiprocessing_pool_can_not_initialize():
@@ -311,10 +311,11 @@ def test_acquire_when_multiprocessing_pool_can_not_initialize():
 
     https://github.com/python/cpython/blob/4e02981de0952f54bf87967f8e10d169d6946b40/Lib/multiprocessing/synchronize.py#L30-L33
     """
-    with mock.patch("multiprocessing.Pool", side_effect=ImportError) as pool:
+    with mock.patch("multiprocessing.get_context") as context:
+        context.return_value.Pool.side_effect = ImportError
         result = checker._try_initialize_processpool(2)
 
-    pool.assert_called_once_with(2, checker._pool_init)
+    context.return_value.Pool.assert_called_once_with(2, checker._pool_init)
     assert result is None
 
 

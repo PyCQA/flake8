@@ -172,7 +172,7 @@ class Application:
             if parse_options is None:
                 continue
 
-            # XXX: ideally we would't have two forms of parse_options
+            # XXX: ideally we wouldn't have two forms of parse_options
             try:
                 parse_options(
                     self.option_manager,

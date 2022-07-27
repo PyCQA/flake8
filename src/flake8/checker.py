@@ -29,7 +29,7 @@ LOG = logging.getLogger(__name__)
 SERIAL_RETRY_ERRNOS = {
     # ENOSPC: Added by sigmavirus24
     # > On some operating systems (OSX), multiprocessing may cause an
-    # > ENOSPC error while trying to trying to create a Semaphore.
+    # > ENOSPC error while trying to create a Semaphore.
     # > In those cases, we should replace the customized Queue Report
     # > class with pep8's StandardReport class to ensure users don't run
     # > into this problem.

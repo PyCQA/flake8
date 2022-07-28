@@ -406,3 +406,13 @@ The specified config file does not exist: missing.cfg
     out, err = capsys.readouterr()
     assert out == expected
     assert err == ""
+
+
+def test_format_option_help(capsys):
+    """Test that help displays list of available formatters."""
+    with pytest.raises(SystemExit):
+        cli.main(["--help"])
+
+    out, err = capsys.readouterr()
+    assert "(default, pylint, quiet-filename, quiet-nothing)" in out
+    assert err == ""

@@ -17,7 +17,10 @@ TEST_VERSION = "3.0.0b1"
 def optmanager():
     """Generate a simple OptionManager with default test arguments."""
     return manager.OptionManager(
-        version=TEST_VERSION, plugin_versions="", parents=[]
+        version=TEST_VERSION,
+        plugin_versions="",
+        parents=[],
+        formatter_names=[],
     )
 
 
@@ -34,7 +37,10 @@ def test_option_manager_including_parent_options():
 
     # WHEN
     optmanager = manager.OptionManager(
-        version=TEST_VERSION, plugin_versions="", parents=[parent_parser]
+        version=TEST_VERSION,
+        plugin_versions="",
+        parents=[parent_parser],
+        formatter_names=[],
     )
     options = optmanager.parse_args(["--parent", "foo"])
 

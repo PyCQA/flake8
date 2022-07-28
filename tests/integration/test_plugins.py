@@ -100,6 +100,7 @@ def test_local_plugin_can_add_option(local_config):
         version="123",
         plugin_versions="",
         parents=[stage1_parser],
+        formatter_names=[],
     )
     register_default_options(option_manager)
     option_manager.register_plugins(loaded_plugins)

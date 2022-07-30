@@ -85,8 +85,6 @@ generates its own :term:`error code`\ s for ``pyflakes``:
 +------+---------------------------------------------------------------------+
 | F704 | a ``yield`` or ``yield from`` statement outside of a function       |
 +------+---------------------------------------------------------------------+
-| F705 | a ``return`` statement with arguments inside a generator            |
-+------+---------------------------------------------------------------------+
 | F706 | a ``return`` statement outside of a function/method                 |
 +------+---------------------------------------------------------------------+
 | F707 | an ``except:`` block as not the last exception handler              |

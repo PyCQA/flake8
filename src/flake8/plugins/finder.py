@@ -27,7 +27,7 @@ VALID_CODE = re.compile("^[A-Z]{1,3}[0-9]{0,3}$", re.ASCII)
 FLAKE8_GROUPS = frozenset(("flake8.extension", "flake8.report"))
 
 BANNED_PLUGINS = {
-    "flake8-colors": "4.1",
+    "flake8-colors": "5.0",
     "flake8-per-file-ignores": "3.7",
 }
 

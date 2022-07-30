@@ -1,0 +1,76 @@
+5.0.0 -- 2022-07-30
+-------------------
+
+You can view the `5.0.0 milestone`_ on GitHub for more details.
+
+Backwards Incompatible Changes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Remove ``indent_size_str`` (See also :pull:`1411`).
+- Remove some dead code (See also :pull:`1453`, :pull:`1540`, :pull:`1541`).
+- Missing explicitly-specified configuration is now an error (See also
+  :issue:`1497`, :pull:`1498`).
+- Always read configuration files as UTF-8 (See also :issue:`1532`,
+  :pull:`1533`).
+- Remove manpage from docs -- use ``help2man`` or related tools instead (See
+  also :pull:`1557`).
+- Forbid invalid plugin codes (See also :issue:`325`, :pull:`1579`).
+
+
+Deprecations
+~~~~~~~~~~~~
+
+- Deprecate ``--diff`` option (See also :issue:`1389`, :pull:`1441`).
+
+
+New Dependency Information
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- pycodestyle has been updated to >= 2.9.0, < 2.10.0 (See also :pull:`1626`).
+- Pyflakes has been updated to >= 2.5.0, < 2.6.0 (See also :pull:`1625`).
+- mccabe has been updated to >= 0.7.0, < 0.8.0 (See also :pull:`1542`).
+
+
+Features
+~~~~~~~~
+
+- Add colors to output, configurable via ``--color`` (See also :issue:`1379`,
+  :pull:`1440`).
+- Add ``.nox`` to the default exclude list (See also :issue:`1442`,
+  :pull:`1443`).
+- Don't consider a config file which does not contain flake8 settings (See
+  also :issue:`199`, :pull:`1472`).
+- Duplicate ``local-plugins`` names are now allowed (See also :issue:`362`,
+  :pull:`1504`).
+- Consider ``.`` to be a path in config files (See also :issue:`1494`,
+  :pull:`1508`)
+- Add ``--require-plugins`` option taking distribution names (See also
+  :issue:`283`, :pull:`1535`).
+- Improve performance by removing debug logs (See also :pull:`1537`,
+  :pull:`1544`).
+- Include failing file path in plugin execution error (See also :issue:`265`,
+  :pull:`1543`).
+- Improve performance by pre-generating a ``pycodestyle`` plugin (See also
+  :pull:`1545`).
+- Properly differentiate between explicitly ignored / selected and default
+  ignored / selected options (See also :issue:`284`, :pull:`1576`,
+  :pull:`1609`).
+
+
+Bugs Fixed
+~~~~~~~~~~
+
+- Fix physical line plugins not receiving all lines in the case of
+  triple-quoted strings (See also :issue:`1534`, :pull:`1536`).
+- Fix duplicate error logging in the case of plugin issues (See also
+  :pull:`1538`).
+- Fix inconsistent ordering of ``--ignore`` in ``--help`` (See also
+  :issue:`1550`, :pull:`1552`).
+- Fix memory leak of style guides by avoiding ``@lru_cache`` of a method (See
+  also :pull:`1573`).
+- Fix ignoring of configuration files exactly in the home directory (See also
+  :issue:`1617`, :pull:`1618`).
+
+.. all links
+.. _5.0.0 milestone:
+    https://github.com/PyCQA/flake8/milestone/42

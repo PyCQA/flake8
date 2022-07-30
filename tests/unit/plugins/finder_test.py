@@ -356,7 +356,7 @@ unrelated = unrelated:main
         (
             "flake8.plugins.finder",
             30,
-            "flake8-colors plugin is obsolete in flake8>=4.1",
+            "flake8-colors plugin is obsolete in flake8>=5.0",
         ),
     ]
 

@@ -180,7 +180,6 @@ look at a portion of a project's Flake8 configuration in their ``tox.ini``:
 
     [flake8]
     # it's not a bug that we aren't using all of hacking, ignore:
-    # F812: list comprehension redefines ...
     # H101: Use TODO(NAME)
     # H202: assertRaises Exception too broad
     # H233: Python 3.x incompatible use of print operator
@@ -191,7 +190,7 @@ look at a portion of a project's Flake8 configuration in their ``tox.ini``:
     # H404: multi line docstring should start without a leading new line
     # H405: multi line docstring summary not separated with an empty line
     # H501: Do not use self.__dict__ for string formatting
-    ignore = F812,H101,H202,H233,H301,H306,H401,H403,H404,H405,H501
+    ignore = H101,H202,H233,H301,H306,H401,H403,H404,H405,H501
 
 They use the comments to describe the check but they could also write this as:
 
@@ -200,8 +199,6 @@ They use the comments to describe the check but they could also write this as:
     [flake8]
     # it's not a bug that we aren't using all of hacking
     ignore =
-        # F812: list comprehension redefines ...
-        F812,
         # H101: Use TODO(NAME)
         H101,
         # H202: assertRaises Exception too broad

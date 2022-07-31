@@ -179,6 +179,8 @@ def _flake8_plugins(
 
 
 def _find_importlib_plugins() -> Generator[Plugin, None, None]:
+    # some misconfigured pythons (RHEL) have things on `sys.path` twice
+    seen = set()
     for dist in importlib_metadata.distributions():
         # assigned to prevent continual reparsing
         eps = dist.entry_points
@@ -189,6 +191,11 @@ def _find_importlib_plugins() -> Generator[Plugin, None, None]:
 
         # assigned to prevent continual reparsing
         meta = dist.metadata
+
+        if meta["name"] in seen:
+            continue
+        else:
+            seen.add(meta["name"])
 
         if meta["name"] in BANNED_PLUGINS:
             LOG.warning(

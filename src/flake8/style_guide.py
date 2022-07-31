@@ -254,13 +254,10 @@ class StyleGuideManager:
 
     def _style_guide_for(self, filename: str) -> "StyleGuide":
         """Find the StyleGuide for the filename in particular."""
-        guides = sorted(
+        return max(
             (g for g in self.style_guides if g.applies_to(filename)),
             key=lambda g: len(g.filename or ""),
         )
-        if len(guides) > 1:
-            return guides[-1]
-        return guides[0]
 
     @contextlib.contextmanager
     def processing_file(

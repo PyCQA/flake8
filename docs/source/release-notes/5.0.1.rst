@@ -1,0 +1,15 @@
+5.0.1 -- 2022-07-31
+-------------------
+
+You can view the `5.0.1 milestone`_ on GitHub for more details.
+
+Bugs Fixed
+~~~~~~~~~~
+
+- Fix duplicate plugin discovery on misconfigured pythons (See also
+  :issue:`1627`, :pull:`1631`).
+
+
+.. all links
+.. _5.0.1 milestone:
+    https://github.com/PyCQA/flake8/milestone/43

@@ -1,4 +1,6 @@
 """Expose backports in a single place."""
+from __future__ import annotations
+
 import sys
 
 if sys.version_info >= (3, 8):  # pragma: no cover (PY38+)

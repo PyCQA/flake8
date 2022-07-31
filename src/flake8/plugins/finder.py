@@ -1,4 +1,6 @@
 """Functions related to finding and loading plugins."""
+from __future__ import annotations
+
 import configparser
 import inspect
 import itertools
@@ -6,14 +8,9 @@ import logging
 import re
 import sys
 from typing import Any
-from typing import Dict
-from typing import FrozenSet
 from typing import Generator
 from typing import Iterable
-from typing import List
 from typing import NamedTuple
-from typing import Optional
-from typing import Tuple
 
 from flake8 import utils
 from flake8._compat import importlib_metadata
@@ -45,7 +42,7 @@ class LoadedPlugin(NamedTuple):
 
     plugin: Plugin
     obj: Any
-    parameters: Dict[str, bool]
+    parameters: dict[str, bool]
 
     @property
     def entry_name(self) -> str:
@@ -61,17 +58,17 @@ class LoadedPlugin(NamedTuple):
 class Checkers(NamedTuple):
     """Classified plugins needed for checking."""
 
-    tree: List[LoadedPlugin]
-    logical_line: List[LoadedPlugin]
-    physical_line: List[LoadedPlugin]
+    tree: list[LoadedPlugin]
+    logical_line: list[LoadedPlugin]
+    physical_line: list[LoadedPlugin]
 
 
 class Plugins(NamedTuple):
     """Classified plugins."""
 
     checkers: Checkers
-    reporters: Dict[str, LoadedPlugin]
-    disabled: List[LoadedPlugin]
+    reporters: dict[str, LoadedPlugin]
+    disabled: list[LoadedPlugin]
 
     def all_plugins(self) -> Generator[LoadedPlugin, None, None]:
         """Return an iterator over all :class:`LoadedPlugin`s."""
@@ -96,12 +93,12 @@ class Plugins(NamedTuple):
 class PluginOptions(NamedTuple):
     """Options related to plugin loading."""
 
-    local_plugin_paths: Tuple[str, ...]
-    enable_extensions: FrozenSet[str]
-    require_plugins: FrozenSet[str]
+    local_plugin_paths: tuple[str, ...]
+    enable_extensions: frozenset[str]
+    require_plugins: frozenset[str]
 
     @classmethod
-    def blank(cls) -> "PluginOptions":
+    def blank(cls) -> PluginOptions:
         """Make a blank PluginOptions, mostly used for tests."""
         return cls(
             local_plugin_paths=(),
@@ -113,8 +110,8 @@ class PluginOptions(NamedTuple):
 def _parse_option(
     cfg: configparser.RawConfigParser,
     cfg_opt_name: str,
-    opt: Optional[str],
-) -> List[str]:
+    opt: str | None,
+) -> list[str]:
     # specified on commandline: use that
     if opt is not None:
         return utils.parse_comma_separated_list(opt)
@@ -133,8 +130,8 @@ def parse_plugin_options(
     cfg: configparser.RawConfigParser,
     cfg_dir: str,
     *,
-    enable_extensions: Optional[str],
-    require_plugins: Optional[str],
+    enable_extensions: str | None,
+    require_plugins: str | None,
 ) -> PluginOptions:
     """Parse plugin loading related options."""
     paths_s = cfg.get("flake8:local-plugins", "paths", fallback="").strip()
@@ -231,8 +228,8 @@ def _find_local_plugins(
 
 
 def _check_required_plugins(
-    plugins: List[Plugin],
-    expected: FrozenSet[str],
+    plugins: list[Plugin],
+    expected: frozenset[str],
 ) -> None:
     plugin_names = {
         utils.normalize_pypi_name(plugin.package) for plugin in plugins
@@ -252,7 +249,7 @@ def _check_required_plugins(
 def find_plugins(
     cfg: configparser.RawConfigParser,
     opts: PluginOptions,
-) -> List[Plugin]:
+) -> list[Plugin]:
     """Discovers all plugins (but does not load them)."""
     ret = [*_find_importlib_plugins(), *_find_local_plugins(cfg)]
 
@@ -264,7 +261,7 @@ def find_plugins(
     return ret
 
 
-def _parameters_for(func: Any) -> Dict[str, bool]:
+def _parameters_for(func: Any) -> dict[str, bool]:
     """Return the parameters for the plugin.
 
     This will inspect the plugin and return either the function parameters
@@ -305,15 +302,15 @@ def _load_plugin(plugin: Plugin) -> LoadedPlugin:
 
 
 def _import_plugins(
-    plugins: List[Plugin],
+    plugins: list[Plugin],
     opts: PluginOptions,
-) -> List[LoadedPlugin]:
+) -> list[LoadedPlugin]:
     sys.path.extend(opts.local_plugin_paths)
     return [_load_plugin(p) for p in plugins]
 
 
 def _classify_plugins(
-    plugins: List[LoadedPlugin],
+    plugins: list[LoadedPlugin],
     opts: PluginOptions,
 ) -> Plugins:
     tree = []
@@ -358,7 +355,7 @@ def _classify_plugins(
 
 
 def load_plugins(
-    plugins: List[Plugin],
+    plugins: list[Plugin],
     opts: PluginOptions,
 ) -> Plugins:
     """Load and classify all flake8 plugins.

@@ -1,15 +1,12 @@
 """Module containing the application logic for Flake8."""
+from __future__ import annotations
+
 import argparse
 import configparser
 import json
 import logging
 import time
-from typing import Dict
-from typing import List
-from typing import Optional
 from typing import Sequence
-from typing import Set
-from typing import Tuple
 
 import flake8
 from flake8 import checker
@@ -38,27 +35,27 @@ class Application:
         #: The timestamp when the Application instance was instantiated.
         self.start_time = time.time()
         #: The timestamp when the Application finished reported errors.
-        self.end_time: Optional[float] = None
+        self.end_time: float | None = None
         #: The prelimary argument parser for handling options required for
         #: obtaining and parsing the configuration file.
         self.prelim_arg_parser = options.stage1_arg_parser()
         #: The instance of :class:`flake8.options.manager.OptionManager` used
         #: to parse and handle the options and arguments passed by the user
-        self.option_manager: Optional[manager.OptionManager] = None
+        self.option_manager: manager.OptionManager | None = None
 
-        self.plugins: Optional[finder.Plugins] = None
+        self.plugins: finder.Plugins | None = None
         #: The user-selected formatter from :attr:`formatting_plugins`
-        self.formatter: Optional[BaseFormatter] = None
+        self.formatter: BaseFormatter | None = None
         #: The :class:`flake8.style_guide.StyleGuideManager` built from the
         #: user's options
-        self.guide: Optional[style_guide.StyleGuideManager] = None
+        self.guide: style_guide.StyleGuideManager | None = None
         #: The :class:`flake8.checker.Manager` that will handle running all of
         #: the checks selected by the user.
-        self.file_checker_manager: Optional[checker.Manager] = None
+        self.file_checker_manager: checker.Manager | None = None
 
         #: The user-supplied options parsed into an instance of
         #: :class:`argparse.Namespace`
-        self.options: Optional[argparse.Namespace] = None
+        self.options: argparse.Namespace | None = None
         #: The number of errors, warnings, and other messages after running
         #: flake8 and taking into account ignored errors and lines.
         self.result_count = 0
@@ -70,11 +67,11 @@ class Application:
         self.catastrophic_failure = False
 
         #: The parsed diff information
-        self.parsed_diff: Dict[str, Set[int]] = {}
+        self.parsed_diff: dict[str, set[int]] = {}
 
     def parse_preliminary_options(
         self, argv: Sequence[str]
-    ) -> Tuple[argparse.Namespace, List[str]]:
+    ) -> tuple[argparse.Namespace, list[str]]:
         """Get preliminary options from the CLI, pre-plugin-loading.
 
         We need to know the values of a few standard options so that we can
@@ -111,8 +108,8 @@ class Application:
         cfg: configparser.RawConfigParser,
         cfg_dir: str,
         *,
-        enable_extensions: Optional[str],
-        require_plugins: Optional[str],
+        enable_extensions: str | None,
+        require_plugins: str | None,
     ) -> None:
         """Find and load the plugins for this application.
 
@@ -143,7 +140,7 @@ class Application:
         self,
         cfg: configparser.RawConfigParser,
         cfg_dir: str,
-        argv: List[str],
+        argv: list[str],
     ) -> None:
         """Parse configuration files and the CLI options."""
         assert self.option_manager is not None
@@ -218,7 +215,7 @@ class Application:
         assert self.options is not None
         assert self.file_checker_manager is not None
         if self.options.diff:
-            files: Optional[List[str]] = sorted(self.parsed_diff)
+            files: list[str] | None = sorted(self.parsed_diff)
             if not files:
                 return
         else:

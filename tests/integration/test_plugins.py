@@ -1,4 +1,6 @@
 """Integration tests for plugin loading."""
+from __future__ import annotations
+
 import pytest
 
 from flake8.main.cli import main

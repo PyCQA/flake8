@@ -1,12 +1,10 @@
 """Config handling logic for Flake8."""
+from __future__ import annotations
+
 import configparser
 import logging
 import os.path
 from typing import Any
-from typing import Dict
-from typing import List
-from typing import Optional
-from typing import Tuple
 
 from flake8 import exceptions
 from flake8.options.manager import OptionManager
@@ -14,13 +12,13 @@ from flake8.options.manager import OptionManager
 LOG = logging.getLogger(__name__)
 
 
-def _stat_key(s: str) -> Tuple[int, int]:
+def _stat_key(s: str) -> tuple[int, int]:
     # same as what's used by samefile / samestat
     st = os.stat(s)
     return st.st_ino, st.st_dev
 
 
-def _find_config_file(path: str) -> Optional[str]:
+def _find_config_file(path: str) -> str | None:
     # on windows if the homedir isn't detected this returns back `~`
     home = os.path.expanduser("~")
     try:
@@ -55,11 +53,11 @@ def _find_config_file(path: str) -> Optional[str]:
 
 
 def load_config(
-    config: Optional[str],
-    extra: List[str],
+    config: str | None,
+    extra: list[str],
     *,
     isolated: bool = False,
-) -> Tuple[configparser.RawConfigParser, str]:
+) -> tuple[configparser.RawConfigParser, str]:
     """Load the configuration given the user options.
 
     - in ``isolated`` mode, return an empty configuration
@@ -97,7 +95,7 @@ def parse_config(
     option_manager: OptionManager,
     cfg: configparser.RawConfigParser,
     cfg_dir: str,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Parse and normalize the typed configuration options."""
     if "flake8" not in cfg:
         return {}

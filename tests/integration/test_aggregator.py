@@ -1,4 +1,6 @@
 """Test aggregation of config files and command-line options."""
+from __future__ import annotations
+
 import os
 
 import pytest

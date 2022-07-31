@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
+from __future__ import annotations
+
 import inspect
 import os.path
 from typing import Any
 from typing import Callable
 from typing import Generator
 from typing import NamedTuple
-from typing import Tuple
 
 import pycodestyle
 
@@ -20,7 +21,7 @@ def _too_long(s: str) -> str:
 class Call(NamedTuple):
     name: str
     is_generator: bool
-    params: Tuple[str, ...]
+    params: tuple[str, ...]
 
     def to_src(self) -> str:
         params_s = ", ".join(self.params)
@@ -35,7 +36,7 @@ class Call(NamedTuple):
             return "\n".join(lines)
 
     @classmethod
-    def from_func(cls, func: Callable[..., Any]) -> "Call":
+    def from_func(cls, func: Callable[..., Any]) -> Call:
         spec = inspect.getfullargspec(func)
         params = tuple(spec.args)
         return cls(func.__name__, inspect.isgeneratorfunction(func), params)
@@ -55,9 +56,10 @@ def lines() -> Generator[str, None, None]:
 
     yield f'"""Generated using ./bin/{os.path.basename(__file__)}."""'
     yield "# fmt: off"
+    yield "from __future__ import annotations"
+    yield ""
     yield "from typing import Any"
     yield "from typing import Generator"
-    yield "from typing import Tuple"
     yield ""
     imports = sorted(call.name for call in logical + physical)
     for name in imports:
@@ -69,7 +71,7 @@ def lines() -> Generator[str, None, None]:
     logical_params = {param for call in logical for param in call.params}
     for param in sorted(logical_params):
         yield f"    {param}: Any,"
-    yield ") -> Generator[Tuple[int, str], None, None]:"
+    yield ") -> Generator[tuple[int, str], None, None]:"
     yield '    """Run pycodestyle logical checks."""'
     for call in sorted(logical):
         yield call.to_src()
@@ -80,7 +82,7 @@ def lines() -> Generator[str, None, None]:
     physical_params = {param for call in physical for param in call.params}
     for param in sorted(physical_params):
         yield f"    {param}: Any,"
-    yield ") -> Generator[Tuple[int, str], None, None]:"
+    yield ") -> Generator[tuple[int, str], None, None]:"
     yield '    """Run pycodestyle physical checks."""'
     for call in sorted(physical):
         yield call.to_src()

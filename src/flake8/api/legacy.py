@@ -3,13 +3,12 @@
 Previously, users would import :func:`get_style_guide` from ``flake8.engine``.
 In 3.0 we no longer have an "engine" module but we maintain the API from it.
 """
+from __future__ import annotations
+
 import argparse
 import logging
 import os.path
 from typing import Any
-from typing import List
-from typing import Optional
-from typing import Type
 
 import flake8
 from flake8.discover_files import expand_paths
@@ -53,7 +52,7 @@ class Report:
         """Return the total number of errors."""
         return self._application.result_count
 
-    def get_statistics(self, violation: str) -> List[str]:
+    def get_statistics(self, violation: str) -> list[str]:
         """Get the list of occurrences of a violation.
 
         :returns:
@@ -97,12 +96,12 @@ class StyleGuide:
         return self._application.options
 
     @property
-    def paths(self) -> List[str]:
+    def paths(self) -> list[str]:
         """Return the extra arguments passed as paths."""
         assert self._application.options is not None
         return self._application.options.filenames
 
-    def check_files(self, paths: Optional[List[str]] = None) -> Report:
+    def check_files(self, paths: list[str] | None = None) -> Report:
         """Run collected checks on the files provided.
 
         This will check the files passed in and return a :class:`Report`
@@ -119,7 +118,7 @@ class StyleGuide:
         self._application.report_errors()
         return Report(self._application)
 
-    def excluded(self, filename: str, parent: Optional[str] = None) -> bool:
+    def excluded(self, filename: str, parent: str | None = None) -> bool:
         """Determine if a file is excluded.
 
         :param filename:
@@ -148,7 +147,7 @@ class StyleGuide:
 
     def init_report(
         self,
-        reporter: Optional[Type[formatter.BaseFormatter]] = None,
+        reporter: type[formatter.BaseFormatter] | None = None,
     ) -> None:
         """Set up a formatter for this run of Flake8."""
         if reporter is None:
@@ -170,9 +169,9 @@ class StyleGuide:
     def input_file(
         self,
         filename: str,
-        lines: Optional[Any] = None,
-        expected: Optional[Any] = None,
-        line_offset: Optional[Any] = 0,
+        lines: Any | None = None,
+        expected: Any | None = None,
+        line_offset: Any | None = 0,
     ) -> Report:
         """Run collected checks on a single file.
 

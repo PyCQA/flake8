@@ -1,6 +1,5 @@
 """Default formatting class for Flake8."""
-from typing import Optional
-from typing import Set
+from __future__ import annotations
 
 from flake8.formatting import base
 from flake8.violation import Violation
@@ -38,7 +37,7 @@ class SimpleFormatter(base.BaseFormatter):
 
     error_format: str
 
-    def format(self, error: "Violation") -> Optional[str]:
+    def format(self, error: Violation) -> str | None:
         """Format and write error out.
 
         If an output filename is specified, write formatted errors to that
@@ -86,12 +85,12 @@ class FilenameOnly(SimpleFormatter):
 
     def after_init(self) -> None:
         """Initialize our set of filenames."""
-        self.filenames_already_printed: Set[str] = set()
+        self.filenames_already_printed: set[str] = set()
 
-    def show_source(self, error: "Violation") -> Optional[str]:
+    def show_source(self, error: Violation) -> str | None:
         """Do not include the source code."""
 
-    def format(self, error: "Violation") -> Optional[str]:
+    def format(self, error: Violation) -> str | None:
         """Ensure we only print each error once."""
         if error.filename not in self.filenames_already_printed:
             self.filenames_already_printed.add(error.filename)
@@ -103,8 +102,8 @@ class FilenameOnly(SimpleFormatter):
 class Nothing(base.BaseFormatter):
     """Print absolutely nothing."""
 
-    def format(self, error: "Violation") -> Optional[str]:
+    def format(self, error: Violation) -> str | None:
         """Do nothing."""
 
-    def show_source(self, error: "Violation") -> Optional[str]:
+    def show_source(self, error: Violation) -> str | None:
         """Do not print the source."""

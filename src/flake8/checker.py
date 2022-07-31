@@ -1,4 +1,6 @@
 """Checker Manager and Checker classes."""
+from __future__ import annotations
+
 import argparse
 import collections
 import errno
@@ -8,7 +10,6 @@ import multiprocessing.pool
 import signal
 import tokenize
 from typing import Any
-from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Tuple
@@ -71,8 +72,8 @@ class Manager:
         self.options = style_guide.options
         self.plugins = plugins
         self.jobs = self._job_count()
-        self._all_checkers: List[FileChecker] = []
-        self.checkers: List[FileChecker] = []
+        self._all_checkers: list[FileChecker] = []
+        self.checkers: list[FileChecker] = []
         self.statistics = {
             "files": 0,
             "logical lines": 0,
@@ -152,7 +153,7 @@ class Manager:
             )
         return reported_results_count
 
-    def make_checkers(self, paths: Optional[List[str]] = None) -> None:
+    def make_checkers(self, paths: list[str] | None = None) -> None:
         """Create checkers for each file."""
         if paths is None:
             paths = self.options.filenames
@@ -174,7 +175,7 @@ class Manager:
         self.checkers = [c for c in self._all_checkers if c.should_process]
         LOG.info("Checking %d files", len(self.checkers))
 
-    def report(self) -> Tuple[int, int]:
+    def report(self) -> tuple[int, int]:
         """Report all of the errors found in the managed file checkers.
 
         This iterates over each of the checkers and reports the errors sorted
@@ -195,8 +196,8 @@ class Manager:
     def run_parallel(self) -> None:
         """Run the checkers in parallel."""
         # fmt: off
-        final_results: Dict[str, List[Tuple[str, int, int, str, Optional[str]]]] = collections.defaultdict(list)  # noqa: E501
-        final_statistics: Dict[str, Dict[str, int]] = collections.defaultdict(dict)  # noqa: E501
+        final_results: dict[str, list[tuple[str, int, int, str, str | None]]] = collections.defaultdict(list)  # noqa: E501
+        final_statistics: dict[str, dict[str, int]] = collections.defaultdict(dict)  # noqa: E501
         # fmt: on
 
         pool = _try_initialize_processpool(self.jobs)
@@ -254,7 +255,7 @@ class Manager:
             LOG.warning("Flake8 was interrupted by the user")
             raise exceptions.EarlyQuit("Early quit while running checks")
 
-    def start(self, paths: Optional[List[str]] = None) -> None:
+    def start(self, paths: list[str] | None = None) -> None:
         """Start checking files.
 
         :param paths:
@@ -301,7 +302,7 @@ class FileChecker:
         """Provide helpful debugging representation."""
         return f"FileChecker for {self.filename}"
 
-    def _make_processor(self) -> Optional[processor.FileProcessor]:
+    def _make_processor(self) -> processor.FileProcessor | None:
         try:
             return processor.FileProcessor(self.filename, self.options)
         except OSError as e:
@@ -316,7 +317,7 @@ class FileChecker:
 
     def report(
         self,
-        error_code: Optional[str],
+        error_code: str | None,
         line_number: int,
         column: int,
         text: str,
@@ -361,7 +362,7 @@ class FileChecker:
             )
 
     @staticmethod
-    def _extract_syntax_information(exception: Exception) -> Tuple[int, int]:
+    def _extract_syntax_information(exception: Exception) -> tuple[int, int]:
         if (
             len(exception.args) > 1
             and exception.args[1]
@@ -524,7 +525,7 @@ class FileChecker:
             self.run_physical_checks(file_processor.lines[-1])
             self.run_logical_checks()
 
-    def run_checks(self) -> Tuple[str, Results, Dict[str, int]]:
+    def run_checks(self) -> tuple[str, Results, dict[str, int]]:
         """Run checks against the file."""
         assert self.processor is not None
         try:
@@ -592,7 +593,7 @@ def _pool_init() -> None:
 
 def _try_initialize_processpool(
     job_count: int,
-) -> Optional[multiprocessing.pool.Pool]:
+) -> multiprocessing.pool.Pool | None:
     """Return a new process pool instance if we are able to create one."""
     try:
         return multiprocessing.Pool(job_count, _pool_init)
@@ -617,13 +618,13 @@ def calculate_pool_chunksize(num_checkers: int, num_jobs: int) -> int:
     return max(num_checkers // (num_jobs * 2), 1)
 
 
-def _run_checks(checker: FileChecker) -> Tuple[str, Results, Dict[str, int]]:
+def _run_checks(checker: FileChecker) -> tuple[str, Results, dict[str, int]]:
     return checker.run_checks()
 
 
 def find_offset(
     offset: int, mapping: processor._LogicalMapping
-) -> Tuple[int, int]:
+) -> tuple[int, int]:
     """Find the offset tuple for a single offset."""
     if isinstance(offset, tuple):
         return offset

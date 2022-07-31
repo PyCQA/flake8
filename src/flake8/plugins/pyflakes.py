@@ -1,13 +1,12 @@
 """Plugin built-in to Flake8 to treat pyflakes as a plugin."""
+from __future__ import annotations
+
 import argparse
 import ast
 import os
 import tokenize
 from typing import Any
 from typing import Generator
-from typing import List
-from typing import Tuple
-from typing import Type
 
 import pyflakes.checker
 
@@ -68,13 +67,13 @@ class FlakesChecker(pyflakes.checker.Checker):
     """Subclass the Pyflakes checker to conform with the flake8 API."""
 
     with_doctest = False
-    include_in_doctest: List[str] = []
-    exclude_from_doctest: List[str] = []
+    include_in_doctest: list[str] = []
+    exclude_from_doctest: list[str] = []
 
     def __init__(
         self,
         tree: ast.AST,
-        file_tokens: List[tokenize.TokenInfo],
+        file_tokens: list[tokenize.TokenInfo],
         filename: str,
     ) -> None:
         """Initialize the PyFlakes plugin with an AST tree and filename."""
@@ -180,7 +179,7 @@ class FlakesChecker(pyflakes.checker.Checker):
                 f"both for doctesting."
             )
 
-    def run(self) -> Generator[Tuple[int, int, str, Type[Any]], None, None]:
+    def run(self) -> Generator[tuple[int, int, str, type[Any]], None, None]:
         """Run the plugin."""
         for message in self.messages:
             col = getattr(message, "col", 0)

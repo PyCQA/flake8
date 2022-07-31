@@ -1,12 +1,11 @@
 """Contains the Violation error class used internally."""
+from __future__ import annotations
+
 import functools
 import linecache
 import logging
-from typing import Dict
 from typing import Match
 from typing import NamedTuple
-from typing import Optional
-from typing import Set
 
 from flake8 import defaults
 from flake8 import utils
@@ -16,7 +15,7 @@ LOG = logging.getLogger(__name__)
 
 
 @functools.lru_cache(maxsize=512)
-def _find_noqa(physical_line: str) -> Optional[Match[str]]:
+def _find_noqa(physical_line: str) -> Match[str] | None:
     return defaults.NOQA_INLINE_REGEXP.search(physical_line)
 
 
@@ -28,7 +27,7 @@ class Violation(NamedTuple):
     line_number: int
     column_number: int
     text: str
-    physical_line: Optional[str]
+    physical_line: str | None
 
     def is_inline_ignored(self, disable_noqa: bool) -> bool:
         """Determine if a comment has been added to ignore this line.
@@ -69,7 +68,7 @@ class Violation(NamedTuple):
         )
         return False
 
-    def is_in(self, diff: Dict[str, Set[int]]) -> bool:
+    def is_in(self, diff: dict[str, set[int]]) -> bool:
         """Determine if the violation is included in a diff's line ranges.
 
         This function relies on the parsed data added via

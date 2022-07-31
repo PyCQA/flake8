@@ -1,4 +1,6 @@
 """Tests for the FileProcessor class."""
+from __future__ import annotations
+
 import ast
 import tokenize
 from unittest import mock

@@ -361,6 +361,23 @@ unrelated = unrelated:main
     ]
 
 
+def test_duplicate_dists(flake8_dist):
+    # some poorly packaged pythons put lib and lib64 on sys.path resulting in
+    # duplicates from `importlib.metadata.distributions`
+    with mock.patch.object(
+        importlib_metadata,
+        "distributions",
+        return_value=[
+            flake8_dist,
+            flake8_dist,
+        ],
+    ):
+        ret = list(finder._find_importlib_plugins())
+
+    # we should not have duplicates
+    assert len(ret) == len(set(ret))
+
+
 def test_find_local_plugins_nothing():
     cfg = configparser.RawConfigParser()
     assert set(finder._find_local_plugins(cfg)) == set()

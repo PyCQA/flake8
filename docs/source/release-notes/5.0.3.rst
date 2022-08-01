@@ -1,0 +1,15 @@
+5.0.3 -- 2022-08-01
+-------------------
+
+You can view the `5.0.3 milestone`_ on GitHub for more details.
+
+Bugs Fixed
+~~~~~~~~~~
+
+- Work around partial reads of configuration files with syntax errors (See
+  also :issue:`1647`, :pull:`1648`).
+
+
+.. all links
+.. _5.0.3 milestone:
+    https://github.com/PyCQA/flake8/milestone/45

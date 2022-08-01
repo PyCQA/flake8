@@ -8,6 +8,7 @@
 .coverage
 .coverage.*
 .eggs
+.idea
 .tox
 /.mypy_cache
 build

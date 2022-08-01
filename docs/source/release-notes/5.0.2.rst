@@ -1,0 +1,16 @@
+5.0.2 -- 2022-08-01
+-------------------
+
+You can view the `5.0.2 milestone`_ on GitHub for more details.
+
+Bugs Fixed
+~~~~~~~~~~
+
+- Fix execution on python == 3.8.0 (See also :issue:`1637`, :pull:`1641`).
+- Fix config discovery when home does not exist (See also :issue:`1640`,
+  :pull:`1642`).
+
+
+.. all links
+.. _5.0.2 milestone:
+    https://github.com/PyCQA/flake8/milestone/44

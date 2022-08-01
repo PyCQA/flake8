@@ -29,9 +29,9 @@ def _find_config_file(path: str) -> Optional[str]:
         home_stat = None
 
     dir_stat = _stat_key(path)
-    cfg = configparser.RawConfigParser()
     while True:
         for candidate in ("setup.cfg", "tox.ini", ".flake8"):
+            cfg = configparser.RawConfigParser()
             cfg_path = os.path.join(path, candidate)
             try:
                 cfg.read(cfg_path, encoding="UTF-8")

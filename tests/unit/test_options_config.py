@@ -21,7 +21,9 @@ def test_config_file_without_section_is_not_considered(tmp_path):
 
 
 def test_config_file_with_parse_error_is_not_considered(tmp_path, caplog):
-    tmp_path.joinpath("setup.cfg").write_text("[error")
+    # the syntax error here is deliberately to trigger a partial parse
+    # https://github.com/python/cpython/issues/95546
+    tmp_path.joinpath("setup.cfg").write_text("[flake8]\nx = 1\n...")
 
     assert config._find_config_file(str(tmp_path)) is None
 

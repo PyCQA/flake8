@@ -12,6 +12,7 @@ from flake8 import exceptions
 from flake8.options.manager import OptionManager
 
 LOG = logging.getLogger(__name__)
+CONFIG_FILENAMES = ("setup.cfg", "tox.ini", ".flake8")
 
 
 def _stat_key(s: str) -> Tuple[int, int]:
@@ -21,14 +22,14 @@ def _stat_key(s: str) -> Tuple[int, int]:
 
 
 def _find_config_file(path: str) -> Optional[str]:
-    # on windows if the homedir isn't detected this returns back `~`
+    # on Windows if the homedir isn't detected this returns back `~`
     home = os.path.expanduser("~")
     home_stat = _stat_key(home) if home != "~" else None
 
     dir_stat = _stat_key(path)
     cfg = configparser.RawConfigParser()
     while True:
-        for candidate in ("setup.cfg", "tox.ini", ".flake8"):
+        for candidate in CONFIG_FILENAMES:
             cfg_path = os.path.join(path, candidate)
             try:
                 cfg.read(cfg_path, encoding="UTF-8")

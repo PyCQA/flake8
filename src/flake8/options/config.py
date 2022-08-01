@@ -23,7 +23,10 @@ def _stat_key(s: str) -> Tuple[int, int]:
 def _find_config_file(path: str) -> Optional[str]:
     # on windows if the homedir isn't detected this returns back `~`
     home = os.path.expanduser("~")
-    home_stat = _stat_key(home) if home != "~" else None
+    try:
+        home_stat = _stat_key(home) if home != "~" else None
+    except OSError:  # FileNotFoundError / PermissionError / etc.
+        home_stat = None
 
     dir_stat = _stat_key(path)
     cfg = configparser.RawConfigParser()

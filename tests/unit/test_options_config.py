@@ -78,6 +78,13 @@ def test_find_config_ignores_homedir(tmp_path):
         assert config._find_config_file(str(subdir)) is None
 
 
+def test_find_config_ignores_unknown_homedir(tmp_path):
+    subdir = tmp_path.joinpath("d")
+
+    with mock.patch.object(os.path, "expanduser", return_value=str(subdir)):
+        assert config._find_config_file(str(tmp_path)) is None
+
+
 def test_load_config_config_specified_skips_discovery(tmpdir):
     tmpdir.join("setup.cfg").write("[flake8]\nindent-size=2\n")
     custom_cfg = tmpdir.join("custom.cfg")

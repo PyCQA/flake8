@@ -112,10 +112,16 @@ look like::
 
     X101 = flake8_example:ExamplePlugin
 
+In the above case, the entry-point name and the error code produced by your
+plugin are the same.
+
 If your plugin reports several error codes that all start with ``X10``, then
 it would look like::
 
     X10 = flake8_example:ExamplePlugin
+
+In this casae as well as the following case, your entry-point name acts as
+a prefix to the error codes produced by your plugin.
 
 If all of your plugin's error codes start with ``X1`` then it would look
 like::
@@ -130,8 +136,12 @@ in the users environment. Selecting an entry point that is already used can
 cause plugins to be deactivated without warning!
 
 **Please Note:** Your entry point does not need to be exactly 4 characters
-as of |Flake8| 3.0. *Consider using an entry point with 3 letters followed
-by 3 numbers (i.e.* ``ABC123`` *).*
+as of |Flake8| 3.0. Single letter entry point prefixes (such as the
+'X' in the examples above) have caused issues in the past.  As such,
+please consider using a 2 or 3 character entry point prefix,
+i.e., ``ABC`` is better than ``A`` but ``ABCD`` is invalid.
+*A 3 letters entry point prefix followed by 3 numbers (i.e.* ``ABC123`` *)
+is currently the longest allowed entry point name.*
 
 
 .. _Entry Points:

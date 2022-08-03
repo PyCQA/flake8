@@ -1,0 +1,15 @@
+5.0.4 -- 2022-08-03
+-------------------
+
+You can view the `5.0.4 milestone`_ on GitHub for more details.
+
+Bugs Fixed
+~~~~~~~~~~
+
+- Set a lower bound on ``importlib-metadata`` to prevent ``RecursionError``
+  (See also :issue:`1650`, :pull:`1653`).
+
+
+.. all links
+.. _5.0.4 milestone:
+    https://github.com/PyCQA/flake8/milestone/46

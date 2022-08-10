@@ -193,7 +193,7 @@ Options and their Descriptions
 
     Possible options are ``auto``, ``always``, and ``never``.
 
-    This **can** be specified in config files.
+    This **can not** be specified in config files.
 
     When color is enabled, the following substitutions are enabled:
 
@@ -207,12 +207,6 @@ Options and their Descriptions
     - ``%(cyan)s``
     - ``%(white)s``
     - ``%(reset)s``
-
-    Example config file usage:
-
-    .. code-block:: ini
-
-        color = never
 
 
 .. option:: --count

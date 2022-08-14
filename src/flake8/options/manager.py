@@ -204,7 +204,9 @@ class Option:
             help = help.replace(_optparse_default, _argparse_default)
 
         # ensure help text doesn't get clobbered by later updates to defaults
-        help = self._bind_defaults_to_help_text(help, default)
+        help = self._bind_defaults_to_help_text(
+            help, default, long_option_name
+        )
 
         # optparse -> argparse for `callback`
         if action == "callback":

@@ -36,6 +36,10 @@ _optparse_callable_map: Dict[str, Union[Type[Any], _ARG]] = {
 }
 
 
+_optparse_default: str = "%default"
+_argparse_default: str = "%(default)s"
+
+
 class _CallbackAction(argparse.Action):
     """Shim for optparse-style callback actions."""
 
@@ -189,13 +193,18 @@ class Option:
             short_option_name, long_option_name = _ARG.NO, short_option_name
 
         # optparse -> argparse `%default` => `%(default)s`
-        if help is not _ARG.NO and "%default" in help:
+        if help is not _ARG.NO and _optparse_default in help:
             LOG.warning(
-                "option %s: please update `help=` text to use %%(default)s "
-                "instead of %%default -- this will be an error in the future",
+                "option %s: please update `help=` text to use %s "
+                "instead of %s -- this will be an error in the future",
                 long_option_name,
+                _argparse_default,
+                _optparse_default,
             )
-            help = help.replace("%default", "%(default)s")
+            help = help.replace(_optparse_default, _argparse_default)
+
+        # ensure help text doesn't get clobbered by later updates to defaults
+        help = self._bind_defaults_to_help_text(help, default)
 
         # optparse -> argparse for `callback`
         if action == "callback":
@@ -293,6 +302,26 @@ class Option:
         for k, v in self.filtered_option_kwargs.items():
             parts.append(f"{k}={v!r}")
         return f"Option({', '.join(parts)})"
+
+    @staticmethod
+    def _bind_defaults_to_help_text(
+        help: Union[str, _ARG] = _ARG.NO,
+        default: Union[Any, _ARG] = _ARG.NO,
+        long_option_name: Union[str, _ARG] = _ARG.NO,
+    ) -> Union[str, _ARG]:
+        """Ensure help text doesn't get clobbered by updates to defaults."""
+        if help is not _ARG.NO and _argparse_default in help:
+            if default is _ARG.NO:
+                LOG.warning(
+                    "option %s: %s detected in `help=` text, "
+                    "but no default value was provided",
+                    long_option_name,
+                    _argparse_default,
+                )
+            else:
+                help = help.replace(_argparse_default, "%s") % default
+
+        return help
 
     def normalize(self, value: Any, *normalize_args: str) -> Any:
         """Normalize the value based on the option configuration."""

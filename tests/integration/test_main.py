@@ -1,12 +1,14 @@
 """Integration tests for the main entrypoint of flake8."""
 import json
 import os
+import re
 import sys
 from unittest import mock
 
 import pytest
 
 from flake8 import utils
+from flake8.defaults import EXCLUDE
 from flake8.main import cli
 from flake8.options import config
 
@@ -147,6 +149,33 @@ def test_extend_exclude(tmpdir, capsys):
 """
     assert out == expected_out.replace("/", os.sep)
     assert err == ""
+
+
+def test_config_value_does_not_clobber_default_help_text(tmpdir, capsys):
+    """Test a config value does not clobber the default help text output."""
+    setup_cfg = """\
+[flake8]
+exclude = 1,2
+"""
+    expected = ",".join(EXCLUDE)
+
+    default_pattern = re.compile(r"\(Default:(.*?)\)")
+    whitespace_pattern = re.compile(r"\s+")
+
+    with tmpdir.as_cwd():
+        tmpdir.join("setup.cfg").write(setup_cfg)
+        with pytest.raises(SystemExit):
+            cli.main(["-h"])
+
+    out, err = capsys.readouterr()
+
+    for section in out.split("--"):
+        if section.startswith("exclude patterns"):
+            section = re.sub(whitespace_pattern, "", section)
+            default_groups = re.search(default_pattern, section)
+            assert default_groups is not None
+            default = default_groups.group(1)
+            assert default == expected
 
 
 def test_malformed_per_file_ignores_error(tmpdir, capsys):

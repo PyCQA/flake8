@@ -1,4 +1,6 @@
 """Tests for the flake8.exceptions module."""
+from __future__ import annotations
+
 import pickle
 
 import pytest

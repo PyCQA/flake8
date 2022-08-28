@@ -1,9 +1,8 @@
 """Statistic collection logic for Flake8."""
-from typing import Dict
+from __future__ import annotations
+
 from typing import Generator
-from typing import List
 from typing import NamedTuple
-from typing import Optional
 
 from flake8.violation import Violation
 
@@ -13,9 +12,9 @@ class Statistics:
 
     def __init__(self) -> None:
         """Initialize the underlying dictionary for our statistics."""
-        self._store: Dict[Key, "Statistic"] = {}
+        self._store: dict[Key, Statistic] = {}
 
-    def error_codes(self) -> List[str]:
+    def error_codes(self) -> list[str]:
         """Return all unique error codes stored.
 
         :returns:
@@ -23,7 +22,7 @@ class Statistics:
         """
         return sorted({key.code for key in self._store})
 
-    def record(self, error: "Violation") -> None:
+    def record(self, error: Violation) -> None:
         """Add the fact that the error was seen in the file.
 
         :param error:
@@ -36,8 +35,8 @@ class Statistics:
         self._store[key].increment()
 
     def statistics_for(
-        self, prefix: str, filename: Optional[str] = None
-    ) -> Generator["Statistic", None, None]:
+        self, prefix: str, filename: str | None = None
+    ) -> Generator[Statistic, None, None]:
         """Generate statistics for the prefix and filename.
 
         If you have a :class:`Statistics` object that has recorded errors,
@@ -79,11 +78,11 @@ class Key(NamedTuple):
     code: str
 
     @classmethod
-    def create_from(cls, error: "Violation") -> "Key":
+    def create_from(cls, error: Violation) -> Key:
         """Create a Key from :class:`flake8.violation.Violation`."""
         return cls(filename=error.filename, code=error.code)
 
-    def matches(self, prefix: str, filename: Optional[str]) -> bool:
+    def matches(self, prefix: str, filename: str | None) -> bool:
         """Determine if this key matches some constraints.
 
         :param prefix:
@@ -118,7 +117,7 @@ class Statistic:
         self.count = count
 
     @classmethod
-    def create_from(cls, error: "Violation") -> "Statistic":
+    def create_from(cls, error: Violation) -> Statistic:
         """Create a Statistic from a :class:`flake8.violation.Violation`."""
         return cls(
             error_code=error.code,

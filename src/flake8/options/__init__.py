@@ -10,3 +10,4 @@
   to aggregate configuration into one object used by plugins and Flake8.
 
 """
+from __future__ import annotations

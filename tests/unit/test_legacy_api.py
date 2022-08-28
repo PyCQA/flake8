@@ -1,4 +1,6 @@
 """Tests for Flake8's legacy API."""
+from __future__ import annotations
+
 import argparse
 import configparser
 import os.path

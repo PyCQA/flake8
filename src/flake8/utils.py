@@ -1,4 +1,6 @@
 """Utility methods for flake8."""
+from __future__ import annotations
+
 import collections
 import fnmatch as _fnmatch
 import functools
@@ -10,15 +12,9 @@ import re
 import sys
 import textwrap
 import tokenize
-from typing import Dict
-from typing import List
 from typing import NamedTuple
-from typing import Optional
 from typing import Pattern
 from typing import Sequence
-from typing import Set
-from typing import Tuple
-from typing import Union
 
 from flake8 import exceptions
 
@@ -30,7 +26,7 @@ NORMALIZE_PACKAGE_NAME_RE = re.compile(r"[-_.]+")
 
 def parse_comma_separated_list(
     value: str, regexp: Pattern[str] = COMMA_SEPARATED_LIST_RE
-) -> List[str]:
+) -> list[str]:
     """Parse a comma-separated list.
 
     :param value:
@@ -64,7 +60,7 @@ _FILE_LIST_TOKEN_TYPES = [
 ]
 
 
-def _tokenize_files_to_codes_mapping(value: str) -> List[_Token]:
+def _tokenize_files_to_codes_mapping(value: str) -> list[_Token]:
     tokens = []
     i = 0
     while i < len(value):
@@ -82,8 +78,8 @@ def _tokenize_files_to_codes_mapping(value: str) -> List[_Token]:
 
 
 def parse_files_to_codes_mapping(  # noqa: C901
-    value_: Union[Sequence[str], str]
-) -> List[Tuple[str, List[str]]]:
+    value_: Sequence[str] | str,
+) -> list[tuple[str, list[str]]]:
     """Parse a files-to-codes mapping.
 
     A files-to-codes mapping a sequence of values specified as
@@ -97,15 +93,15 @@ def parse_files_to_codes_mapping(  # noqa: C901
     else:
         value = value_
 
-    ret: List[Tuple[str, List[str]]] = []
+    ret: list[tuple[str, list[str]]] = []
     if not value.strip():
         return ret
 
     class State:
         seen_sep = True
         seen_colon = False
-        filenames: List[str] = []
-        codes: List[str] = []
+        filenames: list[str] = []
+        codes: list[str] = []
 
     def _reset() -> None:
         if State.codes:
@@ -157,7 +153,7 @@ def parse_files_to_codes_mapping(  # noqa: C901
 
 def normalize_paths(
     paths: Sequence[str], parent: str = os.curdir
-) -> List[str]:
+) -> list[str]:
     """Normalize a list of paths relative to a parent directory.
 
     :returns:
@@ -201,12 +197,12 @@ def stdin_get_value() -> str:
         return stdin_value.decode("utf-8")
 
 
-def stdin_get_lines() -> List[str]:
+def stdin_get_lines() -> list[str]:
     """Return lines of stdin split according to file splitting."""
     return list(io.StringIO(stdin_get_value()))
 
 
-def parse_unified_diff(diff: Optional[str] = None) -> Dict[str, Set[int]]:
+def parse_unified_diff(diff: str | None = None) -> dict[str, set[int]]:
     """Parse the unified diff passed on stdin.
 
     :returns:
@@ -218,7 +214,7 @@ def parse_unified_diff(diff: Optional[str] = None) -> Dict[str, Set[int]]:
 
     number_of_rows = None
     current_path = None
-    parsed_paths: Dict[str, Set[int]] = collections.defaultdict(set)
+    parsed_paths: dict[str, set[int]] = collections.defaultdict(set)
     for line in diff.splitlines():
         if number_of_rows:
             if not line or line[0] != "-":
@@ -271,7 +267,7 @@ def parse_unified_diff(diff: Optional[str] = None) -> Dict[str, Set[int]]:
     return parsed_paths
 
 
-def is_using_stdin(paths: List[str]) -> bool:
+def is_using_stdin(paths: list[str]) -> bool:
     """Determine if we're going to read from stdin.
 
     :param paths:

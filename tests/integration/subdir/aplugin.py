@@ -1,4 +1,5 @@
 """Module that is off sys.path by default, for testing local-plugin-paths."""
+from __future__ import annotations
 
 
 class ExtensionTestPlugin2:

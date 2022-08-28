@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import configparser
 import os.path
 from unittest import mock

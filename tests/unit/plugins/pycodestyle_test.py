@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import importlib.machinery
 import importlib.util
 import os.path

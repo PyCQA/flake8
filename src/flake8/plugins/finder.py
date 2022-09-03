@@ -272,7 +272,7 @@ def _parameters_for(func: Any) -> dict[str, bool]:
         A dictionary mapping the parameter name to whether or not it is
         required (a.k.a., is positional only/does not have a default).
     """
-    is_class = not inspect.isfunction(func)
+    is_class = inspect.isclass(func)
     if is_class:
         func = func.__init__
 

@@ -120,7 +120,7 @@ it would look like::
 
     X10 = flake8_example:ExamplePlugin
 
-In this casae as well as the following case, your entry-point name acts as
+In this case as well as the following case, your entry-point name acts as
 a prefix to the error codes produced by your plugin.
 
 If all of your plugin's error codes start with ``X1`` then it would look

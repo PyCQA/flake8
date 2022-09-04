@@ -794,11 +794,13 @@ Options and their Descriptions
             flake8-typing-extensions
 
 
+.. _option-enable-extensions:
+
 .. option:: --enable-extensions=<errors>
 
     :ref:`Go back to index <top>`
 
-    Enable off-by-default extensions.
+    Enable :ref:`off-by-default<off-by-default>` extensions.
 
     Plugins to |Flake8| have the option of registering themselves as
     off-by-default. These plugins will not be loaded unless enabled by this

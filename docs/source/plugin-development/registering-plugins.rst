@@ -143,6 +143,12 @@ i.e., ``ABC`` is better than ``A`` but ``ABCD`` is invalid.
 *A 3 letters entry point prefix followed by 3 numbers (i.e.* ``ABC123`` *)
 is currently the longest allowed entry point name.*
 
+.. _off-by-default:
+
+If your plugin is intended to be opt-in, it can set the attribute
+``off_by_default = True``. Users of your plugin will then need to utilize
+:ref:`enable-extensions<option-enable-extensions>` with your plugin's entry
+point.
 
 .. _Entry Points:
     https://setuptools.readthedocs.io/en/latest/pkg_resources.html#entry-points

@@ -90,7 +90,7 @@ Let's actually look at |Flake8|'s own configuration section:
 .. code-block:: ini
 
     [flake8]
-    ignore = D203
+    extend-ignore = E203
     exclude = .git,__pycache__,docs/source/conf.py,old,build,dist
     max-complexity = 10
 
@@ -98,7 +98,7 @@ This is equivalent to:
 
 .. prompt:: bash
 
-    flake8 --ignore D203 \
+    flake8 --extend-ignore E203 \
              --exclude .git,__pycache__,docs/source/conf.py,old,build,dist \
              --max-complexity 10
 
@@ -107,7 +107,7 @@ In our case, if we wanted to, we could also do
 .. code-block:: ini
 
     [flake8]
-    ignore = D203
+    extend-ignore = E203
     exclude =
         .git,
         __pycache__,
@@ -122,7 +122,7 @@ This allows us to add comments for why we're excluding items, e.g.
 .. code-block:: ini
 
     [flake8]
-    ignore = D203
+    extend-ignore = E203
     exclude =
         # No need to traverse our git directory
         .git,
@@ -190,7 +190,7 @@ look at a portion of a project's Flake8 configuration in their ``tox.ini``:
     # H404: multi line docstring should start without a leading new line
     # H405: multi line docstring summary not separated with an empty line
     # H501: Do not use self.__dict__ for string formatting
-    ignore = H101,H202,H233,H301,H306,H401,H403,H404,H405,H501
+    extend-ignore = H101,H202,H233,H301,H306,H401,H403,H404,H405,H501
 
 They use the comments to describe the check but they could also write this as:
 
@@ -198,7 +198,7 @@ They use the comments to describe the check but they could also write this as:
 
     [flake8]
     # it's not a bug that we aren't using all of hacking
-    ignore =
+    extend-ignore =
         # H101: Use TODO(NAME)
         H101,
         # H202: assertRaises Exception too broad

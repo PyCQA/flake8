@@ -60,11 +60,11 @@ If you only want to see the instances of a specific warning or error, you can
 
     flake8 --select E123,W503 path/to/code/
 
-Alternatively, if you want to *ignore* only one specific warning or error:
+Alternatively, if you want to add a specific warning or error to *ignore*:
 
 .. code::
 
-    flake8 --ignore E24,W504 path/to/code/
+    flake8 --extend-ignore E203,W234 path/to/code/
 
 Please read our user guide for more information about how to use and configure
 |Flake8|.

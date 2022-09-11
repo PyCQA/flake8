@@ -11,6 +11,8 @@ from flake8.options.manager import OptionManager
 
 LOG = logging.getLogger(__name__)
 
+CONFIG_FILES = ("setup.cfg", "tox.ini", ".flake8")
+
 
 def _stat_key(s: str) -> tuple[int, int]:
     # same as what's used by samefile / samestat
@@ -28,7 +30,7 @@ def _find_config_file(path: str) -> str | None:
 
     dir_stat = _stat_key(path)
     while True:
-        for candidate in ("setup.cfg", "tox.ini", ".flake8"):
+        for candidate in CONFIG_FILES:
             cfg = configparser.RawConfigParser()
             cfg_path = os.path.join(path, candidate)
             try:

@@ -143,15 +143,3 @@ def test_report_total_errors():
     app = mock.Mock(result_count="Fake count")
     report = api.Report(app)
     assert report.total_errors == "Fake count"
-
-
-def test_report_get_statistics():
-    """Verify that we use the statistics object."""
-    stats = mock.Mock()
-    stats.statistics_for.return_value = []
-    style_guide = mock.Mock(stats=stats)
-    app = mock.Mock(guide=style_guide)
-
-    report = api.Report(app)
-    assert report.get_statistics("E") == []
-    stats.statistics_for.assert_called_once_with("E")

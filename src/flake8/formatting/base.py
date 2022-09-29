@@ -7,7 +7,6 @@ import sys
 from typing import IO
 
 from flake8.formatting import _windows_color
-from flake8.statistics import Statistics
 from flake8.violation import Violation
 
 
@@ -112,36 +111,6 @@ class BaseFormatter:
         raise NotImplementedError(
             "Subclass of BaseFormatter did not implement" " format."
         )
-
-    def show_statistics(self, statistics: Statistics) -> None:
-        """Format and print the statistics."""
-        for error_code in statistics.error_codes():
-            stats_for_error_code = statistics.statistics_for(error_code)
-            statistic = next(stats_for_error_code)
-            count = statistic.count
-            count += sum(stat.count for stat in stats_for_error_code)
-            self._write(f"{count:<5} {error_code} {statistic.message}")
-
-    def show_benchmarks(self, benchmarks: list[tuple[str, float]]) -> None:
-        """Format and print the benchmarks."""
-        # NOTE(sigmavirus24): The format strings are a little confusing, even
-        # to me, so here's a quick explanation:
-        # We specify the named value first followed by a ':' to indicate we're
-        # formatting the value.
-        # Next we use '<' to indicate we want the value left aligned.
-        # Then '10' is the width of the area.
-        # For floats, finally, we only want only want at most 3 digits after
-        # the decimal point to be displayed. This is the precision and it
-        # can not be specified for integers which is why we need two separate
-        # format strings.
-        float_format = "{value:<10.3} {statistic}".format
-        int_format = "{value:<10} {statistic}".format
-        for statistic, value in benchmarks:
-            if isinstance(value, int):
-                benchmark = int_format(statistic=statistic, value=value)
-            else:
-                benchmark = float_format(statistic=statistic, value=value)
-            self._write(benchmark)
 
     def show_source(self, error: Violation) -> str | None:
         """Show the physical line generating the error.

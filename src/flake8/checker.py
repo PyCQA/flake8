@@ -14,7 +14,6 @@ from typing import List
 from typing import Optional
 from typing import Tuple
 
-from flake8 import defaults
 from flake8 import exceptions
 from flake8 import processor
 from flake8 import utils
@@ -74,21 +73,9 @@ class Manager:
         self.jobs = self._job_count()
         self._all_checkers: list[FileChecker] = []
         self.checkers: list[FileChecker] = []
-        self.statistics = {
-            "files": 0,
-            "logical lines": 0,
-            "physical lines": 0,
-            "tokens": 0,
-        }
         self.exclude = tuple(
             itertools.chain(self.options.exclude, self.options.extend_exclude)
         )
-
-    def _process_statistics(self) -> None:
-        for checker in self.checkers:
-            for statistic in defaults.STATISTIC_NAMES:
-                self.statistics[statistic] += checker.statistics[statistic]
-        self.statistics["files"] += len(self.checkers)
 
     def _job_count(self) -> int:
         # First we walk through all of our error cases:
@@ -197,7 +184,6 @@ class Manager:
         """Run the checkers in parallel."""
         # fmt: off
         final_results: dict[str, list[tuple[str, int, int, str, str | None]]] = collections.defaultdict(list)  # noqa: E501
-        final_statistics: dict[str, dict[str, int]] = collections.defaultdict(dict)  # noqa: E501
         # fmt: on
 
         pool = _try_initialize_processpool(self.jobs)
@@ -216,9 +202,8 @@ class Manager:
                 ),
             )
             for ret in pool_map:
-                filename, results, statistics = ret
+                filename, results = ret
                 final_results[filename] = results
-                final_statistics[filename] = statistics
             pool.close()
             pool.join()
             pool_closed = True
@@ -230,7 +215,6 @@ class Manager:
         for checker in self.checkers:
             filename = checker.display_name
             checker.results = final_results[filename]
-            checker.statistics = final_statistics[filename]
 
     def run_serial(self) -> None:
         """Run the checkers in serial."""
@@ -265,10 +249,6 @@ class Manager:
         LOG.info("Making checkers")
         self.make_checkers(paths)
 
-    def stop(self) -> None:
-        """Stop checking files."""
-        self._process_statistics()
-
 
 class FileChecker:
     """Manage running checks for a file and aggregate the results."""
@@ -285,18 +265,12 @@ class FileChecker:
         self.filename = filename
         self.plugins = plugins
         self.results: Results = []
-        self.statistics = {
-            "tokens": 0,
-            "logical lines": 0,
-            "physical lines": 0,
-        }
         self.processor = self._make_processor()
         self.display_name = filename
         self.should_process = False
         if self.processor is not None:
             self.display_name = self.processor.filename
             self.should_process = not self.processor.should_ignore_file()
-            self.statistics["physical lines"] = len(self.processor.lines)
 
     def __repr__(self) -> str:
         """Provide helpful debugging representation."""
@@ -506,11 +480,9 @@ class FileChecker:
         """
         assert self.processor is not None
         parens = 0
-        statistics = self.statistics
         file_processor = self.processor
         prev_physical = ""
         for token in file_processor.generate_tokens():
-            statistics["tokens"] += 1
             self.check_physical_eol(token, prev_physical)
             token_type, text = token[0:2]
             if token_type == tokenize.OP:
@@ -525,7 +497,7 @@ class FileChecker:
             self.run_physical_checks(file_processor.lines[-1])
             self.run_logical_checks()
 
-    def run_checks(self) -> tuple[str, Results, dict[str, int]]:
+    def run_checks(self) -> tuple[str, Results]:
         """Run checks against the file."""
         assert self.processor is not None
         try:
@@ -535,11 +507,9 @@ class FileChecker:
             code = "E902" if isinstance(e, tokenize.TokenError) else "E999"
             row, column = self._extract_syntax_information(e)
             self.report(code, row, column, f"{type(e).__name__}: {e.args[0]}")
-            return self.filename, self.results, self.statistics
+            return self.filename, self.results
 
-        logical_lines = self.processor.statistics["logical lines"]
-        self.statistics["logical lines"] = logical_lines
-        return self.filename, self.results, self.statistics
+        return self.filename, self.results
 
     def handle_newline(self, token_type: int) -> None:
         """Handle the logic when encountering a newline token."""
@@ -618,7 +588,7 @@ def calculate_pool_chunksize(num_checkers: int, num_jobs: int) -> int:
     return max(num_checkers // (num_jobs * 2), 1)
 
 
-def _run_checks(checker: FileChecker) -> tuple[str, Results, dict[str, int]]:
+def _run_checks(checker: FileChecker) -> tuple[str, Results]:
     return checker.run_checks()
 
 

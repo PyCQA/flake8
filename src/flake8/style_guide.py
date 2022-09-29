@@ -12,7 +12,6 @@ from typing import Generator
 from typing import Sequence
 
 from flake8 import defaults
-from flake8 import statistics
 from flake8 import utils
 from flake8.formatting import base as base_formatter
 from flake8.violation import Violation
@@ -215,11 +214,10 @@ class StyleGuideManager:
         """
         self.options = options
         self.formatter = formatter
-        self.stats = statistics.Statistics()
         self.decider = decider or DecisionEngine(options)
         self.style_guides: list[StyleGuide] = []
         self.default_style_guide = StyleGuide(
-            options, formatter, self.stats, decider=decider
+            options, formatter, decider=decider
         )
         self.style_guides = list(
             itertools.chain(
@@ -318,7 +316,6 @@ class StyleGuide:
         self,
         options: argparse.Namespace,
         formatter: base_formatter.BaseFormatter,
-        stats: statistics.Statistics,
         filename: str | None = None,
         decider: DecisionEngine | None = None,
     ):
@@ -328,7 +325,6 @@ class StyleGuide:
         """
         self.options = options
         self.formatter = formatter
-        self.stats = stats
         self.decider = decider or DecisionEngine(options)
         self.filename = filename
         if self.filename:
@@ -349,9 +345,7 @@ class StyleGuide:
         options = copy.deepcopy(self.options)
         options.extend_ignore = options.extend_ignore or []
         options.extend_ignore.extend(extend_ignore_with or [])
-        return StyleGuide(
-            options, self.formatter, self.stats, filename=filename
-        )
+        return StyleGuide(options, self.formatter, filename=filename)
 
     @contextlib.contextmanager
     def processing_file(
@@ -443,7 +437,6 @@ class StyleGuide:
         is_included_in_diff = error.is_in(self._parsed_diff)
         if error_is_selected and is_not_inline_ignored and is_included_in_diff:
             self.formatter.handle(error)
-            self.stats.record(error)
             return 1
         return 0
 

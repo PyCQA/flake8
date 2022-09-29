@@ -111,8 +111,6 @@ class FileProcessor:
         self.total_lines = len(self.lines)
         #: Verbosity level of Flake8
         self.verbose = options.verbose
-        #: Statistics dictionary
-        self.statistics = {"logical lines": 0}
         self._file_tokens: list[tokenize.TokenInfo] | None = None
         # map from line number to the line we'll search for `noqa` in
         self._noqa_line_mapping: dict[int, str] | None = None
@@ -222,7 +220,6 @@ class FileProcessor:
         comments, logical, mapping_list = self.build_logical_line_tokens()
         joined_comments = "".join(comments)
         self.logical_line = "".join(logical)
-        self.statistics["logical lines"] += 1
         return joined_comments, self.logical_line, mapping_list
 
     def split_line(

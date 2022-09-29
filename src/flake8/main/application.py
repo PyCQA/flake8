@@ -10,7 +10,6 @@ from typing import Sequence
 
 import flake8
 from flake8 import checker
-from flake8 import defaults
 from flake8 import exceptions
 from flake8 import style_guide
 from flake8 import utils
@@ -229,29 +228,7 @@ class Application:
             print("Run flake8 with greater verbosity to see more details")
             self.catastrophic_failure = True
         LOG.info("Finished running")
-        self.file_checker_manager.stop()
         self.end_time = time.time()
-
-    def report_benchmarks(self) -> None:
-        """Aggregate, calculate, and report benchmarks for this run."""
-        assert self.options is not None
-        if not self.options.benchmark:
-            return
-
-        assert self.file_checker_manager is not None
-        assert self.end_time is not None
-        time_elapsed = self.end_time - self.start_time
-        statistics = [("seconds elapsed", time_elapsed)]
-        add_statistic = statistics.append
-        for statistic in defaults.STATISTIC_NAMES + ("files",):
-            value = self.file_checker_manager.statistics[statistic]
-            total_description = f"total {statistic} processed"
-            add_statistic((total_description, value))
-            per_second_description = f"{statistic} processed per second"
-            add_statistic((per_second_description, int(value / time_elapsed)))
-
-        assert self.formatter is not None
-        self.formatter.show_benchmarks(statistics)
 
     def report_errors(self) -> None:
         """Report all the errors found by flake8 3.0.
@@ -268,16 +245,6 @@ class Application:
             self.total_result_count,
             self.result_count,
         )
-
-    def report_statistics(self) -> None:
-        """Aggregate and report statistics from this run."""
-        assert self.options is not None
-        if not self.options.statistics:
-            return
-
-        assert self.formatter is not None
-        assert self.guide is not None
-        self.formatter.show_statistics(self.guide.stats)
 
     def initialize(self, argv: Sequence[str]) -> None:
         """Initialize the application to be run.
@@ -309,12 +276,10 @@ class Application:
         self.make_file_checker_manager()
 
     def report(self) -> None:
-        """Report errors, statistics, and benchmarks."""
+        """Report errors."""
         assert self.formatter is not None
         self.formatter.start()
         self.report_errors()
-        self.report_statistics()
-        self.report_benchmarks()
         self.formatter.stop()
 
     def _run(self, argv: Sequence[str]) -> None:
@@ -344,7 +309,3 @@ class Application:
         except exceptions.EarlyQuit:
             self.catastrophic_failure = True
             print("... stopped while processing files")
-        else:
-            assert self.options is not None
-            if self.options.count:
-                print(self.result_count)

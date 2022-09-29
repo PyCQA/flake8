@@ -91,22 +91,6 @@ if True:
         assert cli.main(["t.py"]) == 0
 
 
-def test_statistics_option(tmpdir, capsys):
-    """Ensure that `flake8 --statistics` works."""
-    with tmpdir.as_cwd():
-        tmpdir.join("t.py").write("import os\nimport sys\n")
-        assert cli.main(["--statistics", "t.py"]) == 1
-
-    expected = """\
-t.py:1:1: F401 'os' imported but unused
-t.py:2:1: F401 'sys' imported but unused
-2     F401 'os' imported but unused
-"""
-    out, err = capsys.readouterr()
-    assert out == expected
-    assert err == ""
-
-
 def test_show_source_option(tmpdir, capsys):
     """Ensure that --show-source and --no-show-source work."""
     with tmpdir.as_cwd():
@@ -223,29 +207,6 @@ def test_bug_report_successful(capsys):
     assert excinfo.value.args[0] == 0
     out, err = capsys.readouterr()
     assert json.loads(out)
-    assert err == ""
-
-
-def test_benchmark_successful(tmp_path, capsys):
-    """Test that --benchmark does not crash."""
-    fname = tmp_path.joinpath("t.py")
-    fname.write_text("print('hello world')\n")
-
-    assert cli.main(["--benchmark", str(fname)]) == 0
-
-    out, err = capsys.readouterr()
-    parts = [line.split(maxsplit=1) for line in out.splitlines()]
-    assert parts == [
-        [mock.ANY, "seconds elapsed"],
-        ["1", "total logical lines processed"],
-        [mock.ANY, "logical lines processed per second"],
-        ["1", "total physical lines processed"],
-        [mock.ANY, "physical lines processed per second"],
-        ["5", "total tokens processed"],
-        [mock.ANY, "tokens processed per second"],
-        ["1", "total files processed"],
-        [mock.ANY, "files processed per second"],
-    ]
     assert err == ""
 
 

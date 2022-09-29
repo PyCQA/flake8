@@ -45,25 +45,11 @@ class Report:
         assert application.guide is not None
         self._application = application
         self._style_guide = application.guide
-        self._stats = self._style_guide.stats
 
     @property
     def total_errors(self) -> int:
         """Return the total number of errors."""
         return self._application.result_count
-
-    def get_statistics(self, violation: str) -> list[str]:
-        """Get the list of occurrences of a violation.
-
-        :returns:
-            List of occurrences of a violation formatted as:
-            {Count} {Error Code} {Message}, e.g.,
-            ``8 E531 Some error message about the error``
-        """
-        return [
-            f"{s.count} {s.error_code} {s.message}"
-            for s in self._stats.statistics_for(violation)
-        ]
 
 
 class StyleGuide:

@@ -23,8 +23,6 @@ INDENT_SIZE = 4
 # Other constants
 WHITESPACE = frozenset(" \t")
 
-STATISTIC_NAMES = ("logical lines", "physical lines", "tokens")
-
 NOQA_INLINE_REGEXP = re.compile(
     # We're looking for items that look like this:
     # ``# noqa``

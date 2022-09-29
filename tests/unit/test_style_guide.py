@@ -6,7 +6,6 @@ from unittest import mock
 
 import pytest
 
-from flake8 import statistics
 from flake8 import style_guide
 from flake8 import utils
 from flake8.formatting import base
@@ -32,7 +31,6 @@ def test_handle_error_does_not_raise_type_errors():
     guide = style_guide.StyleGuide(
         create_options(select=["T111"], ignore=[]),
         formatter=formatter,
-        stats=statistics.Statistics(),
     )
 
     assert 1 == guide.handle_error(
@@ -74,7 +72,6 @@ def test_style_guide_applies_to(style_guide_file, filename, expected):
     guide = style_guide.StyleGuide(
         options,
         formatter=formatter,
-        stats=statistics.Statistics(),
         filename=style_guide_file,
     )
     assert guide.applies_to(filename) is expected

@@ -20,7 +20,7 @@ def _stat_key(s: str) -> tuple[int, int]:
 
 
 def _walk_up_directories_to_root_or_home(
-    path: str
+    path: str,
 ) -> Generator[str, None, None]:
     """Walk upwards from the given directory.
 

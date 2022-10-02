@@ -53,8 +53,12 @@ def _walk_up_directories_to_root_or_home(
 
 
 def _find_config_file(path: str) -> str | None:
+    configuration_file_priority_order = ("setup.cfg", "tox.ini", ".flake8")
+    # This priority order is documented in docs/source/user/configuration.rst
+    # and must be kept in sync with the documentation there.
     for path in _walk_up_directories_to_root_or_home(path):
-        for candidate in ("setup.cfg", "tox.ini", ".flake8"):
+        cfg_paths_found = set()
+        for candidate in configuration_file_priority_order:
             cfg = configparser.RawConfigParser()
             cfg_path = os.path.join(path, candidate)
             try:
@@ -65,6 +69,12 @@ def _find_config_file(path: str) -> str | None:
                 # only consider it a config if it contains flake8 sections
                 if "flake8" in cfg or "flake8:local-plugins" in cfg:
                     return cfg_path
+        if len(cfg_paths_found) == 1:
+            return cfg_paths_found.pop()
+        elif len(cfg_paths_found) > 1:
+            raise exceptions.ExecutionError(
+                f"Multiple config files found: {cfg_paths_found}"
+            )
 
     # did not find any configuration file
     return None

@@ -5,6 +5,7 @@ import configparser
 import logging
 import os.path
 from typing import Any
+from typing import Generator
 
 from flake8 import exceptions
 from flake8.options.manager import OptionManager
@@ -18,7 +19,20 @@ def _stat_key(s: str) -> tuple[int, int]:
     return st.st_ino, st.st_dev
 
 
-def _find_config_file(path: str) -> str | None:
+def _walk_up_directories_to_root_or_home(
+    path: str
+) -> Generator[str, None, None]:
+    """Walk upwards from the given directory.
+
+    Walk upwards from the given directory until either the root or the home
+    directory is reached. Do not include the root or home directory.
+
+    :param path:
+        The starting path. The generator will yield this path, followed by its
+        parent, followed by the parent of its parent, and so forth.
+    :returns:
+        The directory paths, as strings, from bottom to top.
+    """
     # on windows if the homedir isn't detected this returns back `~`
     home = os.path.expanduser("~")
     try:
@@ -28,6 +42,18 @@ def _find_config_file(path: str) -> str | None:
 
     dir_stat = _stat_key(path)
     while True:
+        new_path = os.path.dirname(path)
+        new_dir_stat = _stat_key(new_path)
+        if new_dir_stat == dir_stat or new_dir_stat == home_stat:
+            break
+        else:
+            path = new_path
+            dir_stat = new_dir_stat
+            yield path
+
+
+def _find_config_file(path: str) -> str | None:
+    for path in _walk_up_directories_to_root_or_home(path):
         for candidate in ("setup.cfg", "tox.ini", ".flake8"):
             cfg = configparser.RawConfigParser()
             cfg_path = os.path.join(path, candidate)
@@ -39,14 +65,6 @@ def _find_config_file(path: str) -> str | None:
                 # only consider it a config if it contains flake8 sections
                 if "flake8" in cfg or "flake8:local-plugins" in cfg:
                     return cfg_path
-
-        new_path = os.path.dirname(path)
-        new_dir_stat = _stat_key(new_path)
-        if new_dir_stat == dir_stat or new_dir_stat == home_stat:
-            break
-        else:
-            path = new_path
-            dir_stat = new_dir_stat
 
     # did not find any configuration file
     return None

@@ -31,37 +31,6 @@ def _loaded(plugin=None, obj=None, parameters=None):
     return finder.LoadedPlugin(plugin, obj, parameters)
 
 
-@pytest.mark.parametrize(
-    "s",
-    (
-        "E",
-        "E1",
-        "E123",
-        "ABC",
-        "ABC1",
-        "ABC123",
-    ),
-)
-def test_valid_plugin_prefixes(s):
-    assert finder.VALID_CODE.match(s)
-
-
-@pytest.mark.parametrize(
-    "s",
-    (
-        "",
-        "A1234",
-        "ABCD",
-        "abc",
-        "a-b",
-        "☃",
-        "A𝟗",
-    ),
-)
-def test_invalid_plugin_prefixes(s):
-    assert finder.VALID_CODE.match(s) is None
-
-
 def test_loaded_plugin_entry_name_vs_display_name():
     loaded = _loaded(_plugin(package="package-name", ep=_ep(name="Q")))
     assert loaded.entry_name == "Q"

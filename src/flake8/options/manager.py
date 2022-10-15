@@ -317,6 +317,7 @@ class OptionManager:
         version: str,
         plugin_versions: str,
         parents: list[argparse.ArgumentParser],
+        formatter_names: list[str],
     ) -> None:
         """Initialize an instance of an OptionManager.
 
@@ -330,6 +331,7 @@ class OptionManager:
             A list of ArgumentParser objects whose arguments should also be
             included.
         """
+        self.formatter_names = formatter_names
         self.parser = argparse.ArgumentParser(
             prog="flake8",
             usage="%(prog)s [options] file file ...",

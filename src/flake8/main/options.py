@@ -220,7 +220,15 @@ def register_default_options(option_manager: OptionManager) -> None:
         metavar="format",
         default="default",
         parse_from_config=True,
-        help="Format errors according to the chosen formatter.",
+        help=(
+            f"Format errors according to the chosen formatter "
+            f"({', '.join(sorted(option_manager.formatter_names))}) "
+            f"or a format string containing %%-style "
+            f"mapping keys (code, col, path, row, text). "
+            f"For example, "
+            f"``--format=pylint`` or ``--format='%%(path)s %%(code)s'``. "
+            f"(Default: %(default)s)"
+        ),
     )
 
     add_option(

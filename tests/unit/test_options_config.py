@@ -168,7 +168,9 @@ def test_load_extra_config_utf8(tmpdir):
 
 @pytest.fixture
 def opt_manager():
-    ret = OptionManager(version="123", plugin_versions="", parents=[])
+    ret = OptionManager(
+        version="123", plugin_versions="", parents=[], formatter_names=[]
+    )
     register_default_options(ret)
     return ret
 

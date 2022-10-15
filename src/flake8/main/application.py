@@ -132,6 +132,7 @@ class Application:
             version=flake8.__version__,
             plugin_versions=self.plugins.versions_str(),
             parents=[self.prelim_arg_parser],
+            formatter_names=list(self.plugins.reporters),
         )
         options.register_default_options(self.option_manager)
         self.option_manager.register_plugins(self.plugins)

@@ -4,7 +4,7 @@
  Developing a Formatting Plugin for Flake8
 ===========================================
 
-|Flake8| allowed for custom formatting plugins in version
+|Flake8| allowes for custom formatting plugins since version
 3.0.0. Let's write a plugin together:
 
 .. code-block:: python

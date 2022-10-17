@@ -24,11 +24,12 @@ how it needs to call it:
   entry point references is called for each physical line and the call is
   expected to yield results directly.
 * If the callable has a parameter called ``logical_line`` then the callable
-  referred to by the entry point will be called from Flake8 with each logical
+  referred to by the entry point will be called from |Flake8| with each logical
   line and is expected to yield results.
 
 
 .. note::
+
     Class-style plugins are only supported for AST checker (*tree*) plugins.
 
 
@@ -38,15 +39,15 @@ The Results
 Tree plugins
 ------------
 
-A tree plugins can be a function or a class. If it is a function, it must take
+A tree plugin can be a function or a class. If it is a function, it must take
 a parameter called ``tree``. If it is a class, then the ``__init__`` method
 must take this parameter.
 
-For a class based plugin, the ``run`` method is in charge of yielding results.
+For a class-based plugin, the ``run`` method is in charge of yielding results.
 For functions, they must deliver results directly.
 
-Flake8 expects the result of running these plugins to be an iterable of tuples,
-each of which contain the following:
+|Flake8| expects the result of running these plugins to be an iterable of
+tuples, each of which contain the following:
 
 * An ``int`` with the line number where the issue appears
 
@@ -65,7 +66,7 @@ A Physical Line plugin must be callable, it must take a parameter called
 ``physical_line`` and it must return the result of checking the passed physical
 line.
 
-Flake8 expects the result of this call to be an iterable of tuples, each
+|Flake8| expects the result of this call to be an iterable of tuples, each
 containing the following:
 
 * An ``int`` with the offset within the line where the reported issue appears
@@ -80,7 +81,7 @@ A Logical Line plugin must be callable, it must take a parameter called
 ``logical_line`` and it must return the result of checking the passed logical
 line.
 
-Flake8 expects the result of this call to be an iterable of tuples, each
+|Flake8| expects the result of this call to be an iterable of tuples, each
 containing the following:
 
 * An ``int`` with the offset within the logical line where the reported issue

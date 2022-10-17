@@ -19,4 +19,3 @@ Types of Plugins
 
 - **Report Plugins**: Plugins that receive errors and modify the way these are
   reported. They can take care of formatting, filtering, aggregating, etc.
-

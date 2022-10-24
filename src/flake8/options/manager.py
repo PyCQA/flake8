@@ -319,18 +319,7 @@ class OptionManager:
         parents: list[argparse.ArgumentParser],
         formatter_names: list[str],
     ) -> None:
-        """Initialize an instance of an OptionManager.
-
-        :param prog:
-            Name of the actual program (e.g., flake8).
-        :param version:
-            Version string for the program.
-        :param usage:
-            Basic usage string used by the OptionParser.
-        :param parents:
-            A list of ArgumentParser objects whose arguments should also be
-            included.
-        """
+        """Initialize an instance of an OptionManager."""
         self.formatter_names = formatter_names
         self.parser = argparse.ArgumentParser(
             prog="flake8",

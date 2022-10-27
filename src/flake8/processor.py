@@ -326,7 +326,7 @@ class FileProcessor:
 
     def read_lines(self) -> list[str]:
         """Read the lines for this file checker."""
-        if self.filename is None or self.filename == "-":
+        if self.filename == "-":
             self.filename = self.options.stdin_display_name or "stdin"
             lines = self.read_lines_from_stdin()
         else:

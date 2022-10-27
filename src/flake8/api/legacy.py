@@ -10,11 +10,10 @@ import logging
 import os.path
 from typing import Any
 
-import flake8
 from flake8.discover_files import expand_paths
 from flake8.formatting import base as formatter
 from flake8.main import application as app
-from flake8.options import config
+from flake8.options.parse_args import parse_args
 
 LOG = logging.getLogger(__name__)
 
@@ -163,7 +162,7 @@ class StyleGuide:
         # Stop cringing... I know it's gross.
         self._application.make_guide()
         self._application.file_checker_manager = None
-        self._application.make_file_checker_manager()
+        self._application.make_file_checker_manager([])
 
     def input_file(
         self,
@@ -200,23 +199,7 @@ def get_style_guide(**kwargs: Any) -> StyleGuide:
         An initialized StyleGuide
     """
     application = app.Application()
-    prelim_opts, remaining_args = application.parse_preliminary_options([])
-    flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
-
-    cfg, cfg_dir = config.load_config(
-        config=prelim_opts.config,
-        extra=prelim_opts.append_config,
-        isolated=prelim_opts.isolated,
-    )
-
-    application.find_plugins(
-        cfg,
-        cfg_dir,
-        enable_extensions=prelim_opts.enable_extensions,
-        require_plugins=prelim_opts.require_plugins,
-    )
-    application.register_plugin_options()
-    application.parse_configuration_and_cli(cfg, cfg_dir, remaining_args)
+    application.plugins, application.options = parse_args([])
     # We basically want application.initialize to be called but with these
     # options set instead before we make our formatter, notifier, internal
     # style guide and file checker manager.
@@ -229,5 +212,5 @@ def get_style_guide(**kwargs: Any) -> StyleGuide:
             LOG.error('Could not update option "%s"', key)
     application.make_formatter()
     application.make_guide()
-    application.make_file_checker_manager()
+    application.make_file_checker_manager([])
     return StyleGuide(application)

@@ -4,7 +4,6 @@ from __future__ import annotations
 import argparse
 import collections
 import errno
-import itertools
 import logging
 import multiprocessing.pool
 import signal
@@ -80,9 +79,7 @@ class Manager:
             "physical lines": 0,
             "tokens": 0,
         }
-        self.exclude = tuple(
-            itertools.chain(self.options.exclude, self.options.extend_exclude)
-        )
+        self.exclude = (*self.options.exclude, *self.options.extend_exclude)
 
     def _process_statistics(self) -> None:
         for checker in self.checkers:

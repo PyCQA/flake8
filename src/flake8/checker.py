@@ -2,15 +2,17 @@
 from __future__ import annotations
 
 import argparse
-import collections
+import contextlib
 import errno
 import logging
 import multiprocessing.pool
 import signal
 import tokenize
 from typing import Any
+from typing import Generator
 from typing import List
 from typing import Optional
+from typing import Sequence
 from typing import Tuple
 
 from flake8 import defaults
@@ -18,6 +20,7 @@ from flake8 import exceptions
 from flake8 import processor
 from flake8 import utils
 from flake8.discover_files import expand_paths
+from flake8.options.parse_args import parse_args
 from flake8.plugins.finder import Checkers
 from flake8.plugins.finder import LoadedPlugin
 from flake8.style_guide import StyleGuideManager
@@ -40,6 +43,41 @@ SERIAL_RETRY_ERRNOS = {
     # code. Further, please always add a trailing `,` to reduce the visual
     # noise in diffs.
 }
+
+_mp_plugins: Checkers
+_mp_options: argparse.Namespace
+
+
+@contextlib.contextmanager
+def _mp_prefork(
+    plugins: Checkers, options: argparse.Namespace
+) -> Generator[None, None, None]:
+    # we can save significant startup work w/ `fork` multiprocessing
+    global _mp_plugins, _mp_options
+    _mp_plugins, _mp_options = plugins, options
+    try:
+        yield
+    finally:
+        del _mp_plugins, _mp_options
+
+
+def _mp_init(argv: Sequence[str]) -> None:
+    global _mp_plugins, _mp_options
+
+    # Ensure correct signaling of ^C using multiprocessing.Pool.
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+
+    try:
+        _mp_plugins, _mp_options  # for `fork` this'll already be set
+    except NameError:
+        plugins, options = parse_args(argv)
+        _mp_plugins, _mp_options = plugins.checkers, options
+
+
+def _mp_run(filename: str) -> tuple[str, Results, dict[str, int]]:
+    return FileChecker(
+        filename=filename, plugins=_mp_plugins, options=_mp_options
+    ).run_checks()
 
 
 class Manager:
@@ -65,14 +103,13 @@ class Manager:
         self,
         style_guide: StyleGuideManager,
         plugins: Checkers,
+        argv: Sequence[str],
     ) -> None:
         """Initialize our Manager instance."""
         self.style_guide = style_guide
         self.options = style_guide.options
         self.plugins = plugins
         self.jobs = self._job_count()
-        self._all_checkers: list[FileChecker] = []
-        self.checkers: list[FileChecker] = []
         self.statistics = {
             "files": 0,
             "logical lines": 0,
@@ -80,29 +117,21 @@ class Manager:
             "tokens": 0,
         }
         self.exclude = (*self.options.exclude, *self.options.extend_exclude)
+        self.argv = argv
+        self.results: list[tuple[str, Results, dict[str, int]]] = []
 
     def _process_statistics(self) -> None:
-        for checker in self.checkers:
+        for _, _, statistics in self.results:
             for statistic in defaults.STATISTIC_NAMES:
-                self.statistics[statistic] += checker.statistics[statistic]
-        self.statistics["files"] += len(self.checkers)
+                self.statistics[statistic] += statistics[statistic]
+        self.statistics["files"] += len(self.filenames)
 
     def _job_count(self) -> int:
         # First we walk through all of our error cases:
         # - multiprocessing library is not present
-        # - we're running on windows in which case we know we have significant
-        #   implementation issues
         # - the user provided stdin and that's not something we can handle
         #   well
         # - the user provided some awful input
-
-        # class state is only preserved when using the `fork` strategy.
-        if multiprocessing.get_start_method() != "fork":
-            LOG.warning(
-                "The multiprocessing module is not available. "
-                "Ignoring --jobs arguments."
-            )
-            return 0
 
         if utils.is_using_stdin(self.options.filenames):
             LOG.warning(
@@ -141,27 +170,6 @@ class Manager:
             )
         return reported_results_count
 
-    def make_checkers(self, paths: list[str] | None = None) -> None:
-        """Create checkers for each file."""
-        if paths is None:
-            paths = self.options.filenames
-
-        self._all_checkers = [
-            FileChecker(
-                filename=filename,
-                plugins=self.plugins,
-                options=self.options,
-            )
-            for filename in expand_paths(
-                paths=paths,
-                stdin_display_name=self.options.stdin_display_name,
-                filename_patterns=self.options.filename,
-                exclude=self.exclude,
-            )
-        ]
-        self.checkers = [c for c in self._all_checkers if c.should_process]
-        LOG.info("Checking %d files", len(self.checkers))
-
     def report(self) -> tuple[int, int]:
         """Report all of the errors found in the managed file checkers.
 
@@ -172,9 +180,8 @@ class Manager:
             A tuple of the total results found and the results reported.
         """
         results_reported = results_found = 0
-        for checker in self._all_checkers:
-            results = sorted(checker.results, key=lambda tup: (tup[1], tup[2]))
-            filename = checker.display_name
+        for filename, results, _ in self.results:
+            results.sort(key=lambda tup: (tup[1], tup[2]))
             with self.style_guide.processing_file(filename):
                 results_reported += self._handle_results(filename, results)
             results_found += len(results)
@@ -182,12 +189,8 @@ class Manager:
 
     def run_parallel(self) -> None:
         """Run the checkers in parallel."""
-        # fmt: off
-        final_results: dict[str, list[tuple[str, int, int, str, str | None]]] = collections.defaultdict(list)  # noqa: E501
-        final_statistics: dict[str, dict[str, int]] = collections.defaultdict(dict)  # noqa: E501
-        # fmt: on
-
-        pool = _try_initialize_processpool(self.jobs)
+        with _mp_prefork(self.plugins, self.options):
+            pool = _try_initialize_processpool(self.jobs, self.argv)
 
         if pool is None:
             self.run_serial()
@@ -195,17 +198,7 @@ class Manager:
 
         pool_closed = False
         try:
-            pool_map = pool.imap_unordered(
-                _run_checks,
-                self.checkers,
-                chunksize=calculate_pool_chunksize(
-                    len(self.checkers), self.jobs
-                ),
-            )
-            for ret in pool_map:
-                filename, results, statistics = ret
-                final_results[filename] = results
-                final_statistics[filename] = statistics
+            self.results = list(pool.imap_unordered(_mp_run, self.filenames))
             pool.close()
             pool.join()
             pool_closed = True
@@ -214,15 +207,16 @@ class Manager:
                 pool.terminate()
                 pool.join()
 
-        for checker in self.checkers:
-            filename = checker.display_name
-            checker.results = final_results[filename]
-            checker.statistics = final_statistics[filename]
-
     def run_serial(self) -> None:
         """Run the checkers in serial."""
-        for checker in self.checkers:
-            checker.run_checks()
+        self.results = [
+            FileChecker(
+                filename=filename,
+                plugins=self.plugins,
+                options=self.options,
+            ).run_checks()
+            for filename in self.filenames
+        ]
 
     def run(self) -> None:
         """Run all the checkers.
@@ -234,7 +228,7 @@ class Manager:
         :issue:`117`) this also implements fallback to serial processing.
         """
         try:
-            if self.jobs > 1 and len(self.checkers) > 1:
+            if self.jobs > 1 and len(self.filenames) > 1:
                 self.run_parallel()
             else:
                 self.run_serial()
@@ -242,7 +236,7 @@ class Manager:
             LOG.warning("Flake8 was interrupted by the user")
             raise exceptions.EarlyQuit("Early quit while running checks")
 
-    def start(self, paths: list[str] | None = None) -> None:
+    def start(self) -> None:
         """Start checking files.
 
         :param paths:
@@ -250,7 +244,14 @@ class Manager:
             :meth:`~Manager.make_checkers`.
         """
         LOG.info("Making checkers")
-        self.make_checkers(paths)
+        self.filenames = tuple(
+            expand_paths(
+                paths=self.options.filenames,
+                stdin_display_name=self.options.stdin_display_name,
+                filename_patterns=self.options.filename,
+                exclude=self.exclude,
+            )
+        )
 
     def stop(self) -> None:
         """Stop checking files."""
@@ -325,7 +326,7 @@ class FileChecker:
 
     def run_check(self, plugin: LoadedPlugin, **arguments: Any) -> Any:
         """Run the check in a single plugin."""
-        assert self.processor is not None
+        assert self.processor is not None, self.filename
         try:
             params = self.processor.keyword_arguments_for(
                 plugin.parameters, arguments
@@ -409,7 +410,7 @@ class FileChecker:
 
     def run_ast_checks(self) -> None:
         """Run all checks expecting an abstract syntax tree."""
-        assert self.processor is not None
+        assert self.processor is not None, self.filename
         ast = self.processor.build_ast()
 
         for plugin in self.plugins.tree:
@@ -514,7 +515,9 @@ class FileChecker:
 
     def run_checks(self) -> tuple[str, Results, dict[str, int]]:
         """Run checks against the file."""
-        assert self.processor is not None
+        if self.processor is None or not self.should_process:
+            return self.display_name, self.results, self.statistics
+
         try:
             self.run_ast_checks()
             self.process_tokens()
@@ -522,11 +525,11 @@ class FileChecker:
             code = "E902" if isinstance(e, tokenize.TokenError) else "E999"
             row, column = self._extract_syntax_information(e)
             self.report(code, row, column, f"{type(e).__name__}: {e.args[0]}")
-            return self.filename, self.results, self.statistics
+            return self.display_name, self.results, self.statistics
 
         logical_lines = self.processor.statistics["logical lines"]
         self.statistics["logical lines"] = logical_lines
-        return self.filename, self.results, self.statistics
+        return self.display_name, self.results, self.statistics
 
     def handle_newline(self, token_type: int) -> None:
         """Handle the logic when encountering a newline token."""
@@ -573,17 +576,13 @@ class FileChecker:
                     self.run_physical_checks(line)
 
 
-def _pool_init() -> None:
-    """Ensure correct signaling of ^C using multiprocessing.Pool."""
-    signal.signal(signal.SIGINT, signal.SIG_IGN)
-
-
 def _try_initialize_processpool(
     job_count: int,
+    argv: Sequence[str],
 ) -> multiprocessing.pool.Pool | None:
     """Return a new process pool instance if we are able to create one."""
     try:
-        return multiprocessing.Pool(job_count, _pool_init)
+        return multiprocessing.Pool(job_count, _mp_init, initargs=(argv,))
     except OSError as err:
         if err.errno not in SERIAL_RETRY_ERRNOS:
             raise
@@ -591,22 +590,6 @@ def _try_initialize_processpool(
         pass
 
     return None
-
-
-def calculate_pool_chunksize(num_checkers: int, num_jobs: int) -> int:
-    """Determine the chunksize for the multiprocessing Pool.
-
-    - For chunksize, see: https://docs.python.org/3/library/multiprocessing.html#multiprocessing.pool.Pool.imap  # noqa
-    - This formula, while not perfect, aims to give each worker two batches of
-      work.
-    - See: https://github.com/pycqa/flake8/issues/829#note_18878876
-    - See: https://github.com/pycqa/flake8/issues/197
-    """
-    return max(num_checkers // (num_jobs * 2), 1)
-
-
-def _run_checks(checker: FileChecker) -> tuple[str, Results, dict[str, int]]:
-    return checker.run_checks()
 
 
 def find_offset(

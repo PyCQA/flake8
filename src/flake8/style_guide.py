@@ -6,7 +6,6 @@ import contextlib
 import copy
 import enum
 import functools
-import itertools
 import logging
 from typing import Generator
 from typing import Sequence
@@ -221,12 +220,10 @@ class StyleGuideManager:
         self.default_style_guide = StyleGuide(
             options, formatter, self.stats, decider=decider
         )
-        self.style_guides = list(
-            itertools.chain(
-                [self.default_style_guide],
-                self.populate_style_guides_with(options),
-            )
-        )
+        self.style_guides = [
+            self.default_style_guide,
+            *self.populate_style_guides_with(options),
+        ]
 
         self.style_guide_for = functools.lru_cache(maxsize=None)(
             self._style_guide_for

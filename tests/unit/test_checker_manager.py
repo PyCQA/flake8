@@ -14,12 +14,7 @@ from flake8.plugins import finder
 
 def style_guide_mock():
     """Create a mock StyleGuide object."""
-    return mock.MagicMock(
-        **{
-            "options.diff": False,
-            "options.jobs": JobsArgument("4"),
-        }
-    )
+    return mock.MagicMock(**{"options.jobs": JobsArgument("4")})
 
 
 def _parallel_checker_manager():

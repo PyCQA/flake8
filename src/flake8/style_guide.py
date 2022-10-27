@@ -298,18 +298,6 @@ class StyleGuideManager:
             code, filename, line_number, column_number, text, physical_line
         )
 
-    def add_diff_ranges(self, diffinfo: dict[str, set[int]]) -> None:
-        """Update the StyleGuides to filter out information not in the diff.
-
-        This provides information to the underlying StyleGuides so that only
-        the errors in the line number ranges are reported.
-
-        :param diffinfo:
-            Dictionary mapping filenames to sets of line number ranges.
-        """
-        for guide in self.style_guides:
-            guide.add_diff_ranges(diffinfo)
-
 
 class StyleGuide:
     """Manage a Flake8 user's style guide."""
@@ -333,7 +321,6 @@ class StyleGuide:
         self.filename = filename
         if self.filename:
             self.filename = utils.normalize_path(self.filename)
-        self._parsed_diff: dict[str, set[int]] = {}
 
     def __repr__(self) -> str:
         """Make it easier to debug which StyleGuide we're using."""
@@ -440,20 +427,8 @@ class StyleGuide:
             self.should_report_error(error.code) is Decision.Selected
         )
         is_not_inline_ignored = error.is_inline_ignored(disable_noqa) is False
-        is_included_in_diff = error.is_in(self._parsed_diff)
-        if error_is_selected and is_not_inline_ignored and is_included_in_diff:
+        if error_is_selected and is_not_inline_ignored:
             self.formatter.handle(error)
             self.stats.record(error)
             return 1
         return 0
-
-    def add_diff_ranges(self, diffinfo: dict[str, set[int]]) -> None:
-        """Update the StyleGuide to filter out information not in the diff.
-
-        This provides information to the StyleGuide so that only the errors
-        in the line number ranges are reported.
-
-        :param diffinfo:
-            Dictionary mapping filenames to sets of line number ranges.
-        """
-        self._parsed_diff = diffinfo

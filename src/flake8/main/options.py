@@ -114,7 +114,6 @@ def register_default_options(option_manager: OptionManager) -> None:
     - ``-q``/``--quiet``
     - ``--color``
     - ``--count``
-    - ``--diff``
     - ``--exclude``
     - ``--extend-exclude``
     - ``--filename``
@@ -161,13 +160,6 @@ def register_default_options(option_manager: OptionManager) -> None:
         parse_from_config=True,
         help="Print total number of errors to standard output after "
         "all other output.",
-    )
-
-    add_option(
-        "--diff",
-        action="store_true",
-        help="(DEPRECATED) Report changes only within line number ranges in "
-        "the unified diff provided on standard in by the user.",
     )
 
     add_option(

@@ -44,8 +44,6 @@ Index of Options
 
 - :option:`flake8 --count`
 
-- :option:`flake8 --diff`
-
 - :option:`flake8 --exclude`
 
 - :option:`flake8 --filename`
@@ -228,27 +226,6 @@ Options and their Descriptions
     .. code-block:: ini
 
         count = True
-
-
-.. option:: --diff
-
-    :ref:`Go back to index <top>`
-
-    .. warning::
-
-        Due to hiding potential errors, this option is deprecated and will be
-        removed in a future version.
-
-    Use the unified diff provided on standard in to only check the modified
-    files and report errors included in the diff.
-
-    Command-line example:
-
-    .. prompt:: bash
-
-        git diff -u | flake8 --diff
-
-    This **can not** be specified in config files.
 
 
 .. option:: --exclude=<patterns>

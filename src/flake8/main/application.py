@@ -13,7 +13,6 @@ from flake8 import checker
 from flake8 import defaults
 from flake8 import exceptions
 from flake8 import style_guide
-from flake8 import utils
 from flake8.formatting.base import BaseFormatter
 from flake8.main import debug
 from flake8.main import options
@@ -65,9 +64,6 @@ class Application:
         #: Whether or not something catastrophic happened and we should exit
         #: with a non-zero status code
         self.catastrophic_failure = False
-
-        #: The parsed diff information
-        self.parsed_diff: dict[str, set[int]] = {}
 
     def parse_preliminary_options(
         self, argv: Sequence[str]
@@ -158,13 +154,6 @@ class Application:
             print(json.dumps(info, indent=2, sort_keys=True))
             raise SystemExit(0)
 
-        if self.options.diff:
-            LOG.warning(
-                "the --diff option is deprecated and will be removed in a "
-                "future version."
-            )
-            self.parsed_diff = utils.parse_unified_diff()
-
         for loaded in self.plugins.all_plugins():
             parse_options = getattr(loaded.obj, "parse_options", None)
             if parse_options is None:
@@ -194,9 +183,6 @@ class Application:
             self.options, self.formatter
         )
 
-        if self.options.diff:
-            self.guide.add_diff_ranges(self.parsed_diff)
-
     def make_file_checker_manager(self) -> None:
         """Initialize our FileChecker Manager."""
         assert self.guide is not None
@@ -213,16 +199,9 @@ class Application:
         :class:`~flake8.checker.Manger` instance run the checks it is
         managing.
         """
-        assert self.options is not None
         assert self.file_checker_manager is not None
-        if self.options.diff:
-            files: list[str] | None = sorted(self.parsed_diff)
-            if not files:
-                return
-        else:
-            files = None
 
-        self.file_checker_manager.start(files)
+        self.file_checker_manager.start()
         try:
             self.file_checker_manager.run()
         except exceptions.PluginExecutionFailed as plugin_failed:

@@ -136,7 +136,6 @@ class StyleGuide:
                     stdin_display_name=self.options.stdin_display_name,
                     filename_patterns=self.options.filename,
                     exclude=self.options.exclude,
-                    is_running_from_diff=self.options.diff,
                 )
             )
             return not paths

@@ -97,8 +97,6 @@ class Manager:
         #   implementation issues
         # - the user provided stdin and that's not something we can handle
         #   well
-        # - we're processing a diff, which again does not work well with
-        #   multiprocessing and which really shouldn't require multiprocessing
         # - the user provided some awful input
 
         # class state is only preserved when using the `fork` strategy.
@@ -113,13 +111,6 @@ class Manager:
             LOG.warning(
                 "The --jobs option is not compatible with supplying "
                 "input using - . Ignoring --jobs arguments."
-            )
-            return 0
-
-        if self.options.diff:
-            LOG.warning(
-                "The --diff option was specified with --jobs but "
-                "they are not compatible. Ignoring --jobs arguments."
             )
             return 0
 
@@ -169,7 +160,6 @@ class Manager:
                 stdin_display_name=self.options.stdin_display_name,
                 filename_patterns=self.options.filename,
                 exclude=self.exclude,
-                is_running_from_diff=self.options.diff,
             )
         ]
         self.checkers = [c for c in self._all_checkers if c.should_process]

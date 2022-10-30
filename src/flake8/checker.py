@@ -6,6 +6,7 @@ import contextlib
 import errno
 import logging
 import multiprocessing.pool
+import operator
 import signal
 import tokenize
 from typing import Any
@@ -180,8 +181,9 @@ class Manager:
             A tuple of the total results found and the results reported.
         """
         results_reported = results_found = 0
+        self.results.sort(key=operator.itemgetter(0))
         for filename, results, _ in self.results:
-            results.sort(key=lambda tup: (tup[1], tup[2]))
+            results.sort(key=operator.itemgetter(1, 2))
             with self.style_guide.processing_file(filename):
                 results_reported += self._handle_results(filename, results)
             results_found += len(results)

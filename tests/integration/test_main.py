@@ -98,6 +98,26 @@ t.py:1:1: F401 'os' imported but unused
     assert err == ""
 
 
+def test_errors_sorted(tmpdir, capsys):
+    with tmpdir.as_cwd():
+        for c in "abcde":
+            tmpdir.join(f"{c}.py").write("import os\n")
+        assert cli.main(["./"]) == 1
+
+    # file traversal was done in inode-order before
+    # this uses a significant number of files such that it's unlikely to pass
+    expected = """\
+./a.py:1:1: F401 'os' imported but unused
+./b.py:1:1: F401 'os' imported but unused
+./c.py:1:1: F401 'os' imported but unused
+./d.py:1:1: F401 'os' imported but unused
+./e.py:1:1: F401 'os' imported but unused
+"""
+    out, err = capsys.readouterr()
+    assert out == expected
+    assert err == ""
+
+
 def test_extend_exclude(tmpdir, capsys):
     """Ensure that `flake8 --extend-exclude` works."""
     for d in ["project", "vendor", "legacy", ".git", ".tox", ".hg"]:

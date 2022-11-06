@@ -90,13 +90,13 @@ class FlakesChecker(pyflakes.checker.Checker):
         for exclude in self.exclude_from_doctest:
             if exclude != "" and filename.startswith(exclude):
                 with_doctest = False
-                overlaped_by = [
+                overlapped_by = [
                     include
                     for include in included_by
                     if include.startswith(exclude)
                 ]
 
-                if overlaped_by:
+                if overlapped_by:
                     with_doctest = True
 
         super().__init__(

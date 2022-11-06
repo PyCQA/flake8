@@ -27,7 +27,7 @@ _Logical = Tuple[List[str], List[str], _LogicalMapping]
 
 
 class FileProcessor:
-    """Processes a file and holdes state.
+    """Processes a file and holds state.
 
     This processes a file by generating tokens, logical and physical lines,
     and AST trees. This also provides a way of passing state about the file
@@ -63,7 +63,7 @@ class FileProcessor:
         options: argparse.Namespace,
         lines: list[str] | None = None,
     ) -> None:
-        """Initialice our file processor.
+        """Initialize our file processor.
 
         :param filename: Name of the file to process
         """

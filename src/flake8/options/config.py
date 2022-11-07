@@ -7,6 +7,7 @@ import os.path
 from typing import Any
 
 from flake8 import exceptions
+from flake8.defaults import VALID_CODE_PREFIX
 from flake8.options.manager import OptionManager
 
 LOG = logging.getLogger(__name__)
@@ -120,6 +121,16 @@ def parse_config(
         LOG.debug('Option "%s" returned value: %r', option_name, value)
 
         final_value = option.normalize(value, cfg_dir)
+
+        if option_name in {"ignore", "extend-ignore"}:
+            for error_code in final_value:
+                if not VALID_CODE_PREFIX.match(error_code):
+                    raise ValueError(
+                        f"Error code {error_code!r} "
+                        f"supplied to {option_name!r} option "
+                        f"does not match {VALID_CODE_PREFIX.pattern!r}"
+                    )
+
         assert option.config_name is not None
         config_dict[option.config_name] = final_value
 

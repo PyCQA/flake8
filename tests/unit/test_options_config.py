@@ -220,3 +220,35 @@ def test_parse_config_ignores_unknowns(tmp_path, opt_manager, caplog):
 def test_load_config_missing_file_raises_exception(capsys):
     with pytest.raises(exceptions.ExecutionError):
         config.load_config("foo.cfg", [])
+
+
+def test_invalid_ignore_codes_raise_error(tmpdir, opt_manager):
+    tmpdir.join("setup.cfg").write("[flake8]\nignore = E203, //comment")
+    with tmpdir.as_cwd():
+        cfg, _ = config.load_config("setup.cfg", [], isolated=False)
+
+    with pytest.raises(ValueError) as excinfo:
+        config.parse_config(opt_manager, cfg, tmpdir)
+
+    expected = (
+        "Error code '//comment' supplied to 'ignore' option "
+        "does not match '^[A-Z]{1,3}[0-9]{0,3}$'"
+    )
+    (msg,) = excinfo.value.args
+    assert msg == expected
+
+
+def test_invalid_extend_ignore_codes_raise_error(tmpdir, opt_manager):
+    tmpdir.join("setup.cfg").write("[flake8]\nextend-ignore = E203, //comment")
+    with tmpdir.as_cwd():
+        cfg, _ = config.load_config("setup.cfg", [], isolated=False)
+
+    with pytest.raises(ValueError) as excinfo:
+        config.parse_config(opt_manager, cfg, tmpdir)
+
+    expected = (
+        "Error code '//comment' supplied to 'extend-ignore' option "
+        "does not match '^[A-Z]{1,3}[0-9]{0,3}$'"
+    )
+    (msg,) = excinfo.value.args
+    assert msg == expected

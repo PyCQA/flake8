@@ -222,6 +222,11 @@ def test_load_config_missing_file_raises_exception(capsys):
         config.load_config("foo.cfg", [])
 
 
+def test_load_config_missing_append_config_raise_exception():
+    with pytest.raises(exceptions.ExecutionError):
+        config.load_config(None, ["dont_exist_config.cfg"], isolated=False)
+
+
 def test_invalid_ignore_codes_raise_error(tmpdir, opt_manager):
     tmpdir.join("setup.cfg").write("[flake8]\nignore = E203, //comment")
     with tmpdir.as_cwd():

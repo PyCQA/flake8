@@ -87,7 +87,10 @@ def load_config(
     # TODO: remove this and replace it with configuration modifying plugins
     # read the additional configs afterwards
     for filename in extra:
-        cfg.read(filename, encoding="UTF-8")
+        if not cfg.read(filename, encoding="UTF-8"):
+            raise exceptions.ExecutionError(
+                f"The specified config file does not exist: {filename}"
+            )
 
     return cfg, cfg_dir
 

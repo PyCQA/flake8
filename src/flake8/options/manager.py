@@ -7,7 +7,6 @@ import functools
 import logging
 from typing import Any
 from typing import Callable
-from typing import Mapping
 from typing import Sequence
 
 from flake8 import utils
@@ -18,55 +17,6 @@ LOG = logging.getLogger(__name__)
 # represent a singleton of "not passed arguments".
 # an enum is chosen to trick mypy
 _ARG = enum.Enum("_ARG", "NO")
-
-
-_optparse_callable_map: dict[str, type[Any] | _ARG] = {
-    "int": int,
-    "long": int,
-    "string": str,
-    "float": float,
-    "complex": complex,
-    "choice": _ARG.NO,
-    # optparse allows this but does not document it
-    "str": str,
-}
-
-
-class _CallbackAction(argparse.Action):
-    """Shim for optparse-style callback actions."""
-
-    def __init__(
-        self,
-        *args: Any,
-        callback: Callable[..., Any],
-        callback_args: Sequence[Any] = (),
-        callback_kwargs: dict[str, Any] | None = None,
-        **kwargs: Any,
-    ) -> None:
-        self._callback = callback
-        self._callback_args = callback_args
-        self._callback_kwargs = callback_kwargs or {}
-        super().__init__(*args, **kwargs)
-
-    def __call__(
-        self,
-        parser: argparse.ArgumentParser,
-        namespace: argparse.Namespace,
-        values: Sequence[str] | str | None,
-        option_string: str | None = None,
-    ) -> None:
-        if not values:
-            values = None
-        elif isinstance(values, list) and len(values) > 1:
-            values = tuple(values)
-        self._callback(
-            self,
-            option_string,
-            values,
-            parser,
-            *self._callback_args,
-            **self._callback_kwargs,
-        )
 
 
 def _flake8_normalize(
@@ -95,21 +45,16 @@ class Option:
         self,
         short_option_name: str | _ARG = _ARG.NO,
         long_option_name: str | _ARG = _ARG.NO,
-        # Options below here are taken from the optparse.Option class
+        # Options below are taken from argparse.ArgumentParser.add_argument
         action: str | type[argparse.Action] | _ARG = _ARG.NO,
         default: Any | _ARG = _ARG.NO,
-        type: str | Callable[..., Any] | _ARG = _ARG.NO,
+        type: Callable[..., Any] | _ARG = _ARG.NO,
         dest: str | _ARG = _ARG.NO,
         nargs: int | str | _ARG = _ARG.NO,
         const: Any | _ARG = _ARG.NO,
         choices: Sequence[Any] | _ARG = _ARG.NO,
         help: str | _ARG = _ARG.NO,
         metavar: str | _ARG = _ARG.NO,
-        # deprecated optparse-only options
-        callback: Callable[..., Any] | _ARG = _ARG.NO,
-        callback_args: Sequence[Any] | _ARG = _ARG.NO,
-        callback_kwargs: Mapping[str, Any] | _ARG = _ARG.NO,
-        # Options below are taken from argparse.ArgumentParser.add_argument
         required: bool | _ARG = _ARG.NO,
         # Options below here are specific to Flake8
         parse_from_config: bool = False,
@@ -150,21 +95,9 @@ class Option:
 
         :param type:
             A callable to normalize the type (as is the case in
-            :mod:`argparse`).  Deprecated: you can also pass through type
-            strings such as ``'int'`` which are handled by :mod:`optparse`.
+            :mod:`argparse`).
         :param action:
-            Any action allowed by :mod:`argparse`.  Deprecated: this also
-            understands the ``action='callback'`` action from :mod:`optparse`.
-        :param callback:
-            Callback used if the action is ``"callback"``.  Deprecated: please
-            use ``action=`` instead.
-        :param callback_args:
-            Additional positional arguments to the callback callable.
-            Deprecated: please use ``action=`` instead (probably with
-            ``functools.partial``).
-        :param callback_kwargs:
-            Keyword arguments to the callback callable. Deprecated: please
-            use ``action=`` instead (probably with ``functools.partial``).
+            Any action allowed by :mod:`argparse`.
 
         The following parameters are for Flake8's option handling alone.
 
@@ -183,37 +116,6 @@ class Option:
             and short_option_name.startswith("--")
         ):
             short_option_name, long_option_name = _ARG.NO, short_option_name
-
-        # optparse -> argparse `%default` => `%(default)s`
-        if help is not _ARG.NO and "%default" in help:
-            LOG.warning(
-                "option %s: please update `help=` text to use %%(default)s "
-                "instead of %%default -- this will be an error in the future",
-                long_option_name,
-            )
-            help = help.replace("%default", "%(default)s")
-
-        # optparse -> argparse for `callback`
-        if action == "callback":
-            LOG.warning(
-                "option %s: please update from optparse `action='callback'` "
-                "to argparse action classes -- this will be an error in the "
-                "future",
-                long_option_name,
-            )
-            action = _CallbackAction
-            if type is _ARG.NO:
-                nargs = 0
-
-        # optparse -> argparse for `type`
-        if isinstance(type, str):
-            LOG.warning(
-                "option %s: please update from optparse string `type=` to "
-                "argparse callable `type=` -- this will be an error in the "
-                "future",
-                long_option_name,
-            )
-            type = _optparse_callable_map[type]
 
         # flake8 special type normalization
         if comma_separated_list or normalize_paths:
@@ -237,9 +139,6 @@ class Option:
         self.nargs = nargs
         self.const = const
         self.choices = choices
-        self.callback = callback
-        self.callback_args = callback_args
-        self.callback_kwargs = callback_kwargs
         self.help = help
         self.metavar = metavar
         self.required = required
@@ -251,9 +150,6 @@ class Option:
             "nargs": self.nargs,
             "const": self.const,
             "choices": self.choices,
-            "callback": self.callback,
-            "callback_args": self.callback_args,
-            "callback_kwargs": self.callback_kwargs,
             "help": self.help,
             "metavar": self.metavar,
             "required": self.required,

@@ -1,8 +1,9 @@
 """Generated using ./bin/gen-pycodestyle-plugin."""
 # fmt: off
+from __future__ import annotations
+
 from typing import Any
 from typing import Generator
-from typing import Tuple
 
 from pycodestyle import ambiguous_identifier as _ambiguous_identifier
 from pycodestyle import bare_except as _bare_except
@@ -60,7 +61,7 @@ def pycodestyle_logical(
     previous_unindented_logical_line: Any,
     tokens: Any,
     verbose: Any,
-) -> Generator[Tuple[int, str], None, None]:
+) -> Generator[tuple[int, str], None, None]:
     """Run pycodestyle logical checks."""
     yield from _ambiguous_identifier(logical_line, tokens)
     yield from _bare_except(logical_line, noqa)
@@ -104,7 +105,7 @@ def pycodestyle_physical(
     noqa: Any,
     physical_line: Any,
     total_lines: Any,
-) -> Generator[Tuple[int, str], None, None]:
+) -> Generator[tuple[int, str], None, None]:
     """Run pycodestyle physical checks."""
     ret = _maximum_line_length(physical_line, max_line_length, multiline, line_number, noqa)  # noqa: E501
     if ret is not None:

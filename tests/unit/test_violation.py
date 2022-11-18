@@ -1,4 +1,6 @@
 """Tests for the flake8.violation.Violation class."""
+from __future__ import annotations
+
 from unittest import mock
 
 import pytest
@@ -49,22 +51,3 @@ def test_disable_is_inline_ignored():
         assert error.is_inline_ignored(True) is False
 
     assert getline.called is False
-
-
-@pytest.mark.parametrize(
-    "violation_file,violation_line,diff,expected",
-    [
-        ("file.py", 10, {}, True),
-        ("file.py", 1, {"file.py": range(1, 2)}, True),
-        ("file.py", 10, {"file.py": range(1, 2)}, False),
-        ("file.py", 1, {"other.py": range(1, 2)}, False),
-        ("file.py", 10, {"other.py": range(1, 2)}, False),
-    ],
-)
-def test_violation_is_in_diff(violation_file, violation_line, diff, expected):
-    """Verify that we find violations within a diff."""
-    violation = Violation(
-        "E001", violation_file, violation_line, 1, "warning", "line"
-    )
-
-    assert violation.is_in(diff) is expected

@@ -1,12 +1,13 @@
 """Command-line implementation of flake8."""
+from __future__ import annotations
+
 import sys
-from typing import Optional
 from typing import Sequence
 
 from flake8.main import application
 
 
-def main(argv: Optional[Sequence[str]] = None) -> int:
+def main(argv: Sequence[str] | None = None) -> int:
     """Execute the main bit of the application.
 
     This handles the creation of an instance of :class:`Application`, runs it,

@@ -1,4 +1,6 @@
 """Test aggregation of config files and command-line options."""
+from __future__ import annotations
+
 import os
 
 import pytest
@@ -16,6 +18,7 @@ def optmanager():
         version="3.0.0",
         plugin_versions="",
         parents=[],
+        formatter_names=[],
     )
     options.register_default_options(option_manager)
     return option_manager

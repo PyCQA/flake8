@@ -1,4 +1,6 @@
 """Integration tests for the main entrypoint of flake8."""
+from __future__ import annotations
+
 import json
 import os
 import sys
@@ -9,42 +11,6 @@ import pytest
 from flake8 import utils
 from flake8.main import cli
 from flake8.options import config
-
-
-def test_diff_option(tmpdir, capsys):
-    """Ensure that `flake8 --diff` works."""
-    t_py_contents = """\
-import os
-import sys  # unused but not part of diff
-
-print('(to avoid trailing whitespace in test)')
-print('(to avoid trailing whitespace in test)')
-print(os.path.join('foo', 'bar'))
-
-y  # part of the diff and an error
-"""
-
-    diff = """\
-diff --git a/t.py b/t.py
-index d64ac39..7d943de 100644
---- a/t.py
-+++ b/t.py
-@@ -4,3 +4,5 @@ import sys  # unused but not part of diff
- print('(to avoid trailing whitespace in test)')
- print('(to avoid trailing whitespace in test)')
- print(os.path.join('foo', 'bar'))
-+
-+y  # part of the diff and an error
-"""
-
-    with mock.patch.object(utils, "stdin_get_value", return_value=diff):
-        with tmpdir.as_cwd():
-            tmpdir.join("t.py").write(t_py_contents)
-            assert cli.main(["--diff"]) == 1
-
-    out, err = capsys.readouterr()
-    assert out == "t.py:8:1: F821 undefined name 'y'\n"
-    assert err == ""
 
 
 def test_form_feed_line_split(tmpdir, capsys):
@@ -126,6 +92,26 @@ import os
 
     expected = """\
 t.py:1:1: F401 'os' imported but unused
+"""
+    out, err = capsys.readouterr()
+    assert out == expected
+    assert err == ""
+
+
+def test_errors_sorted(tmpdir, capsys):
+    with tmpdir.as_cwd():
+        for c in "abcde":
+            tmpdir.join(f"{c}.py").write("import os\n")
+        assert cli.main(["./"]) == 1
+
+    # file traversal was done in inode-order before
+    # this uses a significant number of files such that it's unlikely to pass
+    expected = """\
+./a.py:1:1: F401 'os' imported but unused
+./b.py:1:1: F401 'os' imported but unused
+./c.py:1:1: F401 'os' imported but unused
+./d.py:1:1: F401 'os' imported but unused
+./e.py:1:1: F401 'os' imported but unused
 """
     out, err = capsys.readouterr()
     assert out == expected
@@ -403,4 +389,14 @@ The specified config file does not exist: missing.cfg
 
     out, err = capsys.readouterr()
     assert out == expected
+    assert err == ""
+
+
+def test_format_option_help(capsys):
+    """Test that help displays list of available formatters."""
+    with pytest.raises(SystemExit):
+        cli.main(["--help"])
+
+    out, err = capsys.readouterr()
+    assert "(default, pylint, quiet-filename, quiet-nothing)" in out
     assert err == ""

@@ -1,11 +1,10 @@
 """The base class and interface for all formatting plugins."""
+from __future__ import annotations
+
 import argparse
 import os
 import sys
 from typing import IO
-from typing import List
-from typing import Optional
-from typing import Tuple
 
 from flake8.formatting import _windows_color
 from flake8.statistics import Statistics
@@ -46,7 +45,7 @@ class BaseFormatter:
         """
         self.options = options
         self.filename = options.output_file
-        self.output_fd: Optional[IO[str]] = None
+        self.output_fd: IO[str] | None = None
         self.newline = "\n"
         self.color = options.color == "always" or (
             options.color == "auto"
@@ -84,7 +83,7 @@ class BaseFormatter:
             os.makedirs(dirname, exist_ok=True)
             self.output_fd = open(self.filename, "a")
 
-    def handle(self, error: "Violation") -> None:
+    def handle(self, error: Violation) -> None:
         """Handle an error reported by Flake8.
 
         This defaults to calling :meth:`format`, :meth:`show_source`, and
@@ -99,7 +98,7 @@ class BaseFormatter:
         source = self.show_source(error)
         self.write(line, source)
 
-    def format(self, error: "Violation") -> Optional[str]:
+    def format(self, error: Violation) -> str | None:
         """Format an error reported by Flake8.
 
         This method **must** be implemented by subclasses.
@@ -114,7 +113,7 @@ class BaseFormatter:
             "Subclass of BaseFormatter did not implement" " format."
         )
 
-    def show_statistics(self, statistics: "Statistics") -> None:
+    def show_statistics(self, statistics: Statistics) -> None:
         """Format and print the statistics."""
         for error_code in statistics.error_codes():
             stats_for_error_code = statistics.statistics_for(error_code)
@@ -123,7 +122,7 @@ class BaseFormatter:
             count += sum(stat.count for stat in stats_for_error_code)
             self._write(f"{count:<5} {error_code} {statistic.message}")
 
-    def show_benchmarks(self, benchmarks: List[Tuple[str, float]]) -> None:
+    def show_benchmarks(self, benchmarks: list[tuple[str, float]]) -> None:
         """Format and print the benchmarks."""
         # NOTE(sigmavirus24): The format strings are a little confusing, even
         # to me, so here's a quick explanation:
@@ -144,7 +143,7 @@ class BaseFormatter:
                 benchmark = float_format(statistic=statistic, value=value)
             self._write(benchmark)
 
-    def show_source(self, error: "Violation") -> Optional[str]:
+    def show_source(self, error: Violation) -> str | None:
         """Show the physical line generating the error.
 
         This also adds an indicator for the particular part of the line that
@@ -178,7 +177,7 @@ class BaseFormatter:
         if self.output_fd is None or self.options.tee:
             sys.stdout.buffer.write(output.encode() + self.newline.encode())
 
-    def write(self, line: Optional[str], source: Optional[str]) -> None:
+    def write(self, line: str | None, source: str | None) -> None:
         """Write the line either to the output file or stdout.
 
         This handles deciding whether to write to a file or print to standard

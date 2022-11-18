@@ -1,28 +1,20 @@
 """Module containing the application logic for Flake8."""
+from __future__ import annotations
+
 import argparse
-import configparser
 import json
 import logging
 import time
-from typing import Dict
-from typing import List
-from typing import Optional
 from typing import Sequence
-from typing import Set
-from typing import Tuple
 
 import flake8
 from flake8 import checker
 from flake8 import defaults
 from flake8 import exceptions
 from flake8 import style_guide
-from flake8 import utils
 from flake8.formatting.base import BaseFormatter
 from flake8.main import debug
-from flake8.main import options
-from flake8.options import aggregator
-from flake8.options import config
-from flake8.options import manager
+from flake8.options.parse_args import parse_args
 from flake8.plugins import finder
 from flake8.plugins import reporter
 
@@ -38,27 +30,21 @@ class Application:
         #: The timestamp when the Application instance was instantiated.
         self.start_time = time.time()
         #: The timestamp when the Application finished reported errors.
-        self.end_time: Optional[float] = None
-        #: The prelimary argument parser for handling options required for
-        #: obtaining and parsing the configuration file.
-        self.prelim_arg_parser = options.stage1_arg_parser()
-        #: The instance of :class:`flake8.options.manager.OptionManager` used
-        #: to parse and handle the options and arguments passed by the user
-        self.option_manager: Optional[manager.OptionManager] = None
+        self.end_time: float | None = None
 
-        self.plugins: Optional[finder.Plugins] = None
+        self.plugins: finder.Plugins | None = None
         #: The user-selected formatter from :attr:`formatting_plugins`
-        self.formatter: Optional[BaseFormatter] = None
+        self.formatter: BaseFormatter | None = None
         #: The :class:`flake8.style_guide.StyleGuideManager` built from the
         #: user's options
-        self.guide: Optional[style_guide.StyleGuideManager] = None
+        self.guide: style_guide.StyleGuideManager | None = None
         #: The :class:`flake8.checker.Manager` that will handle running all of
         #: the checks selected by the user.
-        self.file_checker_manager: Optional[checker.Manager] = None
+        self.file_checker_manager: checker.Manager | None = None
 
         #: The user-supplied options parsed into an instance of
         #: :class:`argparse.Namespace`
-        self.options: Optional[argparse.Namespace] = None
+        self.options: argparse.Namespace | None = None
         #: The number of errors, warnings, and other messages after running
         #: flake8 and taking into account ignored errors and lines.
         self.result_count = 0
@@ -69,33 +55,6 @@ class Application:
         #: with a non-zero status code
         self.catastrophic_failure = False
 
-        #: The parsed diff information
-        self.parsed_diff: Dict[str, Set[int]] = {}
-
-    def parse_preliminary_options(
-        self, argv: Sequence[str]
-    ) -> Tuple[argparse.Namespace, List[str]]:
-        """Get preliminary options from the CLI, pre-plugin-loading.
-
-        We need to know the values of a few standard options so that we can
-        locate configuration files and configure logging.
-
-        Since plugins aren't loaded yet, there may be some as-yet-unknown
-        options; we ignore those for now, they'll be parsed later when we do
-        real option parsing.
-
-        :param argv:
-            Command-line arguments passed in directly.
-        :returns:
-            Populated namespace and list of remaining argument strings.
-        """
-        args, rest = self.prelim_arg_parser.parse_known_args(argv)
-        # XXX (ericvw): Special case "forwarding" the output file option so
-        # that it can be reparsed again for the BaseFormatter.filename.
-        if args.output_file:
-            rest.extend(("--output-file", args.output_file))
-        return args, rest
-
     def exit_code(self) -> int:
         """Return the program exit code."""
         if self.catastrophic_failure:
@@ -105,82 +64,6 @@ class Application:
             return 0
         else:
             return int(self.result_count > 0)
-
-    def find_plugins(
-        self,
-        cfg: configparser.RawConfigParser,
-        cfg_dir: str,
-        *,
-        enable_extensions: Optional[str],
-        require_plugins: Optional[str],
-    ) -> None:
-        """Find and load the plugins for this application.
-
-        Set :attr:`plugins` based on loaded plugins.
-        """
-        opts = finder.parse_plugin_options(
-            cfg,
-            cfg_dir,
-            enable_extensions=enable_extensions,
-            require_plugins=require_plugins,
-        )
-        raw = finder.find_plugins(cfg, opts)
-        self.plugins = finder.load_plugins(raw, opts)
-
-    def register_plugin_options(self) -> None:
-        """Register options provided by plugins to our option manager."""
-        assert self.plugins is not None
-
-        self.option_manager = manager.OptionManager(
-            version=flake8.__version__,
-            plugin_versions=self.plugins.versions_str(),
-            parents=[self.prelim_arg_parser],
-        )
-        options.register_default_options(self.option_manager)
-        self.option_manager.register_plugins(self.plugins)
-
-    def parse_configuration_and_cli(
-        self,
-        cfg: configparser.RawConfigParser,
-        cfg_dir: str,
-        argv: List[str],
-    ) -> None:
-        """Parse configuration files and the CLI options."""
-        assert self.option_manager is not None
-        assert self.plugins is not None
-        self.options = aggregator.aggregate_options(
-            self.option_manager,
-            cfg,
-            cfg_dir,
-            argv,
-        )
-
-        if self.options.bug_report:
-            info = debug.information(flake8.__version__, self.plugins)
-            print(json.dumps(info, indent=2, sort_keys=True))
-            raise SystemExit(0)
-
-        if self.options.diff:
-            LOG.warning(
-                "the --diff option is deprecated and will be removed in a "
-                "future version."
-            )
-            self.parsed_diff = utils.parse_unified_diff()
-
-        for loaded in self.plugins.all_plugins():
-            parse_options = getattr(loaded.obj, "parse_options", None)
-            if parse_options is None:
-                continue
-
-            # XXX: ideally we wouldn't have two forms of parse_options
-            try:
-                parse_options(
-                    self.option_manager,
-                    self.options,
-                    self.options.filenames,
-                )
-            except TypeError:
-                parse_options(self.options)
 
     def make_formatter(self) -> None:
         """Initialize a formatter based on the parsed options."""
@@ -196,16 +79,14 @@ class Application:
             self.options, self.formatter
         )
 
-        if self.options.diff:
-            self.guide.add_diff_ranges(self.parsed_diff)
-
-    def make_file_checker_manager(self) -> None:
+    def make_file_checker_manager(self, argv: Sequence[str]) -> None:
         """Initialize our FileChecker Manager."""
         assert self.guide is not None
         assert self.plugins is not None
         self.file_checker_manager = checker.Manager(
             style_guide=self.guide,
             plugins=self.plugins.checkers,
+            argv=argv,
         )
 
     def run_checks(self) -> None:
@@ -215,16 +96,9 @@ class Application:
         :class:`~flake8.checker.Manger` instance run the checks it is
         managing.
         """
-        assert self.options is not None
         assert self.file_checker_manager is not None
-        if self.options.diff:
-            files: Optional[List[str]] = sorted(self.parsed_diff)
-            if not files:
-                return
-        else:
-            files = None
 
-        self.file_checker_manager.start(files)
+        self.file_checker_manager.start()
         try:
             self.file_checker_manager.run()
         except exceptions.PluginExecutionFailed as plugin_failed:
@@ -288,28 +162,16 @@ class Application:
         This finds the plugins, registers their options, and parses the
         command-line arguments.
         """
-        # NOTE(sigmavirus24): When updating this, make sure you also update
-        # our legacy API calls to these same methods.
-        prelim_opts, remaining_args = self.parse_preliminary_options(argv)
-        flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
+        self.plugins, self.options = parse_args(argv)
 
-        cfg, cfg_dir = config.load_config(
-            config=prelim_opts.config,
-            extra=prelim_opts.append_config,
-            isolated=prelim_opts.isolated,
-        )
+        if self.options.bug_report:
+            info = debug.information(flake8.__version__, self.plugins)
+            print(json.dumps(info, indent=2, sort_keys=True))
+            raise SystemExit(0)
 
-        self.find_plugins(
-            cfg,
-            cfg_dir,
-            enable_extensions=prelim_opts.enable_extensions,
-            require_plugins=prelim_opts.require_plugins,
-        )
-        self.register_plugin_options()
-        self.parse_configuration_and_cli(cfg, cfg_dir, remaining_args)
         self.make_formatter()
         self.make_guide()
-        self.make_file_checker_manager()
+        self.make_file_checker_manager(argv)
 
     def report(self) -> None:
         """Report errors, statistics, and benchmarks."""

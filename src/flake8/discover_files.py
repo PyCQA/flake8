@@ -1,4 +1,6 @@
 """Functions related to discovering paths."""
+from __future__ import annotations
+
 import logging
 import os.path
 from typing import Callable
@@ -53,7 +55,6 @@ def expand_paths(
     stdin_display_name: str,
     filename_patterns: Sequence[str],
     exclude: Sequence[str],
-    is_running_from_diff: bool,
 ) -> Generator[str, None, None]:
     """Expand out ``paths`` from commandline to the lintable files."""
     if not paths:
@@ -73,24 +74,16 @@ def expand_paths(
             logger=LOG,
         )
 
-    def is_included(arg: str, fname: str) -> bool:
-        # while running from a diff, the arguments aren't _explicitly_
-        # listed so we still filter them
-        if is_running_from_diff:
-            return utils.fnmatch(fname, filename_patterns)
-        else:
-            return (
-                # always lint `-`
-                fname == "-"
-                # always lint explicitly passed (even if not matching filter)
-                or arg == fname
-                # otherwise, check the file against filtered patterns
-                or utils.fnmatch(fname, filename_patterns)
-            )
-
     return (
         filename
         for path in paths
         for filename in _filenames_from(path, predicate=is_excluded)
-        if is_included(path, filename)
+        if (
+            # always lint `-`
+            filename == "-"
+            # always lint explicitly passed (even if not matching filter)
+            or path == filename
+            # otherwise, check the file against filtered patterns
+            or utils.fnmatch(filename, filename_patterns)
+        )
     )

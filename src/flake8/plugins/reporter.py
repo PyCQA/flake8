@@ -1,7 +1,8 @@
-"""Functions for construcing the requested report plugin."""
+"""Functions for constructing the requested report plugin."""
+from __future__ import annotations
+
 import argparse
 import logging
-from typing import Dict
 
 from flake8.formatting.base import BaseFormatter
 from flake8.plugins.finder import LoadedPlugin
@@ -10,7 +11,7 @@ LOG = logging.getLogger(__name__)
 
 
 def make(
-    reporters: Dict[str, LoadedPlugin],
+    reporters: dict[str, LoadedPlugin],
     options: argparse.Namespace,
 ) -> BaseFormatter:
     """Make the formatter from the requested user options.

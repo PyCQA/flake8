@@ -1,4 +1,6 @@
 """Tests for the statistics module in Flake8."""
+from __future__ import annotations
+
 import pytest
 
 from flake8 import statistics as stats

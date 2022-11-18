@@ -1,4 +1,6 @@
 """Tests for the Nothing formatter obbject."""
+from __future__ import annotations
+
 import argparse
 
 from flake8.formatting import default

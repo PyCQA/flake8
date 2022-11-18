@@ -1,55 +1,12 @@
 """Tests for Flake8's legacy API."""
-import argparse
-import configparser
-import os.path
+from __future__ import annotations
+
 from unittest import mock
 
 import pytest
 
 from flake8.api import legacy as api
 from flake8.formatting import base as formatter
-from flake8.options import config
-
-
-def test_get_style_guide():
-    """Verify the methods called on our internal Application."""
-    prelim_opts = argparse.Namespace(
-        append_config=[],
-        config=None,
-        isolated=False,
-        output_file=None,
-        verbose=0,
-        enable_extensions=None,
-        require_plugins=None,
-    )
-    mockedapp = mock.Mock()
-    mockedapp.parse_preliminary_options.return_value = (prelim_opts, [])
-    mockedapp.program = "flake8"
-
-    cfg = configparser.RawConfigParser()
-    cfg_dir = os.getcwd()
-
-    with mock.patch.object(config, "load_config", return_value=(cfg, cfg_dir)):
-        with mock.patch("flake8.main.application.Application") as application:
-            application.return_value = mockedapp
-            style_guide = api.get_style_guide()
-
-    application.assert_called_once_with()
-    mockedapp.parse_preliminary_options.assert_called_once_with([])
-    mockedapp.find_plugins.assert_called_once_with(
-        cfg,
-        cfg_dir,
-        enable_extensions=None,
-        require_plugins=None,
-    )
-    mockedapp.register_plugin_options.assert_called_once_with()
-    mockedapp.parse_configuration_and_cli.assert_called_once_with(
-        cfg, cfg_dir, []
-    )
-    mockedapp.make_formatter.assert_called_once_with()
-    mockedapp.make_guide.assert_called_once_with()
-    mockedapp.make_file_checker_manager.assert_called_once_with()
-    assert isinstance(style_guide, api.StyleGuide)
 
 
 def test_styleguide_options():

@@ -1,4 +1,6 @@
 """Tests for flake8's utils module."""
+from __future__ import annotations
+
 import io
 import logging
 import os
@@ -179,44 +181,6 @@ def test_matches_filename_for_excluding_dotfiles():
 def test_fnmatch(filename, patterns, expected):
     """Verify that our fnmatch wrapper works as expected."""
     assert utils.fnmatch(filename, patterns) is expected
-
-
-def read_diff_file(filename):
-    """Read the diff file in its entirety."""
-    with open(filename) as fd:
-        content = fd.read()
-    return content
-
-
-SINGLE_FILE_DIFF = read_diff_file("tests/fixtures/diffs/single_file_diff")
-SINGLE_FILE_INFO = {
-    "flake8/utils.py": set(range(75, 83)).union(set(range(84, 94))),
-}
-TWO_FILE_DIFF = read_diff_file("tests/fixtures/diffs/two_file_diff")
-TWO_FILE_INFO = {
-    "flake8/utils.py": set(range(75, 83)).union(set(range(84, 94))),
-    "tests/unit/test_utils.py": set(range(115, 128)),
-}
-MULTI_FILE_DIFF = read_diff_file("tests/fixtures/diffs/multi_file_diff")
-MULTI_FILE_INFO = {
-    "flake8/utils.py": set(range(75, 83)).union(set(range(84, 94))),
-    "tests/unit/test_utils.py": set(range(115, 129)),
-    "tests/fixtures/diffs/single_file_diff": set(range(1, 28)),
-    "tests/fixtures/diffs/two_file_diff": set(range(1, 46)),
-}
-
-
-@pytest.mark.parametrize(
-    "diff, parsed_diff",
-    [
-        (SINGLE_FILE_DIFF, SINGLE_FILE_INFO),
-        (TWO_FILE_DIFF, TWO_FILE_INFO),
-        (MULTI_FILE_DIFF, MULTI_FILE_INFO),
-    ],
-)
-def test_parse_unified_diff(diff, parsed_diff):
-    """Verify that what we parse from a diff matches expectations."""
-    assert utils.parse_unified_diff(diff) == parsed_diff
 
 
 def test_stdin_get_value_crlf():

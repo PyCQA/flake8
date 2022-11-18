@@ -8,26 +8,30 @@ repos:
     -   id: trailing-whitespace
         exclude: ^tests/fixtures/
 -   repo: https://github.com/asottile/reorder_python_imports
-    rev: v3.8.2
+    rev: v3.9.0
     hooks:
     -   id: reorder-python-imports
-        args: [--application-directories, '.:src', --py36-plus]
+        args: [
+            --application-directories, '.:src',
+            --py37-plus,
+            --add-import, 'from __future__ import annotations',
+        ]
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v2.37.3
+    rev: v3.2.2
     hooks:
     -   id: pyupgrade
-        args: [--py36-plus]
+        args: [--py37-plus]
 -   repo: https://github.com/psf/black
-    rev: 22.6.0
+    rev: 22.10.0
     hooks:
     -   id: black
         args: [--line-length=79]
 -   repo: https://github.com/PyCQA/flake8
-    rev: 5.0.3
+    rev: 5.0.4
     hooks:
     -   id: flake8
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.971
+    rev: v0.990
     hooks:
     -   id: mypy
         exclude: ^(docs/|example-plugin/)

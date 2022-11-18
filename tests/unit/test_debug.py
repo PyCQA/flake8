@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from unittest import mock
 
 from flake8._compat import importlib_metadata

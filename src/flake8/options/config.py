@@ -1,26 +1,25 @@
 """Config handling logic for Flake8."""
+from __future__ import annotations
+
 import configparser
 import logging
 import os.path
 from typing import Any
-from typing import Dict
-from typing import List
-from typing import Optional
-from typing import Tuple
 
 from flake8 import exceptions
+from flake8.defaults import VALID_CODE_PREFIX
 from flake8.options.manager import OptionManager
 
 LOG = logging.getLogger(__name__)
 
 
-def _stat_key(s: str) -> Tuple[int, int]:
+def _stat_key(s: str) -> tuple[int, int]:
     # same as what's used by samefile / samestat
     st = os.stat(s)
     return st.st_ino, st.st_dev
 
 
-def _find_config_file(path: str) -> Optional[str]:
+def _find_config_file(path: str) -> str | None:
     # on windows if the homedir isn't detected this returns back `~`
     home = os.path.expanduser("~")
     try:
@@ -55,11 +54,11 @@ def _find_config_file(path: str) -> Optional[str]:
 
 
 def load_config(
-    config: Optional[str],
-    extra: List[str],
+    config: str | None,
+    extra: list[str],
     *,
     isolated: bool = False,
-) -> Tuple[configparser.RawConfigParser, str]:
+) -> tuple[configparser.RawConfigParser, str]:
     """Load the configuration given the user options.
 
     - in ``isolated`` mode, return an empty configuration
@@ -88,7 +87,10 @@ def load_config(
     # TODO: remove this and replace it with configuration modifying plugins
     # read the additional configs afterwards
     for filename in extra:
-        cfg.read(filename, encoding="UTF-8")
+        if not cfg.read(filename, encoding="UTF-8"):
+            raise exceptions.ExecutionError(
+                f"The specified config file does not exist: {filename}"
+            )
 
     return cfg, cfg_dir
 
@@ -97,7 +99,7 @@ def parse_config(
     option_manager: OptionManager,
     cfg: configparser.RawConfigParser,
     cfg_dir: str,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Parse and normalize the typed configuration options."""
     if "flake8" not in cfg:
         return {}
@@ -122,6 +124,16 @@ def parse_config(
         LOG.debug('Option "%s" returned value: %r', option_name, value)
 
         final_value = option.normalize(value, cfg_dir)
+
+        if option_name in {"ignore", "extend-ignore"}:
+            for error_code in final_value:
+                if not VALID_CODE_PREFIX.match(error_code):
+                    raise ValueError(
+                        f"Error code {error_code!r} "
+                        f"supplied to {option_name!r} option "
+                        f"does not match {VALID_CODE_PREFIX.pattern!r}"
+                    )
+
         assert option.config_name is not None
         config_dict[option.config_name] = final_value
 

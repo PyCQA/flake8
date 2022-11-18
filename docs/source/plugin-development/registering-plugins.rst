@@ -120,7 +120,7 @@ it would look like::
 
     X10 = flake8_example:ExamplePlugin
 
-In this casae as well as the following case, your entry-point name acts as
+In this case as well as the following case, your entry-point name acts as
 a prefix to the error codes produced by your plugin.
 
 If all of your plugin's error codes start with ``X1`` then it would look
@@ -143,6 +143,12 @@ i.e., ``ABC`` is better than ``A`` but ``ABCD`` is invalid.
 *A 3 letters entry point prefix followed by 3 numbers (i.e.* ``ABC123`` *)
 is currently the longest allowed entry point name.*
 
+.. _off-by-default:
+
+If your plugin is intended to be opt-in, it can set the attribute
+``off_by_default = True``. Users of your plugin will then need to utilize
+:ref:`enable-extensions<option-enable-extensions>` with your plugin's entry
+point.
 
 .. _Entry Points:
     https://setuptools.readthedocs.io/en/latest/pkg_resources.html#entry-points

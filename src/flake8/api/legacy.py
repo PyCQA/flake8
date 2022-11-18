@@ -3,19 +3,17 @@
 Previously, users would import :func:`get_style_guide` from ``flake8.engine``.
 In 3.0 we no longer have an "engine" module but we maintain the API from it.
 """
+from __future__ import annotations
+
 import argparse
 import logging
 import os.path
 from typing import Any
-from typing import List
-from typing import Optional
-from typing import Type
 
-import flake8
 from flake8.discover_files import expand_paths
 from flake8.formatting import base as formatter
 from flake8.main import application as app
-from flake8.options import config
+from flake8.options.parse_args import parse_args
 
 LOG = logging.getLogger(__name__)
 
@@ -53,7 +51,7 @@ class Report:
         """Return the total number of errors."""
         return self._application.result_count
 
-    def get_statistics(self, violation: str) -> List[str]:
+    def get_statistics(self, violation: str) -> list[str]:
         """Get the list of occurrences of a violation.
 
         :returns:
@@ -97,12 +95,12 @@ class StyleGuide:
         return self._application.options
 
     @property
-    def paths(self) -> List[str]:
+    def paths(self) -> list[str]:
         """Return the extra arguments passed as paths."""
         assert self._application.options is not None
         return self._application.options.filenames
 
-    def check_files(self, paths: Optional[List[str]] = None) -> Report:
+    def check_files(self, paths: list[str] | None = None) -> Report:
         """Run collected checks on the files provided.
 
         This will check the files passed in and return a :class:`Report`
@@ -119,7 +117,7 @@ class StyleGuide:
         self._application.report_errors()
         return Report(self._application)
 
-    def excluded(self, filename: str, parent: Optional[str] = None) -> bool:
+    def excluded(self, filename: str, parent: str | None = None) -> bool:
         """Determine if a file is excluded.
 
         :param filename:
@@ -137,7 +135,6 @@ class StyleGuide:
                     stdin_display_name=self.options.stdin_display_name,
                     filename_patterns=self.options.filename,
                     exclude=self.options.exclude,
-                    is_running_from_diff=self.options.diff,
                 )
             )
             return not paths
@@ -148,7 +145,7 @@ class StyleGuide:
 
     def init_report(
         self,
-        reporter: Optional[Type[formatter.BaseFormatter]] = None,
+        reporter: type[formatter.BaseFormatter] | None = None,
     ) -> None:
         """Set up a formatter for this run of Flake8."""
         if reporter is None:
@@ -165,14 +162,14 @@ class StyleGuide:
         # Stop cringing... I know it's gross.
         self._application.make_guide()
         self._application.file_checker_manager = None
-        self._application.make_file_checker_manager()
+        self._application.make_file_checker_manager([])
 
     def input_file(
         self,
         filename: str,
-        lines: Optional[Any] = None,
-        expected: Optional[Any] = None,
-        line_offset: Optional[Any] = 0,
+        lines: Any | None = None,
+        expected: Any | None = None,
+        line_offset: Any | None = 0,
     ) -> Report:
         """Run collected checks on a single file.
 
@@ -202,23 +199,7 @@ def get_style_guide(**kwargs: Any) -> StyleGuide:
         An initialized StyleGuide
     """
     application = app.Application()
-    prelim_opts, remaining_args = application.parse_preliminary_options([])
-    flake8.configure_logging(prelim_opts.verbose, prelim_opts.output_file)
-
-    cfg, cfg_dir = config.load_config(
-        config=prelim_opts.config,
-        extra=prelim_opts.append_config,
-        isolated=prelim_opts.isolated,
-    )
-
-    application.find_plugins(
-        cfg,
-        cfg_dir,
-        enable_extensions=prelim_opts.enable_extensions,
-        require_plugins=prelim_opts.require_plugins,
-    )
-    application.register_plugin_options()
-    application.parse_configuration_and_cli(cfg, cfg_dir, remaining_args)
+    application.plugins, application.options = parse_args([])
     # We basically want application.initialize to be called but with these
     # options set instead before we make our formatter, notifier, internal
     # style guide and file checker manager.
@@ -231,5 +212,5 @@ def get_style_guide(**kwargs: Any) -> StyleGuide:
             LOG.error('Could not update option "%s"', key)
     application.make_formatter()
     application.make_guide()
-    application.make_file_checker_manager()
+    application.make_file_checker_manager([])
     return StyleGuide(application)

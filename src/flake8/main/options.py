@@ -1,4 +1,6 @@
 """Contains the logic for all of the default options for Flake8."""
+from __future__ import annotations
+
 import argparse
 
 from flake8 import defaults
@@ -112,7 +114,6 @@ def register_default_options(option_manager: OptionManager) -> None:
     - ``-q``/``--quiet``
     - ``--color``
     - ``--count``
-    - ``--diff``
     - ``--exclude``
     - ``--extend-exclude``
     - ``--filename``
@@ -157,15 +158,8 @@ def register_default_options(option_manager: OptionManager) -> None:
         "--count",
         action="store_true",
         parse_from_config=True,
-        help="Print total number of errors to standard output and "
-        "set the exit code to 1 if total is not empty.",
-    )
-
-    add_option(
-        "--diff",
-        action="store_true",
-        help="(DEPRECATED) Report changes only within line number ranges in "
-        "the unified diff provided on standard in by the user.",
+        help="Print total number of errors to standard output after "
+        "all other output.",
     )
 
     add_option(
@@ -218,7 +212,15 @@ def register_default_options(option_manager: OptionManager) -> None:
         metavar="format",
         default="default",
         parse_from_config=True,
-        help="Format errors according to the chosen formatter.",
+        help=(
+            f"Format errors according to the chosen formatter "
+            f"({', '.join(sorted(option_manager.formatter_names))}) "
+            f"or a format string containing %%-style "
+            f"mapping keys (code, col, path, row, text). "
+            f"For example, "
+            f"``--format=pylint`` or ``--format='%%(path)s %%(code)s'``. "
+            f"(Default: %(default)s)"
+        ),
     )
 
     add_option(

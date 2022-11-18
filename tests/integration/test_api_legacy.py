@@ -1,4 +1,6 @@
 """Integration tests for the legacy api."""
+from __future__ import annotations
+
 from flake8.api import legacy
 
 

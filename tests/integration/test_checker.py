@@ -1,4 +1,6 @@
 """Integration tests for the checker submodule."""
+from __future__ import annotations
+
 import sys
 from unittest import mock
 
@@ -264,17 +266,12 @@ def test_report_order(results, expected_order):
     # tuples to create the expected result lists from the indexes
     expected_results = [results[index] for index in expected_order]
 
-    file_checker = mock.Mock(spec=["results", "display_name"])
-    file_checker.results = results
-    file_checker.display_name = "placeholder"
-
     style_guide = mock.MagicMock(spec=["options", "processing_file"])
 
     # Create a placeholder manager without arguments or plugins
     # Just add one custom file checker which just provides the results
-    manager = checker.Manager(style_guide, finder.Checkers([], [], []))
-    manager.checkers = manager._all_checkers = [file_checker]
-
+    manager = checker.Manager(style_guide, finder.Checkers([], [], []), [])
+    manager.results = [("placeholder", results, {})]
     # _handle_results is the first place which gets the sorted result
     # Should something non-private be mocked instead?
     handler = mock.Mock(side_effect=count_side_effect)
@@ -293,9 +290,9 @@ def test_acquire_when_multiprocessing_pool_can_initialize():
     This simulates the behaviour on most common platforms.
     """
     with mock.patch("multiprocessing.Pool") as pool:
-        result = checker._try_initialize_processpool(2)
+        result = checker._try_initialize_processpool(2, [])
 
-    pool.assert_called_once_with(2, checker._pool_init)
+    pool.assert_called_once_with(2, checker._mp_init, initargs=([],))
     assert result is pool.return_value
 
 
@@ -312,9 +309,9 @@ def test_acquire_when_multiprocessing_pool_can_not_initialize():
     https://github.com/python/cpython/blob/4e02981de0952f54bf87967f8e10d169d6946b40/Lib/multiprocessing/synchronize.py#L30-L33
     """
     with mock.patch("multiprocessing.Pool", side_effect=ImportError) as pool:
-        result = checker._try_initialize_processpool(2)
+        result = checker._try_initialize_processpool(2, [])
 
-    pool.assert_called_once_with(2, checker._pool_init)
+    pool.assert_called_once_with(2, checker._mp_init, initargs=([],))
     assert result is None
 
 

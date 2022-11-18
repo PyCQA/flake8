@@ -66,11 +66,3 @@ The standard library's :func:`fnmatch.fnmatch` is excellent at deciding if a
 filename matches a single pattern. In our use case, however, we typically have
 a list of patterns and want to know if the filename matches any of them. This
 function abstracts that logic away with a little extra logic.
-
-.. autofunction:: flake8.utils.parse_unified_diff
-
-To handle usage of :option:`flake8 --diff`, |Flake8| needs to be able
-to parse the name of the files in the diff as well as the ranges indicated the
-sections that have been changed. This function either accepts the diff as an
-argument or reads the diff from standard-in. It then returns a dictionary with
-filenames as the keys and sets of line numbers as the value.

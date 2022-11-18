@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os.path
 
 import pytest
@@ -123,7 +125,6 @@ def _expand_paths(
     stdin_display_name="stdin",
     filename_patterns=("*.py",),
     exclude=(),
-    is_running_from_diff=False,
 ):
     return set(
         expand_paths(
@@ -131,7 +132,6 @@ def _expand_paths(
             stdin_display_name=stdin_display_name,
             filename_patterns=filename_patterns,
             exclude=exclude,
-            is_running_from_diff=is_running_from_diff,
         )
     )
 
@@ -164,11 +164,3 @@ def test_alternate_stdin_name_is_filtered():
 def test_filename_included_even_if_not_matching_include(tmp_path):
     some_file = str(tmp_path.joinpath("some/file"))
     assert _expand_paths(paths=(some_file,)) == {some_file}
-
-
-def test_diff_filenames_filtered_by_patterns(tmp_path):
-    f1 = str(tmp_path.joinpath("f1"))
-    f2 = str(tmp_path.joinpath("f2.py"))
-
-    ret = _expand_paths(paths=(f1, f2), is_running_from_diff=True)
-    assert ret == {f2}

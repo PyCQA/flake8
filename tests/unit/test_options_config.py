@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import configparser
 import os.path
 from unittest import mock
@@ -166,7 +168,9 @@ def test_load_extra_config_utf8(tmpdir):
 
 @pytest.fixture
 def opt_manager():
-    ret = OptionManager(version="123", plugin_versions="", parents=[])
+    ret = OptionManager(
+        version="123", plugin_versions="", parents=[], formatter_names=[]
+    )
     register_default_options(ret)
     return ret
 
@@ -216,3 +220,40 @@ def test_parse_config_ignores_unknowns(tmp_path, opt_manager, caplog):
 def test_load_config_missing_file_raises_exception(capsys):
     with pytest.raises(exceptions.ExecutionError):
         config.load_config("foo.cfg", [])
+
+
+def test_load_config_missing_append_config_raise_exception():
+    with pytest.raises(exceptions.ExecutionError):
+        config.load_config(None, ["dont_exist_config.cfg"], isolated=False)
+
+
+def test_invalid_ignore_codes_raise_error(tmpdir, opt_manager):
+    tmpdir.join("setup.cfg").write("[flake8]\nignore = E203, //comment")
+    with tmpdir.as_cwd():
+        cfg, _ = config.load_config("setup.cfg", [], isolated=False)
+
+    with pytest.raises(ValueError) as excinfo:
+        config.parse_config(opt_manager, cfg, tmpdir)
+
+    expected = (
+        "Error code '//comment' supplied to 'ignore' option "
+        "does not match '^[A-Z]{1,3}[0-9]{0,3}$'"
+    )
+    (msg,) = excinfo.value.args
+    assert msg == expected
+
+
+def test_invalid_extend_ignore_codes_raise_error(tmpdir, opt_manager):
+    tmpdir.join("setup.cfg").write("[flake8]\nextend-ignore = E203, //comment")
+    with tmpdir.as_cwd():
+        cfg, _ = config.load_config("setup.cfg", [], isolated=False)
+
+    with pytest.raises(ValueError) as excinfo:
+        config.parse_config(opt_manager, cfg, tmpdir)
+
+    expected = (
+        "Error code '//comment' supplied to 'extend-ignore' option "
+        "does not match '^[A-Z]{1,3}[0-9]{0,3}$'"
+    )
+    (msg,) = excinfo.value.args
+    assert msg == expected

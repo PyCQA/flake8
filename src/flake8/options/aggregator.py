@@ -3,10 +3,11 @@
 This holds the logic that uses the collected and merged config files and
 applies the user-specified command-line configuration on top of it.
 """
+from __future__ import annotations
+
 import argparse
 import configparser
 import logging
-from typing import Optional
 from typing import Sequence
 
 from flake8.options import config
@@ -19,7 +20,7 @@ def aggregate_options(
     manager: OptionManager,
     cfg: configparser.RawConfigParser,
     cfg_dir: str,
-    argv: Optional[Sequence[str]],
+    argv: Sequence[str] | None,
 ) -> argparse.Namespace:
     """Aggregate and merge CLI and config file options."""
     # Get defaults from the option parser

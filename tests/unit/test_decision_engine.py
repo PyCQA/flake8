@@ -1,4 +1,6 @@
 """Tests for the flake8.style_guide.DecisionEngine class."""
+from __future__ import annotations
+
 import argparse
 
 import pytest

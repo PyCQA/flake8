@@ -44,8 +44,6 @@ Index of Options
 
 - :option:`flake8 --count`
 
-- :option:`flake8 --diff`
-
 - :option:`flake8 --exclude`
 
 - :option:`flake8 --filename`
@@ -193,7 +191,7 @@ Options and their Descriptions
 
     Possible options are ``auto``, ``always``, and ``never``.
 
-    This **can** be specified in config files.
+    This **can not** be specified in config files.
 
     When color is enabled, the following substitutions are enabled:
 
@@ -207,12 +205,6 @@ Options and their Descriptions
     - ``%(cyan)s``
     - ``%(white)s``
     - ``%(reset)s``
-
-    Example config file usage:
-
-    .. code-block:: ini
-
-        color = never
 
 
 .. option:: --count
@@ -234,27 +226,6 @@ Options and their Descriptions
     .. code-block:: ini
 
         count = True
-
-
-.. option:: --diff
-
-    :ref:`Go back to index <top>`
-
-    .. warning::
-
-        Due to hiding potential errors, this option is deprecated and will be
-        removed in a future version.
-
-    Use the unified diff provided on standard in to only check the modified
-    files and report errors included in the diff.
-
-    Command-line example:
-
-    .. prompt:: bash
-
-        git diff -u | flake8 --diff
-
-    This **can not** be specified in config files.
 
 
 .. option:: --exclude=<patterns>
@@ -800,11 +771,13 @@ Options and their Descriptions
             flake8-typing-extensions
 
 
+.. _option-enable-extensions:
+
 .. option:: --enable-extensions=<errors>
 
     :ref:`Go back to index <top>`
 
-    Enable off-by-default extensions.
+    Enable :ref:`off-by-default<off-by-default>` extensions.
 
     Plugins to |Flake8| have the option of registering themselves as
     off-by-default. These plugins will not be loaded unless enabled by this

@@ -1,5 +1,6 @@
 """Utility methods for flake8."""
-import collections
+from __future__ import annotations
+
 import fnmatch as _fnmatch
 import functools
 import io
@@ -10,19 +11,12 @@ import re
 import sys
 import textwrap
 import tokenize
-from typing import Dict
-from typing import List
 from typing import NamedTuple
-from typing import Optional
 from typing import Pattern
 from typing import Sequence
-from typing import Set
-from typing import Tuple
-from typing import Union
 
 from flake8 import exceptions
 
-DIFF_HUNK_REGEXP = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@.*$")
 COMMA_SEPARATED_LIST_RE = re.compile(r"[,\s]")
 LOCAL_PLUGIN_LIST_RE = re.compile(r"[,\t\n\r\f\v]")
 NORMALIZE_PACKAGE_NAME_RE = re.compile(r"[-_.]+")
@@ -30,7 +24,7 @@ NORMALIZE_PACKAGE_NAME_RE = re.compile(r"[-_.]+")
 
 def parse_comma_separated_list(
     value: str, regexp: Pattern[str] = COMMA_SEPARATED_LIST_RE
-) -> List[str]:
+) -> list[str]:
     """Parse a comma-separated list.
 
     :param value:
@@ -64,7 +58,7 @@ _FILE_LIST_TOKEN_TYPES = [
 ]
 
 
-def _tokenize_files_to_codes_mapping(value: str) -> List[_Token]:
+def _tokenize_files_to_codes_mapping(value: str) -> list[_Token]:
     tokens = []
     i = 0
     while i < len(value):
@@ -82,8 +76,8 @@ def _tokenize_files_to_codes_mapping(value: str) -> List[_Token]:
 
 
 def parse_files_to_codes_mapping(  # noqa: C901
-    value_: Union[Sequence[str], str]
-) -> List[Tuple[str, List[str]]]:
+    value_: Sequence[str] | str,
+) -> list[tuple[str, list[str]]]:
     """Parse a files-to-codes mapping.
 
     A files-to-codes mapping a sequence of values specified as
@@ -97,15 +91,15 @@ def parse_files_to_codes_mapping(  # noqa: C901
     else:
         value = value_
 
-    ret: List[Tuple[str, List[str]]] = []
+    ret: list[tuple[str, list[str]]] = []
     if not value.strip():
         return ret
 
     class State:
         seen_sep = True
         seen_colon = False
-        filenames: List[str] = []
-        codes: List[str] = []
+        filenames: list[str] = []
+        codes: list[str] = []
 
     def _reset() -> None:
         if State.codes:
@@ -157,7 +151,7 @@ def parse_files_to_codes_mapping(  # noqa: C901
 
 def normalize_paths(
     paths: Sequence[str], parent: str = os.curdir
-) -> List[str]:
+) -> list[str]:
     """Normalize a list of paths relative to a parent directory.
 
     :returns:
@@ -201,77 +195,12 @@ def stdin_get_value() -> str:
         return stdin_value.decode("utf-8")
 
 
-def stdin_get_lines() -> List[str]:
+def stdin_get_lines() -> list[str]:
     """Return lines of stdin split according to file splitting."""
     return list(io.StringIO(stdin_get_value()))
 
 
-def parse_unified_diff(diff: Optional[str] = None) -> Dict[str, Set[int]]:
-    """Parse the unified diff passed on stdin.
-
-    :returns:
-        dictionary mapping file names to sets of line numbers
-    """
-    # Allow us to not have to patch out stdin_get_value
-    if diff is None:
-        diff = stdin_get_value()
-
-    number_of_rows = None
-    current_path = None
-    parsed_paths: Dict[str, Set[int]] = collections.defaultdict(set)
-    for line in diff.splitlines():
-        if number_of_rows:
-            if not line or line[0] != "-":
-                number_of_rows -= 1
-            # We're in the part of the diff that has lines starting with +, -,
-            # and ' ' to show context and the changes made. We skip these
-            # because the information we care about is the filename and the
-            # range within it.
-            # When number_of_rows reaches 0, we will once again start
-            # searching for filenames and ranges.
-            continue
-
-        # NOTE(sigmavirus24): Diffs that we support look roughly like:
-        #    diff a/file.py b/file.py
-        #    ...
-        #    --- a/file.py
-        #    +++ b/file.py
-        # Below we're looking for that last line. Every diff tool that
-        # gives us this output may have additional information after
-        # ``b/file.py`` which it will separate with a \t, e.g.,
-        #    +++ b/file.py\t100644
-        # Which is an example that has the new file permissions/mode.
-        # In this case we only care about the file name.
-        if line[:3] == "+++":
-            current_path = line[4:].split("\t", 1)[0]
-            # NOTE(sigmavirus24): This check is for diff output from git.
-            if current_path[:2] == "b/":
-                current_path = current_path[2:]
-            # We don't need to do anything else. We have set up our local
-            # ``current_path`` variable. We can skip the rest of this loop.
-            # The next line we will see will give us the hung information
-            # which is in the next section of logic.
-            continue
-
-        hunk_match = DIFF_HUNK_REGEXP.match(line)
-        # NOTE(sigmavirus24): pep8/pycodestyle check for:
-        #    line[:3] == '@@ '
-        # But the DIFF_HUNK_REGEXP enforces that the line start with that
-        # So we can more simply check for a match instead of slicing and
-        # comparing.
-        if hunk_match:
-            (row, number_of_rows) = (
-                1 if not group else int(group) for group in hunk_match.groups()
-            )
-            assert current_path is not None
-            parsed_paths[current_path].update(range(row, row + number_of_rows))
-
-    # We have now parsed our diff into a dictionary that looks like:
-    #    {'file.py': set(range(10, 16), range(18, 20)), ...}
-    return parsed_paths
-
-
-def is_using_stdin(paths: List[str]) -> bool:
+def is_using_stdin(paths: list[str]) -> bool:
     """Determine if we're going to read from stdin.
 
     :param paths:

@@ -1,4 +1,6 @@
 """Tests for the flake8.style_guide.StyleGuide class."""
+from __future__ import annotations
+
 import argparse
 from unittest import mock
 

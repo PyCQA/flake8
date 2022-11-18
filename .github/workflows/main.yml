@@ -13,10 +13,7 @@ jobs:
         include:
         # linux
         - os: ubuntu-latest
-          python: pypy-3.7
-          toxenv: py
-        - os: ubuntu-latest
-          python: 3.7
+          python: pypy-3.8
           toxenv: py
         - os: ubuntu-latest
           python: 3.8
@@ -25,21 +22,24 @@ jobs:
           python: 3.9
           toxenv: py
         - os: ubuntu-latest
-          python: '3.10.0-alpha - 3.10.999'
+          python: '3.10'
+          toxenv: py
+        - os: ubuntu-latest
+          python: '3.11'
           toxenv: py
         # windows
         - os: windows-latest
-          python: 3.7
+          python: 3.8
           toxenv: py
         # misc
         - os: ubuntu-latest
-          python: 3.9
+          python: '3.10'
           toxenv: docs
         - os: ubuntu-latest
-          python: 3.9
+          python: '3.10'
           toxenv: linters
         - os: ubuntu-latest
-          python: 3.9
+          python: '3.10'
           toxenv: dogfood
     runs-on: ${{ matrix.os }}
     steps:

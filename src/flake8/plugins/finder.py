@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import configparser
+import importlib.metadata
 import inspect
 import itertools
 import logging
@@ -12,7 +13,6 @@ from typing import Iterable
 from typing import NamedTuple
 
 from flake8 import utils
-from flake8._compat import importlib_metadata
 from flake8.defaults import VALID_CODE_PREFIX
 from flake8.exceptions import ExecutionError
 from flake8.exceptions import FailedToLoadPlugin
@@ -32,7 +32,7 @@ class Plugin(NamedTuple):
 
     package: str
     version: str
-    entry_point: importlib_metadata.EntryPoint
+    entry_point: importlib.metadata.EntryPoint
 
 
 class LoadedPlugin(NamedTuple):
@@ -148,12 +148,12 @@ def parse_plugin_options(
 
 
 def _flake8_plugins(
-    eps: Iterable[importlib_metadata.EntryPoint],
+    eps: Iterable[importlib.metadata.EntryPoint],
     name: str,
     version: str,
 ) -> Generator[Plugin, None, None]:
-    pyflakes_meta = importlib_metadata.distribution("pyflakes").metadata
-    pycodestyle_meta = importlib_metadata.distribution("pycodestyle").metadata
+    pyflakes_meta = importlib.metadata.distribution("pyflakes").metadata
+    pycodestyle_meta = importlib.metadata.distribution("pycodestyle").metadata
 
     for ep in eps:
         if ep.group not in FLAKE8_GROUPS:
@@ -176,7 +176,7 @@ def _flake8_plugins(
 def _find_importlib_plugins() -> Generator[Plugin, None, None]:
     # some misconfigured pythons (RHEL) have things on `sys.path` twice
     seen = set()
-    for dist in importlib_metadata.distributions():
+    for dist in importlib.metadata.distributions():
         # assigned to prevent continual reparsing
         eps = dist.entry_points
 
@@ -221,7 +221,7 @@ def _find_local_plugins(
         ):
             name, _, entry_str = plugin_s.partition("=")
             name, entry_str = name.strip(), entry_str.strip()
-            ep = importlib_metadata.EntryPoint(name, entry_str, group)
+            ep = importlib.metadata.EntryPoint(name, entry_str, group)
             yield Plugin("local", "local", ep)
 
 

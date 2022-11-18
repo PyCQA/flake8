@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import importlib.metadata
 from unittest import mock
 
-from flake8._compat import importlib_metadata
 from flake8.main import debug
 from flake8.plugins import finder
 
@@ -13,7 +13,7 @@ def test_debug_information():
             finder.Plugin(
                 pkg,
                 version,
-                importlib_metadata.EntryPoint(
+                importlib.metadata.EntryPoint(
                     ep_name, "dne:dne", "flake8.extension"
                 ),
             ),

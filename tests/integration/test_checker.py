@@ -1,13 +1,13 @@
 """Integration tests for the checker submodule."""
 from __future__ import annotations
 
+import importlib.metadata
 import sys
 from unittest import mock
 
 import pytest
 
 from flake8 import checker
-from flake8._compat import importlib_metadata
 from flake8.plugins import finder
 from flake8.processor import FileProcessor
 
@@ -85,7 +85,7 @@ def mock_file_checker_with_plugin(plugin_target):
         finder.Plugin(
             "flake-package",
             "9001",
-            importlib_metadata.EntryPoint(
+            importlib.metadata.EntryPoint(
                 "Q",
                 f"{plugin_target.__module__}:{plugin_target.__name__}",
                 "flake8.extension",

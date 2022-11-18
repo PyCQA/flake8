@@ -170,8 +170,6 @@ def test_tokenization_error_but_not_syntax_error(tmpdir, capsys):
 
     if hasattr(sys, "pypy_version_info"):  # pragma: no cover (pypy)
         expected = "t.py:2:1: E999 SyntaxError: end of file (EOF) in multi-line statement\n"  # noqa: E501
-    elif sys.version_info < (3, 8):  # pragma: no cover (<cp38)
-        expected = "t.py:2:1: E902 TokenError: EOF in multi-line statement\n"
     elif sys.version_info < (3, 10):  # pragma: no cover (cp38+)
         expected = "t.py:1:8: E999 SyntaxError: unexpected EOF while parsing\n"
     else:  # pragma: no cover (cp310+)

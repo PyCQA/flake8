@@ -2,13 +2,13 @@
 from __future__ import annotations
 
 import argparse
+import importlib.metadata
 from unittest import mock
 
 import pytest
 
 import flake8
 from flake8 import checker
-from flake8._compat import importlib_metadata
 from flake8.plugins import finder
 
 
@@ -46,7 +46,7 @@ def test_raises_exception_on_failed_plugin(tmp_path, default_options):
         finder.Plugin(
             "plugin-name",
             "1.2.3",
-            importlib_metadata.EntryPoint("X", "dne:dne", "flake8.extension"),
+            importlib.metadata.EntryPoint("X", "dne:dne", "flake8.extension"),
         ),
         mock.Mock(side_effect=ValueError),
         {},

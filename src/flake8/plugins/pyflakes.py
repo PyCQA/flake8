@@ -4,7 +4,6 @@ from __future__ import annotations
 import argparse
 import ast
 import os
-import tokenize
 from typing import Any
 from typing import Generator
 
@@ -52,13 +51,13 @@ FLAKE8_PYFLAKES_CODES = {
     "DefaultExceptNotLast": "F707",
     "DoctestSyntaxError": "F721",
     "ForwardAnnotationSyntaxError": "F722",
-    "CommentAnnotationSyntaxError": "F723",
     "RedefinedWhileUnused": "F811",
     "UndefinedName": "F821",
     "UndefinedExport": "F822",
     "UndefinedLocal": "F823",
     "DuplicateArgument": "F831",
     "UnusedVariable": "F841",
+    "UnusedAnnotation": "F842",
     "RaiseNotImplemented": "F901",
 }
 
@@ -70,12 +69,7 @@ class FlakesChecker(pyflakes.checker.Checker):
     include_in_doctest: list[str] = []
     exclude_from_doctest: list[str] = []
 
-    def __init__(
-        self,
-        tree: ast.AST,
-        file_tokens: list[tokenize.TokenInfo],
-        filename: str,
-    ) -> None:
+    def __init__(self, tree: ast.AST, filename: str) -> None:
         """Initialize the PyFlakes plugin with an AST tree and filename."""
         filename = utils.normalize_path(filename)
         with_doctest = self.with_doctest
@@ -99,12 +93,7 @@ class FlakesChecker(pyflakes.checker.Checker):
                 if overlapped_by:
                     with_doctest = True
 
-        super().__init__(
-            tree,
-            filename=filename,
-            withDoctest=with_doctest,
-            file_tokens=file_tokens,
-        )
+        super().__init__(tree, filename=filename, withDoctest=with_doctest)
 
     @classmethod
     def add_options(cls, parser: OptionManager) -> None:

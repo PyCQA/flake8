@@ -685,7 +685,7 @@ def test_load_plugin_ok():
     assert loaded == finder.LoadedPlugin(
         plugin,
         FlakesChecker,
-        {"tree": True, "file_tokens": True, "filename": True},
+        {"tree": True, "filename": True},
     )
 
 

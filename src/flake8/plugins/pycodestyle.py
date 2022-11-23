@@ -26,11 +26,7 @@ from pycodestyle import missing_whitespace_after_keyword as _missing_whitespace_
 from pycodestyle import missing_whitespace_around_operator as _missing_whitespace_around_operator  # noqa: E501
 from pycodestyle import module_imports_on_top_of_file as _module_imports_on_top_of_file  # noqa: E501
 from pycodestyle import python_3000_async_await_keywords as _python_3000_async_await_keywords  # noqa: E501
-from pycodestyle import python_3000_backticks as _python_3000_backticks
-from pycodestyle import python_3000_has_key as _python_3000_has_key
 from pycodestyle import python_3000_invalid_escape_sequence as _python_3000_invalid_escape_sequence  # noqa: E501
-from pycodestyle import python_3000_not_equal as _python_3000_not_equal
-from pycodestyle import python_3000_raise_comma as _python_3000_raise_comma
 from pycodestyle import tabs_obsolete as _tabs_obsolete
 from pycodestyle import tabs_or_spaces as _tabs_or_spaces
 from pycodestyle import trailing_blank_lines as _trailing_blank_lines
@@ -83,11 +79,7 @@ def pycodestyle_logical(
     yield from _missing_whitespace_around_operator(logical_line, tokens)
     yield from _module_imports_on_top_of_file(logical_line, indent_level, checker_state, noqa)  # noqa: E501
     yield from _python_3000_async_await_keywords(logical_line, tokens)
-    yield from _python_3000_backticks(logical_line)
-    yield from _python_3000_has_key(logical_line, noqa)
     yield from _python_3000_invalid_escape_sequence(logical_line, tokens, noqa)
-    yield from _python_3000_not_equal(logical_line)
-    yield from _python_3000_raise_comma(logical_line)
     yield from _whitespace_around_comma(logical_line)
     yield from _whitespace_around_keywords(logical_line)
     yield from _whitespace_around_named_parameter_equals(logical_line, tokens)

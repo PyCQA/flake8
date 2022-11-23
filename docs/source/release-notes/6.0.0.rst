@@ -1,0 +1,35 @@
+6.0.0 -- 2022-11-23
+-------------------
+
+You can view the `6.0.0 milestone`_ on GitHub for more details.
+
+Backwards Incompatible Changes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Remove ``--diff`` option (See also :issue:`1389`, :pull:`1720`).
+- Produce an error when invalid codes are specified in configuration (See also
+  :issue:`1689`, :pull:`1713`).
+- Produce an error if the file specified in ``--extend-config`` does not exist
+  (See also :issue:`1729`, :pull:`1732`).
+- Remove ``optparse`` compatibility support (See also :pull:`1739`).
+
+New Dependency Information
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- pycodestyle has been updated to >= 2.10.0, < 2.11.0 (See also :pull:`1746`).
+- Pyflakes has been updated to >= 3.0.0, < 3.1.0 (See also :pull:`1748`).
+
+Features
+~~~~~~~~
+
+- Require python >= 3.8.1 (See also :pull:`1633`, :pull:`1741`).
+- List available formatters in for ``--format`` option in ``--help`` (See also
+  :issue:`223`, :pull:`1624`).
+- Improve multiprocessing performance (See also :pull:`1723`).
+- Enable multiprocessing on non-fork platforms (See also :pull:`1723`).
+- Ensure results are sorted when discovered from files (See also :issue:`1670`,
+  :pull:`1726`).
+
+.. all links
+.. _6.0.0 milestone:
+    https://github.com/PyCQA/flake8/milestone/47

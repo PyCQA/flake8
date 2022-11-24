@@ -1,9 +1,0 @@
-include *.rst
-include CONTRIBUTORS.txt
-include LICENSE
-include *.ini
-global-exclude *.pyc
-recursive-include docs *.rst *.py
-recursive-include tests *.py *.ini *.rst *_diff
-recursive-include src *.py
-prune docs/build/

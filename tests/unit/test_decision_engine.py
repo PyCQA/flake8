@@ -14,7 +14,7 @@ def create_options(**kwargs):
     kwargs.setdefault("ignore", None)
     kwargs.setdefault("extend_select", None)
     kwargs.setdefault("extend_ignore", None)
-    kwargs.setdefault("extended_default_select", [])
+    kwargs.setdefault("extended_default_select", ["C90", "F", "E", "W"])
     kwargs.setdefault("extended_default_ignore", [])
     kwargs.setdefault("disable_noqa", False)
     return argparse.Namespace(**kwargs)

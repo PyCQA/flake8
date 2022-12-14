@@ -297,9 +297,11 @@ def register_default_options(option_manager: OptionManager) -> None:
         parse_from_config=True,
         comma_separated_list=True,
         help=(
-            f"Comma-separated list of error codes to enable. "
-            f"For example, ``--select=E4,E51,W234``. "
-            f"(Default: {','.join(defaults.SELECT)})"
+            "Limit the reported error codes to codes prefix-matched by this "
+            "list.  "
+            "You usually do not need to specify this option as the default "
+            "includes all installed plugin codes.  "
+            "For example, ``--select=E4,E51,W234``."
         ),
     )
 
@@ -309,8 +311,10 @@ def register_default_options(option_manager: OptionManager) -> None:
         parse_from_config=True,
         comma_separated_list=True,
         help=(
-            "Comma-separated list of error codes to add to the list "
-            "of selected ones. For example, ``--extend-select=E4,E51,W234``."
+            "Add additional error codes to the default ``--select``.  "
+            "You usually do not need to specify this option as the default "
+            "includes all installed plugin codes.  "
+            "For example, ``--extend-select=E4,E51,W234``."
         ),
     )
 

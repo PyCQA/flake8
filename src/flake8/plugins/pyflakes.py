@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import logging
 import os
 from typing import Any
 from typing import Generator
@@ -11,6 +12,8 @@ import pyflakes.checker
 
 from flake8 import utils
 from flake8.options.manager import OptionManager
+
+LOG = logging.getLogger(__name__)
 
 FLAKE8_PYFLAKES_CODES = {
     "UnusedImport": "F401",
@@ -136,6 +139,12 @@ class FlakesChecker(pyflakes.checker.Checker):
         if options.builtins:
             cls.builtIns = cls.builtIns.union(options.builtins)
         cls.with_doctest = options.doctests
+
+        if options.include_in_doctest or options.exclude_from_doctest:
+            LOG.warning(
+                "--include-in-doctest / --exclude-from-doctest will be "
+                "removed in a future version.  see PyCQA/flake8#1747"
+            )
 
         included_files = []
         for included_file in options.include_in_doctest:

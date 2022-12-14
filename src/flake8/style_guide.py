@@ -88,7 +88,7 @@ class DecisionEngine:
 
         self.selected = _select_ignore(
             option=options.select,
-            default=defaults.SELECT,
+            default=(),
             extended_default=options.extended_default_select,
             extend=options.extend_select,
         )

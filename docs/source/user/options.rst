@@ -607,12 +607,13 @@ Options and their Descriptions
 
     :ref:`Go back to index <top>`
 
+    **You usually do not need to specify this option as the default includes
+    all installed plugin codes.**
+
     Specify the list of error codes you wish |Flake8| to report. Similarly to
     :option:`--ignore`. You can specify a portion of an error code to get all
     that start with that string. For example, you can use ``E``, ``E4``,
     ``E43``, and ``E431``.
-
-    This defaults to: ``E,F,W,C90``
 
     Command-line example:
 
@@ -648,6 +649,9 @@ Options and their Descriptions
     :ref:`Go back to index <top>`
 
     .. versionadded:: 4.0.0
+
+    **You usually do not need to specify this option as the default includes
+    all installed plugin codes.**
 
     Specify a list of codes to add to the list of selected ones. Similar
     considerations as in :option:`--select` apply here with regard to the

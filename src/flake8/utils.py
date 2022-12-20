@@ -17,7 +17,8 @@ from typing import Sequence
 
 from flake8 import exceptions
 
-COMMA_SEPARATED_LIST_RE = re.compile(r"[,\s]")
+COMMA_SEPARATED_LIST_RE = re.compile(r"[,\s]+")
+STRIP_RE = re.compile(r"^\s+|\s+$|\s*#.*$")
 LOCAL_PLUGIN_LIST_RE = re.compile(r"[,\t\n\r\f\v]")
 NORMALIZE_PACKAGE_NAME_RE = re.compile(r"[-_.]+")
 
@@ -38,7 +39,7 @@ def parse_comma_separated_list(
     assert isinstance(value, str), value
 
     separated = regexp.split(value)
-    item_gen = (item.strip() for item in separated)
+    item_gen = (STRIP_RE.sub("", item) for item in separated)
     return [item for item in item_gen if item]
 
 

@@ -243,6 +243,15 @@ def test_invalid_ignore_codes_raise_error(tmpdir, opt_manager):
     assert msg == expected
 
 
+def test_ignore_code_comments_dont_raise_error(tmpdir, opt_manager):
+    tmpdir.join("setup.cfg").write("[flake8]\nignore = E203, #comment")
+    with tmpdir.as_cwd():
+        cfg, _ = config.load_config("setup.cfg", [], isolated=False)
+
+    ret = config.parse_config(opt_manager, cfg, tmpdir)
+    assert ret == {"ignore": ["E203"]}
+
+
 def test_invalid_extend_ignore_codes_raise_error(tmpdir, opt_manager):
     tmpdir.join("setup.cfg").write("[flake8]\nextend-ignore = E203, //comment")
     with tmpdir.as_cwd():

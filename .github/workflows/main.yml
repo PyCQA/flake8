@@ -13,7 +13,7 @@ jobs:
         include:
         # linux
         - os: ubuntu-latest
-          python: pypy-3.8
+          python: pypy-3.9
           toxenv: py
         - os: ubuntu-latest
           python: 3.8

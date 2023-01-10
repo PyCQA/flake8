@@ -11,6 +11,7 @@ from flake8.defaults import VALID_CODE_PREFIX
 from flake8.options.manager import OptionManager
 
 LOG = logging.getLogger(__name__)
+ALLOW_NO_VALUE = True
 
 
 def _stat_key(s: str) -> tuple[int, int]:
@@ -30,7 +31,7 @@ def _find_config_file(path: str) -> str | None:
     dir_stat = _stat_key(path)
     while True:
         for candidate in ("setup.cfg", "tox.ini", ".flake8"):
-            cfg = configparser.RawConfigParser()
+            cfg = configparser.RawConfigParser(allow_no_value=ALLOW_NO_VALUE)
             cfg_path = os.path.join(path, candidate)
             try:
                 cfg.read(cfg_path, encoding="UTF-8")
@@ -69,12 +70,12 @@ def load_config(
     pwd = os.path.abspath(".")
 
     if isolated:
-        return configparser.RawConfigParser(), pwd
+        return configparser.RawConfigParser(allow_no_value=ALLOW_NO_VALUE), pwd
 
     if config is None:
         config = _find_config_file(pwd)
 
-    cfg = configparser.RawConfigParser()
+    cfg = configparser.RawConfigParser(allow_no_value=ALLOW_NO_VALUE)
     if config is not None:
         if not cfg.read(config, encoding="UTF-8"):
             raise exceptions.ExecutionError(

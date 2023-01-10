@@ -43,4 +43,4 @@ NOQA_INLINE_REGEXP = re.compile(
 
 NOQA_FILE = re.compile(r"\s*# flake8[:=]\s*noqa", re.I)
 
-VALID_CODE_PREFIX = re.compile("^[A-Z]{1,3}[0-9]{0,3}$", re.ASCII)
+VALID_CODE_PREFIX = re.compile("^[A-Z]{1,3}[0-9]{0,4}$", re.ASCII)

@@ -85,5 +85,6 @@ Links
 Maintenance
 ===========
 
-Flake8 was created by Tarek Ziadé and is currently maintained by `Ian Cordasco
+Flake8 was created by Tarek Ziadé and is currently maintained by `anthony sottile
+<https://github.com/sponsors/asottile>`_ and `Ian Cordasco
 <https://www.coglib.com/~icordasc/>`_

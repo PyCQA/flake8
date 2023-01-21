@@ -70,7 +70,7 @@ namely
 .. warning::
 
     These are not *perfectly* backwards compatible. Not all arguments are
-    respsected, and some of the types necessary for something to work have
+    respected, and some of the types necessary for something to work have
     changed.
 
 Most people, we observed, were using

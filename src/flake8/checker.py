@@ -160,7 +160,7 @@ class Manager:
     def _handle_results(self, filename: str, results: Results) -> int:
         style_guide = self.style_guide
         reported_results_count = 0
-        for (error_code, line_number, column, text, physical_line) in results:
+        for error_code, line_number, column, text, physical_line in results:
             reported_results_count += style_guide.handle_error(
                 code=error_code,
                 filename=filename,
@@ -423,7 +423,7 @@ class FileChecker:
                 runner = checker.run()
             except AttributeError:
                 runner = checker
-            for (line_number, offset, text, _) in runner:
+            for line_number, offset, text, _ in runner:
                 self.report(
                     error_code=None,
                     line_number=line_number,

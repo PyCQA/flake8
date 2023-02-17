@@ -69,6 +69,9 @@ Links
 
 * `GitHub Project <https://github.com/pycqa/flake8>`_
 
+* `PyPI Project
+  <https://pypi.org/project/flake8/>`_
+
 * `All (Open and Closed) Issues
   <https://github.com/pycqa/flake8/issues?q=is%3Aissue>`_
 
@@ -77,6 +80,9 @@ Links
 
 * `Code of Conduct
   <https://flake8.pycqa.org/en/latest/internal/contributing.html#code-of-conduct>`_
+
+* `Frequently Asked Questions
+  <https://flake8.pycqa.org/en/latest/faq.html>`_
 
 * `Getting Started Contributing
   <https://flake8.pycqa.org/en/latest/internal/contributing.html>`_

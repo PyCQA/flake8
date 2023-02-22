@@ -6,6 +6,7 @@ You can view the `6.0.0 milestone`_ on GitHub for more details.
 Backwards Incompatible Changes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+- Require python >= 3.8.1 (See also :pull:`1633`, :pull:`1741`).
 - Remove ``--diff`` option (See also :issue:`1389`, :pull:`1720`).
 - Produce an error when invalid codes are specified in configuration (See also
   :issue:`1689`, :pull:`1713`).
@@ -22,7 +23,6 @@ New Dependency Information
 Features
 ~~~~~~~~
 
-- Require python >= 3.8.1 (See also :pull:`1633`, :pull:`1741`).
 - List available formatters in for ``--format`` option in ``--help`` (See also
   :issue:`223`, :pull:`1624`).
 - Improve multiprocessing performance (See also :pull:`1723`).

@@ -31,6 +31,10 @@ Values set at the command line have highest priority, then those in the
 project configuration file, and finally there are the defaults. However,
 there are additional command line options which can alter this.
 
+.. note::
+
+    The home directory is **not** searched for ``setup.cfg``, ``tox.ini``,
+    or ``.flake8``
 
 Project Configuration
 ---------------------

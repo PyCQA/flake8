@@ -40,9 +40,9 @@ from now when you install it again.
 |Flake8|'s dependencies tend to avoid new checks in patch versions which is
 why |Flake8| expresses its dependencies roughly as::
 
-    pycodestyle >= 2.0.0, < 2.1.0
-    pyflakes >= 0.8.0, != 1.2.0, != 1.2.1, != 1.2.2, < 1.3.0
-    mccabe >= 0.5.0, < 0.6.0
+    pycodestyle >= 2.10.0, < 2.11.0
+    pyflakes >= 3.0.0, < 3.1.0
+    mccabe >= 0.7.0, < 0.8.0
 
 This allows those projects to release patch versions that fix bugs and for
 |Flake8| users to consume those fixes.

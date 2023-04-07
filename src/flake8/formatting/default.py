@@ -78,6 +78,16 @@ class Pylint(SimpleFormatter):
     error_format = "%(path)s:%(row)d: [%(code)s] %(text)s"
 
 
+class GitHub(SimpleFormatter):
+    """GitHub formatter for Flake8."""
+
+    error_format = (
+        "::error title=Flake8 %(code)s,file=%(path)s,"
+        "line=%(row)d,col=%(col)d,endLine=%(row)d,endColumn=%(col)d"
+        "::%(code)s %(text)s"
+    )
+
+
 class FilenameOnly(SimpleFormatter):
     """Only print filenames, e.g., flake8 -q."""
 

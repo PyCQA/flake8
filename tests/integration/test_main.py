@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 from unittest import mock
 
@@ -396,5 +397,8 @@ def test_format_option_help(capsys):
         cli.main(["--help"])
 
     out, err = capsys.readouterr()
-    assert "(default, pylint, quiet-filename, quiet-nothing)" in out
+    assert (
+        "(default, github, pylint, quiet-filename, quiet-nothing)"
+        in re.sub(re.compile(r"\n\s*"), "", out)  # noqa: E501
+    )
     assert err == ""

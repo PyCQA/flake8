@@ -8,6 +8,7 @@ import pytest
 from flake8.formatting import default
 from flake8.plugins import finder
 from flake8.plugins import reporter
+from flake8.violation import Violation
 
 
 def _opts(**kwargs):
@@ -15,6 +16,18 @@ def _opts(**kwargs):
     kwargs.setdefault("color", "never")
     kwargs.setdefault("output_file", None)
     return argparse.Namespace(**kwargs)
+
+
+@pytest.fixture
+def violation():
+    return Violation(
+        code="E501",
+        filename="test/test1.py",
+        line_number=1,
+        column_number=2,
+        text="line too long (124 > 79 characters)",
+        physical_line=None,
+    )
 
 
 @pytest.fixture
@@ -35,6 +48,7 @@ def reporters():
     return {
         "default": _plugin("default", default.Default),
         "pylint": _plugin("pylint", default.Pylint),
+        "github": _plugin("github", default.GitHub),
         "quiet-filename": _plugin("quiet-filename", default.FilenameOnly),
         "quiet-nothing": _plugin("quiet-nothing", default.Nothing),
     }
@@ -57,9 +71,27 @@ def test_make_formatter_very_quiet(reporters, quiet):
     assert isinstance(ret, default.Nothing)
 
 
-def test_make_formatter_custom(reporters):
-    ret = reporter.make(reporters, _opts(format="pylint"))
-    assert isinstance(ret, default.Pylint)
+@pytest.mark.parametrize(
+    "format_input, expected_formatter_class, error_str",
+    [
+        (
+            "pylint",
+            default.Pylint,
+            "test/test1.py:1: [E501] line too long (124 > 79 characters)",
+        ),
+        (
+            "github",
+            default.GitHub,
+            "::error title=Flake8 E501,file=test/test1.py,line=1,col=2,endLine=1,endColumn=2::E501 line too long (124 > 79 characters)",  # noqa: E501
+        ),
+    ],
+)
+def test_make_formatter_custom(
+    reporters, violation, format_input, expected_formatter_class, error_str
+):
+    ret = reporter.make(reporters, _opts(format=format_input))
+    assert isinstance(ret, expected_formatter_class)
+    assert ret.format(violation) == error_str
 
 
 def test_make_formatter_format_string(reporters, caplog):

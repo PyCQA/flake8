@@ -5,6 +5,7 @@ import argparse
 import ast
 import contextlib
 import logging
+import sys
 import tokenize
 from typing import Any
 from typing import Generator
@@ -178,7 +179,7 @@ class FileProcessor:
         self.blank_lines = 0
         self.tokens = []
 
-    def build_logical_line_tokens(self) -> _Logical:
+    def build_logical_line_tokens(self) -> _Logical:  # noqa: C901
         """Build the mapping, comments, and logical line lists."""
         logical = []
         comments = []
@@ -195,6 +196,11 @@ class FileProcessor:
                 continue
             if token_type == tokenize.STRING:
                 text = mutate_string(text)
+            elif (
+                sys.version_info >= (3, 12)
+                and token_type == tokenize.FSTRING_MIDDLE
+            ):
+                text = "x" * len(text)
             if previous_row:
                 (start_row, start_column) = start
                 if previous_row != start_row:

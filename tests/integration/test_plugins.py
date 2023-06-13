@@ -197,3 +197,35 @@ t.py:3:1: T001 '"""\\n'
 '''
     out, err = capsys.readouterr()
     assert out == expected
+
+
+def yields_logical_line(logical_line):
+    yield 0, f"T001 {logical_line!r}"
+
+
+def test_logical_line_plugin(tmpdir, capsys):
+    cfg_s = f"""\
+[flake8]
+extend-ignore = F
+[flake8:local-plugins]
+extension =
+    T = {yields_logical_line.__module__}:{yields_logical_line.__name__}
+"""
+
+    cfg = tmpdir.join("tox.ini")
+    cfg.write(cfg_s)
+
+    src = """\
+f'hello world'
+"""
+    t_py = tmpdir.join("t.py")
+    t_py.write_binary(src.encode())
+
+    with tmpdir.as_cwd():
+        assert main(("t.py", "--config", str(cfg))) == 1
+
+    expected = """\
+t.py:1:1: T001 "f'xxxxxxxxxxx'"
+"""
+    out, err = capsys.readouterr()
+    assert out == expected

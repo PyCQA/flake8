@@ -199,6 +199,38 @@ t.py:3:1: T001 '"""\\n'
     assert out == expected
 
 
+def test_physical_line_plugin_multiline_fstring(tmpdir, capsys):
+    cfg_s = f"""\
+[flake8:local-plugins]
+extension =
+    T = {yields_physical_line.__module__}:{yields_physical_line.__name__}
+"""
+
+    cfg = tmpdir.join("tox.ini")
+    cfg.write(cfg_s)
+
+    src = '''\
+y = 1
+x = f"""
+hello {y}
+"""
+'''
+    t_py = tmpdir.join("t.py")
+    t_py.write_binary(src.encode())
+
+    with tmpdir.as_cwd():
+        assert main(("t.py", "--config", str(cfg))) == 1
+
+    expected = '''\
+t.py:1:1: T001 'y = 1\\n'
+t.py:2:1: T001 'x = f"""\\n'
+t.py:3:1: T001 'hello {y}\\n'
+t.py:4:1: T001 '"""\\n'
+'''
+    out, err = capsys.readouterr()
+    assert out == expected
+
+
 def yields_logical_line(logical_line):
     yield 0, f"T001 {logical_line!r}"
 

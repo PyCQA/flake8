@@ -275,13 +275,15 @@ def test_processor_split_line(default_options):
         (3, 3),
         'x = """\ncontents\n"""\n',
     )
-    expected = [('x = """\n', 0), ("contents\n", 1)]
+    expected = [('x = """\n', 1, True), ("contents\n", 2, True)]
+    assert file_processor.multiline is False
     actual = [
-        (line, file_processor.line_number)
-        for line in file_processor.split_line(token)
+        (line, file_processor.line_number, file_processor.multiline)
+        for line in file_processor.multiline_string(token)
     ]
+    assert file_processor.multiline is False
     assert expected == actual
-    assert file_processor.line_number == 2
+    assert file_processor.line_number == 3
 
 
 def test_build_ast(default_options):
@@ -319,21 +321,6 @@ def test_visited_new_blank_line(default_options):
     assert file_processor.blank_lines == 0
     file_processor.visited_new_blank_line()
     assert file_processor.blank_lines == 1
-
-
-def test_inside_multiline(default_options):
-    """Verify we update the line number and reset multiline."""
-    file_processor = processor.FileProcessor(
-        "-", default_options, lines=["a = 1\n"]
-    )
-
-    assert file_processor.multiline is False
-    assert file_processor.line_number == 0
-    with file_processor.inside_multiline(10):
-        assert file_processor.multiline is True
-        assert file_processor.line_number == 10
-
-    assert file_processor.multiline is False
 
 
 @pytest.mark.parametrize(

@@ -20,6 +20,7 @@ from flake8 import defaults
 from flake8 import exceptions
 from flake8 import processor
 from flake8 import utils
+from flake8._compat import FSTRING_START
 from flake8.discover_files import expand_paths
 from flake8.options.parse_args import parse_args
 from flake8.plugins.finder import Checkers
@@ -551,15 +552,17 @@ class FileChecker:
     ) -> None:
         """Run physical checks if and only if it is at the end of the line."""
         assert self.processor is not None
+        if token.type == FSTRING_START:  # pragma: >=3.12 cover
+            self.processor.fstring_start(token.start[0])
         # a newline token ends a single physical line.
-        if processor.is_eol_token(token):
+        elif processor.is_eol_token(token):
             # if the file does not end with a newline, the NEWLINE
             # token is inserted by the parser, but it does not contain
             # the previous physical line in `token[4]`
-            if token[4] == "":
+            if token.line == "":
                 self.run_physical_checks(prev_physical)
             else:
-                self.run_physical_checks(token[4])
+                self.run_physical_checks(token.line)
         elif processor.is_multiline_string(token):
             # Less obviously, a string that contains newlines is a
             # multiline string, either triple-quoted or with internal
@@ -572,10 +575,8 @@ class FileChecker:
             # - have to wind self.line_number back because initially it
             #   points to the last line of the string, and we want
             #   check_physical() to give accurate feedback
-            line_no = token[2][0]
-            with self.processor.inside_multiline(line_number=line_no):
-                for line in self.processor.split_line(token):
-                    self.run_physical_checks(line)
+            for line in self.processor.multiline_string(token):
+                self.run_physical_checks(line)
 
 
 def _try_initialize_processpool(

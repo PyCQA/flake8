@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import functools
 import logging
 import tokenize
 from typing import Any
@@ -114,23 +115,15 @@ class FileProcessor:
         self.verbose = options.verbose
         #: Statistics dictionary
         self.statistics = {"logical lines": 0}
-        self._file_tokens: list[tokenize.TokenInfo] | None = None
-        # map from line number to the line we'll search for `noqa` in
-        self._noqa_line_mapping: dict[int, str] | None = None
         self._fstring_start = -1
 
-    @property
+    @functools.cached_property
     def file_tokens(self) -> list[tokenize.TokenInfo]:
         """Return the complete set of tokens for a file."""
-        if self._file_tokens is None:
-            line_iter = iter(self.lines)
-            self._file_tokens = list(
-                tokenize.generate_tokens(lambda: next(line_iter))
-            )
+        line_iter = iter(self.lines)
+        return list(tokenize.generate_tokens(lambda: next(line_iter)))
 
-        return self._file_tokens
-
-    def fstring_start(self, lineno: int) -> None:
+    def fstring_start(self, lineno: int) -> None:  # pragma: >=3.12 cover
         """Signal the beginning of an fstring."""
         self._fstring_start = lineno
 
@@ -138,7 +131,7 @@ class FileProcessor:
         self, token: tokenize.TokenInfo
     ) -> Generator[str, None, None]:
         """Iterate through the lines of a multiline string."""
-        if token.type == FSTRING_END:
+        if token.type == FSTRING_END:  # pragma: >=3.12 cover
             start = self._fstring_start
         else:
             start = token.start[0]
@@ -209,7 +202,7 @@ class FileProcessor:
                 continue
             if token_type == tokenize.STRING:
                 text = mutate_string(text)
-            elif token_type == FSTRING_MIDDLE:
+            elif token_type == FSTRING_MIDDLE:  # pragma: >=3.12 cover
                 text = "x" * len(text)
             if previous_row:
                 (start_row, start_column) = start
@@ -277,41 +270,37 @@ class FileProcessor:
         joined = "".join(self.lines[min_line - 1 : max_line])
         return dict.fromkeys(line_range, joined)
 
-    def noqa_line_for(self, line_number: int) -> str | None:
-        """Retrieve the line which will be used to determine noqa."""
-        if self._noqa_line_mapping is None:
-            try:
-                file_tokens = self.file_tokens
-            except (tokenize.TokenError, SyntaxError):
-                # if we failed to parse the file tokens, we'll always fail in
-                # the future, so set this so the code does not try again
-                self._noqa_line_mapping = {}
-            else:
-                ret = {}
+    @functools.cached_property
+    def _noqa_line_mapping(self) -> dict[int, str]:
+        """Map from line number to the line we'll search for `noqa` in."""
+        try:
+            file_tokens = self.file_tokens
+        except (tokenize.TokenError, SyntaxError):
+            # if we failed to parse the file tokens, we'll always fail in
+            # the future, so set this so the code does not try again
+            return {}
+        else:
+            ret = {}
 
-                min_line = len(self.lines) + 2
-                max_line = -1
-                for tp, _, (s_line, _), (e_line, _), _ in file_tokens:
-                    if tp == tokenize.ENDMARKER:
-                        break
+            min_line = len(self.lines) + 2
+            max_line = -1
+            for tp, _, (s_line, _), (e_line, _), _ in file_tokens:
+                if tp == tokenize.ENDMARKER or tp == tokenize.DEDENT:
+                    continue
 
-                    min_line = min(min_line, s_line)
-                    max_line = max(max_line, e_line)
+                min_line = min(min_line, s_line)
+                max_line = max(max_line, e_line)
 
-                    if tp in (tokenize.NL, tokenize.NEWLINE):
-                        ret.update(self._noqa_line_range(min_line, max_line))
-
-                        min_line = len(self.lines) + 2
-                        max_line = -1
-
-                # in newer versions of python, a `NEWLINE` token is inserted
-                # at the end of the file even if it doesn't have one.
-                # on old pythons, they will not have hit a `NEWLINE`
-                if max_line != -1:
+                if tp in (tokenize.NL, tokenize.NEWLINE):
                     ret.update(self._noqa_line_range(min_line, max_line))
 
-                self._noqa_line_mapping = ret
+                    min_line = len(self.lines) + 2
+                    max_line = -1
 
+            return ret
+
+    def noqa_line_for(self, line_number: int) -> str | None:
+        """Retrieve the line which will be used to determine noqa."""
         # NOTE(sigmavirus24): Some plugins choose to report errors for empty
         # files on Line 1. In those cases, we shouldn't bother trying to
         # retrieve a physical line (since none exist).
@@ -377,12 +366,8 @@ class FileProcessor:
             # If we have nothing to analyze quit early
             return
 
-        first_byte = ord(self.lines[0][0])
-        if first_byte not in (0xEF, 0xFEFF):
-            return
-
         # If the first byte of the file is a UTF-8 BOM, strip it
-        if first_byte == 0xFEFF:
+        if self.lines[0][:1] == "\uFEFF":
             self.lines[0] = self.lines[0][1:]
         elif self.lines[0][:3] == "\xEF\xBB\xBF":
             self.lines[0] = self.lines[0][3:]

@@ -48,7 +48,6 @@ FLAKE8_PYFLAKES_CODES = {
     "IfTuple": "F634",
     "BreakOutsideLoop": "F701",
     "ContinueOutsideLoop": "F702",
-    "ContinueInFinally": "F703",
     "YieldOutsideFunction": "F704",
     "ReturnOutsideFunction": "F706",
     "DefaultExceptNotLast": "F707",

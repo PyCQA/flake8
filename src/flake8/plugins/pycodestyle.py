@@ -23,9 +23,7 @@ from pycodestyle import maximum_doc_length as _maximum_doc_length
 from pycodestyle import maximum_line_length as _maximum_line_length
 from pycodestyle import missing_whitespace as _missing_whitespace
 from pycodestyle import missing_whitespace_after_keyword as _missing_whitespace_after_keyword  # noqa: E501
-from pycodestyle import missing_whitespace_around_operator as _missing_whitespace_around_operator  # noqa: E501
 from pycodestyle import module_imports_on_top_of_file as _module_imports_on_top_of_file  # noqa: E501
-from pycodestyle import python_3000_async_await_keywords as _python_3000_async_await_keywords  # noqa: E501
 from pycodestyle import python_3000_invalid_escape_sequence as _python_3000_invalid_escape_sequence  # noqa: E501
 from pycodestyle import tabs_obsolete as _tabs_obsolete
 from pycodestyle import tabs_or_spaces as _tabs_or_spaces
@@ -74,11 +72,9 @@ def pycodestyle_logical(
     yield from _imports_on_separate_lines(logical_line)
     yield from _indentation(logical_line, previous_logical, indent_char, indent_level, previous_indent_level, indent_size)  # noqa: E501
     yield from _maximum_doc_length(logical_line, max_doc_length, noqa, tokens)
-    yield from _missing_whitespace(logical_line)
+    yield from _missing_whitespace(logical_line, tokens)
     yield from _missing_whitespace_after_keyword(logical_line, tokens)
-    yield from _missing_whitespace_around_operator(logical_line, tokens)
     yield from _module_imports_on_top_of_file(logical_line, indent_level, checker_state, noqa)  # noqa: E501
-    yield from _python_3000_async_await_keywords(logical_line, tokens)
     yield from _python_3000_invalid_escape_sequence(logical_line, tokens, noqa)
     yield from _whitespace_around_comma(logical_line)
     yield from _whitespace_around_keywords(logical_line)

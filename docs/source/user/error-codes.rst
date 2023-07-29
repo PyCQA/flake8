@@ -81,8 +81,6 @@ generates its own :term:`error code`\ s for ``pyflakes``:
 +------+---------------------------------------------------------------------+
 | F702 | a ``continue`` statement outside of a ``while`` or ``for`` loop     |
 +------+---------------------------------------------------------------------+
-| F703 | a ``continue`` statement in a ``finally`` block in a loop           |
-+------+---------------------------------------------------------------------+
 | F704 | a ``yield`` or ``yield from`` statement outside of a function       |
 +------+---------------------------------------------------------------------+
 | F706 | a ``return`` statement outside of a function/method                 |

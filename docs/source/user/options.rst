@@ -98,10 +98,6 @@ Index of Options
 
 - :option:`flake8 --doctests`
 
-- :option:`flake8 --include-in-doctest`
-
-- :option:`flake8 --exclude-from-doctest`
-
 - :option:`flake8 --benchmark`
 
 - :option:`flake8 --bug-report`
@@ -995,62 +991,6 @@ Options and their Descriptions
     .. code-block:: ini
 
         doctests = True
-
-
-.. option:: --include-in-doctest=<paths>
-
-    :ref:`Go back to index <top>`
-
-    Specify which files are checked by PyFlakes for doctest syntax.
-
-    This is registered by the default PyFlakes plugin.
-
-    Command-line example:
-
-    .. prompt:: bash
-
-        flake8 --include-in-doctest=dir/subdir/file.py,dir/other/file.py dir/
-
-    This **can** be specified in config files.
-
-    Example config file usage:
-
-    .. code-block:: ini
-
-        include-in-doctest =
-            dir/subdir/file.py,
-            dir/other/file.py
-        include_in_doctest =
-            dir/subdir/file.py,
-            dir/other/file.py
-
-
-.. option:: --exclude-from-doctest=<paths>
-
-    :ref:`Go back to index <top>`
-
-    Specify which files are not to be checked by PyFlakes for doctest syntax.
-
-    This is registered by the default PyFlakes plugin.
-
-    Command-line example:
-
-    .. prompt:: bash
-
-        flake8 --exclude-from-doctest=dir/subdir/file.py,dir/other/file.py dir/
-
-    This **can** be specified in config files.
-
-    Example config file usage:
-
-    .. code-block:: ini
-
-        exclude-from-doctest =
-            dir/subdir/file.py,
-            dir/other/file.py
-        exclude_from_doctest =
-            dir/subdir/file.py,
-            dir/other/file.py
 
 
 .. option:: --benchmark

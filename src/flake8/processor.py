@@ -3,9 +3,7 @@ from __future__ import annotations
 
 import argparse
 import ast
-import contextlib
 import logging
-import sys
 import tokenize
 from typing import Any
 from typing import Generator
@@ -14,6 +12,8 @@ from typing import Tuple
 
 from flake8 import defaults
 from flake8 import utils
+from flake8._compat import FSTRING_END
+from flake8._compat import FSTRING_MIDDLE
 from flake8.plugins.finder import LoadedPlugin
 
 LOG = logging.getLogger(__name__)
@@ -117,6 +117,7 @@ class FileProcessor:
         self._file_tokens: list[tokenize.TokenInfo] | None = None
         # map from line number to the line we'll search for `noqa` in
         self._noqa_line_mapping: dict[int, str] | None = None
+        self._fstring_start = -1
 
     @property
     def file_tokens(self) -> list[tokenize.TokenInfo]:
@@ -129,14 +130,26 @@ class FileProcessor:
 
         return self._file_tokens
 
-    @contextlib.contextmanager
-    def inside_multiline(
-        self, line_number: int
-    ) -> Generator[None, None, None]:
-        """Context-manager to toggle the multiline attribute."""
-        self.line_number = line_number
+    def fstring_start(self, lineno: int) -> None:
+        """Signal the beginning of an fstring."""
+        self._fstring_start = lineno
+
+    def multiline_string(
+        self, token: tokenize.TokenInfo
+    ) -> Generator[str, None, None]:
+        """Iterate through the lines of a multiline string."""
+        if token.type == FSTRING_END:
+            start = self._fstring_start
+        else:
+            start = token.start[0]
+
         self.multiline = True
-        yield
+        self.line_number = start
+        # intentionally don't include the last line, that line will be
+        # terminated later by a future end-of-line
+        for _ in range(start, token.end[0]):
+            yield self.lines[self.line_number - 1]
+            self.line_number += 1
         self.multiline = False
 
     def reset_blank_before(self) -> None:
@@ -196,10 +209,7 @@ class FileProcessor:
                 continue
             if token_type == tokenize.STRING:
                 text = mutate_string(text)
-            elif (
-                sys.version_info >= (3, 12)
-                and token_type == tokenize.FSTRING_MIDDLE
-            ):
+            elif token_type == FSTRING_MIDDLE:
                 text = "x" * len(text)
             if previous_row:
                 (start_row, start_column) = start
@@ -230,19 +240,6 @@ class FileProcessor:
         self.logical_line = "".join(logical)
         self.statistics["logical lines"] += 1
         return joined_comments, self.logical_line, mapping_list
-
-    def split_line(
-        self, token: tokenize.TokenInfo
-    ) -> Generator[str, None, None]:
-        """Split a physical line's line based on new-lines.
-
-        This also auto-increments the line number for the caller.
-        """
-        # intentionally don't include the last line, that line will be
-        # terminated later by a future end-of-line
-        for line_no in range(token.start[0], token.end[0]):
-            yield self.lines[line_no - 1]
-            self.line_number += 1
 
     def keyword_arguments_for(
         self,
@@ -398,7 +395,9 @@ def is_eol_token(token: tokenize.TokenInfo) -> bool:
 
 def is_multiline_string(token: tokenize.TokenInfo) -> bool:
     """Check if this is a multiline string."""
-    return token[0] == tokenize.STRING and "\n" in token[1]
+    return token.type == FSTRING_END or (
+        token.type == tokenize.STRING and "\n" in token.string
+    )
 
 
 def token_is_newline(token: tokenize.TokenInfo) -> bool:

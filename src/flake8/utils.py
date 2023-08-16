@@ -176,7 +176,7 @@ def normalize_path(path: str, parent: str = os.curdir) -> str:
     if (
         path == "."
         or separator in path
-        or (alternate_separator and alternate_separator in path)
+        or (alternate_separator and separator in path)
     ):
         path = os.path.abspath(os.path.join(parent, path))
     return path.rstrip(separator + alternate_separator)

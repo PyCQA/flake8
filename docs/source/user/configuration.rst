@@ -25,7 +25,7 @@ Configuration Locations
 =======================
 
 |Flake8| supports storing its configuration in your project in one of
-``setup.cfg``, ``tox.ini``, or ``.flake8``.
+``setup.cfg``, ``tox.ini``, or ``.flake8``, but not ``pyproject.toml``.
 
 Values set at the command line have highest priority, then those in the
 project configuration file, and finally there are the defaults. However,

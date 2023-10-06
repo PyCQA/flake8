@@ -4,13 +4,11 @@ from __future__ import annotations
 import argparse
 import ast
 import logging
-import os
 from typing import Any
 from typing import Generator
 
 import pyflakes.checker
 
-from flake8 import utils
 from flake8.options.manager import OptionManager
 
 LOG = logging.getLogger(__name__)
@@ -68,34 +66,12 @@ class FlakesChecker(pyflakes.checker.Checker):
     """Subclass the Pyflakes checker to conform with the flake8 API."""
 
     with_doctest = False
-    include_in_doctest: list[str] = []
-    exclude_from_doctest: list[str] = []
 
     def __init__(self, tree: ast.AST, filename: str) -> None:
         """Initialize the PyFlakes plugin with an AST tree and filename."""
-        filename = utils.normalize_path(filename)
-        with_doctest = self.with_doctest
-        included_by = [
-            include
-            for include in self.include_in_doctest
-            if include != "" and filename.startswith(include)
-        ]
-        if included_by:
-            with_doctest = True
-
-        for exclude in self.exclude_from_doctest:
-            if exclude != "" and filename.startswith(exclude):
-                with_doctest = False
-                overlapped_by = [
-                    include
-                    for include in included_by
-                    if include.startswith(exclude)
-                ]
-
-                if overlapped_by:
-                    with_doctest = True
-
-        super().__init__(tree, filename=filename, withDoctest=with_doctest)
+        super().__init__(
+            tree, filename=filename, withDoctest=self.with_doctest
+        )
 
     @classmethod
     def add_options(cls, parser: OptionManager) -> None:
@@ -113,24 +89,6 @@ class FlakesChecker(pyflakes.checker.Checker):
             parse_from_config=True,
             help="also check syntax of the doctests",
         )
-        parser.add_option(
-            "--include-in-doctest",
-            default="",
-            dest="include_in_doctest",
-            parse_from_config=True,
-            comma_separated_list=True,
-            normalize_paths=True,
-            help="Run doctests only on these files",
-        )
-        parser.add_option(
-            "--exclude-from-doctest",
-            default="",
-            dest="exclude_from_doctest",
-            parse_from_config=True,
-            comma_separated_list=True,
-            normalize_paths=True,
-            help="Skip these files when running doctests",
-        )
 
     @classmethod
     def parse_options(cls, options: argparse.Namespace) -> None:
@@ -138,43 +96,6 @@ class FlakesChecker(pyflakes.checker.Checker):
         if options.builtins:
             cls.builtIns = cls.builtIns.union(options.builtins)
         cls.with_doctest = options.doctests
-
-        if options.include_in_doctest or options.exclude_from_doctest:
-            LOG.warning(
-                "--include-in-doctest / --exclude-from-doctest will be "
-                "removed in a future version.  see PyCQA/flake8#1747"
-            )
-
-        included_files = []
-        for included_file in options.include_in_doctest:
-            if included_file == "":
-                continue
-            if not included_file.startswith((os.sep, "./", "~/")):
-                included_files.append(f"./{included_file}")
-            else:
-                included_files.append(included_file)
-        cls.include_in_doctest = utils.normalize_paths(included_files)
-
-        excluded_files = []
-        for excluded_file in options.exclude_from_doctest:
-            if excluded_file == "":
-                continue
-            if not excluded_file.startswith((os.sep, "./", "~/")):
-                excluded_files.append(f"./{excluded_file}")
-            else:
-                excluded_files.append(excluded_file)
-        cls.exclude_from_doctest = utils.normalize_paths(excluded_files)
-
-        inc_exc = set(cls.include_in_doctest).intersection(
-            cls.exclude_from_doctest
-        )
-        if inc_exc:
-            raise ValueError(
-                f"{inc_exc!r} was specified in both the "
-                f"include-in-doctest and exclude-from-doctest "
-                f"options. You are not allowed to specify it in "
-                f"both for doctesting."
-            )
 
     def run(self) -> Generator[tuple[int, int, str, type[Any]], None, None]:
         """Run the plugin."""

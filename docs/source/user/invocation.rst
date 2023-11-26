@@ -51,7 +51,7 @@ Or
 
     This is the last time we will show both versions of an invocation.
     From now on, we'll simply use ``flake8`` and assume that the user
-    knows they can instead use ``python<version> -m flake8`` instead.
+    knows they can instead use ``python<version> -m flake8``.
 
 It's also possible to narrow what |Flake8| will try to check by specifying
 exactly the paths and directories you want it to check. Let's assume that

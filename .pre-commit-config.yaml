@@ -39,3 +39,8 @@ repos:
     hooks:
     -   id: mypy
         exclude: ^(docs/|example-plugin/)
+-   repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.27.2
+    hooks:
+      - id: check-github-workflows
+      - id: check-readthedocs

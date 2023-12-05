@@ -7,6 +7,16 @@ on:
   pull_request:
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -mpip install --upgrade setuptools pip tox virtualenv
+      - run: tox -e linters
+
   main:
     strategy:
       matrix:

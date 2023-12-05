@@ -11,7 +11,7 @@ from flake8.plugins import reporter
 
 
 def _opts(**kwargs):
-    kwargs.setdefault("quiet", 0),
+    kwargs.setdefault("quiet", 0)
     kwargs.setdefault("color", "never")
     kwargs.setdefault("output_file", None)
     return argparse.Namespace(**kwargs)

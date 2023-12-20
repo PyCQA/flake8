@@ -70,7 +70,8 @@ def _mp_init(argv: Sequence[str]) -> None:
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
     try:
-        _mp_plugins, _mp_options  # for `fork` this'll already be set
+        # for `fork` this'll already be set
+        _mp_plugins, _mp_options  # noqa: B018
     except NameError:
         plugins, options = parse_args(argv)
         _mp_plugins, _mp_options = plugins.checkers, options

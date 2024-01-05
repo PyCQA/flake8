@@ -1,0 +1,19 @@
+7.0.0 -- 2024-01-04
+-------------------
+
+You can view the `7.0.0 milestone`_ on GitHub for more details.
+
+Backwards Incompatible Changes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Remove ``--include-in-doctest`` and ``--exclude-from-doctest`` options.
+  (See also :issue:`1747`, :pull:`1854`)
+
+New Dependency Information
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Pyflakes has been updated to >= 3.2.0, < 3.3.0 (See also :pull:`1906`).
+
+.. all links
+.. _7.0.0 milestone:
+    https://github.com/PyCQA/flake8/milestone/49

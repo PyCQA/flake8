@@ -30,7 +30,7 @@ Historically, |Flake8| has generated major releases for:
 
 - Large scale refactoring (2.0, 3.0, 5.0, 6.0)
 
-- Subtly breaking CLI changes (3.0, 4.0, 5.0, 6.0)
+- Subtly breaking CLI changes (3.0, 4.0, 5.0, 6.0, 7.0)
 
 - Breaking changes to its plugin interface (3.0)
 

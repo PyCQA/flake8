@@ -34,7 +34,7 @@ extensions = [
     "sphinx.ext.todo",
     "sphinx.ext.coverage",
     "sphinx.ext.viewcode",
-    "sphinx-prompt",
+    "sphinx_prompt",
 ]
 
 # Add any paths that contain templates here, relative to this directory.

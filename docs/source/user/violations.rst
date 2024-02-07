@@ -139,7 +139,7 @@ configuration. Both exist so we can choose which is better for us.
 Ignoring Violations in Specific Files
 -------------------------------------
 
-If we want to ignore one or more violation codes for certain files, you can 
+If we want to ignore one or more violation codes for certain files, you can
 use the :option:`flake8 --per-file-ignores` on either the command-line
 or in your configuration file.
 
@@ -153,7 +153,7 @@ or in your configuration file.
    While most options in Flake8 use commas to separate values, this option allows
    multiple violation codes to be specified per file with commas so to specify
    multiple file mappings use spaces to delimit them.
-   
+
 We can also specify it in config file:
 
 .. code-block:: ini

@@ -136,6 +136,32 @@ the errors in that file will show up without having to modify our
 configuration. Both exist so we can choose which is better for us.
 
 
+Ignoring Violations for some Files
+-----------------------
+
+Sometimes, we might want to ignore some error codes (or class of error codes) for
+some part of our project (tests for example).
+We can do this using :option:`flake8 --per-file-ignores` from CLI:
+
+.. prompt:: bash
+
+ flake8 --per-file-ignores='project/test.py:F841 setup.py:E121'
+ flake8 --per-file-ignores='tests/*:F841 setup.py:E121'
+
+We can also specify it in config file:
+
+.. code-block:: ini
+
+     per-file-ignores =
+            project/test.py:F841
+            tests/*:F841
+            setup.py:E121
+            other_project/*:W9
+
+Syntax is similar with :option:`flake8 --exclude` for files
+and :option:`flake8 --ignore` for errors.
+
+
 
 Selecting Violations with Flake8
 ================================

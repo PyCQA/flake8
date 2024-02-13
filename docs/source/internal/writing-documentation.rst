@@ -116,7 +116,7 @@ Use the option template for new options
 All of |Flake8|'s command-line options are documented in the User Guide. Each
 option is documented individually using the ``.. option::`` directive provided
 by Sphinx. At the top of the document, in a reStructuredText comment, is a
-template that should be copied and pasted into place when documening new
+template that should be copied and pasted into place when documenting new
 options.
 
 .. note::

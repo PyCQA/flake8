@@ -32,7 +32,7 @@ def test_config_file_with_parse_error_is_not_considered(tmp_path, caplog):
     assert len(caplog.record_tuples) == 1
     ((mod, level, msg),) = caplog.record_tuples
     assert (mod, level) == ("flake8.options.config", 30)
-    assert msg.startswith("ignoring unparseable config ")
+    assert msg.startswith("ignoring unparsable config ")
 
 
 def test_config_file_with_encoding_error_is_not_considered(tmp_path, caplog):
@@ -43,7 +43,7 @@ def test_config_file_with_encoding_error_is_not_considered(tmp_path, caplog):
     assert len(caplog.record_tuples) == 1
     ((mod, level, msg),) = caplog.record_tuples
     assert (mod, level) == ("flake8.options.config", 30)
-    assert msg.startswith("ignoring unparseable config ")
+    assert msg.startswith("ignoring unparsable config ")
 
 
 @pytest.mark.parametrize("cfg_name", ("setup.cfg", "tox.ini", ".flake8"))

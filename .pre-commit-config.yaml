@@ -39,3 +39,8 @@ repos:
     hooks:
     -   id: mypy
         exclude: ^(docs/|example-plugin/)
+-   repo: https://github.com/codespell-project/codespell
+    # Configuration for codespell is in setup.cfg
+    rev: v2.2.6
+    hooks:
+    -   id: codespell

@@ -8,8 +8,15 @@ Flake8 and its plugins assign a code to each message that we refer to as an
 :term:`error code` (or :term:`violation`). Most plugins will list their error
 codes in their documentation or README.
 
-Flake8 installs ``pycodestyle``, ``pyflakes``, and ``mccabe`` by default and
-generates its own :term:`error code`\ s for ``pyflakes``:
+Flake8 installs ``pycodestyle``, ``pyflakes``, and ``mccabe`` by default.
+
+Codes from ``pycodestyle`` start with ``E`` (error) or ``W`` (warning), see
+`pycodestyle's list of error codes`_.
+
+``mccabe`` only ever reports one :term:`violation` - ``C901`` based on the
+complexity value provided by the user.
+
+Flake8 generates its own :term:`error code`\ s for ``pyflakes``:
 
 +------+---------------------------------------------------------------------+
 | Code | Example Message                                                     |
@@ -112,12 +119,6 @@ generates its own :term:`error code`\ s for ``pyflakes``:
 
 We also report one extra error: ``E999``. We report ``E999`` when we fail to
 compile a file into an Abstract Syntax Tree for the plugins that require it.
-
-``mccabe`` only ever reports one :term:`violation` - ``C901`` based on the
-complexity value provided by the user.
-
-Users should also reference `pycodestyle's list of error codes`_.
-
 
 .. links
 .. _pycodestyle's list of error codes:

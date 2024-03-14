@@ -296,7 +296,11 @@ texinfo_documents = [
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {"python": ("https://docs.python.org/3/", None)}
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3/", None),
+    "packaging": ("https://packaging.python.org/en/latest/", None),
+    "setuptools": ("https://setuptools.pypa.io/en/latest/", None),
+}
 
 extlinks = {
     "issue": ("https://github.com/pycqa/flake8/issues/%s", "#%s"),

@@ -13,12 +13,14 @@ To register any kind of plugin with |Flake8|, you need:
 #. A name for your plugin that will (ideally) be unique.
 
 |Flake8| relies on functionality provided by build tools called
-:external:doc:`entry points<specifications/entry-points>`. These allow
-any package to register a plugin with |Flake8| via that package's metadata.
+:external+packaging:doc:`entry points<specifications/entry-points>`. These
+allow any package to register a plugin with |Flake8| via that package's
+metadata.
 
 Let's presume that we already have our plugin written and it's in a module
+:external+packaging:term:`Build Backend`, but be aware that most backends
 called ``flake8_example``. We will also assume ``setuptools`` is used as a
-:term:`Build Backend`, but be aware that most backends support entry points.
+support entry points.
 
 We might have a ``setup.py`` that looks something like:
 
@@ -151,5 +153,5 @@ point.
 
 .. seealso::
 
-    The :external:doc:`setuptools user guide <userguide/entry_point>` about
-    entry points.
+    The :external+setuptools:doc:`setuptools user guide <userguide/entry_point>`
+    about entry points.

@@ -31,7 +31,7 @@ To get started writing a |Flake8| :term:`plugin` you first need:
 Once you've gathered these things, you can get started.
 
 All plugins for |Flake8| must be registered via
-:external:doc:`entry points<specifications/entry-points>`. In this
+:external+packaging:doc:`entry points<specifications/entry-points>`. In this
 section we cover:
 
 - How to register your plugin so |Flake8| can find it

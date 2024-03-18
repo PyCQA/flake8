@@ -55,6 +55,8 @@ Here's a tutorial which goes over building an ast checking plugin from scratch:
         <iframe src="https://www.youtube.com/embed/ot5Z4KQPBL8" frameborder="0" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
     </div>
 
+Detailed Plugin Development Documentation
+=========================================
 
 .. toctree::
     :caption: Plugin Developer Documentation

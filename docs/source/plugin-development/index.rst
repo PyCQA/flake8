@@ -30,7 +30,8 @@ To get started writing a |Flake8| :term:`plugin` you first need:
 
 Once you've gathered these things, you can get started.
 
-All plugins for |Flake8| must be registered via `entry points`_. In this
+All plugins for |Flake8| must be registered via
+:external+packaging:doc:`entry points<specifications/entry-points>`. In this
 section we cover:
 
 - How to register your plugin so |Flake8| can find it
@@ -54,6 +55,8 @@ Here's a tutorial which goes over building an ast checking plugin from scratch:
         <iframe src="https://www.youtube.com/embed/ot5Z4KQPBL8" frameborder="0" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
     </div>
 
+Detailed Plugin Development Documentation
+=========================================
 
 .. toctree::
     :caption: Plugin Developer Documentation
@@ -62,7 +65,3 @@ Here's a tutorial which goes over building an ast checking plugin from scratch:
     registering-plugins
     plugin-parameters
     formatters
-
-
-.. _entry points:
-    https://setuptools.readthedocs.io/en/latest/pkg_resources.html#entry-points

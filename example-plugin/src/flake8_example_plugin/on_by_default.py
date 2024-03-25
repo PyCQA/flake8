@@ -1,4 +1,5 @@
 """Our first example plugin."""
+
 from __future__ import annotations
 
 

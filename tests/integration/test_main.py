@@ -1,4 +1,5 @@
 """Integration tests for the main entrypoint of flake8."""
+
 from __future__ import annotations
 
 import json

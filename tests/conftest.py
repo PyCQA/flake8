@@ -1,4 +1,5 @@
 """Test configuration for py.test."""
+
 from __future__ import annotations
 
 import sys

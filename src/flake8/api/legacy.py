@@ -3,6 +3,7 @@
 Previously, users would import :func:`get_style_guide` from ``flake8.engine``.
 In 3.0 we no longer have an "engine" module but we maintain the API from it.
 """
+
 from __future__ import annotations
 
 import argparse

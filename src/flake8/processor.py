@@ -1,4 +1,5 @@
 """Module containing our file processor that tokenizes a file for checks."""
+
 from __future__ import annotations
 
 import argparse

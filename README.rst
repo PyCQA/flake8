@@ -45,7 +45,7 @@ See our `quickstart documentation
 and get started with Flake8.
 
 
-Frequently Asked Questions
+Frequentlу Asked Questions
 ==========================
 
 Flake8 maintains an `FAQ <https://flake8.pycqa.org/en/latest/faq.html>`_ in its

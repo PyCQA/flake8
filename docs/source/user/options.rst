@@ -46,6 +46,8 @@ Index of Options
 
 - :option:`flake8 --exclude`
 
+- :option:`flake8 --extend-exclude`
+
 - :option:`flake8 --filename`
 
 - :option:`flake8 --stdin-display-name`

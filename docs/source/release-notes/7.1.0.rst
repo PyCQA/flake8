@@ -1,0 +1,13 @@
+7.1.0 -- 2024-06-15
+-------------------
+
+You can view the `7.1.0 milestone`_ on GitHub for more details.
+
+New Dependency Information
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- pycodestyle has been updated to >= 2.12.0, < 2.13.0 (See also :pull:`1939`).
+
+.. all links
+.. _7.1.0 milestone:
+    https://github.com/PyCQA/flake8/milestone/50

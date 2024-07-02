@@ -1,4 +1,5 @@
 """Integration tests for plugin loading."""
+
 from __future__ import annotations
 
 import pytest

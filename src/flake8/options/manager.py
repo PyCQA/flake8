@@ -1,4 +1,5 @@
 """Option handling and Option management logic."""
+
 from __future__ import annotations
 
 import argparse

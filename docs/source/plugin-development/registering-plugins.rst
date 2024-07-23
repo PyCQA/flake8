@@ -18,7 +18,6 @@ allow any package to register a plugin with |Flake8| via that package's
 metadata.
 
 Let's presume that we already have our plugin written and it's in a module
-:external+packaging:term:`Build Backend`, but be aware that most backends
 called ``flake8_example``. We will also assume ``setuptools`` is used as a
 :external+packaging:term:`Build Backend`, but be aware that most backends
 support entry points.

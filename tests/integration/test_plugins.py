@@ -1,6 +1,8 @@
 """Integration tests for plugin loading."""
 from __future__ import annotations
 
+import sys
+
 import pytest
 
 from flake8.main.cli import main
@@ -258,6 +260,39 @@ f'hello world'
 
     expected = """\
 t.py:1:1: T001 "f'xxxxxxxxxxx'"
+"""
+    out, err = capsys.readouterr()
+    assert out == expected
+
+
+def test_escaping_of_fstrings_in_string_redacter(tmpdir, capsys):
+    cfg_s = f"""\
+[flake8]
+extend-ignore = F
+[flake8:local-plugins]
+extension =
+    T = {yields_logical_line.__module__}:{yields_logical_line.__name__}
+"""
+
+    cfg = tmpdir.join("tox.ini")
+    cfg.write(cfg_s)
+
+    src = """\
+f'{{"{hello}": "{world}"}}'
+"""
+    t_py = tmpdir.join("t.py")
+    t_py.write_binary(src.encode())
+
+    with tmpdir.as_cwd():
+        assert main(("t.py", "--config", str(cfg))) == 1
+
+    if sys.version_info >= (3, 12):  # pragma: >=3.12 cover
+        expected = """\
+t.py:1:1: T001 "f'xxx{hello}xxxx{world}xxx'"
+"""
+    else:  # pragma: <3.12 cover
+        expected = """\
+t.py:1:1: T001 "f'xxxxxxxxxxxxxxxxxxxxxxxx'"
 """
     out, err = capsys.readouterr()
     assert out == expected

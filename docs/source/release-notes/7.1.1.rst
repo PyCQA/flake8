@@ -1,0 +1,15 @@
+7.1.1 -- 2024-08-04
+-------------------
+
+You can view the `7.1.1 milestone`_ on GitHub for more details.
+
+Bugs Fixed
+~~~~~~~~~~
+
+- Properly preserve escaped `{` and `}` in fstrings in logical lines in 3.12+.
+  (See also :issue:`1948`, :pull:`1949`).
+
+
+.. all links
+.. _7.1.1 milestone:
+    https://github.com/PyCQA/flake8/milestone/51

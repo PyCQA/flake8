@@ -203,7 +203,13 @@ class FileProcessor:
             if token_type == tokenize.STRING:
                 text = mutate_string(text)
             elif token_type == FSTRING_MIDDLE:  # pragma: >=3.12 cover
-                text = "x" * len(text)
+                # A curly brace in an FSTRING_MIDDLE token must be an escaped
+                # curly brace. Both 'text' and 'end' will account for the
+                # escaped version of the token (i.e. a single brace) rather
+                # than the raw double brace version, so we must counteract this
+                brace_offset = text.count("{") + text.count("}")
+                text = "x" * (len(text) + brace_offset)
+                end = (end[0], end[1] + brace_offset)
             if previous_row:
                 (start_row, start_column) = start
                 if previous_row != start_row:

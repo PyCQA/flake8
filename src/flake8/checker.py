@@ -530,6 +530,12 @@ class FileChecker:
             row, column = self._extract_syntax_information(e)
             self.report(code, row, column, f"{type(e).__name__}: {e.args[0]}")
             return self.display_name, self.results, self.statistics
+        except BaseException as e:
+            try:
+                e.add_note(f"while checking {self.filename}")
+            except AttributeError:
+                pass  # PEP-678 .add_note() method is new in Python 3.11
+            raise
 
         logical_lines = self.processor.statistics["logical lines"]
         self.statistics["logical lines"] = logical_lines

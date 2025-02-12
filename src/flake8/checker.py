@@ -8,6 +8,7 @@ import logging
 import multiprocessing.pool
 import operator
 import signal
+import sys
 import tokenize
 from typing import Any
 from typing import Generator
@@ -151,7 +152,14 @@ class Manager:
         # default to 1
         if jobs.is_auto:
             try:
-                return multiprocessing.cpu_count()
+                system_cpus = multiprocessing.cpu_count()
+
+                # Work around https://bugs.python.org/issue26903
+                return (
+                    min(system_cpus, 61)
+                    if sys.platform == "win32"
+                    else system_cpus
+                )
             except NotImplementedError:
                 return 0
 

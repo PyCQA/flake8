@@ -1,0 +1,15 @@
+7.1.2 -- 2025-02-16
+-------------------
+
+You can view the `7.1.2 milestone`_ on GitHub for more details.
+
+Bugs Fixed
+~~~~~~~~~~
+
+- Avoid starting unnecessary processes when "# files" < "jobs".
+  (See also :pull:`1966`).
+
+
+.. all links
+.. _7.1.2 milestone:
+    https://github.com/PyCQA/flake8/milestone/52

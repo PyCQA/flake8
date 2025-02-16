@@ -76,9 +76,5 @@ def test_make_checkers():
     style_guide = style_guide_mock()
     style_guide.options.filenames = ["file1", "file2"]
     manager = checker.Manager(style_guide, finder.Checkers([], [], []), [])
-
-    with mock.patch("flake8.utils.fnmatch", return_value=True):
-        with mock.patch("flake8.processor.FileProcessor"):
-            manager.start()
-
+    manager.start()
     assert manager.filenames == ("file1", "file2")

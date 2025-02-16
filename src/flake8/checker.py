@@ -256,6 +256,7 @@ class Manager:
                 exclude=self.exclude,
             )
         )
+        self.jobs = min(len(self.filenames), self.jobs)
 
     def stop(self) -> None:
         """Stop checking files."""

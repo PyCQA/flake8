@@ -61,6 +61,16 @@ def test_multiprocessing_cpu_count_not_implemented():
     assert manager.jobs == 0
 
 
+def test_jobs_count_limited_to_file_count():
+    style_guide = style_guide_mock()
+    style_guide.options.jobs = JobsArgument("4")
+    style_guide.options.filenames = ["file1", "file2"]
+    manager = checker.Manager(style_guide, finder.Checkers([], [], []), [])
+    assert manager.jobs == 4
+    manager.start()
+    assert manager.jobs == 2
+
+
 def test_make_checkers():
     """Verify that we create a list of FileChecker instances."""
     style_guide = style_guide_mock()

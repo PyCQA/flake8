@@ -42,7 +42,7 @@ class Call(NamedTuple):
         return cls(func.__name__, inspect.isgeneratorfunction(func), params)
 
 
-def lines() -> Generator[str, None, None]:
+def lines() -> Generator[str]:
     logical = []
     physical = []
 

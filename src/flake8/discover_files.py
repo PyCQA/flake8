@@ -1,4 +1,5 @@
 """Functions related to discovering paths."""
+
 from __future__ import annotations
 
 import logging
@@ -16,7 +17,7 @@ def _filenames_from(
     arg: str,
     *,
     predicate: Callable[[str], bool],
-) -> Generator[str, None, None]:
+) -> Generator[str]:
     """Generate filenames from an argument.
 
     :param arg:
@@ -55,7 +56,7 @@ def expand_paths(
     stdin_display_name: str,
     filename_patterns: Sequence[str],
     exclude: Sequence[str],
-) -> Generator[str, None, None]:
+) -> Generator[str]:
     """Expand out ``paths`` from commandline to the lintable files."""
     if not paths:
         paths = ["."]

@@ -1,4 +1,5 @@
 """Tests for the flake8.violation.Violation class."""
+
 from __future__ import annotations
 
 from unittest import mock

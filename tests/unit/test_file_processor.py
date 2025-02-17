@@ -1,4 +1,5 @@
 """Tests for the FileProcessor class."""
+
 from __future__ import annotations
 
 import ast
@@ -52,8 +53,8 @@ def test_read_lines_unknown_encoding(tmpdir, default_options):
 @pytest.mark.parametrize(
     "first_line",
     [
-        '\xEF\xBB\xBF"""Module docstring."""\n',
-        '\uFEFF"""Module docstring."""\n',
+        '\xef\xbb\xbf"""Module docstring."""\n',
+        '\ufeff"""Module docstring."""\n',
     ],
 )
 def test_strip_utf_bom(first_line, default_options):
@@ -67,8 +68,8 @@ def test_strip_utf_bom(first_line, default_options):
 @pytest.mark.parametrize(
     "lines, expected",
     [
-        (['\xEF\xBB\xBF"""Module docstring."""\n'], False),
-        (['\uFEFF"""Module docstring."""\n'], False),
+        (['\xef\xbb\xbf"""Module docstring."""\n'], False),
+        (['\ufeff"""Module docstring."""\n'], False),
         (["#!/usr/bin/python", "# flake8 is great", "a = 1"], False),
         (["#!/usr/bin/python", "# flake8: noqa", "a = 1"], True),
         (["#!/usr/bin/python", "# flake8:noqa", "a = 1"], True),

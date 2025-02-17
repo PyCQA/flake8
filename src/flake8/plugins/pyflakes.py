@@ -1,4 +1,5 @@
 """Plugin built-in to Flake8 to treat pyflakes as a plugin."""
+
 from __future__ import annotations
 
 import argparse
@@ -97,7 +98,7 @@ class FlakesChecker(pyflakes.checker.Checker):
             cls.builtIns = cls.builtIns.union(options.builtins)
         cls.with_doctest = options.doctests
 
-    def run(self) -> Generator[tuple[int, int, str, type[Any]], None, None]:
+    def run(self) -> Generator[tuple[int, int, str, type[Any]]]:
         """Run the plugin."""
         for message in self.messages:
             col = getattr(message, "col", 0)

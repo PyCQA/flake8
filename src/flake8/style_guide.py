@@ -1,4 +1,5 @@
 """Implementation of the StyleGuide used by Flake8."""
+
 from __future__ import annotations
 
 import argparse
@@ -231,7 +232,7 @@ class StyleGuideManager:
 
     def populate_style_guides_with(
         self, options: argparse.Namespace
-    ) -> Generator[StyleGuide, None, None]:
+    ) -> Generator[StyleGuide]:
         """Generate style guides from the per-file-ignores option.
 
         :param options:
@@ -253,9 +254,7 @@ class StyleGuideManager:
         )
 
     @contextlib.contextmanager
-    def processing_file(
-        self, filename: str
-    ) -> Generator[StyleGuide, None, None]:
+    def processing_file(self, filename: str) -> Generator[StyleGuide]:
         """Record the fact that we're processing the file's results."""
         guide = self.style_guide_for(filename)
         with guide.processing_file(filename):
@@ -338,9 +337,7 @@ class StyleGuide:
         )
 
     @contextlib.contextmanager
-    def processing_file(
-        self, filename: str
-    ) -> Generator[StyleGuide, None, None]:
+    def processing_file(self, filename: str) -> Generator[StyleGuide]:
         """Record the fact that we're processing the file's results."""
         self.formatter.beginning(filename)
         yield self

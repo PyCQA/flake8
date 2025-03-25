@@ -423,10 +423,9 @@ class StyleGuide:
         error_is_selected = (
             self.should_report_error(error.code) is Decision.Selected
         )
-        is_ignored = (
-            error.is_block_ignored(disable_noqa)
-            or error.is_inline_ignored(disable_noqa)
-        )
+        is_ignored = error.is_block_ignored(
+            disable_noqa
+        ) or error.is_inline_ignored(disable_noqa)
         is_not_ignored = is_ignored is False
 
         if error_is_selected and is_not_ignored:

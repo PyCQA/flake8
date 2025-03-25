@@ -70,24 +70,74 @@ def _bi_tc(error_code, physical_line, block_start, filename, expected_result):
     [
         _bi_tc("E111", "a = 1", None, "filename-1.py", False),
         _bi_tc("E121", "a = 1", "# noqa: on E111", "filename-2.py", False),
-        _bi_tc("E121", "a = 1", "# noqa: on E111,W123,F821", "filename-3.py", False),
-        _bi_tc("E111", "a = 1", "# noqa: on E111,W123,F821", "filename-4.py", True),
-        _bi_tc("W123", "a = 1", "# noqa: on E111,W123,F821", "filename-5.py", True),
-        _bi_tc("W123", "a = 1", "# noqa: on E111, W123,F821", "filename-6.py", True),
-        _bi_tc("E111", "a = 1", "# noqa: on E11,W123,F821", "filename-7.py", True),
-        _bi_tc("E121", "a = 1", "# noqa:on E111,W123,F821", "filename-8.py", False),
-        _bi_tc("E111", "a = 1", "# noqa:on E111,W123,F821", "filename-9.py", True),
-        _bi_tc("W123", "a = 1", "# noqa:on E111,W123,F821", "filename-10.py", True),
-        _bi_tc("W123", "a = 1", "# noqa:on E111, W123,F821", "filename-11.py", True),
-        _bi_tc("E111", "a = 1", "# noqa:on E11,W123,F821", "filename-12.py", True),
-        _bi_tc("E111", "a = 1", "# noqa: on - We do not care", "filename-13.py", True),
-        _bi_tc("E111", "a = 1", "# noqa: on We do not care", "filename-14.py", True),
-        _bi_tc("E111", "a = 1", "# noqa:On We do not care", "filename-15.py", True),
+        _bi_tc(
+            "E121",
+            "a = 1",
+            "# noqa: on E111,W123,F821",
+            "filename-3.py",
+            False,
+        ),
+        _bi_tc(
+            "E111", "a = 1", "# noqa: on E111,W123,F821", "filename-4.py", True
+        ),
+        _bi_tc(
+            "W123", "a = 1", "# noqa: on E111,W123,F821", "filename-5.py", True
+        ),
+        _bi_tc(
+            "W123",
+            "a = 1",
+            "# noqa: on E111, W123,F821",
+            "filename-6.py",
+            True,
+        ),
+        _bi_tc(
+            "E111", "a = 1", "# noqa: on E11,W123,F821", "filename-7.py", True
+        ),
+        _bi_tc(
+            "E121", "a = 1", "# noqa:on E111,W123,F821", "filename-8.py", False
+        ),
+        _bi_tc(
+            "E111", "a = 1", "# noqa:on E111,W123,F821", "filename-9.py", True
+        ),
+        _bi_tc(
+            "W123", "a = 1", "# noqa:on E111,W123,F821", "filename-10.py", True
+        ),
+        _bi_tc(
+            "W123",
+            "a = 1",
+            "# noqa:on E111, W123,F821",
+            "filename-11.py",
+            True,
+        ),
+        _bi_tc(
+            "E111", "a = 1", "# noqa:on E11,W123,F821", "filename-12.py", True
+        ),
+        _bi_tc(
+            "E111",
+            "a = 1",
+            "# noqa: on - We do not care",
+            "filename-13.py",
+            True,
+        ),
+        _bi_tc(
+            "E111",
+            "a = 1",
+            "# noqa: on We do not care",
+            "filename-14.py",
+            True,
+        ),
+        _bi_tc(
+            "E111", "a = 1", "# noqa:On We do not care", "filename-15.py", True
+        ),
         _bi_tc("ABC123", "a = 1", "# noqa: on ABC123", "filename-16.py", True),
         _bi_tc("E111", "a = 1", "# noqa: on ABC123", "filename-17.py", False),
-        _bi_tc("ABC123", "a = 1", "# noqa: on ABC124", "filename-18.py", False),
+        _bi_tc(
+            "ABC123", "a = 1", "# noqa: on ABC124", "filename-18.py", False
+        ),
         _bi_tc("ABC123", "a = 1", "# noqa: ABC124", "filename-19.py", False),
-        _bi_tc("ABC123", "a = 1", "# noqa: off ABC124", "filename-19.py", False),
+        _bi_tc(
+            "ABC123", "a = 1", "# noqa: off ABC124", "filename-19.py", False
+        ),
     ],
 )
 def test_is_block_ignored(

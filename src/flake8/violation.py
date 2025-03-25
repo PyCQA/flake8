@@ -48,9 +48,12 @@ def _noqa_block_ranges(filename: str) -> Match[str] | None:
             current_block_start = line_no
             current_block_codes = codes
         elif state == "off":
-            noqa_block_ranges.append((
-                range(current_block_start, line_no), current_block_codes,
-            ))
+            noqa_block_ranges.append(
+                (
+                    range(current_block_start, line_no),
+                    current_block_codes,
+                )
+            )
             next_expected_state = "on"
             current_block_start = None
             current_block_codes = None
@@ -99,7 +102,10 @@ class Violation(NamedTuple):
             return False
 
         if codes_str is None:
-            LOG.debug("%r is ignored by a blanket ``# noqa: on ... # noqa: off`` block", self)
+            LOG.debug(
+                "%r is ignored by a blanket ``# noqa: on ... # noqa: off`` block",
+                self,
+            )
             return True
 
         codes = set(utils.parse_comma_separated_list(codes_str))
@@ -112,7 +118,9 @@ class Violation(NamedTuple):
             return True
 
         LOG.debug(
-            "%r is not ignored within ``# noqa: on %s ... # noqa: off`` block", self, codes_str
+            "%r is not ignored within ``# noqa: on %s ... # noqa: off`` block",
+            self,
+            codes_str,
         )
         return False
 

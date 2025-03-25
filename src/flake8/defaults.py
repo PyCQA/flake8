@@ -40,6 +40,25 @@ NOQA_INLINE_REGEXP = re.compile(
     re.IGNORECASE,
 )
 
+NOQA_BLOCK_REGEXP = re.compile(
+    # We're looking for items that look like this:
+    # ``# noqa: off``
+    # ``# noqa:off``
+    # ``# noqa: Off``
+    # ``# noqa:Off``
+    # ``# noqa: off E123``
+    # ``# noqa: off E123,W451,F921``
+    # ``# noqa:off E123,W451,F921``
+    # ``# NoQA: off E123,W451,F921``
+    # ``# NOQA: off E123,W451,F921``
+    # ``# NOQA:off E123,W451,F921``
+    # We do not care about the casing of ``noqa``
+    # We want the desired block state
+    # We want a comma-separated list of errors
+    r"# noqa:[\s]?(?P<state>off|on)[\s]?(?P<codes>([A-Z]+[0-9]+(?:[,\s]+)?)+)?",
+    re.IGNORECASE,
+)
+
 NOQA_FILE = re.compile(r"\s*# flake8[:=]\s*noqa", re.I)
 
 VALID_CODE_PREFIX = re.compile("^[A-Z]{1,3}[0-9]{0,3}$", re.ASCII)

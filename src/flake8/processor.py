@@ -6,10 +6,8 @@ import ast
 import functools
 import logging
 import tokenize
+from collections.abc import Generator
 from typing import Any
-from typing import Generator
-from typing import List
-from typing import Tuple
 
 from flake8 import defaults
 from flake8 import utils
@@ -24,8 +22,8 @@ SKIP_TOKENS = frozenset(
     [tokenize.NL, tokenize.NEWLINE, tokenize.INDENT, tokenize.DEDENT]
 )
 
-_LogicalMapping = List[Tuple[int, Tuple[int, int]]]
-_Logical = Tuple[List[str], List[str], _LogicalMapping]
+_LogicalMapping = list[tuple[int, tuple[int, int]]]
+_Logical = tuple[list[str], list[str], _LogicalMapping]
 
 
 class FileProcessor:
@@ -127,9 +125,7 @@ class FileProcessor:
         """Signal the beginning of an fstring."""
         self._fstring_start = lineno
 
-    def multiline_string(
-        self, token: tokenize.TokenInfo
-    ) -> Generator[str, None, None]:
+    def multiline_string(self, token: tokenize.TokenInfo) -> Generator[str]:
         """Iterate through the lines of a multiline string."""
         if token.type == FSTRING_END:  # pragma: >=3.12 cover
             start = self._fstring_start
@@ -210,7 +206,7 @@ class FileProcessor:
                 brace_offset = text.count("{") + text.count("}")
                 text = "x" * (len(text) + brace_offset)
                 end = (end[0], end[1] + brace_offset)
-            if previous_row:
+            if previous_row is not None and previous_column is not None:
                 (start_row, start_column) = start
                 if previous_row != start_row:
                     row_index = previous_row - 1
@@ -263,7 +259,7 @@ class FileProcessor:
                     )
         return ret
 
-    def generate_tokens(self) -> Generator[tokenize.TokenInfo, None, None]:
+    def generate_tokens(self) -> Generator[tokenize.TokenInfo]:
         """Tokenize the file and yield the tokens."""
         for token in tokenize.generate_tokens(self.next_line):
             if token[2][0] > self.total_lines:

@@ -5,7 +5,7 @@ import argparse
 import json
 import logging
 import time
-from typing import Sequence
+from collections.abc import Sequence
 
 import flake8
 from flake8 import checker

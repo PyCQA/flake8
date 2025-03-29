@@ -7,9 +7,9 @@ import inspect
 import itertools
 import logging
 import sys
+from collections.abc import Generator
+from collections.abc import Iterable
 from typing import Any
-from typing import Generator
-from typing import Iterable
 from typing import NamedTuple
 
 from flake8 import utils
@@ -68,7 +68,7 @@ class Plugins(NamedTuple):
     reporters: dict[str, LoadedPlugin]
     disabled: list[LoadedPlugin]
 
-    def all_plugins(self) -> Generator[LoadedPlugin, None, None]:
+    def all_plugins(self) -> Generator[LoadedPlugin]:
         """Return an iterator over all :class:`LoadedPlugin`s."""
         yield from self.checkers.tree
         yield from self.checkers.logical_line
@@ -151,7 +151,7 @@ def _flake8_plugins(
     eps: Iterable[importlib.metadata.EntryPoint],
     name: str,
     version: str,
-) -> Generator[Plugin, None, None]:
+) -> Generator[Plugin]:
     pyflakes_meta = importlib.metadata.distribution("pyflakes").metadata
     pycodestyle_meta = importlib.metadata.distribution("pycodestyle").metadata
 
@@ -173,7 +173,7 @@ def _flake8_plugins(
             yield Plugin(name, version, ep)
 
 
-def _find_importlib_plugins() -> Generator[Plugin, None, None]:
+def _find_importlib_plugins() -> Generator[Plugin]:
     # some misconfigured pythons (RHEL) have things on `sys.path` twice
     seen = set()
     for dist in importlib.metadata.distributions():
@@ -212,7 +212,7 @@ def _find_importlib_plugins() -> Generator[Plugin, None, None]:
 
 def _find_local_plugins(
     cfg: configparser.RawConfigParser,
-) -> Generator[Plugin, None, None]:
+) -> Generator[Plugin]:
     for plugin_type in ("extension", "report"):
         group = f"flake8.{plugin_type}"
         for plugin_s in utils.parse_comma_separated_list(

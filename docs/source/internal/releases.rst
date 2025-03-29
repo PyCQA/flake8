@@ -81,9 +81,9 @@ for users.
 
 Before releasing, the following tox test environments must pass:
 
-- Python 3.8 (a.k.a., ``tox -e py38``)
+- Python 3.9 (a.k.a., ``tox -e py39``)
 
-- Python 3.12 (a.k.a., ``tox -e py312``)
+- Python 3.13 (a.k.a., ``tox -e py313``)
 
 - PyPy 3 (a.k.a., ``tox -e pypy3``)
 

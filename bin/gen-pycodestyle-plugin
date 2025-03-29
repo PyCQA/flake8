@@ -3,9 +3,9 @@ from __future__ import annotations
 
 import inspect
 import os.path
+from collections.abc import Generator
 from typing import Any
 from typing import Callable
-from typing import Generator
 from typing import NamedTuple
 
 import pycodestyle
@@ -42,7 +42,7 @@ class Call(NamedTuple):
         return cls(func.__name__, inspect.isgeneratorfunction(func), params)
 
 
-def lines() -> Generator[str, None, None]:
+def lines() -> Generator[str]:
     logical = []
     physical = []
 
@@ -58,8 +58,8 @@ def lines() -> Generator[str, None, None]:
     yield "# fmt: off"
     yield "from __future__ import annotations"
     yield ""
+    yield "from collections.abc import Generator"
     yield "from typing import Any"
-    yield "from typing import Generator"
     yield ""
     imports = sorted(call.name for call in logical + physical)
     for name in imports:
@@ -71,7 +71,7 @@ def lines() -> Generator[str, None, None]:
     logical_params = {param for call in logical for param in call.params}
     for param in sorted(logical_params):
         yield f"    {param}: Any,"
-    yield ") -> Generator[tuple[int, str], None, None]:"
+    yield ") -> Generator[tuple[int, str]]:"
     yield '    """Run pycodestyle logical checks."""'
     for call in sorted(logical):
         yield call.to_src()
@@ -82,7 +82,7 @@ def lines() -> Generator[str, None, None]:
     physical_params = {param for call in physical for param in call.params}
     for param in sorted(physical_params):
         yield f"    {param}: Any,"
-    yield ") -> Generator[tuple[int, str], None, None]:"
+    yield ") -> Generator[tuple[int, str]]:"
     yield '    """Run pycodestyle physical checks."""'
     for call in sorted(physical):
         yield call.to_src()

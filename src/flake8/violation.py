@@ -4,7 +4,7 @@ from __future__ import annotations
 import functools
 import linecache
 import logging
-from typing import Match
+from re import Match
 from typing import NamedTuple
 
 from flake8 import defaults

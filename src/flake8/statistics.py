@@ -1,7 +1,7 @@
 """Statistic collection logic for Flake8."""
 from __future__ import annotations
 
-from typing import Generator
+from collections.abc import Generator
 from typing import NamedTuple
 
 from flake8.violation import Violation
@@ -36,7 +36,7 @@ class Statistics:
 
     def statistics_for(
         self, prefix: str, filename: str | None = None
-    ) -> Generator[Statistic, None, None]:
+    ) -> Generator[Statistic]:
         """Generate statistics for the prefix and filename.
 
         If you have a :class:`Statistics` object that has recorded errors,

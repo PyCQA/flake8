@@ -9,12 +9,10 @@ import multiprocessing.pool
 import operator
 import signal
 import tokenize
+from collections.abc import Generator
+from collections.abc import Sequence
 from typing import Any
-from typing import Generator
-from typing import List
 from typing import Optional
-from typing import Sequence
-from typing import Tuple
 
 from flake8 import defaults
 from flake8 import exceptions
@@ -27,7 +25,7 @@ from flake8.plugins.finder import Checkers
 from flake8.plugins.finder import LoadedPlugin
 from flake8.style_guide import StyleGuideManager
 
-Results = List[Tuple[str, int, int, str, Optional[str]]]
+Results = list[tuple[str, int, int, str, Optional[str]]]
 
 LOG = logging.getLogger(__name__)
 
@@ -53,7 +51,7 @@ _mp_options: argparse.Namespace
 @contextlib.contextmanager
 def _mp_prefork(
     plugins: Checkers, options: argparse.Namespace
-) -> Generator[None, None, None]:
+) -> Generator[None]:
     # we can save significant startup work w/ `fork` multiprocessing
     global _mp_plugins, _mp_options
     _mp_plugins, _mp_options = plugins, options

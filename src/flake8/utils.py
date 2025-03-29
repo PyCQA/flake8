@@ -11,9 +11,9 @@ import re
 import sys
 import textwrap
 import tokenize
+from collections.abc import Sequence
+from re import Pattern
 from typing import NamedTuple
-from typing import Pattern
-from typing import Sequence
 
 from flake8 import exceptions
 

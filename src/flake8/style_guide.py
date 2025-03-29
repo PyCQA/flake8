@@ -7,8 +7,8 @@ import copy
 import enum
 import functools
 import logging
-from typing import Generator
-from typing import Sequence
+from collections.abc import Generator
+from collections.abc import Sequence
 
 from flake8 import defaults
 from flake8 import statistics
@@ -225,13 +225,11 @@ class StyleGuideManager:
             *self.populate_style_guides_with(options),
         ]
 
-        self.style_guide_for = functools.lru_cache(maxsize=None)(
-            self._style_guide_for
-        )
+        self.style_guide_for = functools.cache(self._style_guide_for)
 
     def populate_style_guides_with(
         self, options: argparse.Namespace
-    ) -> Generator[StyleGuide, None, None]:
+    ) -> Generator[StyleGuide]:
         """Generate style guides from the per-file-ignores option.
 
         :param options:
@@ -253,9 +251,7 @@ class StyleGuideManager:
         )
 
     @contextlib.contextmanager
-    def processing_file(
-        self, filename: str
-    ) -> Generator[StyleGuide, None, None]:
+    def processing_file(self, filename: str) -> Generator[StyleGuide]:
         """Record the fact that we're processing the file's results."""
         guide = self.style_guide_for(filename)
         with guide.processing_file(filename):
@@ -338,9 +334,7 @@ class StyleGuide:
         )
 
     @contextlib.contextmanager
-    def processing_file(
-        self, filename: str
-    ) -> Generator[StyleGuide, None, None]:
+    def processing_file(self, filename: str) -> Generator[StyleGuide]:
         """Record the fact that we're processing the file's results."""
         self.formatter.beginning(filename)
         yield self

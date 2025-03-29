@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import sys
-from typing import Sequence
+from collections.abc import Sequence
 
 from flake8.main import application
 

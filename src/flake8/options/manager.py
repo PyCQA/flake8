@@ -5,9 +5,9 @@ import argparse
 import enum
 import functools
 import logging
+from collections.abc import Sequence
 from typing import Any
 from typing import Callable
-from typing import Sequence
 
 from flake8 import utils
 from flake8.plugins.finder import Plugins

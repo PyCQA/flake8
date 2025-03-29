@@ -16,9 +16,6 @@ jobs:
           python: pypy-3.9
           toxenv: py
         - os: ubuntu-latest
-          python: 3.8
-          toxenv: py
-        - os: ubuntu-latest
           python: 3.9
           toxenv: py
         - os: ubuntu-latest
@@ -28,11 +25,14 @@ jobs:
           python: '3.11'
           toxenv: py
         - os: ubuntu-latest
-          python: '3.12-dev'
+          python: '3.12'
+          toxenv: py
+        - os: ubuntu-latest
+          python: '3.13'
           toxenv: py
         # windows
         - os: windows-latest
-          python: 3.8
+          python: 3.9
           toxenv: py
         # misc
         - os: ubuntu-latest

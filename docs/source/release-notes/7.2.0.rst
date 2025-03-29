@@ -1,0 +1,19 @@
+7.2.0 -- 2025-03-29
+-------------------
+
+You can view the `7.2.0 milestone`_ on GitHub for more details.
+
+New Dependency Information
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- pycodestyle has been updated to >= 2.13.0, < 2.14.0 (See also :pull:`1974`).
+- pyflakes has been updated to >= 3.3.0, < 3.4.0 (See also :pull:`1974`).
+
+Features
+~~~~~~~~
+
+- Require python >= 3.9 (See also :pull:`1973`).
+
+.. all links
+.. _7.2.0 milestone:
+    https://github.com/PyCQA/flake8/milestone/53

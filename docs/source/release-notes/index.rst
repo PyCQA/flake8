@@ -13,6 +13,7 @@ with the newest releases first.
    7.1.0
    7.1.1
    7.1.2
+   7.2.0
 
 6.x Release Series
 ==================

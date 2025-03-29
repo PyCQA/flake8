@@ -55,6 +55,7 @@ FLAKE8_PYFLAKES_CODES = {
     "UndefinedName": "F821",
     "UndefinedExport": "F822",
     "UndefinedLocal": "F823",
+    "UnusedIndirectAssignment": "F824",
     "DuplicateArgument": "F831",
     "UnusedVariable": "F841",
     "UnusedAnnotation": "F842",

@@ -102,6 +102,9 @@ generates its own :term:`error code`\ s for ``pyflakes``:
 +------+---------------------------------------------------------------------+
 | F823 | local variable ``name`` ... referenced before assignment            |
 +------+---------------------------------------------------------------------+
+| F824 | ``global name`` / ``nonlocal name`` is unused: name is never        |
+|      | assigned in scope                                                   |
++------+---------------------------------------------------------------------+
 | F831 | duplicate argument ``name`` in function definition                  |
 +------+---------------------------------------------------------------------+
 | F841 | local variable ``name`` is assigned to but never used               |

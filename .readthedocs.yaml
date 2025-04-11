@@ -8,3 +8,5 @@ python:
   install:
   - path: .
   - requirements: docs/source/requirements.txt
+sphinx:
+  configuration: docs/source/conf.py

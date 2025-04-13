@@ -1,4 +1,5 @@
 """Module containing the logic for our debugging logic."""
+
 from __future__ import annotations
 
 import platform

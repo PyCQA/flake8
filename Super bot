@@ -1,0 +1,43 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+import time
+
+# SETUP - Replace with your faucet email and password
+EMAIL = "baileyjames757@gmail.com"
+PASSWORD = "fattyoner126"
+
+def claim_freebitco():
+    # Setup Chrome browser in headless mode (no window)
+    options = Options()
+    options.add_argument("--headless")
+    driver = webdriver.Chrome(options=options)
+
+    try:
+        # Go to the site
+        driver.get("https://freebitco.in")
+        time.sleep(3)
+
+        # Click login link
+        login_link = driver.find_element(By.LINK_TEXT, "Login")
+        login_link.click()
+        time.sleep(2)
+
+        # Enter login info
+        driver.find_element(By.NAME, "baileyjames757@gmail.com").send_keys(EMAIL)
+        driver.find_element(By.NAME, "fattyoner126").send_keys(PASSWORD)
+        driver.find_element(By.ID, "login_button").click()
+        time.sleep(5)
+
+        # Claim faucet
+        claim_button = driver.find_element(By.ID, "free_play_form_button")
+        claim_button.click()
+        print("Faucet claimed successfully!")
+
+    except Exception as e:
+        print("Something went wrong:", e)
+
+    driver.quit()
+
+# Run the faucet claim
+claim_freebitco()

@@ -19,6 +19,7 @@ from flake8 import exceptions
 from flake8 import processor
 from flake8 import utils
 from flake8._compat import FSTRING_START
+from flake8._compat import TSTRING_START
 from flake8.discover_files import expand_paths
 from flake8.options.parse_args import parse_args
 from flake8.plugins.finder import Checkers
@@ -554,6 +555,8 @@ class FileChecker:
         assert self.processor is not None
         if token.type == FSTRING_START:  # pragma: >=3.12 cover
             self.processor.fstring_start(token.start[0])
+        elif token.type == TSTRING_START:  # pragma: >=3.14 cover
+            self.processor.tstring_start(token.start[0])
         # a newline token ends a single physical line.
         elif processor.is_eol_token(token):
             # if the file does not end with a newline, the NEWLINE

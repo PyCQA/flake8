@@ -296,3 +296,36 @@ t.py:1:1: T001 "f'xxxxxxxxxxxxxxxxxxxxxxxx'"
 """
     out, err = capsys.readouterr()
     assert out == expected
+
+
+@pytest.mark.xfail(sys.version_info < (3, 14), reason="3.14+")
+def test_tstring_logical_line(tmpdir, capsys):  # pragma: >=3.14 cover
+    cfg_s = f"""\
+[flake8]
+extend-ignore = F
+[flake8:local-plugins]
+extension =
+    T = {yields_logical_line.__module__}:{yields_logical_line.__name__}
+"""
+
+    cfg = tmpdir.join("tox.ini")
+    cfg.write(cfg_s)
+
+    src = """\
+t'''
+hello {world}
+'''
+t'{{"{hello}": "{world}"}}'
+"""
+    t_py = tmpdir.join("t.py")
+    t_py.write_binary(src.encode())
+
+    with tmpdir.as_cwd():
+        assert main(("t.py", "--config", str(cfg))) == 1
+
+    expected = """\
+t.py:1:1: T001 "t'''xxxxxxx{world}x'''"
+t.py:4:1: T001 "t'xxx{hello}xxxx{world}xxx'"
+"""
+    out, err = capsys.readouterr()
+    assert out == expected

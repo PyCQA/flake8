@@ -13,6 +13,8 @@ from flake8 import defaults
 from flake8 import utils
 from flake8._compat import FSTRING_END
 from flake8._compat import FSTRING_MIDDLE
+from flake8._compat import TSTRING_END
+from flake8._compat import TSTRING_MIDDLE
 from flake8.plugins.finder import LoadedPlugin
 
 LOG = logging.getLogger(__name__)
@@ -113,7 +115,7 @@ class FileProcessor:
         self.verbose = options.verbose
         #: Statistics dictionary
         self.statistics = {"logical lines": 0}
-        self._fstring_start = -1
+        self._fstring_start = self._tstring_start = -1
 
     @functools.cached_property
     def file_tokens(self) -> list[tokenize.TokenInfo]:
@@ -125,10 +127,16 @@ class FileProcessor:
         """Signal the beginning of an fstring."""
         self._fstring_start = lineno
 
+    def tstring_start(self, lineno: int) -> None:  # pragma: >=3.14 cover
+        """Signal the beginning of an tstring."""
+        self._tstring_start = lineno
+
     def multiline_string(self, token: tokenize.TokenInfo) -> Generator[str]:
         """Iterate through the lines of a multiline string."""
         if token.type == FSTRING_END:  # pragma: >=3.12 cover
             start = self._fstring_start
+        elif token.type == TSTRING_END:  # pragma: >=3.14 cover
+            start = self._tstring_start
         else:
             start = token.start[0]
 
@@ -198,7 +206,10 @@ class FileProcessor:
                 continue
             if token_type == tokenize.STRING:
                 text = mutate_string(text)
-            elif token_type == FSTRING_MIDDLE:  # pragma: >=3.12 cover
+            elif token_type in {
+                FSTRING_MIDDLE,
+                TSTRING_MIDDLE,
+            }:  # pragma: >=3.12 cover  # noqa: E501
                 # A curly brace in an FSTRING_MIDDLE token must be an escaped
                 # curly brace. Both 'text' and 'end' will account for the
                 # escaped version of the token (i.e. a single brace) rather
@@ -382,7 +393,7 @@ def is_eol_token(token: tokenize.TokenInfo) -> bool:
 
 def is_multiline_string(token: tokenize.TokenInfo) -> bool:
     """Check if this is a multiline string."""
-    return token.type == FSTRING_END or (
+    return token.type in {FSTRING_END, TSTRING_END} or (
         token.type == tokenize.STRING and "\n" in token.string
     )
 

@@ -1,4 +1,5 @@
 """Functions related to finding and loading plugins."""
+
 from __future__ import annotations
 
 import configparser

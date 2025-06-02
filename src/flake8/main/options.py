@@ -1,4 +1,5 @@
 """Contains the logic for all of the default options for Flake8."""
+
 from __future__ import annotations
 
 import argparse

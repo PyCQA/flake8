@@ -1,4 +1,5 @@
 """Tests for the Manager object for FileCheckers."""
+
 from __future__ import annotations
 
 import errno

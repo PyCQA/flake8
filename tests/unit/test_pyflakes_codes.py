@@ -1,4 +1,5 @@
 """Tests of pyflakes monkey patches."""
+
 from __future__ import annotations
 
 import ast

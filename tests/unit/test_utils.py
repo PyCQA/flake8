@@ -1,4 +1,5 @@
 """Tests for flake8's utils module."""
+
 from __future__ import annotations
 
 import io

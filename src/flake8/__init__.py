@@ -9,6 +9,7 @@ This module
 .. autofunction:: flake8.configure_logging
 
 """
+
 from __future__ import annotations
 
 import logging

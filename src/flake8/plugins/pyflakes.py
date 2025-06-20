@@ -36,6 +36,7 @@ FLAKE8_PYFLAKES_CODES = {
     "StringDotFormatMissingArgument": "F524",
     "StringDotFormatMixingAutomatic": "F525",
     "FStringMissingPlaceholders": "F541",
+    "TStringMissingPlaceholders": "F542",
     "MultiValueRepeatedKeyLiteral": "F601",
     "MultiValueRepeatedKeyVariable": "F602",
     "TooManyExpressionsInStarredAssignment": "F621",

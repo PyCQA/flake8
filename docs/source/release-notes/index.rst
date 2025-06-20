@@ -9,18 +9,19 @@ with the newest releases first.
 ==================
 
 .. toctree::
-   7.0.0
-   7.1.0
-   7.1.1
-   7.1.2
+   7.3.0
    7.2.0
+   7.1.2
+   7.1.1
+   7.1.0
+   7.0.0
 
 6.x Release Series
 ==================
 
 .. toctree::
-   6.0.0
    6.1.0
+   6.0.0
 
 5.x Release Series
 ==================

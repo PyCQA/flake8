@@ -45,8 +45,7 @@ SERIAL_RETRY_ERRNOS = {
     # noise in diffs.
 }
 
-_mp_plugins: Checkers
-_mp_options: argparse.Namespace
+_mp: tuple[Checkers, argparse.Namespace] | None = None
 
 
 @contextlib.contextmanager
@@ -54,31 +53,31 @@ def _mp_prefork(
     plugins: Checkers, options: argparse.Namespace
 ) -> Generator[None]:
     # we can save significant startup work w/ `fork` multiprocessing
-    global _mp_plugins, _mp_options
-    _mp_plugins, _mp_options = plugins, options
+    global _mp
+    _mp = plugins, options
     try:
         yield
     finally:
-        del _mp_plugins, _mp_options
+        _mp = None
 
 
 def _mp_init(argv: Sequence[str]) -> None:
-    global _mp_plugins, _mp_options
+    global _mp
 
     # Ensure correct signaling of ^C using multiprocessing.Pool.
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
-    try:
-        # for `fork` this'll already be set
-        _mp_plugins, _mp_options  # noqa: B018
-    except NameError:
+    # for `fork` this'll already be set
+    if _mp is None:
         plugins, options = parse_args(argv)
-        _mp_plugins, _mp_options = plugins.checkers, options
+        _mp = plugins.checkers, options
 
 
 def _mp_run(filename: str) -> tuple[str, Results, dict[str, int]]:
+    assert _mp is not None, _mp
+    plugins, options = _mp
     return FileChecker(
-        filename=filename, plugins=_mp_plugins, options=_mp_options
+        filename=filename, plugins=plugins, options=options
     ).run_checks()
 
 

@@ -41,9 +41,11 @@ def test_oserrors_are_reraised():
     err = OSError(errno.EAGAIN, "Ominous message")
     with mock.patch("_multiprocessing.SemLock", side_effect=err):
         manager = _parallel_checker_manager()
-        with mock.patch.object(manager, "run_serial") as serial:
-            with pytest.raises(OSError):
-                manager.run()
+        with (
+            mock.patch.object(manager, "run_serial") as serial,
+            pytest.raises(OSError),
+        ):
+            manager.run()
     assert serial.call_count == 0
 
 

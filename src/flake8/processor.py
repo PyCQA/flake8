@@ -280,7 +280,7 @@ class FileProcessor:
 
     def _noqa_line_range(self, min_line: int, max_line: int) -> dict[int, str]:
         line_range = range(min_line, max_line + 1)
-        joined = "".join(self.lines[min_line - 1 : max_line])
+        joined = "".join(self.lines[min_line - 1: max_line])
         return dict.fromkeys(line_range, joined)
 
     @functools.cached_property
@@ -388,7 +388,7 @@ class FileProcessor:
 
 def is_eol_token(token: tokenize.TokenInfo) -> bool:
     """Check if the token is an end-of-line token."""
-    return token[0] in NEWLINE or token[4][token[3][1] :].lstrip() == "\\\n"
+    return token[0] in NEWLINE or token[4][token[3][1]:].lstrip() == "\\\n"
 
 
 def is_multiline_string(token: tokenize.TokenInfo) -> bool:

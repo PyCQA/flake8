@@ -97,7 +97,7 @@ def mock_file_checker_with_plugin(plugin_target):
 
     # Prevent it from reading lines from stdin or somewhere else
     with mock.patch(
-        "flake8.processor.FileProcessor.read_lines", return_value=["Line 1"]
+        "flake8.processor.FileProcessor.read_lines", return_value=["Line 1"],
     ):
         file_checker = checker.FileChecker(
             filename="-",
@@ -325,12 +325,12 @@ def test_handling_syntaxerrors_across_pythons():
     if sys.version_info < (3, 10):  # pragma: no cover (<3.10)
         # Python 3.9 or older
         err = SyntaxError(
-            "invalid syntax", ("<unknown>", 2, 5, "bad python:\n")
+            "invalid syntax", ("<unknown>", 2, 5, "bad python:\n"),
         )
         expected = (2, 4)
     else:  # pragma: no cover (3.10+)
         err = SyntaxError(
-            "invalid syntax", ("<unknown>", 2, 1, "bad python:\n", 2, 11)
+            "invalid syntax", ("<unknown>", 2, 1, "bad python:\n", 2, 11),
         )
         expected = (2, 1)
     file_checker = checker.FileChecker(

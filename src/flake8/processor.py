@@ -21,7 +21,7 @@ LOG = logging.getLogger(__name__)
 NEWLINE = frozenset([tokenize.NL, tokenize.NEWLINE])
 
 SKIP_TOKENS = frozenset(
-    [tokenize.NL, tokenize.NEWLINE, tokenize.INDENT, tokenize.DEDENT]
+    [tokenize.NL, tokenize.NEWLINE, tokenize.INDENT, tokenize.DEDENT],
 )
 
 _LogicalMapping = list[tuple[int, tuple[int, int]]]
@@ -173,7 +173,7 @@ class FileProcessor:
         """Update the checker_state attribute for the plugin."""
         if "checker_state" in plugin.parameters:
             self.checker_state = self._checker_states.setdefault(
-                plugin.entry_name, {}
+                plugin.entry_name, {},
             )
 
     def next_logical_line(self) -> None:
@@ -367,7 +367,7 @@ class FileProcessor:
         elif any(defaults.NOQA_FILE.search(line) for line in self.lines):
             LOG.warning(
                 "Detected `flake8: noqa` on line with code. To ignore an "
-                "error on a line use `noqa` instead."
+                "error on a line use `noqa` instead.",
             )
             return False
         else:

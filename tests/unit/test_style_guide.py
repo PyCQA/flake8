@@ -36,7 +36,7 @@ def test_handle_error_does_not_raise_type_errors():
     )
 
     assert 1 == guide.handle_error(
-        "T111", "file.py", 1, 1, "error found", "a = 1"
+        "T111", "file.py", 1, 1, "error found", "a = 1",
     )
 
 
@@ -110,7 +110,7 @@ def test_style_guide_manager_pre_file_ignores_parsing():
     ],
 )
 def test_style_guide_manager_pre_file_ignores(
-    ignores, violation, filename, handle_error_return
+    ignores, violation, filename, handle_error_return,
 ):
     """Verify how the StyleGuideManager creates a default style guide."""
     formatter = mock.create_autospec(base.BaseFormatter, instance=True)

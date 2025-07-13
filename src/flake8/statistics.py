@@ -35,7 +35,7 @@ class Statistics:
         self._store[key].increment()
 
     def statistics_for(
-        self, prefix: str, filename: str | None = None
+        self, prefix: str, filename: str | None = None,
     ) -> Generator[Statistic]:
         """Generate statistics for the prefix and filename.
 
@@ -108,7 +108,7 @@ class Statistic:
     """
 
     def __init__(
-        self, error_code: str, filename: str, message: str, count: int
+        self, error_code: str, filename: str, message: str, count: int,
     ) -> None:
         """Initialize our Statistic."""
         self.error_code = error_code

@@ -83,8 +83,8 @@ class Plugins(NamedTuple):
                     f"{loaded.plugin.package}: {loaded.plugin.version}"
                     for loaded in self.all_plugins()
                     if loaded.plugin.package not in {"flake8", "local"}
-                }
-            )
+                },
+            ),
         )
 
 
@@ -167,7 +167,7 @@ def _flake8_plugins(
             # ideally pycodestyle's plugin entrypoints would exactly represent
             # the codes they produce...
             yield Plugin(
-                pycodestyle_meta["name"], pycodestyle_meta["version"], ep
+                pycodestyle_meta["name"], pycodestyle_meta["version"], ep,
             )
         else:
             yield Plugin(name, version, ep)
@@ -240,7 +240,7 @@ def _check_required_plugins(
             f"required plugins were not installed!\n"
             f"- installed: {', '.join(sorted(plugin_names))}\n"
             f"- expected: {', '.join(sorted(expected_names))}\n"
-            f"- missing: {', '.join(sorted(missing_plugins))}"
+            f"- missing: {', '.join(sorted(missing_plugins))}",
         )
 
 
@@ -338,7 +338,7 @@ def _classify_plugins(
         if not VALID_CODE_PREFIX.match(loaded.entry_name):
             raise ExecutionError(
                 f"plugin code for `{loaded.display_name}` does not match "
-                f"{VALID_CODE_PREFIX.pattern}"
+                f"{VALID_CODE_PREFIX.pattern}",
             )
 
     return Plugins(

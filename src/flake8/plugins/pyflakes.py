@@ -72,7 +72,7 @@ class FlakesChecker(pyflakes.checker.Checker):
     def __init__(self, tree: ast.AST, filename: str) -> None:
         """Initialize the PyFlakes plugin with an AST tree and filename."""
         super().__init__(
-            tree, filename=filename, withDoctest=self.with_doctest
+            tree, filename=filename, withDoctest=self.with_doctest,
         )
 
     @classmethod

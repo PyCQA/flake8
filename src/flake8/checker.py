@@ -50,7 +50,7 @@ _mp: tuple[Checkers, argparse.Namespace] | None = None
 
 @contextlib.contextmanager
 def _mp_prefork(
-    plugins: Checkers, options: argparse.Namespace
+    plugins: Checkers, options: argparse.Namespace,
 ) -> Generator[None]:
     # we can save significant startup work w/ `fork` multiprocessing
     global _mp
@@ -77,7 +77,7 @@ def _mp_run(filename: str) -> tuple[str, Results, dict[str, int]]:
     assert _mp is not None, _mp
     plugins, options = _mp
     return FileChecker(
-        filename=filename, plugins=plugins, options=options
+        filename=filename, plugins=plugins, options=options,
     ).run_checks()
 
 
@@ -137,7 +137,7 @@ class Manager:
         if utils.is_using_stdin(self.options.filenames):
             LOG.warning(
                 "The --jobs option is not compatible with supplying "
-                "input using - . Ignoring --jobs arguments."
+                "input using - . Ignoring --jobs arguments.",
             )
             return 0
 
@@ -252,7 +252,7 @@ class Manager:
                 stdin_display_name=self.options.stdin_display_name,
                 filename_patterns=self.options.filename,
                 exclude=self.exclude,
-            )
+            ),
         )
         self.jobs = min(len(self.filenames), self.jobs)
 
@@ -332,11 +332,11 @@ class FileChecker:
         assert self.processor is not None, self.filename
         try:
             params = self.processor.keyword_arguments_for(
-                plugin.parameters, arguments
+                plugin.parameters, arguments,
             )
         except AttributeError as ae:
             raise exceptions.PluginRequestedUnknownParameters(
-                plugin_name=plugin.display_name, exception=ae
+                plugin_name=plugin.display_name, exception=ae,
             )
         try:
             return plugin.obj(**arguments, **params)
@@ -548,7 +548,7 @@ class FileChecker:
             self.run_logical_checks()
 
     def check_physical_eol(
-        self, token: tokenize.TokenInfo, prev_physical: str
+        self, token: tokenize.TokenInfo, prev_physical: str,
     ) -> None:
         """Run physical checks if and only if it is at the end of the line."""
         assert self.processor is not None
@@ -598,7 +598,7 @@ def _try_initialize_processpool(
 
 
 def find_offset(
-    offset: int, mapping: processor._LogicalMapping
+    offset: int, mapping: processor._LogicalMapping,
 ) -> tuple[int, int]:
     """Find the offset tuple for a single offset."""
     if isinstance(offset, tuple):

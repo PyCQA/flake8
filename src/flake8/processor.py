@@ -21,7 +21,7 @@ LOG = logging.getLogger(__name__)
 NEWLINE = frozenset([tokenize.NL, tokenize.NEWLINE])
 
 SKIP_TOKENS = frozenset(
-    [tokenize.NL, tokenize.NEWLINE, tokenize.INDENT, tokenize.DEDENT]
+    [tokenize.NL, tokenize.NEWLINE, tokenize.INDENT, tokenize.DEDENT],
 )
 
 _LogicalMapping = list[tuple[int, tuple[int, int]]]
@@ -173,7 +173,7 @@ class FileProcessor:
         """Update the checker_state attribute for the plugin."""
         if "checker_state" in plugin.parameters:
             self.checker_state = self._checker_states.setdefault(
-                plugin.entry_name, {}
+                plugin.entry_name, {},
             )
 
     def next_logical_line(self) -> None:
@@ -280,7 +280,7 @@ class FileProcessor:
 
     def _noqa_line_range(self, min_line: int, max_line: int) -> dict[int, str]:
         line_range = range(min_line, max_line + 1)
-        joined = "".join(self.lines[min_line - 1 : max_line])
+        joined = "".join(self.lines[min_line - 1: max_line])
         return dict.fromkeys(line_range, joined)
 
     @functools.cached_property
@@ -367,7 +367,7 @@ class FileProcessor:
         elif any(defaults.NOQA_FILE.search(line) for line in self.lines):
             LOG.warning(
                 "Detected `flake8: noqa` on line with code. To ignore an "
-                "error on a line use `noqa` instead."
+                "error on a line use `noqa` instead.",
             )
             return False
         else:
@@ -388,7 +388,7 @@ class FileProcessor:
 
 def is_eol_token(token: tokenize.TokenInfo) -> bool:
     """Check if the token is an end-of-line token."""
-    return token[0] in NEWLINE or token[4][token[3][1] :].lstrip() == "\\\n"
+    return token[0] in NEWLINE or token[4][token[3][1]:].lstrip() == "\\\n"
 
 
 def is_multiline_string(token: tokenize.TokenInfo) -> bool:

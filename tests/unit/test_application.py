@@ -36,7 +36,7 @@ def application():
     ],
 )
 def test_application_exit_code(
-    result_count, catastrophic, exit_zero, value, application
+    result_count, catastrophic, exit_zero, value, application,
 ):
     """Verify Application.exit_code returns the correct value."""
     application.result_count = result_count

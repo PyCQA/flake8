@@ -314,7 +314,7 @@ def test_cli_config_option_respected(tmp_path):
         """\
 [flake8]
 ignore = F401
-"""
+""",
     )
 
     py_file = tmp_path / "t.py"
@@ -330,7 +330,7 @@ def test_cli_isolated_overrides_config_option(tmp_path):
         """\
 [flake8]
 ignore = F401
-"""
+""",
     )
 
     py_file = tmp_path / "t.py"
@@ -364,7 +364,7 @@ def test_output_file(tmpdir, capsys):
 
 def test_early_keyboard_interrupt_does_not_crash(capsys):
     with mock.patch.object(
-        config, "load_config", side_effect=KeyboardInterrupt
+        config, "load_config", side_effect=KeyboardInterrupt,
     ):
         assert cli.main(["does-not-exist"]) == 1
     out, err = capsys.readouterr()

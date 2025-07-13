@@ -66,5 +66,5 @@ def configure_logging(
     LOG.addHandler(handler)
     LOG.setLevel(log_level)
     LOG.debug(
-        "Added a %s logging handler to logger root at %s", filename, __name__
+        "Added a %s logging handler to logger root at %s", filename, __name__,
     )

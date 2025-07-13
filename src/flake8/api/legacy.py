@@ -135,7 +135,7 @@ class StyleGuide:
                     stdin_display_name=self.options.stdin_display_name,
                     filename_patterns=self.options.filename,
                     exclude=self.options.exclude,
-                )
+                ),
             )
             return not paths
 
@@ -153,7 +153,7 @@ class StyleGuide:
         if not issubclass(reporter, formatter.BaseFormatter):
             raise ValueError(
                 "Report should be subclass of "
-                "flake8.formatter.BaseFormatter."
+                "flake8.formatter.BaseFormatter.",
             )
         self._application.formatter = reporter(self.options)
         self._application.guide = None

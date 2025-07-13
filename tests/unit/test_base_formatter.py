@@ -50,7 +50,7 @@ def test_format_needs_to_be_implemented():
     formatter = base.BaseFormatter(options())
     with pytest.raises(NotImplementedError):
         formatter.format(
-            Violation("A000", "file.py", 1, 1, "error text", None)
+            Violation("A000", "file.py", 1, 1, "error text", None),
         )
 
 
@@ -59,7 +59,7 @@ def test_show_source_returns_nothing_when_not_showing_source():
     formatter = base.BaseFormatter(options(show_source=False))
     assert (
         formatter.show_source(
-            Violation("A000", "file.py", 1, 1, "error text", "line")
+            Violation("A000", "file.py", 1, 1, "error text", "line"),
         )
         == ""
     )
@@ -70,7 +70,7 @@ def test_show_source_returns_nothing_when_there_is_source():
     formatter = base.BaseFormatter(options(show_source=True))
     assert (
         formatter.show_source(
-            Violation("A000", "file.py", 1, 1, "error text", None)
+            Violation("A000", "file.py", 1, 1, "error text", None),
         )
         == ""
     )

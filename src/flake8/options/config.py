@@ -78,7 +78,7 @@ def load_config(
     if config is not None:
         if not cfg.read(config, encoding="UTF-8"):
             raise exceptions.ExecutionError(
-                f"The specified config file does not exist: {config}"
+                f"The specified config file does not exist: {config}",
             )
         cfg_dir = os.path.dirname(config)
     else:
@@ -89,7 +89,7 @@ def load_config(
     for filename in extra:
         if not cfg.read(filename, encoding="UTF-8"):
             raise exceptions.ExecutionError(
-                f"The specified config file does not exist: {filename}"
+                f"The specified config file does not exist: {filename}",
             )
 
     return cfg, cfg_dir
@@ -131,7 +131,7 @@ def parse_config(
                     raise ValueError(
                         f"Error code {error_code!r} "
                         f"supplied to {option_name!r} option "
-                        f"does not match {VALID_CODE_PREFIX.pattern!r}"
+                        f"does not match {VALID_CODE_PREFIX.pattern!r}",
                     )
 
         assert option.config_name is not None

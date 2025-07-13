@@ -200,7 +200,9 @@ def test_flake8_plugins(flake8_dist, mock_distribution):
             "flake8",
             "9001",
             importlib.metadata.EntryPoint(
-                "default", "flake8.formatting.default:Default", "flake8.report",
+                "default",
+                 "flake8.formatting.default:Default", 
+                "flake8.report",
             ),
         ),
         finder.Plugin(
@@ -304,7 +306,9 @@ unrelated = unrelated:main
             "flake8",
             "9001",
             importlib.metadata.EntryPoint(
-                "default", "flake8.formatting.default:Default", "flake8.report",
+                "default", 
+                "flake8.formatting.default:Default", 
+                "flake8.report",
             ),
         ),
         finder.Plugin(
@@ -485,7 +489,9 @@ def test_find_plugins(
             "flake8",
             "9001",
             importlib.metadata.EntryPoint(
-                "default", "flake8.formatting.default:Default", "flake8.report",
+                "default", 
+                "flake8.formatting.default:Default", 
+                "flake8.report",
             ),
         ),
         finder.Plugin(

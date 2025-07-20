@@ -14,7 +14,7 @@ def information(version: str, plugins: Plugins) -> dict[str, Any]:
             (loaded.plugin.package, loaded.plugin.version)
             for loaded in plugins.all_plugins()
             if loaded.plugin.package not in {"flake8", "local"}
-        }
+        },
     )
     return {
         "version": version,

@@ -218,7 +218,7 @@ class StyleGuideManager:
         self.decider = decider or DecisionEngine(options)
         self.style_guides: list[StyleGuide] = []
         self.default_style_guide = StyleGuide(
-            options, formatter, self.stats, decider=decider
+            options, formatter, self.stats, decider=decider,
         )
         self.style_guides = [
             self.default_style_guide,
@@ -228,7 +228,7 @@ class StyleGuideManager:
         self.style_guide_for = functools.cache(self._style_guide_for)
 
     def populate_style_guides_with(
-        self, options: argparse.Namespace
+        self, options: argparse.Namespace,
     ) -> Generator[StyleGuide]:
         """Generate style guides from the per-file-ignores option.
 
@@ -240,7 +240,7 @@ class StyleGuideManager:
         per_file = utils.parse_files_to_codes_mapping(options.per_file_ignores)
         for filename, violations in per_file:
             yield self.default_style_guide.copy(
-                filename=filename, extend_ignore_with=violations
+                filename=filename, extend_ignore_with=violations,
             )
 
     def _style_guide_for(self, filename: str) -> StyleGuide:
@@ -288,7 +288,7 @@ class StyleGuideManager:
         """
         guide = self.style_guide_for(filename)
         return guide.handle_error(
-            code, filename, line_number, column_number, text, physical_line
+            code, filename, line_number, column_number, text, physical_line,
         )
 
 
@@ -330,7 +330,7 @@ class StyleGuide:
         options.extend_ignore = options.extend_ignore or []
         options.extend_ignore.extend(extend_ignore_with or [])
         return StyleGuide(
-            options, self.formatter, self.stats, filename=filename
+            options, self.formatter, self.stats, filename=filename,
         )
 
     @contextlib.contextmanager

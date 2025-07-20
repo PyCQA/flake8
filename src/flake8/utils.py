@@ -23,7 +23,7 @@ NORMALIZE_PACKAGE_NAME_RE = re.compile(r"[-_.]+")
 
 
 def parse_comma_separated_list(
-    value: str, regexp: Pattern[str] = COMMA_SEPARATED_LIST_RE
+    value: str, regexp: Pattern[str] = COMMA_SEPARATED_LIST_RE,
 ) -> list[str]:
     """Parse a comma-separated list.
 
@@ -115,7 +115,7 @@ def parse_files_to_codes_mapping(  # noqa: C901
             f"Expected `per-file-ignores` to be a mapping from file exclude "
             f"patterns to ignore codes.\n\n"
             f"Configured `per-file-ignores` setting:\n\n"
-            f"{textwrap.indent(value.strip(), '    ')}"
+            f"{textwrap.indent(value.strip(), '    ')}",
         )
 
     for token in _tokenize_files_to_codes_mapping(value):
@@ -150,7 +150,7 @@ def parse_files_to_codes_mapping(  # noqa: C901
 
 
 def normalize_paths(
-    paths: Sequence[str], parent: str = os.curdir
+    paths: Sequence[str], parent: str = os.curdir,
 ) -> list[str]:
     """Normalize a list of paths relative to a parent directory.
 

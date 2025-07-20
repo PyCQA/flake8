@@ -122,7 +122,7 @@ def test_parse_args_handles_comma_separated_defaults(optmanager):
     assert optmanager.config_options_dict == {}
 
     optmanager.add_option(
-        "--exclude", default="E123,W234", comma_separated_list=True
+        "--exclude", default="E123,W234", comma_separated_list=True,
     )
 
     options = optmanager.parse_args([])
@@ -135,7 +135,7 @@ def test_parse_args_handles_comma_separated_lists(optmanager):
     assert optmanager.config_options_dict == {}
 
     optmanager.add_option(
-        "--exclude", default="E123,W234", comma_separated_list=True
+        "--exclude", default="E123,W234", comma_separated_list=True,
     )
 
     options = optmanager.parse_args(["--exclude", "E201,W111,F280"])
@@ -148,11 +148,11 @@ def test_parse_args_normalize_paths(optmanager):
     assert optmanager.config_options_dict == {}
 
     optmanager.add_option(
-        "--extra-config", normalize_paths=True, comma_separated_list=True
+        "--extra-config", normalize_paths=True, comma_separated_list=True,
     )
 
     options = optmanager.parse_args(
-        ["--extra-config", "../config.ini,tox.ini,flake8/some-other.cfg"]
+        ["--extra-config", "../config.ini,tox.ini,flake8/some-other.cfg"],
     )
     assert options.extra_config == [
         os.path.abspath("../config.ini"),

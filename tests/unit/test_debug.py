@@ -14,7 +14,7 @@ def test_debug_information():
                 pkg,
                 version,
                 importlib.metadata.EntryPoint(
-                    ep_name, "dne:dne", "flake8.extension"
+                    ep_name, "dne:dne", "flake8.extension",
                 ),
             ),
             None,

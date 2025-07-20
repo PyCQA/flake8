@@ -42,7 +42,7 @@ def test_plugins_all_plugins():
     logical_line_plugin = _loaded(parameters={"logical_line": True})
     physical_line_plugin = _loaded(parameters={"physical_line": True})
     report_plugin = _loaded(
-        plugin=_plugin(ep=_ep(name="R", group="flake8.report"))
+        plugin=_plugin(ep=_ep(name="R", group="flake8.report")),
     )
 
     plugins = finder.Plugins(
@@ -200,14 +200,16 @@ def test_flake8_plugins(flake8_dist, mock_distribution):
             "flake8",
             "9001",
             importlib.metadata.EntryPoint(
-                "default", "flake8.formatting.default:Default", "flake8.report"
+                "default",
+                "flake8.formatting.default:Default",
+                "flake8.report",
             ),
         ),
         finder.Plugin(
             "flake8",
             "9001",
             importlib.metadata.EntryPoint(
-                "pylint", "flake8.formatting.default:Pylint", "flake8.report"
+                "pylint", "flake8.formatting.default:Pylint", "flake8.report",
             ),
         ),
     }
@@ -270,7 +272,7 @@ unrelated = unrelated:main
             "flake8-foo",
             "1.2.3",
             importlib.metadata.EntryPoint(
-                "Q", "flake8_foo:Plugin", "flake8.extension"
+                "Q", "flake8_foo:Plugin", "flake8.extension",
             ),
         ),
         finder.Plugin(
@@ -304,21 +306,23 @@ unrelated = unrelated:main
             "flake8",
             "9001",
             importlib.metadata.EntryPoint(
-                "default", "flake8.formatting.default:Default", "flake8.report"
+                "default",
+                "flake8.formatting.default:Default",
+                "flake8.report",
             ),
         ),
         finder.Plugin(
             "flake8",
             "9001",
             importlib.metadata.EntryPoint(
-                "pylint", "flake8.formatting.default:Pylint", "flake8.report"
+                "pylint", "flake8.formatting.default:Pylint", "flake8.report",
             ),
         ),
         finder.Plugin(
             "flake8-foo",
             "1.2.3",
             importlib.metadata.EntryPoint(
-                "foo", "flake8_foo:Formatter", "flake8.report"
+                "foo", "flake8_foo:Formatter", "flake8.report",
             ),
         ),
     }
@@ -485,28 +489,30 @@ def test_find_plugins(
             "flake8",
             "9001",
             importlib.metadata.EntryPoint(
-                "default", "flake8.formatting.default:Default", "flake8.report"
+                "default",
+                "flake8.formatting.default:Default",
+                "flake8.report",
             ),
         ),
         finder.Plugin(
             "flake8",
             "9001",
             importlib.metadata.EntryPoint(
-                "pylint", "flake8.formatting.default:Pylint", "flake8.report"
+                "pylint", "flake8.formatting.default:Pylint", "flake8.report",
             ),
         ),
         finder.Plugin(
             "flake8-foo",
             "1.2.3",
             importlib.metadata.EntryPoint(
-                "Q", "flake8_foo:Plugin", "flake8.extension"
+                "Q", "flake8_foo:Plugin", "flake8.extension",
             ),
         ),
         finder.Plugin(
             "flake8-foo",
             "1.2.3",
             importlib.metadata.EntryPoint(
-                "foo", "flake8_foo:Formatter", "flake8.report"
+                "foo", "flake8_foo:Formatter", "flake8.report",
             ),
         ),
         finder.Plugin(
@@ -518,7 +524,7 @@ def test_find_plugins(
             "local",
             "local",
             importlib.metadata.EntryPoint(
-                "Y", "mod2:attr", "flake8.extension"
+                "Y", "mod2:attr", "flake8.extension",
             ),
         ),
         finder.Plugin(
@@ -723,7 +729,7 @@ def test_import_plugins_extends_sys_path():
 
 def test_classify_plugins():
     report_plugin = _loaded(
-        plugin=_plugin(ep=_ep(name="R", group="flake8.report"))
+        plugin=_plugin(ep=_ep(name="R", group="flake8.report")),
     )
     tree_plugin = _loaded(parameters={"tree": True})
     logical_line_plugin = _loaded(parameters={"logical_line": True})

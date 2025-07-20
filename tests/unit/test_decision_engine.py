@@ -35,7 +35,7 @@ def create_options(**kwargs):
 def test_was_ignored_ignores_errors(ignore_list, extend_ignore, error_code):
     """Verify we detect users explicitly ignoring an error."""
     decider = style_guide.DecisionEngine(
-        create_options(ignore=ignore_list, extend_ignore=extend_ignore)
+        create_options(ignore=ignore_list, extend_ignore=extend_ignore),
     )
 
     assert decider.was_ignored(error_code) is style_guide.Ignored.Explicitly
@@ -53,11 +53,11 @@ def test_was_ignored_ignores_errors(ignore_list, extend_ignore, error_code):
     ],
 )
 def test_was_ignored_implicitly_selects_errors(
-    ignore_list, extend_ignore, error_code
+    ignore_list, extend_ignore, error_code,
 ):
     """Verify we detect users does not explicitly ignore an error."""
     decider = style_guide.DecisionEngine(
-        create_options(ignore=ignore_list, extend_ignore=extend_ignore)
+        create_options(ignore=ignore_list, extend_ignore=extend_ignore),
     )
 
     assert decider.was_ignored(error_code) is style_guide.Selected.Implicitly
@@ -179,7 +179,7 @@ def test_was_selected_excludes_errors(select_list, error_code):
     ],
 )
 def test_decision_for(
-    select_list, ignore_list, extend_ignore, error_code, expected
+    select_list, ignore_list, extend_ignore, error_code, expected,
 ):
     """Verify we decide when to report an error."""
     decider = style_guide.DecisionEngine(
@@ -187,7 +187,7 @@ def test_decision_for(
             select=select_list,
             ignore=ignore_list,
             extend_ignore=extend_ignore,
-        )
+        ),
     )
 
     assert decider.decision_for(error_code) is expected

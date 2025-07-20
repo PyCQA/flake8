@@ -64,6 +64,6 @@ class Violation(NamedTuple):
             return True
 
         LOG.debug(
-            "%r is not ignored inline with ``# noqa: %s``", self, codes_str
+            "%r is not ignored inline with ``# noqa: %s``", self, codes_str,
         )
         return False

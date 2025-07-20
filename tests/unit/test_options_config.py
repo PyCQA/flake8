@@ -169,7 +169,7 @@ def test_load_extra_config_utf8(tmpdir):
 @pytest.fixture
 def opt_manager():
     ret = OptionManager(
-        version="123", plugin_versions="", parents=[], formatter_names=[]
+        version="123", plugin_versions="", parents=[], formatter_names=[],
     )
     register_default_options(ret)
     return ret
@@ -213,7 +213,7 @@ def test_parse_config_ignores_unknowns(tmp_path, opt_manager, caplog):
             "flake8.options.config",
             10,
             'Option "wat" is not registered. Ignoring.',
-        )
+        ),
     ]
 
 

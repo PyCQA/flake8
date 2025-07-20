@@ -110,7 +110,7 @@ class BaseFormatter:
             The formatted error string.
         """
         raise NotImplementedError(
-            "Subclass of BaseFormatter did not implement" " format."
+            "Subclass of BaseFormatter did not implement" " format.",
         )
 
     def show_statistics(self, statistics: Statistics) -> None:

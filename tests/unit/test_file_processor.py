@@ -28,7 +28,7 @@ def _lines_from_file(tmpdir, contents, options):
 def test_read_lines_universal_newlines(tmpdir, default_options):
     r"""Verify that line endings are translated to \n."""
     lines = _lines_from_file(
-        tmpdir, b"# coding: utf-8\r\nx = 1\r\n", default_options
+        tmpdir, b"# coding: utf-8\r\nx = 1\r\n", default_options,
     )
     assert lines == ["# coding: utf-8\n", "x = 1\n"]
 
@@ -36,7 +36,7 @@ def test_read_lines_universal_newlines(tmpdir, default_options):
 def test_read_lines_incorrect_utf_16(tmpdir, default_options):
     """Verify that an incorrectly encoded file is read as latin-1."""
     lines = _lines_from_file(
-        tmpdir, b"# coding: utf16\nx = 1\n", default_options
+        tmpdir, b"# coding: utf16\nx = 1\n", default_options,
     )
     assert lines == ["# coding: utf16\n", "x = 1\n"]
 
@@ -44,7 +44,7 @@ def test_read_lines_incorrect_utf_16(tmpdir, default_options):
 def test_read_lines_unknown_encoding(tmpdir, default_options):
     """Verify that an unknown encoding is still read as latin-1."""
     lines = _lines_from_file(
-        tmpdir, b"# coding: fake-encoding\nx = 1\n", default_options
+        tmpdir, b"# coding: fake-encoding\nx = 1\n", default_options,
     )
     assert lines == ["# coding: fake-encoding\n", "x = 1\n"]
 
@@ -289,7 +289,7 @@ def test_processor_split_line(default_options):
 def test_build_ast(default_options):
     """Verify the logic for how we build an AST for plugins."""
     file_processor = processor.FileProcessor(
-        "-", default_options, lines=["a = 1\n"]
+        "-", default_options, lines=["a = 1\n"],
     )
 
     module = file_processor.build_ast()
@@ -299,7 +299,7 @@ def test_build_ast(default_options):
 def test_next_logical_line_updates_the_previous_logical_line(default_options):
     """Verify that we update our tracking of the previous logical line."""
     file_processor = processor.FileProcessor(
-        "-", default_options, lines=["a = 1\n"]
+        "-", default_options, lines=["a = 1\n"],
     )
 
     file_processor.indent_level = 1
@@ -315,7 +315,7 @@ def test_next_logical_line_updates_the_previous_logical_line(default_options):
 def test_visited_new_blank_line(default_options):
     """Verify we update the number of blank lines seen."""
     file_processor = processor.FileProcessor(
-        "-", default_options, lines=["a = 1\n"]
+        "-", default_options, lines=["a = 1\n"],
     )
 
     assert file_processor.blank_lines == 0

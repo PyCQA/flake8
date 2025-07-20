@@ -32,7 +32,7 @@ def stage1_arg_parser() -> argparse.ArgumentParser:
     )
 
     parser.add_argument(
-        "--output-file", default=None, help="Redirect report to a file."
+        "--output-file", default=None, help="Redirect report to a file.",
     )
 
     # Config file options

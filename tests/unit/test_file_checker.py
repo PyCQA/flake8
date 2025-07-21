@@ -1,4 +1,5 @@
 """Unit tests for the FileChecker class."""
+
 from __future__ import annotations
 
 import argparse

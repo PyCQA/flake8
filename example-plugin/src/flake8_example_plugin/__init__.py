@@ -1,4 +1,5 @@
 """Module for an example Flake8 plugin."""
+
 from __future__ import annotations
 
 from .off_by_default import ExampleTwo

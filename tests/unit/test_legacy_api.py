@@ -1,4 +1,5 @@
 """Tests for Flake8's legacy API."""
+
 from __future__ import annotations
 
 from unittest import mock

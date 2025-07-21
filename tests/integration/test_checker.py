@@ -1,4 +1,5 @@
 """Integration tests for the checker submodule."""
+
 from __future__ import annotations
 
 import importlib.metadata

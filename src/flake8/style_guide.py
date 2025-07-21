@@ -1,4 +1,5 @@
 """Implementation of the StyleGuide used by Flake8."""
+
 from __future__ import annotations
 
 import argparse

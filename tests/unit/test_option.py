@@ -1,4 +1,5 @@
 """Unit tests for flake8.options.manager.Option."""
+
 from __future__ import annotations
 
 import functools

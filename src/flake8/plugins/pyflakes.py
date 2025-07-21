@@ -1,4 +1,5 @@
 """Plugin built-in to Flake8 to treat pyflakes as a plugin."""
+
 from __future__ import annotations
 
 import argparse

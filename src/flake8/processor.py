@@ -1,4 +1,5 @@
 """Module containing our file processor that tokenizes a file for checks."""
+
 from __future__ import annotations
 
 import argparse
@@ -380,9 +381,9 @@ class FileProcessor:
             return
 
         # If the first byte of the file is a UTF-8 BOM, strip it
-        if self.lines[0][:1] == "\uFEFF":
+        if self.lines[0][:1] == "\ufeff":
             self.lines[0] = self.lines[0][1:]
-        elif self.lines[0][:3] == "\xEF\xBB\xBF":
+        elif self.lines[0][:3] == "\xef\xbb\xbf":
             self.lines[0] = self.lines[0][3:]
 
 

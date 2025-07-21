@@ -1,4 +1,5 @@
 """Tests for the FilenameOnly formatter object."""
+
 from __future__ import annotations
 
 import argparse

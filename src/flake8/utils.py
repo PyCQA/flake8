@@ -1,4 +1,5 @@
 """Utility methods for flake8."""
+
 from __future__ import annotations
 
 import fnmatch as _fnmatch

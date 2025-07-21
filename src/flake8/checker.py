@@ -1,4 +1,5 @@
 """Checker Manager and Checker classes."""
+
 from __future__ import annotations
 
 import argparse

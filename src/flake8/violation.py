@@ -1,4 +1,5 @@
 """Contains the Violation error class used internally."""
+
 from __future__ import annotations
 
 import functools

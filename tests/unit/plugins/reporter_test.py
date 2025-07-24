@@ -25,7 +25,7 @@ def reporters():
                 "flake8",
                 "123",
                 importlib.metadata.EntryPoint(
-                    name, f"{cls.__module__}:{cls.__name__}", "flake8.report"
+                    name, f"{cls.__module__}:{cls.__name__}", "flake8.report",
                 ),
             ),
             cls,
@@ -72,5 +72,5 @@ def test_make_formatter_format_string(reporters, caplog):
             "flake8.plugins.reporter",
             30,
             "'hi %(code)s' is an unknown formatter.  Falling back to default.",
-        )
+        ),
     ]

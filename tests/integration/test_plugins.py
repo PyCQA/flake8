@@ -86,7 +86,7 @@ def test_local_plugin_can_add_option(local_config):
     stage1_args, rest = stage1_parser.parse_known_args(argv)
 
     cfg, cfg_dir = config.load_config(
-        config=stage1_args.config, extra=[], isolated=False
+        config=stage1_args.config, extra=[], isolated=False,
     )
 
     opts = finder.parse_plugin_options(

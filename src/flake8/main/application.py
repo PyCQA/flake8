@@ -76,7 +76,7 @@ class Application:
         assert self.formatter is not None
         assert self.options is not None
         self.guide = style_guide.StyleGuideManager(
-            self.options, self.formatter
+            self.options, self.formatter,
         )
 
     def make_file_checker_manager(self, argv: Sequence[str]) -> None:

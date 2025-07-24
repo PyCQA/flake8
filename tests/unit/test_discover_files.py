@@ -47,7 +47,7 @@ def test_filenames_from_a_directory_with_a_predicate():
         _filenames_from(
             arg=_normpath("a/b/"),
             predicate=lambda path: path.endswith(_normpath("b/c.py")),
-        )
+        ),
     )
     # should not include c.py
     expected = _normpaths(("a/b/d.py", "a/b/e/f.py"))
@@ -61,7 +61,7 @@ def test_filenames_from_a_directory_with_a_predicate_from_the_current_dir():
         _filenames_from(
             arg=_normpath("./a/b"),
             predicate=lambda path: path == "c.py",
-        )
+        ),
     )
     # none should have matched the predicate so all returned
     expected = _normpaths(("./a/b/c.py", "./a/b/d.py", "./a/b/e/f.py"))
@@ -132,7 +132,7 @@ def _expand_paths(
             stdin_display_name=stdin_display_name,
             filename_patterns=filename_patterns,
             exclude=exclude,
-        )
+        ),
     )
 
 

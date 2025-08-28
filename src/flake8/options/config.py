@@ -1,4 +1,5 @@
 """Config handling logic for Flake8."""
+
 from __future__ import annotations
 
 import configparser
@@ -41,9 +42,12 @@ def _find_config_file(path: str) -> str | None:
                 if "flake8" in cfg or "flake8:local-plugins" in cfg:
                     return cfg_path
 
+        if dir_stat == home_stat:
+            break
+
         new_path = os.path.dirname(path)
         new_dir_stat = _stat_key(new_path)
-        if new_dir_stat == dir_stat or new_dir_stat == home_stat:
+        if new_dir_stat == dir_stat:
             break
         else:
             path = new_path

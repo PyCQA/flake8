@@ -12,7 +12,8 @@ from collections.abc import Iterable
 from typing import Any
 from typing import NamedTuple
 
-import annotationlib
+if sys.version_info >= (3, 14):
+    import annotationlib
 
 from flake8 import utils
 from flake8.defaults import VALID_CODE_PREFIX
@@ -279,7 +280,11 @@ def _parameters_for(func: Any) -> dict[str, bool]:
     parameters = {
         parameter.name: parameter.default is inspect.Parameter.empty
         for parameter in inspect.signature(
-            func, annotation_format=annotationlib.Format.STRING,
+            func, **(
+                {"annotation_format": annotationlib.Format.STRING}
+                if sys.version_info >= (3, 14)
+                else {}
+            ),
         ).parameters.values()
         if parameter.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD
     }

@@ -1,7 +1,6 @@
 """Functions related to finding and loading plugins."""
 from __future__ import annotations
 
-import annotationlib
 import configparser
 import importlib.metadata
 import inspect
@@ -12,6 +11,8 @@ from collections.abc import Generator
 from collections.abc import Iterable
 from typing import Any
 from typing import NamedTuple
+
+import annotationlib
 
 from flake8 import utils
 from flake8.defaults import VALID_CODE_PREFIX
@@ -278,7 +279,7 @@ def _parameters_for(func: Any) -> dict[str, bool]:
     parameters = {
         parameter.name: parameter.default is inspect.Parameter.empty
         for parameter in inspect.signature(
-            func, annotation_format=annotationlib.Format.STRING
+            func, annotation_format=annotationlib.Format.STRING,
         ).parameters.values()
         if parameter.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD
     }

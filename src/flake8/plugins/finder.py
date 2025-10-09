@@ -1,6 +1,7 @@
 """Functions related to finding and loading plugins."""
 from __future__ import annotations
 
+import annotationlib
 import configparser
 import importlib.metadata
 import inspect
@@ -276,7 +277,9 @@ def _parameters_for(func: Any) -> dict[str, bool]:
 
     parameters = {
         parameter.name: parameter.default is inspect.Parameter.empty
-        for parameter in inspect.signature(func).parameters.values()
+        for parameter in inspect.signature(
+            func, annotation_format=annotationlib.Format.STRING
+        ).parameters.values()
         if parameter.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD
     }
 

@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import importlib.metadata
-import sys
 from unittest import mock
 
 import pytest
@@ -322,17 +321,10 @@ def test_handling_syntaxerrors_across_pythons():
     We need to handle that correctly to avoid crashing.
     https://github.com/PyCQA/flake8/issues/1372
     """
-    if sys.version_info < (3, 10):  # pragma: no cover (<3.10)
-        # Python 3.9 or older
-        err = SyntaxError(
-            "invalid syntax", ("<unknown>", 2, 5, "bad python:\n"),
-        )
-        expected = (2, 4)
-    else:  # pragma: no cover (3.10+)
-        err = SyntaxError(
-            "invalid syntax", ("<unknown>", 2, 1, "bad python:\n", 2, 11),
-        )
-        expected = (2, 1)
+    err = SyntaxError(
+        "invalid syntax", ("<unknown>", 2, 1, "bad python:\n", 2, 11),
+    )
+    expected = (2, 1)
     file_checker = checker.FileChecker(
         filename="-",
         plugins=finder.Checkers([], [], []),

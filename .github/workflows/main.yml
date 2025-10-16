@@ -13,10 +13,7 @@ jobs:
         include:
         # linux
         - os: ubuntu-latest
-          python: pypy-3.9
-          toxenv: py
-        - os: ubuntu-latest
-          python: 3.9
+          python: pypy-3.11
           toxenv: py
         - os: ubuntu-latest
           python: '3.10'
@@ -30,9 +27,12 @@ jobs:
         - os: ubuntu-latest
           python: '3.13'
           toxenv: py
+        - os: ubuntu-latest
+          python: '3.14'
+          toxenv: py
         # windows
         - os: windows-latest
-          python: 3.9
+          python: '3.10'
           toxenv: py
         # misc
         - os: ubuntu-latest
@@ -46,8 +46,8 @@ jobs:
           toxenv: dogfood
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python }}
     - run: python -mpip install --upgrade setuptools pip tox virtualenv

@@ -43,6 +43,8 @@ section we cover:
 
 - How to write your check plugin so that it works with |Flake8| 2.x and 3.x
 
+- How to test your plugin (:doc:`testing-plugins`)
+
 
 Video Tutorial
 ==============
@@ -65,3 +67,4 @@ Detailed Plugin Development Documentation
     registering-plugins
     plugin-parameters
     formatters
+    testing-plugins

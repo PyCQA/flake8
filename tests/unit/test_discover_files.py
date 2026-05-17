@@ -95,11 +95,11 @@ def test_filenames_from_exclude_doesnt_exclude_directory_names(tmpdir):
     assert filenames == [os.path.join(".", "2", "1", "return_me.py")]
 
 
-def test_filenames_from_predicate_applies_to_initial_arg(tmp_path):
-    """Test that the predicate is also applied to the passed argument."""
+def test_filenames_from_predicate_does_not_apply_to_initial_file(tmp_path):
+    """Test that the predicate is not applied to a directly passed file."""
     fname = str(tmp_path.joinpath("f.py"))
     ret = tuple(_filenames_from(fname, predicate=lambda _: True))
-    assert ret == ()
+    assert ret == (fname,)
 
 
 def test_filenames_from_predicate_applies_to_dirname(tmp_path):
@@ -164,3 +164,10 @@ def test_alternate_stdin_name_is_filtered():
 def test_filename_included_even_if_not_matching_include(tmp_path):
     some_file = str(tmp_path.joinpath("some/file"))
     assert _expand_paths(paths=(some_file,)) == {some_file}
+
+
+def test_filename_included_even_if_matching_exclude(tmp_path):
+    some_file = str(tmp_path.joinpath("some/file.py"))
+    assert _expand_paths(paths=(some_file,), exclude=("file.py",)) == {
+        some_file,
+    }

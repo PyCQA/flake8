@@ -135,6 +135,20 @@ def test_extend_exclude(tmpdir, capsys):
     assert err == ""
 
 
+def test_explicit_file_ignores_exclude(tmpdir, capsys):
+    tmpdir.join("test/module.py").ensure()
+    tmpdir.join("test/module.py").write("import os\n")
+    tmpdir.join(".flake8").write("[flake8]\nexclude = module.py\n")
+
+    with tmpdir.as_cwd():
+        assert cli.main(["test/module.py"]) == 1
+
+    expected_out = "test/module.py:1:1: F401 'os' imported but unused\n"
+    out, err = capsys.readouterr()
+    assert out == expected_out.replace("/", os.sep)
+    assert err == ""
+
+
 def test_malformed_per_file_ignores_error(tmpdir, capsys):
     """Test the error message for malformed `per-file-ignores`."""
     setup_cfg = """\

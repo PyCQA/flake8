@@ -22,17 +22,19 @@ def _filenames_from(
     :param arg:
         Parameter from the command-line.
     :param predicate:
-        Predicate to use to filter out filenames. If the predicate
-        returns ``True`` we will exclude the filename, otherwise we
-        will yield it. By default, we include every filename
-        generated.
+        Predicate to use to filter out paths discovered from directories
+        or stdin aliases. Direct file arguments are yielded even if the
+        predicate matches them.
     :returns:
         Generator of paths
     """
-    if predicate(arg):
+    if arg == "-" and predicate(arg):
         return
 
     if os.path.isdir(arg):
+        if predicate(arg):
+            return
+
         for root, sub_directories, files in os.walk(arg):
             # NOTE(sigmavirus24): os.walk() will skip a directory if you
             # remove it from the list of sub-directories.

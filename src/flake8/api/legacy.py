@@ -10,7 +10,7 @@ import logging
 import os.path
 from typing import Any
 
-from flake8.discover_files import expand_paths
+from flake8 import utils
 from flake8.formatting import base as formatter
 from flake8.main import application as app
 from flake8.options.parse_args import parse_args
@@ -129,15 +129,12 @@ class StyleGuide:
         """
 
         def excluded(path: str) -> bool:
-            paths = tuple(
-                expand_paths(
-                    paths=[path],
-                    stdin_display_name=self.options.stdin_display_name,
-                    filename_patterns=self.options.filename,
-                    exclude=self.options.exclude,
-                ),
+            return utils.matches_filename(
+                path,
+                patterns=self.options.exclude,
+                log_message='"%(path)s" has %(whether)sbeen excluded',
+                logger=LOG,
             )
-            return not paths
 
         return excluded(filename) or (
             parent is not None and excluded(os.path.join(parent, filename))

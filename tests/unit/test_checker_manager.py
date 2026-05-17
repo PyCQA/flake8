@@ -63,6 +63,17 @@ def test_multiprocessing_cpu_count_not_implemented():
     assert manager.jobs == 0
 
 
+def test_mp_init_applies_option_overrides():
+    checker._mp = None
+    try:
+        checker._mp_init([], {"max_line_length": 88})
+        assert checker._mp is not None
+        _, options = checker._mp
+        assert options.max_line_length == 88
+    finally:
+        checker._mp = None
+
+
 def test_jobs_count_limited_to_file_count():
     style_guide = style_guide_mock()
     style_guide.options.jobs = JobsArgument("4")

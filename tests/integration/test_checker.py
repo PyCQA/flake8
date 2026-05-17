@@ -291,7 +291,7 @@ def test_acquire_when_multiprocessing_pool_can_initialize():
     with mock.patch("multiprocessing.Pool") as pool:
         result = checker._try_initialize_processpool(2, [])
 
-    pool.assert_called_once_with(2, checker._mp_init, initargs=([],))
+    pool.assert_called_once_with(2, checker._mp_init, initargs=([], None))
     assert result is pool.return_value
 
 
@@ -310,7 +310,7 @@ def test_acquire_when_multiprocessing_pool_can_not_initialize():
     with mock.patch("multiprocessing.Pool", side_effect=ImportError) as pool:
         result = checker._try_initialize_processpool(2, [])
 
-    pool.assert_called_once_with(2, checker._mp_init, initargs=([],))
+    pool.assert_called_once_with(2, checker._mp_init, initargs=([], None))
     assert result is None
 
 

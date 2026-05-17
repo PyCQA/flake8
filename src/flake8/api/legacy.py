@@ -204,13 +204,15 @@ def get_style_guide(**kwargs: Any) -> StyleGuide:
     # options set instead before we make our formatter, notifier, internal
     # style guide and file checker manager.
     options = application.options
+    option_overrides = {}
     for key, value in kwargs.items():
         try:
             getattr(options, key)
             setattr(options, key, value)
+            option_overrides[key] = value
         except AttributeError:
             LOG.error('Could not update option "%s"', key)
     application.make_formatter()
     application.make_guide()
-    application.make_file_checker_manager([])
+    application.make_file_checker_manager([], option_overrides)
     return StyleGuide(application)

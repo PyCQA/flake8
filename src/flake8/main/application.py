@@ -6,6 +6,7 @@ import json
 import logging
 import time
 from collections.abc import Sequence
+from typing import Any
 
 import flake8
 from flake8 import checker
@@ -79,7 +80,11 @@ class Application:
             self.options, self.formatter,
         )
 
-    def make_file_checker_manager(self, argv: Sequence[str]) -> None:
+    def make_file_checker_manager(
+        self,
+        argv: Sequence[str],
+        option_overrides: dict[str, Any] | None = None,
+    ) -> None:
         """Initialize our FileChecker Manager."""
         assert self.guide is not None
         assert self.plugins is not None
@@ -87,6 +92,7 @@ class Application:
             style_guide=self.guide,
             plugins=self.plugins.checkers,
             argv=argv,
+            option_overrides=option_overrides,
         )
 
     def run_checks(self) -> None:

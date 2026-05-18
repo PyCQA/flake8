@@ -73,6 +73,23 @@ def test_jobs_count_limited_to_file_count():
     assert manager.jobs == 2
 
 
+def test_mp_init_preserves_supplied_options():
+    parsed_plugins = mock.Mock(checkers="parsed-checkers")
+    parsed_options = mock.Mock()
+    options_override = mock.Mock()
+
+    with (
+        mock.patch.object(checker, "_mp", None),
+        mock.patch.object(
+            checker,
+            "parse_args",
+            return_value=(parsed_plugins, parsed_options),
+        ),
+    ):
+        checker._mp_init([], options_override)
+        assert checker._mp == ("parsed-checkers", options_override)
+
+
 def test_make_checkers():
     """Verify that we create a list of FileChecker instances."""
     style_guide = style_guide_mock()

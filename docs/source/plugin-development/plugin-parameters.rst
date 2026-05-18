@@ -109,6 +109,13 @@ Each of these options works individually or can be combined. Let's look at a
 couple examples from |Flake8|. In each example, we will have
 ``option_manager`` which is an instance of |OptionManager|.
 
+.. note::
+
+    Values read from configuration files do not go through :mod:`argparse`
+    ``action`` handlers. If an option needs the same custom transformation for
+    both command-line and configuration values, prefer ``type=`` for that
+    transformation, or use the |Flake8|-specific normalizers documented above.
+
 .. code-block:: python
 
     option_manager.add_option(

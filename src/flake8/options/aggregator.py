@@ -39,8 +39,25 @@ def aggregate_options(
         # If the config name is somehow different from the destination name,
         # fetch the destination name from our Option
         if not hasattr(default_values, config_name):
-            dest_val = manager.config_options_dict[config_name].dest
-            assert isinstance(dest_val, str)
+            try:
+                option = manager.config_options_dict[config_name]
+            except KeyError:
+                LOG.warning(
+                    'Config option "%s" is not registered with the active '
+                    "OptionManager; ignoring value %r",
+                    config_name,
+                    value,
+                )
+                continue
+            dest_val = option.dest
+            if not isinstance(dest_val, str):
+                LOG.warning(
+                    'Config option "%s" has no explicit "dest" attribute; '
+                    "ignoring value %r",
+                    config_name,
+                    value,
+                )
+                continue
             dest_name = dest_val
 
         LOG.debug(

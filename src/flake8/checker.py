@@ -340,7 +340,7 @@ class FileChecker:
             )
         try:
             return plugin.obj(**arguments, **params)
-        except Exception as all_exc:
+        except (AssertionError, AttributeError, NameError, SyntaxError, TypeError, ValueError) as all_exc:
             LOG.critical(
                 "Plugin %s raised an unexpected exception",
                 plugin.display_name,

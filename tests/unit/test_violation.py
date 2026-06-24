@@ -31,6 +31,9 @@ from flake8.violation import Violation
         ("ABC123", "a = 1  # noqa: ABC123", True),
         ("E111", "a = 1  # noqa: ABC123", False),
         ("ABC123", "a = 1  # noqa: ABC124", False),
+        ("E111", "a = '# noqa'", False),
+        ("E111", "a = '# noqa: E111'", False),
+        ("E111", "a = '# noqa'  # noqa: E111", True),
     ],
 )
 def test_is_inline_ignored(error_code, physical_line, expected_result):

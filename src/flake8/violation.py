@@ -2,8 +2,10 @@
 from __future__ import annotations
 
 import functools
+import io
 import linecache
 import logging
+import tokenize
 from re import Match
 from typing import NamedTuple
 
@@ -16,7 +18,20 @@ LOG = logging.getLogger(__name__)
 
 @functools.lru_cache(maxsize=512)
 def _find_noqa(physical_line: str) -> Match[str] | None:
-    return defaults.NOQA_INLINE_REGEXP.search(physical_line)
+    if defaults.NOQA_INLINE_REGEXP.search(physical_line) is None:
+        return None
+
+    try:
+        tokens = tokenize.generate_tokens(io.StringIO(physical_line).readline)
+        for token in tokens:
+            if token.type == tokenize.COMMENT:
+                match = defaults.NOQA_INLINE_REGEXP.search(token.string)
+                if match is not None:
+                    return match
+    except (SyntaxError, tokenize.TokenError):
+        return defaults.NOQA_INLINE_REGEXP.search(physical_line)
+
+    return None
 
 
 class Violation(NamedTuple):

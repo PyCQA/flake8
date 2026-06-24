@@ -240,6 +240,19 @@ t.py:1:15: E711 comparison to None should be 'if cond is None:'
     assert out == expected
 
 
+def test_noqa_inside_string_literal_does_not_ignore_line(tmpdir, capsys):
+    """See https://github.com/pycqa/flake8/issues/1321."""
+    with tmpdir.as_cwd():
+        tmpdir.join("t.py").write("def f():\n    x = '# noqa'\n")
+        assert cli.main(["t.py"]) == 1
+
+    expected = """\
+t.py:2:5: F841 local variable 'x' is assigned to but never used
+"""
+    out, err = capsys.readouterr()
+    assert out == expected
+
+
 def test_specific_noqa_on_line_with_continuation(tmpdir, capsys):
     """See https://github.com/pycqa/flake8/issues/621."""
     t_py_src = '''\

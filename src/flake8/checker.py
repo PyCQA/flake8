@@ -7,6 +7,7 @@ import errno
 import logging
 import multiprocessing.pool
 import operator
+import pickle
 import signal
 import tokenize
 from collections.abc import Generator
@@ -61,16 +62,24 @@ def _mp_prefork(
         _mp = None
 
 
-def _mp_init(argv: Sequence[str]) -> None:
+def _mp_init(
+    argv: Sequence[str],
+    plugins: Checkers | None = None,
+    options: argparse.Namespace | None = None,
+) -> None:
     global _mp
 
     # Ensure correct signaling of ^C using multiprocessing.Pool.
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
+    if plugins is not None and options is not None:
+        _mp = plugins, options
+        return
+
     # for `fork` this'll already be set
     if _mp is None:
-        plugins, options = parse_args(argv)
-        _mp = plugins.checkers, options
+        parsed_plugins, parsed_options = parse_args(argv)
+        _mp = parsed_plugins.checkers, parsed_options
 
 
 def _mp_run(filename: str) -> tuple[str, Results, dict[str, int]]:
@@ -105,6 +114,7 @@ class Manager:
         style_guide: StyleGuideManager,
         plugins: Checkers,
         argv: Sequence[str],
+        use_initialized_options: bool = False,
     ) -> None:
         """Initialize our Manager instance."""
         self.style_guide = style_guide
@@ -119,6 +129,7 @@ class Manager:
         }
         self.exclude = (*self.options.exclude, *self.options.extend_exclude)
         self.argv = argv
+        self.use_initialized_options = use_initialized_options
         self.results: list[tuple[str, Results, dict[str, int]]] = []
 
     def _process_statistics(self) -> None:
@@ -191,8 +202,12 @@ class Manager:
 
     def run_parallel(self) -> None:
         """Run the checkers in parallel."""
+        plugins = self.plugins if self.use_initialized_options else None
+        options = self.options if self.use_initialized_options else None
         with _mp_prefork(self.plugins, self.options):
-            pool = _try_initialize_processpool(self.jobs, self.argv)
+            pool = _try_initialize_processpool(
+                self.jobs, self.argv, plugins=plugins, options=options,
+            )
 
         if pool is None:
             self.run_serial()
@@ -547,12 +562,20 @@ class FileChecker:
 def _try_initialize_processpool(
     job_count: int,
     argv: Sequence[str],
+    *,
+    plugins: Checkers | None = None,
+    options: argparse.Namespace | None = None,
 ) -> multiprocessing.pool.Pool | None:
     """Return a new process pool instance if we are able to create one."""
     try:
-        return multiprocessing.Pool(job_count, _mp_init, initargs=(argv,))
+        return multiprocessing.Pool(
+            job_count, _mp_init, initargs=(argv, plugins, options),
+        )
     except OSError as err:
         if err.errno not in SERIAL_RETRY_ERRNOS:
+            raise
+    except (AttributeError, pickle.PicklingError, TypeError):
+        if plugins is None and options is None:
             raise
     except ImportError:
         pass

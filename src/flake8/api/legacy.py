@@ -162,7 +162,9 @@ class StyleGuide:
         # Stop cringing... I know it's gross.
         self._application.make_guide()
         self._application.file_checker_manager = None
-        self._application.make_file_checker_manager([])
+        self._application.make_file_checker_manager(
+            [], use_initialized_options=True,
+        )
 
     def input_file(
         self,
@@ -212,5 +214,5 @@ def get_style_guide(**kwargs: Any) -> StyleGuide:
             LOG.error('Could not update option "%s"', key)
     application.make_formatter()
     application.make_guide()
-    application.make_file_checker_manager([])
+    application.make_file_checker_manager([], use_initialized_options=True)
     return StyleGuide(application)

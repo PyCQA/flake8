@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import importlib.metadata
+import pickle
 from unittest import mock
 
 import pytest
@@ -291,7 +292,24 @@ def test_acquire_when_multiprocessing_pool_can_initialize():
     with mock.patch("multiprocessing.Pool") as pool:
         result = checker._try_initialize_processpool(2, [])
 
-    pool.assert_called_once_with(2, checker._mp_init, initargs=([],))
+    pool.assert_called_once_with(
+        2, checker._mp_init, initargs=([], None, None),
+    )
+    assert result is pool.return_value
+
+
+def test_acquire_when_multiprocessing_pool_uses_initialized_options():
+    plugins = mock.Mock()
+    options = mock.Mock()
+
+    with mock.patch("multiprocessing.Pool") as pool:
+        result = checker._try_initialize_processpool(
+            2, [], plugins=plugins, options=options,
+        )
+
+    pool.assert_called_once_with(
+        2, checker._mp_init, initargs=([], plugins, options),
+    )
     assert result is pool.return_value
 
 
@@ -310,7 +328,21 @@ def test_acquire_when_multiprocessing_pool_can_not_initialize():
     with mock.patch("multiprocessing.Pool", side_effect=ImportError) as pool:
         result = checker._try_initialize_processpool(2, [])
 
-    pool.assert_called_once_with(2, checker._mp_init, initargs=([],))
+    pool.assert_called_once_with(
+        2, checker._mp_init, initargs=([], None, None),
+    )
+    assert result is None
+
+
+def test_acquire_falls_back_when_initialized_options_are_unpickleable():
+    with mock.patch(
+        "multiprocessing.Pool", side_effect=pickle.PicklingError,
+    ) as pool:
+        result = checker._try_initialize_processpool(
+            2, [], plugins=mock.Mock(), options=mock.Mock(),
+        )
+
+    pool.assert_called_once()
     assert result is None
 
 

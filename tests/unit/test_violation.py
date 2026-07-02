@@ -28,6 +28,7 @@ from flake8.violation import Violation
         ("E111", "a = 1  # noqa - We do not care", True),
         ("E111", "a = 1  # noqa: We do not care", True),
         ("E111", "a = 1  # noqa:We do not care", True),
+        ("E111", "a = '# noqa'", False),
         ("ABC123", "a = 1  # noqa: ABC123", True),
         ("E111", "a = 1  # noqa: ABC123", False),
         ("ABC123", "a = 1  # noqa: ABC124", False),

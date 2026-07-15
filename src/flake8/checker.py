@@ -61,7 +61,9 @@ def _mp_prefork(
         _mp = None
 
 
-def _mp_init(argv: Sequence[str]) -> None:
+def _mp_init(
+    argv: Sequence[str], options: argparse.Namespace,
+) -> None:
     global _mp
 
     # Ensure correct signaling of ^C using multiprocessing.Pool.
@@ -69,7 +71,7 @@ def _mp_init(argv: Sequence[str]) -> None:
 
     # for `fork` this'll already be set
     if _mp is None:
-        plugins, options = parse_args(argv)
+        plugins, _ = parse_args(argv)
         _mp = plugins.checkers, options
 
 
@@ -192,7 +194,9 @@ class Manager:
     def run_parallel(self) -> None:
         """Run the checkers in parallel."""
         with _mp_prefork(self.plugins, self.options):
-            pool = _try_initialize_processpool(self.jobs, self.argv)
+            pool = _try_initialize_processpool(
+                self.jobs, self.argv, self.options,
+            )
 
         if pool is None:
             self.run_serial()
@@ -547,10 +551,13 @@ class FileChecker:
 def _try_initialize_processpool(
     job_count: int,
     argv: Sequence[str],
+    options: argparse.Namespace,
 ) -> multiprocessing.pool.Pool | None:
     """Return a new process pool instance if we are able to create one."""
     try:
-        return multiprocessing.Pool(job_count, _mp_init, initargs=(argv,))
+        return multiprocessing.Pool(
+            job_count, _mp_init, initargs=(argv, options),
+        )
     except OSError as err:
         if err.errno not in SERIAL_RETRY_ERRNOS:
             raise

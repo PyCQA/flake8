@@ -288,10 +288,13 @@ def test_acquire_when_multiprocessing_pool_can_initialize():
 
     This simulates the behaviour on most common platforms.
     """
+    options = mock.sentinel.options
     with mock.patch("multiprocessing.Pool") as pool:
-        result = checker._try_initialize_processpool(2, [])
+        result = checker._try_initialize_processpool(2, [], options)
 
-    pool.assert_called_once_with(2, checker._mp_init, initargs=([],))
+    pool.assert_called_once_with(
+        2, checker._mp_init, initargs=([], options),
+    )
     assert result is pool.return_value
 
 
@@ -307,10 +310,13 @@ def test_acquire_when_multiprocessing_pool_can_not_initialize():
 
     https://github.com/python/cpython/blob/4e02981de0952f54bf87967f8e10d169d6946b40/Lib/multiprocessing/synchronize.py#L30-L33
     """
+    options = mock.sentinel.options
     with mock.patch("multiprocessing.Pool", side_effect=ImportError) as pool:
-        result = checker._try_initialize_processpool(2, [])
+        result = checker._try_initialize_processpool(2, [], options)
 
-    pool.assert_called_once_with(2, checker._mp_init, initargs=([],))
+    pool.assert_called_once_with(
+        2, checker._mp_init, initargs=([], options),
+    )
     assert result is None
 
 

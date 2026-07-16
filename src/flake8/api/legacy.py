@@ -10,7 +10,7 @@ import logging
 import os.path
 from typing import Any
 
-from flake8.discover_files import expand_paths
+from flake8 import utils
 from flake8.formatting import base as formatter
 from flake8.main import application as app
 from flake8.options.parse_args import parse_args
@@ -127,17 +127,18 @@ class StyleGuide:
         :returns:
             True if the filename is excluded, False otherwise.
         """
+        exclude = (*self.options.exclude, *self.options.extend_exclude)
 
         def excluded(path: str) -> bool:
-            paths = tuple(
-                expand_paths(
-                    paths=[path],
-                    stdin_display_name=self.options.stdin_display_name,
-                    filename_patterns=self.options.filename,
-                    exclude=self.options.exclude,
-                ),
+            # Query exclude patterns directly. Do not go through expand_paths:
+            # CLI discovery always lints explicit file arguments (#1074), but
+            # this API answers "does this path match exclude?", not "lint it?".
+            return utils.matches_filename(
+                path,
+                patterns=exclude,
+                log_message='"%(path)s" has %(whether)sbeen excluded',
+                logger=LOG,
             )
-            return not paths
 
         return excluded(filename) or (
             parent is not None and excluded(os.path.join(parent, filename))

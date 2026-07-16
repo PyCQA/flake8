@@ -74,16 +74,24 @@ def expand_paths(
             logger=LOG,
         )
 
-    return (
-        filename
-        for path in paths
-        for filename in _filenames_from(path, predicate=is_excluded)
-        if (
-            # always lint `-`
-            filename == "-"
-            # always lint explicitly passed (even if not matching filter)
-            or path == filename
-            # otherwise, check the file against filtered patterns
-            or utils.fnmatch(filename, filename_patterns)
+    for path in paths:
+        # Explicit file arguments (not directories, not stdin) always lint,
+        # even when ``exclude`` matches the basename or a parent path.
+        # Directory discovery still honours exclude.  See issue #1074 and
+        # maintainer guidance that an explicit CLI path means "lint this".
+        if path != "-" and not os.path.isdir(path):
+            yield path
+            continue
+
+        yield from (
+            filename
+            for filename in _filenames_from(path, predicate=is_excluded)
+            if (
+                # always lint `-`
+                filename == "-"
+                # always lint explicitly passed (even if not matching filter)
+                or path == filename
+                # otherwise, check the file against filtered patterns
+                or utils.fnmatch(filename, filename_patterns)
+            )
         )
-    )

@@ -164,3 +164,33 @@ def test_alternate_stdin_name_is_filtered():
 def test_filename_included_even_if_not_matching_include(tmp_path):
     some_file = str(tmp_path.joinpath("some/file"))
     assert _expand_paths(paths=(some_file,)) == {some_file}
+
+
+def test_explicit_file_not_excluded_by_basename_pattern(tmp_path):
+    """Issue #1074: basename exclude must not drop an explicit file path."""
+    module = tmp_path.joinpath("test", "module.py")
+    module.parent.mkdir()
+    module.write_text("import os\n", encoding="utf-8")
+    path = str(module)
+    assert _expand_paths(paths=(path,), exclude=["module.py"]) == {path}
+
+
+def test_explicit_file_not_excluded_by_parent_dir_pattern(tmp_path):
+    """Explicit files under an excluded directory still lint when named."""
+    module = tmp_path.joinpath("test", "module.py")
+    module.parent.mkdir()
+    module.write_text("import os\n", encoding="utf-8")
+    path = str(module)
+    assert _expand_paths(paths=(path,), exclude=["test"]) == {path}
+
+
+def test_directory_discovery_still_honors_exclude(tmp_path):
+    """Walking a tree still applies exclude patterns."""
+    module = tmp_path.joinpath("test", "module.py")
+    module.parent.mkdir()
+    module.write_text("import os\n", encoding="utf-8")
+    kept = tmp_path.joinpath("kept.py")
+    kept.write_text("import os\n", encoding="utf-8")
+    assert _expand_paths(paths=(str(tmp_path),), exclude=["test"]) == {
+        str(kept),
+    }

@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import ast
+import os.path
+import re
 
 import pyflakes
 
@@ -16,6 +18,14 @@ def test_all_pyflakes_messages_have_flake8_codes_assigned():
         if name[0].isupper() and obj.message
     }
     assert messages == set(pyflakes_shim.FLAKE8_PYFLAKES_CODES)
+
+
+def test_all_codes_documented():
+    here = os.path.dirname(__file__)
+    fname = os.path.join(here, '../../docs/source/user/error-codes.rst')
+    with open(fname) as f:
+        codes = set(re.findall(r'\bF\d{3}\b', f.read()))
+    assert set(pyflakes_shim.FLAKE8_PYFLAKES_CODES.values()) == codes
 
 
 def test_undefined_local_code():

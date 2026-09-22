@@ -1,0 +1,16 @@
+7.4.0 -- 2026-09-22
+-------------------
+
+You can view the `7.4.0 milestone`_ on GitHub for more details.
+
+New Dependency Information
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Drop support for python 3.10 (See also :pull:`2001`).
+- pycodestyle has been updated to >= 2.15.0, < 2.16.0 (See also :pull:`2053`).
+- Pyflakes has been updated to >= 4.0.0, < 4.1.0 (See also :pull:`2054`).
+- Added support for python 3.15 (See also :pull:`2055`).
+
+.. all links
+.. _7.4.0 milestone:
+    https://github.com/PyCQA/flake8/milestone/55

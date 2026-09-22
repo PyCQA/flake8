@@ -50,6 +50,8 @@ FLAKE8_PYFLAKES_CODES = {
     "YieldOutsideFunction": "F704",
     "ReturnOutsideFunction": "F706",
     "DefaultExceptNotLast": "F707",
+    "LazyImportNotAtModuleScope": "F708",
+    "LazyImportStarNotPermitted": "F709",
     "DoctestSyntaxError": "F721",
     "ForwardAnnotationSyntaxError": "F722",
     "RedefinedWhileUnused": "F811",
@@ -60,6 +62,7 @@ FLAKE8_PYFLAKES_CODES = {
     "DuplicateArgument": "F831",
     "UnusedVariable": "F841",
     "UnusedAnnotation": "F842",
+    "EagerUseOfLazyImport": "F851",
     "RaiseNotImplemented": "F901",
 }
 

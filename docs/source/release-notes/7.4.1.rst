@@ -1,0 +1,14 @@
+7.4.1 -- 2026-09-23
+-------------------
+
+You can view the `7.4.1 milestone`_ on GitHub for more details.
+
+New Dependency Information
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Fix ``--builtins`` (regressed in 7.4.0) (See also :pull:`2057`,
+  :issue:`2056`).
+
+.. all links
+.. _7.4.1 milestone:
+    https://github.com/PyCQA/flake8/milestone/56

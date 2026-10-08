@@ -7,51 +7,18 @@ on:
   pull_request:
 
 jobs:
-  main:
-    strategy:
-      matrix:
-        include:
-        # linux
-        - os: ubuntu-latest
-          python: pypy-3.11
-          toxenv: py
-        - os: ubuntu-latest
-          python: '3.10'
-          toxenv: py
-        - os: ubuntu-latest
-          python: '3.11'
-          toxenv: py
-        - os: ubuntu-latest
-          python: '3.12'
-          toxenv: py
-        - os: ubuntu-latest
-          python: '3.13'
-          toxenv: py
-        - os: ubuntu-latest
-          python: '3.14'
-          toxenv: py
-        - os: ubuntu-latest
-          python: '3.15-dev'
-          toxenv: py
-        # windows
-        - os: windows-latest
-          python: '3.10'
-          toxenv: py
-        # misc
-        - os: ubuntu-latest
-          python: '3.10'
-          toxenv: docs
-        - os: ubuntu-latest
-          python: '3.10'
-          toxenv: linters
-        - os: ubuntu-latest
-          python: '3.10'
-          toxenv: dogfood
-    runs-on: ${{ matrix.os }}
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python }}
-    - run: python -mpip install --upgrade setuptools pip tox virtualenv
-    - run: tox -e ${{ matrix.toxenv }}
+  main-windows:
+    uses: asottile/workflows/.github/workflows/tox.yml@v1.11.1
+    with:
+      env: '["py310"]'
+      os: windows-latest
+  main-linux:
+    uses: asottile/workflows/.github/workflows/tox.yml@v1.11.1
+    with:
+      env: '["pypy3", "py310", "py311", "py312", "py313", "py314", "py315"]'
+      os: ubuntu-latest
+  main-other:
+    uses: asottile/workflows/.github/workflows/tox.yml@v1.11.1
+    with:
+      env: '["docs", "linters", "dogfood"]'
+      os: ubuntu-latest

@@ -21,14 +21,14 @@ repos:
     -   id: reorder-python-imports
         args: [
             --application-directories, '.:src',
-            --py310-plus,
+            --py311-plus,
             --add-import, 'from __future__ import annotations',
         ]
 -   repo: https://github.com/asottile/pyupgrade
     rev: v3.21.2
     hooks:
     -   id: pyupgrade
-        args: [--py310-plus]
+        args: [--py311-plus]
 -   repo: https://github.com/hhatto/autopep8
     rev: v2.3.2
     hooks:

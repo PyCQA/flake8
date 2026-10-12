@@ -12,11 +12,11 @@ repos:
     -   id: trailing-whitespace
         exclude: ^tests/fixtures/
 -   repo: https://github.com/asottile/setup-cfg-fmt
-    rev: v3.2.0
+    rev: v3.3.0
     hooks:
     -   id: setup-cfg-fmt
 -   repo: https://github.com/asottile/reorder-python-imports
-    rev: v3.17.0
+    rev: v3.19.0
     hooks:
     -   id: reorder-python-imports
         args: [
@@ -25,7 +25,7 @@ repos:
             --add-import, 'from __future__ import annotations',
         ]
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v3.21.2
+    rev: v3.22.0
     hooks:
     -   id: pyupgrade
         args: [--py311-plus]

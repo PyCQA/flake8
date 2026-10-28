@@ -1,0 +1,14 @@
+7.5.0 -- 2026-10-28
+-------------------
+
+You can view the `7.5.0 milestone`_ on GitHub for more details.
+
+New Dependency Information
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Drop support for python 3.10 (See also :pull:`2064`).
+- Pyflakes has been updated to >= 4.1.0, < 4.2.0 (See also :pull:`2070`).
+
+.. all links
+.. _7.5.0 milestone:
+    https://github.com/PyCQA/flake8/milestone/57

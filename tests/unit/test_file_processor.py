@@ -296,6 +296,17 @@ def test_build_ast(default_options):
     assert isinstance(module, ast.Module)
 
 
+def test_build_ast_preserves_filename_in_warnings(default_options):
+    file_processor = processor.FileProcessor(
+        'fname.py', default_options, lines=[r"s = '\d'\n"],
+    )
+
+    # the SyntaxWarning is upgraded to error due to `filterwarnings`
+    with pytest.raises(SyntaxError) as excinfo:
+        file_processor.build_ast()
+    assert excinfo.value.filename == 'fname.py'
+
+
 def test_next_logical_line_updates_the_previous_logical_line(default_options):
     """Verify that we update our tracking of the previous logical line."""
     file_processor = processor.FileProcessor(
